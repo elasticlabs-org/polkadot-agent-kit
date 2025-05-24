@@ -63,11 +63,10 @@ export function addressOfSubstrate(address: Uint8Array): string {
 }
 
 export interface BalanceInfo {
-  balance: bigint;
-  decimals: number;
-  symbol: string;
+  balance: bigint
+  decimals: number
+  symbol: string
 }
-
 
 // export function toMultiAddress(address: string): MultiAddress {
 //   return MultiAddress.Id(address);

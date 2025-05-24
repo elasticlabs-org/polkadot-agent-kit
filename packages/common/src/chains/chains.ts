@@ -45,20 +45,20 @@ export type DescriptorsAll = DescriptorsRelay & DescriptorsAssetHub & Descriptor
 export type ChainIdAssetHub = keyof DescriptorsAssetHub
 export type ChainIdRelay = keyof DescriptorsRelay
 export type ChainIdPara = keyof DescriptorsParaType
-export type KnowChainId = ChainIdRelay | ChainIdAssetHub | ChainIdPara
-type UnKnowChainId = string & {}
-export type ChainId = KnowChainId | UnKnowChainId
+export type KnownChainId = ChainIdRelay | ChainIdAssetHub | ChainIdPara
+type UnKnownChainId = string & {}
+export type ChainId = KnownChainId | UnKnownChainId
 
 export const isChainIdAssetHub = (id: unknown): id is ChainIdAssetHub =>
   typeof id === "string" && !!DESCRIPTORS_ASSET_HUB[id as ChainIdAssetHub]
 export const isChainIdRelay = (id: unknown): id is ChainIdRelay =>
   typeof id === "string" && !!DESCRIPTORS_RELAY[id as ChainIdRelay]
 
-export type Descriptors<Id extends KnowChainId> = DescriptorsAll[Id]
+export type Descriptors<Id extends KnownChainId> = DescriptorsAll[Id]
 
-export const getDescriptors = (id: ChainId): Descriptors<KnowChainId> | undefined => {
-  if (DESCRIPTORS_ALL[id as KnowChainId]) {
-    return DESCRIPTORS_ALL[id as KnowChainId]
+export const getDescriptors = (id: ChainId): Descriptors<KnownChainId> | undefined => {
+  if (DESCRIPTORS_ALL[id as KnownChainId]) {
+    return DESCRIPTORS_ALL[id as KnownChainId]
   }
   return undefined
 }
@@ -106,4 +106,9 @@ export const getAllSupportedChains = (): Chain[] => {
 
 export const isSupportedChain = (chainId: unknown): chainId is ChainId => {
   return typeof chainId === "string" && SUPPORTED_CHAINS.some(chain => chain.id === chainId)
+}
+
+export function getDecimalsByChainId(chainId: string): number {
+  const chain = getChainById(chainId, getAllSupportedChains())
+  return chain.decimals
 }
