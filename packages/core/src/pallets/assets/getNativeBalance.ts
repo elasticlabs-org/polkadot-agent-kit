@@ -1,4 +1,10 @@
-import { Api, KnowChainId, getChainById, getAllSupportedChains, BalanceInfo } from "@polkadot-agent-kit/common"
+import {
+  Api,
+  KnownChainId,
+  getChainById,
+  getAllSupportedChains,
+  BalanceInfo
+} from "@polkadot-agent-kit/common"
 
 /**
  * Retrieves the native balance and token information of an account
@@ -6,7 +12,10 @@ import { Api, KnowChainId, getChainById, getAllSupportedChains, BalanceInfo } fr
  * @param address The address to query the balance for
  * @returns The native balance info including balance, decimals and symbol
  */
-export const getNativeBalance = async (api: Api<KnowChainId>, address: string): Promise<BalanceInfo> => {
+export const getNativeBalance = async (
+  api: Api<KnownChainId>,
+  address: string
+): Promise<BalanceInfo> => {
   const balance = await api.query.System.Account.getValue(address)
   const chain = getChainById(api.chainId, getAllSupportedChains())
 

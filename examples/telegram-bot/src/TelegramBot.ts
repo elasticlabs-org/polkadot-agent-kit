@@ -3,7 +3,7 @@ import { ChatOpenAI } from '@langchain/openai';
 import { Tool } from '@langchain/core/tools';
 import { setupHandlers } from './handlers';
 import { PolkadotAgentKit } from '@polkadot-agent-kit/sdk';
-import { getChainByName, KnowChainId, getAllSupportedChains } from '@polkadot-agent-kit/common';
+import { getChainByName, KnownChainId, getAllSupportedChains } from '@polkadot-agent-kit/common';
 
 
 interface BotConfig {
@@ -54,9 +54,12 @@ export class TelegramBot {
       // Set up tools 
       // Get balance of agent account
       const checkBalance = this.agent.getNativeBalanceTool();
+      // Transfer native tokens to a recipient address on a specific chain.
+      const transferNative = this.agent.transferNativeTool();
       
       setupHandlers(this.bot, this.llm, {
         checkBalance: checkBalance,
+        transferNative: transferNative,
       });
 
       console.log("Bot initialization complete");

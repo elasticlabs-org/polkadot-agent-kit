@@ -1,8 +1,8 @@
-import { KnowChainId } from "@polkadot-agent-kit/common"
+import { KnownChainId } from "@polkadot-agent-kit/common"
 import { DynamicStructuredTool } from "@langchain/core/tools"
-import { checkBalanceTool } from "../langchain/balance"
-import { transferNativeTool } from "../langchain/transfer"
+import { checkBalanceTool, transferNativeTool } from "../langchain"
 import { PolkadotApi } from "@polkadot-agent-kit/core"
+import { BalanceTool, TransferTool } from "../types"
 
 /**
  * Interface for Polkadot API implementations
@@ -14,13 +14,13 @@ export interface IPolkadotAgentApi {
    * @param address The address to check the balance for
    * @returns A dynamic structured tool that checks the balance of the specified address
    */
-  getNativeBalanceTool(address: string): DynamicStructuredTool
+  getNativeBalanceTool(address: string): BalanceTool
+
   /**
    * Returns a tool that transfers native tokens to a specific address
-   * @param chainId The chain ID of the target chain
    * @returns A dynamic structured tool that transfers native tokens to the specified address
    */
-  transferNativeTool(chainId: KnowChainId): DynamicStructuredTool
+  transferNativeTool(): TransferTool
 }
 
 /**
@@ -32,15 +32,16 @@ export class PolkadotAgentApi implements IPolkadotAgentApi {
    * The Polkadot API instance
    */
   private api: PolkadotApi
+
   constructor(api: PolkadotApi) {
     this.api = api
   }
 
-  getNativeBalanceTool(address: string): DynamicStructuredTool {
-    return checkBalanceTool(this.api.getAllApis(), address)
+  getNativeBalanceTool(address: string): BalanceTool {
+    return checkBalanceTool(this.api.getAllApis(), address) as BalanceTool
   }
 
-  transferNativeTool(chainId: KnowChainId): DynamicStructuredTool {
-    return transferNativeTool(this.api.getApi(chainId))
+  transferNativeTool(): TransferTool {
+    return transferNativeTool(this.api.getAllApis()) as TransferTool
   }
 }

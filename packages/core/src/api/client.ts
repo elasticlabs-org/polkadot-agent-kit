@@ -1,6 +1,6 @@
 import {
   Api,
-  KnowChainId,
+  KnownChainId,
   SmoldotClient,
   getApi,
   getChainSpec,
@@ -15,10 +15,10 @@ import { start } from "polkadot-api/smoldot"
  * Defines the interface that all Polkadot chain types must follow
  */
 export interface IPolkadotApi {
-  setApi(chainId: KnowChainId, api?: Api<KnowChainId>): void
+  setApi(chainId: KnownChainId, api?: Api<KnownChainId>): void
   initializeApi(): Promise<void>
   disconnect(): Promise<void>
-  getApi(chainId: KnowChainId): Api<KnowChainId>
+  getApi(chainId: KnownChainId): Api<KnownChainId>
 }
 
 /**
@@ -26,7 +26,7 @@ export interface IPolkadotApi {
  * Manages the initialization and connection of Polkadot APIs
  */
 export class PolkadotApi implements IPolkadotApi {
-  private _apis: Map<KnowChainId, Api<KnowChainId>> = new Map()
+  private _apis: Map<KnownChainId, Api<KnownChainId>> = new Map()
   private initialized = false
   private smoldotClient: SmoldotClient
   private initPromise: Promise<void> | null = null
@@ -40,7 +40,7 @@ export class PolkadotApi implements IPolkadotApi {
    * @param chainId The ID of the chain
    * @param api Optional API instance to set
    */
-  setApi(chainId: KnowChainId, api?: Api<KnowChainId>) {
+  setApi(chainId: KnownChainId, api?: Api<KnownChainId>) {
     if (api) {
       this._apis.set(chainId, api)
     }
@@ -51,7 +51,7 @@ export class PolkadotApi implements IPolkadotApi {
    * @param chainId The ID of the chain
    * @returns The API instance for the specified chain
    */
-  getApi(chainId: KnowChainId): Api<KnowChainId> {
+  getApi(chainId: KnownChainId): Api<KnownChainId> {
     if (!this.initialized) {
       throw new Error("APIs not initialized. Call initializeApi() first.")
     }
@@ -66,7 +66,7 @@ export class PolkadotApi implements IPolkadotApi {
    * Retrieves all initialized APIs
    * @returns Map of chain IDs to API instances
    */
-  getAllApis(): Map<KnowChainId, Api<KnowChainId>> {
+  getAllApis(): Map<KnownChainId, Api<KnownChainId>> {
     if (!this.initialized) {
       throw new Error("APIs not initialized. Call initializeApi() first.")
     }
@@ -90,7 +90,7 @@ export class PolkadotApi implements IPolkadotApi {
       try {
         const supportedChains = getAllSupportedChains()
 
-        const chainSpecs: Record<KnowChainId, string> = {
+        const chainSpecs: Record<KnownChainId, string> = {
           polkadot: "",
           west: "",
           polkadot_asset_hub: "",
@@ -98,12 +98,12 @@ export class PolkadotApi implements IPolkadotApi {
         }
 
         for (const chain of supportedChains) {
-          chainSpecs[chain.id as KnowChainId] = this.getChainSpec(chain.id as KnowChainId)
+          chainSpecs[chain.id as KnownChainId] = this.getChainSpec(chain.id as KnownChainId)
         }
 
         const apiInitPromises = supportedChains.map(async chain => {
           try {
-            const api = await getApi(chain.id as KnowChainId, [chain], true, {
+            const api = await getApi(chain.id as KnownChainId, [chain], true, {
               enable: true,
               smoldot: this.smoldotClient,
               chainSpecs
@@ -117,7 +117,7 @@ export class PolkadotApi implements IPolkadotApi {
 
         const results = await Promise.all(apiInitPromises)
         for (const { chain, api } of results) {
-          this._apis.set(chain.id as KnowChainId, api)
+          this._apis.set(chain.id as KnownChainId, api)
         }
 
         this.initialized = true
@@ -162,7 +162,7 @@ export class PolkadotApi implements IPolkadotApi {
    * @param chainId The ID of the chain
    * @returns The chain spec for the specified chain
    */
-  getChainSpec(chainId: KnowChainId) {
+  getChainSpec(chainId: KnownChainId) {
     return getChainSpec(chainId, specRegistry())
   }
 }

@@ -1,37 +1,40 @@
-import { tool } from "@langchain/core/tools"
+import { DynamicStructuredTool, tool } from "@langchain/core/tools"
 import { z } from "zod"
 import { transferNativeCall } from "@polkadot-agent-kit/core"
-import { Api, KnowChainId } from "@polkadot-agent-kit/common"
-import { MultiAddress } from "@polkadot-api/descriptors"
+import {
+  Api,
+  getAllSupportedChains,
+  getChainById,
+  KnownChainId,
+  parseUnits,
+  getDecimalsByChainId
+} from "@polkadot-agent-kit/common"
+import { getApiForChain, validateAndFormatMultiAddress, executeTool } from "../utils"
+import { toolConfigTransferNative, ToolNames, TransferResult, transferToolSchema } from "../types"
+
 
 /**
  * Returns a tool that transfers native tokens to a specific address
  * @param api The API instance to use for the transfer
  * @returns A dynamic structured tool that transfers native tokens to the specified address
  */
-export const transferNativeTool = (api: Api<KnowChainId>) => {
-  return tool(
-    async ({ address, amount }: { address: MultiAddress; amount: bigint }) => {
-      try {
-        await transferNativeCall(api, address, amount)
+export const transferNativeTool = (apis: Map<KnownChainId, Api<KnownChainId>>) => {
+  return tool(async ({ amount, to, chain }: z.infer<typeof transferToolSchema>) => {
+    return executeTool<TransferResult>(
+      ToolNames.TRANSFER_NATIVE,
+      async () => {
+        const api = getApiForChain(apis, chain)
+        const formattedAddress = validateAndFormatMultiAddress(to, chain as KnownChainId)
+        const parsedAmount = parseUnits(amount, getDecimalsByChainId(chain))
+
+        await transferNativeCall(api, formattedAddress, parsedAmount)
         return {
-          content: `Transferred ${amount} to ${address}`,
-          tool_call_id: `transfer_${Date.now()}`
+          amount,
+          address: String(formattedAddress.value),
+          chain
         }
-      } catch (error) {
-        return {
-          content: `Error transferring ${amount} to ${address}: ${error.message}`,
-          tool_call_id: `transfer_error_${Date.now()}`
-        }
-      }
-    },
-    {
-      name: "transfer_native",
-      description: "Transfer native tokens to a specific address",
-      schema: z.object({
-        address: z.string().describe("The address to transfer the tokens to"),
-        amount: z.bigint().describe("The amount of tokens to transfer")
-      })
-    }
-  )
+      },
+      result => `Transferred ${result.amount} to ${result.address}`
+    )
+  }, toolConfigTransferNative)
 }

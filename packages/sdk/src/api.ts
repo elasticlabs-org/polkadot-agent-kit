@@ -1,8 +1,13 @@
-import { IPolkadotAgentApi, PolkadotAgentApi } from "@polkadot-agent-kit/llm"
+import {
+  IPolkadotAgentApi,
+  PolkadotAgentApi,
+  BalanceTool,
+  TransferTool
+} from "@polkadot-agent-kit/llm"
 import { IPolkadotApi, PolkadotApi } from "@polkadot-agent-kit/core"
 import {
   Api,
-  KnowChainId,
+  KnownChainId,
   getAllSupportedChains,
   AgentConfig,
   getChainById
@@ -25,11 +30,11 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
     this.config = config
   }
 
-  setApi(chainId: KnowChainId, api?: Api<KnowChainId>) {
+  setApi(chainId: KnownChainId, api?: Api<KnownChainId>) {
     this.polkadotApi.setApi(chainId, api)
   }
 
-  getApi(chainId: KnowChainId): Api<KnowChainId> {
+  getApi(chainId: KnownChainId): Api<KnownChainId> {
     return this.polkadotApi.getApi(chainId)
   }
 
@@ -62,7 +67,7 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
    * const result = await balanceTool.call({ address });
    * ```
    */
-  getNativeBalanceTool(): DynamicStructuredTool {
+  getNativeBalanceTool(): BalanceTool {
     const address = this.getCurrentAddress()
     return this.agentApi.getNativeBalanceTool(address)
   }
@@ -92,8 +97,8 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
    *
    * @throws {Error} If the transfer fails or parameters are invalid
    */
-  transferNativeTool(chainId: KnowChainId): DynamicStructuredTool {
-    return this.agentApi.transferNativeTool(chainId)
+  transferNativeTool(): TransferTool {
+    return this.agentApi.transferNativeTool()
   }
 
   /**

@@ -10,12 +10,12 @@ import {
   type ChainIdAssetHub,
   type ChainIdRelay,
   type Descriptors,
-  type KnowChainId
+  type KnownChainId
 } from "../chains"
 import { getClient, type ClientOptions } from "../clients/client"
 
 export type LightClients = ClientOptions["lightClients"]
-type ApiBase<Id extends ChainId> = Id extends KnowChainId
+type ApiBase<Id extends ChainId> = Id extends KnownChainId
   ? TypedApi<Descriptors<Id>>
   : TypedApi<ChainDefinition>
 
@@ -101,7 +101,7 @@ export const getApi = async <Id extends ChainId, Papi = Api<Id>>(
 
   if (!API_CACHE.has(cacheKey)) API_CACHE.set(cacheKey, getApiInner(id, lightClients, chains))
 
-  const api = (await API_CACHE.get(cacheKey)) as Api<KnowChainId>
+  const api = (await API_CACHE.get(cacheKey)) as Api<KnownChainId>
 
   if (waitReady) await api.waitReady
 

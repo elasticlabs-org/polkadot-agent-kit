@@ -1,4 +1,4 @@
-import { Api, KnowChainId } from "@polkadot-agent-kit/common"
+import { Api, KnownChainId } from "@polkadot-agent-kit/common"
 import { MultiAddress } from "@polkadot-api/descriptors"
 
 /**
@@ -9,7 +9,7 @@ import { MultiAddress } from "@polkadot-api/descriptors"
  * @returns The transfer call
  */
 export const transferNativeCall = async (
-  api: Api<KnowChainId>,
+  api: Api<KnownChainId>,
   to: MultiAddress,
   amount: bigint
 ) => {
