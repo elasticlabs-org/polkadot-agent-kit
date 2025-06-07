@@ -1,8 +1,8 @@
-import { Chain } from "../chains"
+import type { Chain } from "../chains"
 
 /**
  * Determines if a chain is a parachain based on the chainId
- * @param Chain
+ * @param chain - The chain to check
  * @returns boolean
  */
 export const isParachain = (chain: Chain): boolean => {

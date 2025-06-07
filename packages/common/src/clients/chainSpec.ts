@@ -1,12 +1,13 @@
-import type { ChainId } from "../chains"
 import { chainSpec as polkadotSpec } from "polkadot-api/chains/polkadot"
-import { chainSpec as westSpec } from "polkadot-api/chains/westend2"
 import { chainSpec as polkadotAssetHubSpec } from "polkadot-api/chains/polkadot_asset_hub"
+import { chainSpec as westSpec } from "polkadot-api/chains/westend2"
 import { chainSpec as westAssetHubSpec } from "polkadot-api/chains/westend2_asset_hub"
+
+import type { ChainId } from "../chains"
 
 /**
  * Cache for chain specifications to avoid redundant lookups
- * @private - Implementation detail, not meant for external use
+ * @internal - Implementation detail, not meant for external use
  */
 const chainSpecCache = new Map<ChainId, string>()
 

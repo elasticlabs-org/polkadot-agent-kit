@@ -1,6 +1,6 @@
 import { ed25519 } from "@noble/curves/ed25519"
-import { getPolkadotSigner, PolkadotSigner } from "polkadot-api/signer"
-import { getSs58AddressInfo } from "polkadot-api"
+import type { PolkadotSigner } from "polkadot-api/signer";
+import { getPolkadotSigner } from "polkadot-api/signer"
 export type Hex = Uint8Array | string
 
 import * as ss58 from "@subsquid/ss58"
@@ -28,7 +28,6 @@ export function getPrivateKey(account?: string) {
 export function publicKeyOf(seed?: string) {
   let privateKey: Hex | undefined = seed || getPrivateKey()
   if (!privateKey) {
-    console.warn("No private key found will use a random one")
     privateKey = ed25519.utils.randomPrivateKey()
   }
   return ed25519.getPublicKey(privateKey)

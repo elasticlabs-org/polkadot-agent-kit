@@ -1,6 +1,6 @@
 import { getSmProvider } from "polkadot-api/sm-provider"
-import type { ChainId } from "../chains"
 
+import type { ChainId } from "../chains"
 import type { SmoldotClient } from "../types/smoldot"
 
 type Chain = Awaited<Parameters<typeof getSmProvider>[0]>

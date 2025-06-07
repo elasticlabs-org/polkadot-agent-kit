@@ -1,7 +1,7 @@
 /**
  * Format balance with proper decimal places
- * @param balance The balance in smallest unit
- * @param decimals The number of decimal places
+ * @param balance - The balance in smallest unit
+ * @param decimals - The number of decimal places
  * @returns Formatted balance string
  */
 export const formatBalance = (balance: bigint, decimals: number): string => {

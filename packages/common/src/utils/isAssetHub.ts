@@ -1,8 +1,8 @@
-import { Chain, ChainAssetHub } from "../chains"
+import type { Chain, ChainAssetHub } from "../chains"
 
 /**
  * Determines if a chain is a system chain based on the value chainId
- * @param chainId
+ * @param chain - The chain to check
  * @returns boolean
  */
 export const isSystemChain = (chain: Chain): chain is ChainAssetHub => {

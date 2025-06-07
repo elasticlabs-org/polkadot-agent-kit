@@ -1,20 +1,8 @@
 import { beforeEach, describe, expect, it, vi, afterEach } from "vitest"
-import {
-  Api,
-  Chain,
-  KnownChainId,
-  disconnect,
-  getAllSupportedChains,
-  getChainByName,
-  isSupportedChain,
-  SmoldotClient
-} from "@polkadot-agent-kit/common"
-import { start } from "polkadot-api/smoldot"
-import { getApi, getChainSpec, AgentConfig } from "@polkadot-agent-kit/common"
-import { PolkadotAgentKit } from "./api"
+import type { Api, KnownChainId } from "@polkadot-agent-kit/common"
+
 import { PolkadotApi } from "@polkadot-agent-kit/core"
-import { DynamicStructuredTool } from "@langchain/core/tools"
-import { BalanceTool, balanceToolSchema, PolkadotAgentApi } from "@polkadot-agent-kit/llm"
+import { BalanceTool, PolkadotAgentApi } from "@polkadot-agent-kit/llm"
 
 // Mock modules at top level with ALL required exports
 vi.mock("polkadot-api/smoldot", () => ({

@@ -1,8 +1,8 @@
-import type { Chain, ChainAssetHub, ChainRelay } from "../chains"
+import type { Chain, ChainRelay } from "../chains"
 
 /**
  * Determines if a chain is a relay chain based
- * @param Chain
+ * @param chain - The chain to check
  * @returns boolean
  */
 export const isRelayChain = (chain: Chain): chain is ChainRelay => {
