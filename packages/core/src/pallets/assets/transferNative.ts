@@ -1,5 +1,6 @@
-import { Api, KnownChainId } from "@polkadot-agent-kit/common"
-import { MultiAddress } from "@polkadot-api/descriptors"
+import type { MultiAddress } from "@polkadot-api/descriptors"
+
+import type { Api, KnownChainId } from "@polkadot-agent-kit/common"
 
 /**
  * Creates a transfer call for native assets

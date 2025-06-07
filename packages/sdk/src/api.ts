@@ -6,13 +6,10 @@ import {
 } from "@polkadot-agent-kit/llm"
 import { IPolkadotApi, PolkadotApi } from "@polkadot-agent-kit/core"
 import {
-  Api,
-  KnownChainId,
   getAllSupportedChains,
-  AgentConfig,
   getChainById
 } from "@polkadot-agent-kit/common"
-import { DynamicStructuredTool } from "@langchain/core/tools"
+import type { Api, KnownChainId, AgentConfig } from "@polkadot-agent-kit/common"
 import { sr25519CreateDerive, ed25519CreateDerive } from "@polkadot-labs/hdkd"
 import * as ss58 from "@subsquid/ss58"
 

@@ -1,2 +1,2 @@
-export * from "./isValidAddress"
 export * from "./format"
+export * from "./isValidAddress"

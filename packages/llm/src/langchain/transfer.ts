@@ -1,18 +1,11 @@
-import { DynamicStructuredTool, tool } from "@langchain/core/tools"
+import { tool } from "@langchain/core/tools"
 import { z } from "zod"
 import { transferNativeCall } from "@polkadot-agent-kit/core"
-import {
-  Api,
-  getAllSupportedChains,
-  getChainById,
-  KnownChainId,
-  parseUnits,
-  getDecimalsByChainId
-} from "@polkadot-agent-kit/common"
+import { parseUnits, getDecimalsByChainId } from "@polkadot-agent-kit/common"
+import type { Api, KnownChainId } from "@polkadot-agent-kit/common"
 import { getApiForChain, validateAndFormatMultiAddress, executeTool } from "../utils"
-import { toolConfigTransferNative, ToolNames, TransferResult, transferToolSchema } from "../types"
-
-
+import { toolConfigTransferNative, ToolNames } from "../types"
+import type { TransferToolResult, transferToolSchema } from "../types"
 /**
  * Returns a tool that transfers native tokens to a specific address
  * @param api The API instance to use for the transfer

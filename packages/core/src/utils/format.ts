@@ -1,11 +1,13 @@
-import { getAllSupportedChains, getChainById, KnownChainId } from "@polkadot-agent-kit/common"
+import { AccountId } from "polkadot-api"
 import { MultiAddress } from "@polkadot-api/descriptors"
 import * as ss58 from "@subsquid/ss58"
-import { AccountId } from "polkadot-api"
+
+import { getAllSupportedChains, getChainById } from "@polkadot-agent-kit/common"
+import type { KnownChainId } from "@polkadot-agent-kit/common"
 
 /**
  * Gets the SS58 prefix for a chain
- * @private
+ * @internal
  */
 function getChainPrefix(chainId: KnownChainId): number {
   const chain = getChainById(chainId, getAllSupportedChains())
@@ -45,10 +47,7 @@ export function convertAddress(
     // Encode to target format
     return ss58.codec(prefix).encode(publicKey)
   } catch (error) {
-    console.error(
-      "Failed to convert address:",
-      error instanceof Error ? error.message : String(error)
-    )
+    // Return null for any conversion errors
     return null
   }
 }

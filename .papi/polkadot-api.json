@@ -31,6 +31,11 @@
       "chain": "ksmcc3_asset_hub",
       "metadata": ".papi/metadata/ksmcc3_asset_hub.scale",
       "genesis": "0x48239ef607d7928874027a43a67689209727dfb3d3dc5e5b03a39bdc2eda771a"
+    },
+    "hydra": {
+      "wsUrl": "wss://hydration-rpc.n.dwellir.com",
+      "metadata": ".papi/metadata/hydra.scale",
+      "genesis": "0xafdc188f45c71dacbaa0b62e16a91f726c7b8699a9748cdf715459de6b7f366d"
     }
   }
 }

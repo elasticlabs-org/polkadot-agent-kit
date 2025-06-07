@@ -1,8 +1,7 @@
-import { KnownChainId } from "@polkadot-agent-kit/common"
-import { DynamicStructuredTool } from "@langchain/core/tools"
+import type { PolkadotApi } from "@polkadot-agent-kit/core"
+
 import { checkBalanceTool, transferNativeTool } from "../langchain"
-import { PolkadotApi } from "@polkadot-agent-kit/core"
-import { BalanceTool, TransferTool } from "../types"
+import type { BalanceTool, TransferTool } from "../types"
 
 /**
  * Interface for Polkadot API implementations
@@ -11,7 +10,7 @@ import { BalanceTool, TransferTool } from "../types"
 export interface IPolkadotAgentApi {
   /**
    * Returns a tool that checks the balance of a specific address
-   * @param address The address to check the balance for
+   * @param address - The address to check the balance for
    * @returns A dynamic structured tool that checks the balance of the specified address
    */
   getNativeBalanceTool(address: string): BalanceTool

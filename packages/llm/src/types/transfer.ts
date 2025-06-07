@@ -1,6 +1,6 @@
-import { DynamicStructuredTool } from "@langchain/core/tools";
-import { z } from "zod";
-import { ToolConfig, ToolNames } from "../types";
+import { DynamicStructuredTool } from "@langchain/core/tools"
+import { z } from "zod"
+import { ToolConfig, ToolNames } from "../types"
 
 /**
  * Schema for the transfer tool input.
@@ -16,14 +16,14 @@ import { ToolConfig, ToolNames } from "../types";
  * ```
  */
 export const transferToolSchema = z.object({
-    amount: z.string().describe("The amount of tokens to transfer"),
-    to: z.string().describe("The address to transfer the tokens to"),
-    chain: z.string().describe("The chain to transfer the tokens to")
+  amount: z.string().describe("The amount of tokens to transfer"),
+  to: z.string().describe("The address to transfer the tokens to"),
+  chain: z.string().describe("The chain to transfer the tokens to")
 })
 
 /**
  * Type for a token transfer tool that validates input using transferToolSchema.
- * 
+ *
  * @example
  * ```typescript
  * const transferTool: TransferTool = transferNativeTool(apis);
@@ -34,7 +34,7 @@ export type TransferTool = DynamicStructuredTool<typeof transferToolSchema>
 
 /**
  * Result returned by token transfer tools.
- * 
+ *
  * @example
  * ```typescript
  * const result: TransferResult = {
@@ -44,19 +44,19 @@ export type TransferTool = DynamicStructuredTool<typeof transferToolSchema>
  * };
  * ```
  */
-export interface TransferResult {
-    /** The amount of tokens transferred */
-    amount: string
-    /** The recipient address */
-    address: string
-    /** The chain where the transfer occurred */
-    chain: string
+export interface TransferToolResult {
+  /** The amount of tokens transferred */
+  amount: string
+  /** The recipient address */
+  address: string
+  /** The chain where the transfer occurred */
+  chain: string
 }
 
 /**
  * Configuration object for the native token transfer tool.
  * Used internally by LangChain to register and execute the tool.
- * 
+ *
  * @example
  * ```typescript
  * const tool = tool(async ({ amount, to, chain }) => {
@@ -65,10 +65,7 @@ export interface TransferResult {
  * ```
  */
 export const toolConfigTransferNative: ToolConfig = {
-    name: ToolNames.TRANSFER_NATIVE,
-    description: "Transfer native tokens to a specific address",
-    schema: transferToolSchema
+  name: ToolNames.TRANSFER_NATIVE,
+  description: "Transfer native tokens to a specific address",
+  schema: transferToolSchema
 }
-
-
-

@@ -1,11 +1,10 @@
-import { polkadot, polkadot_asset_hub, west, west_asset_hub } from "@polkadot-api/descriptors"
+import { polkadot, polkadot_asset_hub, west, west_asset_hub, hydra } from "@polkadot-api/descriptors"
 
 import {
-  polkadotChain,
   polkadotAssetHubChain,
-  westendChain,
-  westendAssetHubChain
-} from "./supported-chains"
+  polkadotChain,
+  westendAssetHubChain,
+  westendChain} from "./supported-chains"
 type DescriptorsRelayType = {
   polkadot: typeof polkadot
   west: typeof west
@@ -16,8 +15,9 @@ type DescriptorsAssetHubType = {
   west_asset_hub: typeof west_asset_hub
 }
 
-// todo: add para descriptors
-type DescriptorsParaType = {}
+type DescriptorsParaType = {
+  hydra: typeof hydra
+}
 
 const DESCRIPTORS_RELAY: DescriptorsRelayType = {
   polkadot,
@@ -29,7 +29,9 @@ const DESCRIPTORS_ASSET_HUB: DescriptorsAssetHubType = {
   west_asset_hub
 }
 
-const DESCRIPTORS_PARA: DescriptorsParaType = {}
+const DESCRIPTORS_PARA: DescriptorsParaType = {
+  hydra
+}
 
 export const DESCRIPTORS_ALL = {
   ...DESCRIPTORS_RELAY,
@@ -84,13 +86,13 @@ export type ChainAssetHub = Chain & { chainId: 1000 }
 export const getChainById = <T extends Chain>(id: ChainId, chains: Chain[]): T => {
   const foundChain = chains.find(chain => chain.id === id) as T
   if (!foundChain) throw new Error(`Could not find chain ${id}`)
-  return foundChain as T
+  return foundChain
 }
 
 export const getChainByName = <T extends Chain>(name: string, chains: Chain[]): T => {
   const foundChain = chains.find(chain => chain.name === name) as T
   if (!foundChain) throw new Error(`Could not find chain ${name}`)
-  return foundChain as T
+  return foundChain
 }
 
 const SUPPORTED_CHAINS: Chain[] = [
