@@ -1,13 +1,12 @@
-import { start } from "polkadot-api/smoldot"
-
+import type { Api, KnownChainId, SmoldotClient } from "@polkadot-agent-kit/common"
 import {
-  getApi,
-  getChainSpec,
   disconnect,
   getAllSupportedChains,
+  getApi,
+  getChainSpec,
   specRegistry
 } from "@polkadot-agent-kit/common"
-import type { Api, KnownChainId, SmoldotClient } from "@polkadot-agent-kit/common"
+import { start } from "polkadot-api/smoldot"
 
 /**
  * Interface for Polkadot API implementations

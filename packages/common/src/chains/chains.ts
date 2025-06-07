@@ -1,4 +1,4 @@
-import { polkadot, polkadot_asset_hub, west, west_asset_hub, hydra } from "@polkadot-api/descriptors"
+import { hydra,polkadot, polkadot_asset_hub, west, west_asset_hub } from "@polkadot-api/descriptors"
 
 import {
   polkadotAssetHubChain,

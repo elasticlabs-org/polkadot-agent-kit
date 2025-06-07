@@ -1,6 +1,8 @@
-import { DynamicStructuredTool } from "@langchain/core/tools"
-import { ToolConfig, ToolNames } from "../types"
+import type { DynamicStructuredTool } from "@langchain/core/tools"
 import { z } from "zod"
+
+import type { ToolConfig} from "../types";
+import { ToolNames } from "../types"
 
 /**
  * Schema for the balance check tool input.

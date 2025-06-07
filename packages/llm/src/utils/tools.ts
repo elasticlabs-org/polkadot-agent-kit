@@ -1,14 +1,15 @@
 import type { Api, KnownChainId } from "@polkadot-agent-kit/common"
 import { convertAddress, toMultiAddress } from "@polkadot-agent-kit/core"
-import { MultiAddress } from "@polkadot-api/descriptors"
-import {
-  ToolResponse,
-  ChainNotAvailableError,
-  InvalidAddressError,
+import type { MultiAddress } from "@polkadot-api/descriptors"
+
+import type {
   ToolError,
+  ToolResponse} from "../types";
+import {
+  ChainNotAvailableError,
   ErrorCodes,
-  isAnyToolError
-} from "../types"
+  InvalidAddressError,
+  isAnyToolError} from "../types"
 
 /**
  * Internal utility to generate unique IDs for tool responses.

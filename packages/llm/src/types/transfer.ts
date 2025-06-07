@@ -1,6 +1,8 @@
-import { DynamicStructuredTool } from "@langchain/core/tools"
+import type { DynamicStructuredTool } from "@langchain/core/tools"
 import { z } from "zod"
-import { ToolConfig, ToolNames } from "../types"
+
+import type { ToolConfig} from "../types";
+import { ToolNames } from "../types"
 
 /**
  * Schema for the transfer tool input.

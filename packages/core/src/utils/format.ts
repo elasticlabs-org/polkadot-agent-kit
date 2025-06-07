@@ -1,9 +1,8 @@
-import { AccountId } from "polkadot-api"
+import type { KnownChainId } from "@polkadot-agent-kit/common"
+import { getAllSupportedChains, getChainById } from "@polkadot-agent-kit/common"
 import { MultiAddress } from "@polkadot-api/descriptors"
 import * as ss58 from "@subsquid/ss58"
-
-import { getAllSupportedChains, getChainById } from "@polkadot-agent-kit/common"
-import type { KnownChainId } from "@polkadot-agent-kit/common"
+import { AccountId } from "polkadot-api"
 
 /**
  * Gets the SS58 prefix for a chain
