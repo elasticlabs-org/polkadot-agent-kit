@@ -42,8 +42,7 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
     try {
       await this.polkadotApi.initializeApi()
     } catch (error) {
-      console.error("PolkadotAgentKit API initialization failed:", error)
-      throw error
+      throw new Error(`PolkadotAgentKit API initialization failed: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
 
@@ -64,7 +63,7 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
    * const balanceTool = agent.getNativeBalanceTool("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY");
    *
    * // Tool can be used with LangChain
-   * const result = await balanceTool.call({ address });
+   * const result = await balanceTool.call(\{ address \});
    * ```
    */
   getNativeBalanceTool(): BalanceTool {
@@ -89,13 +88,13 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
    * );
    *
    * // Tool can be used with LangChain
-   * const result = await transferTool.call({
+   * const result = await transferTool.call(\{
    *   address: to,
    *   amount: amount
-   * });
+   * \});
    * ```
    *
-   * @throws {Error} If the transfer fails or parameters are invalid
+   * @throws \{Error\} If the transfer fails or parameters are invalid
    */
   transferNativeTool(): TransferTool {
     return this.agentApi.transferNativeTool()
@@ -154,7 +153,7 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
    *
    * @param key - Private key as string
    * @returns Uint8Array representation of the key
-   * @private
+   * @internal
    */
   private normalizePrivateKey(key: string): Uint8Array {
     if (key.startsWith("0x")) {

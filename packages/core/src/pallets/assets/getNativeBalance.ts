@@ -3,8 +3,8 @@ import { getAllSupportedChains,getChainById } from "@polkadot-agent-kit/common"
 
 /**
  * Retrieves the native balance and token information of an account
- * @param api The API instance to use for the query
- * @param address The address to query the balance for
+ * @param api - The API instance to use for the query
+ * @param address - The address to query the balance for
  * @returns The native balance info including balance, decimals and symbol
  */
 export const getNativeBalance = async (

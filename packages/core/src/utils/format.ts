@@ -18,7 +18,8 @@ function getChainPrefix(chainId: KnownChainId): number {
  *
  * @param address - The address to convert
  * @param targetChainId - The target chain ID or SS58 prefix
- * @returns The converted address or null if invalid
+ * @returns The converted address
+ * @throws Error if the address is invalid or conversion fails
  *
  * @example
  * ```typescript
@@ -32,7 +33,7 @@ function getChainPrefix(chainId: KnownChainId): number {
 export function convertAddress(
   address: string,
   targetChainId: KnownChainId | number
-): string | null {
+): string {
   try {
     // Get prefix based on input type
     const prefix = typeof targetChainId === "number" ? targetChainId : getChainPrefix(targetChainId)
@@ -46,8 +47,9 @@ export function convertAddress(
     // Encode to target format
     return ss58.codec(prefix).encode(publicKey)
   } catch (error) {
-    // Return null for any conversion errors
-    return null
+    throw new Error(
+      `Failed to convert address ${address} to format ${targetChainId}: ${error instanceof Error ? error.message : String(error)}`
+    )
   }
 }
 

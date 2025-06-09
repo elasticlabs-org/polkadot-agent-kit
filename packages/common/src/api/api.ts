@@ -48,15 +48,18 @@ export const getApiInner = async <Id extends ChainId>(
 
   const descriptors = getDescriptors(chain.id)
   const client = await getClient(chainId, chains, { lightClients })
-  if (!client) throw new Error(`Could not create client for chain ${chainId}/${lightClients}`)
+  if (!client) throw new Error(`Could not create client for chain ${chainId}`)
 
   const api = client.getTypedApi(descriptors ?? polkadot) as Api<Id>
 
   api.chainId = chainId as Id
   api.chain = chain
   api.waitReady = (() => {
-    // Track subscription for cleanup
-    let subscription: any = null
+
+    type Subscription = {
+      unsubscribe: () => void
+    }
+    let subscription: Subscription | null = null
 
     // Create the actual Promise
     const readyPromise = new Promise<void>((resolve, reject) => {
@@ -70,13 +73,15 @@ export const getApiInner = async <Id extends ChainId>(
       subscription = client.bestBlocks$.subscribe({
         next: () => {
           clearTimeout(timeoutId)
+
           if (subscription) subscription.unsubscribe()
           resolve()
         },
-        error: err => {
+        error: (err: Error) => {
           clearTimeout(timeoutId)
+
           if (subscription) subscription.unsubscribe()
-          reject(err)
+            reject(new Error(err.message))
         }
       })
     })
