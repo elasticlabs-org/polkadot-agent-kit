@@ -1,5 +1,5 @@
 import type { Api, KnownChainId } from "@polkadot-agent-kit/common"
-import type { MultiAddress } from "@polkadot-api/descriptors"
+import { MultiAddress } from "@polkadot-api/descriptors"
 
 /**
  * Creates a transfer call for native assets
@@ -10,11 +10,11 @@ import type { MultiAddress } from "@polkadot-api/descriptors"
  */
 export const transferNativeCall = (
   api: Api<KnownChainId>,
-  to: MultiAddress,
+  to: string,
   amount: bigint
 ) => {
   const data = {
-    dest: to,
+    dest: MultiAddress.Id(to),
     value: amount
   }
   return api.tx.Balances.transfer_keep_alive(data).decodedCall
