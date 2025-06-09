@@ -24,9 +24,22 @@ jobs:
       - run: |
           touch .env
           echo GH_COMMIT_SHA="${{ github.event.pull_request.head.sha }}" >> .env
-      - run: pnpm install
-      - run: pnpm build
-      - run: pnpm compile
-      - run: pnpm format:check
-      - run: pnpm lint:check
+      - name: Install dependencies
+        run: |
+          pnpm install
+      - name: Build
+        run: |
+          pnpm build
+      - name: Compile
+        run: |
+          pnpm compile
+      - name: Format check
+        run: |
+          pnpm format:check
+      - name: Lint check
+        run: |
+          pnpm lint:check
+      - name: Test
+        run: |
+          pnpm test
 
