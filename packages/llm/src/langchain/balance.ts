@@ -5,7 +5,8 @@ import { getNativeBalance } from "@polkadot-agent-kit/core"
 import type { z } from "zod"
 
 import type { BalanceToolResult, balanceToolSchema} from "../types"
-import { toolConfigBalance, ToolNames } from "../types"
+import { toolConfigBalance } from "../types/balance"
+import { ToolNames } from "../types/common"
 import { executeTool,getApiForChain, validateAndFormatAddress } from "../utils"
 
 /**
