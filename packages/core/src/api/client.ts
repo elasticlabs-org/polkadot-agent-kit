@@ -92,7 +92,8 @@ export class PolkadotApi implements IPolkadotApi {
           polkadot: "",
           west: "",
           polkadot_asset_hub: "",
-          west_asset_hub: ""
+          west_asset_hub: "",
+          hydra: ""
         }
 
         for (const chain of supportedChains) {
