@@ -109,7 +109,9 @@ export class PolkadotApi implements IPolkadotApi {
             })
             return { chain, api }
           } catch (error) {
-            throw new Error(`Failed to initialize API for ${chain.id}: ${error instanceof Error ? error.message : String(error)}`)
+            throw new Error(
+              `Failed to initialize API for ${chain.id}: ${error instanceof Error ? error.message : String(error)}`
+            )
           }
         })
 
