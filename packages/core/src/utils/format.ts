@@ -1,11 +1,12 @@
-import { getAllSupportedChains, getChainById, KnownChainId } from "@polkadot-agent-kit/common"
+import type { KnownChainId } from "@polkadot-agent-kit/common"
+import { getAllSupportedChains, getChainById } from "@polkadot-agent-kit/common"
 import { MultiAddress } from "@polkadot-api/descriptors"
 import * as ss58 from "@subsquid/ss58"
 import { AccountId } from "polkadot-api"
 
 /**
  * Gets the SS58 prefix for a chain
- * @private
+ * @internal
  */
 function getChainPrefix(chainId: KnownChainId): number {
   const chain = getChainById(chainId, getAllSupportedChains())
@@ -17,7 +18,8 @@ function getChainPrefix(chainId: KnownChainId): number {
  *
  * @param address - The address to convert
  * @param targetChainId - The target chain ID or SS58 prefix
- * @returns The converted address or null if invalid
+ * @returns The converted address
+ * @throws Error if the address is invalid or conversion fails
  *
  * @example
  * ```typescript
@@ -31,7 +33,7 @@ function getChainPrefix(chainId: KnownChainId): number {
 export function convertAddress(
   address: string,
   targetChainId: KnownChainId | number
-): string | null {
+): string {
   try {
     // Get prefix based on input type
     const prefix = typeof targetChainId === "number" ? targetChainId : getChainPrefix(targetChainId)
@@ -45,11 +47,9 @@ export function convertAddress(
     // Encode to target format
     return ss58.codec(prefix).encode(publicKey)
   } catch (error) {
-    console.error(
-      "Failed to convert address:",
-      error instanceof Error ? error.message : String(error)
+    throw new Error(
+      `Failed to convert address ${address} to format ${targetChainId}: ${error instanceof Error ? error.message : String(error)}`
     )
-    return null
   }
 }
 

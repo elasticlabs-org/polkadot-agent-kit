@@ -1,15 +1,18 @@
-import { DynamicStructuredTool, tool } from "@langchain/core/tools"
-import { z } from "zod"
+import { tool } from "@langchain/core/tools"
+import type { Api, KnownChainId } from "@polkadot-agent-kit/common"
+import { formatBalance } from "@polkadot-agent-kit/common"
 import { getNativeBalance } from "@polkadot-agent-kit/core"
-import { Api, KnownChainId, formatBalance } from "@polkadot-agent-kit/common"
-import { getApiForChain, validateAndFormatAddress, executeTool } from "../utils"
-import { BalanceToolResult, balanceToolSchema, toolConfigBalance, ToolNames } from "../types"
+import type { z } from "zod"
 
+import type { BalanceToolResult, balanceToolSchema} from "../types"
+import { toolConfigBalance } from "../types/balance"
+import { ToolNames } from "../types/common"
+import { executeTool,getApiForChain, validateAndFormatAddress } from "../utils"
 
 /**
  * Returns a tool that checks the balance of a specific address
- * @param apis Map of chain IDs to API instances
- * @param address The address to check the balance for
+ * @param apis - Map of chain IDs to API instances
+ * @param address - The address to check the balance for
  * @returns A dynamic structured tool that checks the balance of the specified address
  */
 export const checkBalanceTool = (apis: Map<KnownChainId, Api<KnownChainId>>, address: string) => {

@@ -74,7 +74,7 @@ describe("validateAndFormatAddress", () => {
       const invalidAddress = "invalid-address"
       const chain = "polkadot" as any
 
-      mockConvertAddress.mockReturnValue(null)
+      mockConvertAddress.mockReturnValue(null as any)
 
       expect(() => validateAndFormatAddress(invalidAddress, chain)).toThrow(InvalidAddressError)
 
@@ -85,7 +85,7 @@ describe("validateAndFormatAddress", () => {
       const invalidAddress = "another-invalid-address"
       const chain = "kusama" as any
 
-      mockConvertAddress.mockReturnValue(null)
+      mockConvertAddress.mockReturnValue(null as any)
 
       expect(() => validateAndFormatAddress(invalidAddress, chain)).toThrow(InvalidAddressError)
     })
@@ -103,7 +103,7 @@ describe("validateAndFormatAddress", () => {
       const invalidAddress = "malformed-address-123"
       const chain = "polkadot" as any
 
-      mockConvertAddress.mockReturnValue(null)
+      mockConvertAddress.mockReturnValue(null as any)
 
       expect(() => validateAndFormatAddress(invalidAddress, chain)).toThrow(
         new InvalidAddressError(invalidAddress)
@@ -192,7 +192,7 @@ describe("validateAndFormatMultiAddress", () => {
       const invalidAddress = "invalid-address"
       const chain = "polkadot" as any
 
-      mockConvertAddress.mockReturnValue(null)
+      mockConvertAddress.mockReturnValue(null as any)
 
       expect(() => validateAndFormatMultiAddress(invalidAddress, chain)).toThrow(
         InvalidAddressError

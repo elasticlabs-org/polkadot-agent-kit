@@ -1,26 +1,21 @@
-import { DynamicStructuredTool, tool } from "@langchain/core/tools"
-import { z } from "zod"
+import { tool } from "@langchain/core/tools"
+import type { Api, KnownChainId } from "@polkadot-agent-kit/common"
+import { getDecimalsByChainId,parseUnits } from "@polkadot-agent-kit/common"
 import { transferNativeCall } from "@polkadot-agent-kit/core"
-import {
-  Api,
-  getAllSupportedChains,
-  getChainById,
-  KnownChainId,
-  parseUnits,
-  getDecimalsByChainId
-} from "@polkadot-agent-kit/common"
-import { getApiForChain, validateAndFormatMultiAddress, executeTool } from "../utils"
-import { toolConfigTransferNative, ToolNames, TransferResult, transferToolSchema } from "../types"
+import type { z } from "zod"
 
-
+import type { TransferToolResult, transferToolSchema } from "../types"
+import { toolConfigTransferNative } from "../types/transfer"
+import { ToolNames } from "../types/common"
+import { executeTool,getApiForChain, validateAndFormatMultiAddress } from "../utils"
 /**
  * Returns a tool that transfers native tokens to a specific address
- * @param api The API instance to use for the transfer
+ * @param api - The API instance to use for the transfer
  * @returns A dynamic structured tool that transfers native tokens to the specified address
  */
 export const transferNativeTool = (apis: Map<KnownChainId, Api<KnownChainId>>) => {
   return tool(async ({ amount, to, chain }: z.infer<typeof transferToolSchema>) => {
-    return executeTool<TransferResult>(
+    return executeTool<TransferToolResult>(
       ToolNames.TRANSFER_NATIVE,
       async () => {
         const api = getApiForChain(apis, chain)
@@ -30,7 +25,7 @@ export const transferNativeTool = (apis: Map<KnownChainId, Api<KnownChainId>>) =
         await transferNativeCall(api, formattedAddress, parsedAmount)
         return {
           amount,
-          address: String(formattedAddress.value),
+          address: formattedAddress.type === "Id" ? formattedAddress.value : JSON.stringify(formattedAddress.value),
           chain
         }
       },

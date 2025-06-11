@@ -1,6 +1,8 @@
-import { DynamicStructuredTool } from "@langchain/core/tools"
-import { ToolConfig, ToolNames } from "../types"
+import type { DynamicStructuredTool } from "@langchain/core/tools"
 import { z } from "zod"
+
+import type { ToolConfig} from "../types";
+import { ToolNames } from "../types"
 
 /**
  * Schema for the balance check tool input.
@@ -14,16 +16,16 @@ import { z } from "zod"
  * ```
  */
 export const balanceToolSchema = z.object({
-    chain: z
-        .string()
-        .describe(
-            "The chain name to check balance on (e.g., 'polkadot', 'kusama', 'west', 'westend_asset_hub')"
-        )
+  chain: z
+    .string()
+    .describe(
+      "The chain name to check balance on (e.g., 'polkadot', 'kusama', 'west', 'westend_asset_hub')"
+    )
 })
 
 /**
  * Type for a balance checking tool that validates input using balanceToolSchema.
- * 
+ *
  * @example
  * ```typescript
  * const balanceTool: BalanceTool = checkBalanceTool(apis, address);
@@ -34,7 +36,7 @@ export type BalanceTool = DynamicStructuredTool<typeof balanceToolSchema>
 
 /**
  * Result returned by balance checking tools.
- * 
+ *
  * @example
  * ```typescript
  * const result: BalanceToolResult = {
@@ -45,18 +47,18 @@ export type BalanceTool = DynamicStructuredTool<typeof balanceToolSchema>
  * ```
  */
 export interface BalanceToolResult {
-    /** The formatted balance amount as a string */
-    balance: string
-    /** The token symbol (e.g., "DOT", "KSM") */
-    symbol: string
-    /** The chain where the balance was checked */
-    chain: string
+  /** The formatted balance amount as a string */
+  balance: string
+  /** The token symbol (e.g., "DOT", "KSM") */
+  symbol: string
+  /** The chain where the balance was checked */
+  chain: string
 }
 
 /**
  * Configuration object for the balance checking tool.
  * Used internally by LangChain to register and execute the tool.
- * 
+ *
  * @example
  * ```typescript
  * const tool = tool(async ({ chain }) => {
@@ -65,10 +67,7 @@ export interface BalanceToolResult {
  * ```
  */
 export const toolConfigBalance: ToolConfig = {
-    name: ToolNames.CHECK_BALANCE,
-    description: "Check balance of the wallet address on a specific chain",
-    schema: balanceToolSchema
+  name: ToolNames.CHECK_BALANCE,
+  description: "Check balance of the wallet address on a specific chain",
+  schema: balanceToolSchema
 }
-
-
-

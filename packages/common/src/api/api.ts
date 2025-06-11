@@ -1,18 +1,19 @@
 import { polkadot } from "@polkadot-api/descriptors"
 import type { ChainDefinition, TypedApi } from "polkadot-api"
+
 import {
-  getChainById,
-  getDescriptors,
-  isChainIdAssetHub,
-  isChainIdRelay,
   type Chain,
   type ChainId,
   type ChainIdAssetHub,
   type ChainIdRelay,
   type Descriptors,
+  getChainById,
+  getDescriptors,
+  isChainIdAssetHub,
+  isChainIdRelay,
   type KnownChainId
 } from "../chains"
-import { getClient, type ClientOptions } from "../clients/client"
+import { type ClientOptions,getClient } from "../clients/client"
 
 export type LightClients = ClientOptions["lightClients"]
 type ApiBase<Id extends ChainId> = Id extends KnownChainId
@@ -47,15 +48,18 @@ export const getApiInner = async <Id extends ChainId>(
 
   const descriptors = getDescriptors(chain.id)
   const client = await getClient(chainId, chains, { lightClients })
-  if (!client) throw new Error(`Could not create client for chain ${chainId}/${lightClients}`)
+  if (!client) throw new Error(`Could not create client for chain ${chainId}`)
 
   const api = client.getTypedApi(descriptors ?? polkadot) as Api<Id>
 
   api.chainId = chainId as Id
   api.chain = chain
   api.waitReady = (() => {
-    // Track subscription for cleanup
-    let subscription: any = null
+
+    type Subscription = {
+      unsubscribe: () => void
+    }
+    let subscription: Subscription | null = null
 
     // Create the actual Promise
     const readyPromise = new Promise<void>((resolve, reject) => {
@@ -69,13 +73,15 @@ export const getApiInner = async <Id extends ChainId>(
       subscription = client.bestBlocks$.subscribe({
         next: () => {
           clearTimeout(timeoutId)
+
           if (subscription) subscription.unsubscribe()
           resolve()
         },
-        error: err => {
+        error: (err: Error) => {
           clearTimeout(timeoutId)
+
           if (subscription) subscription.unsubscribe()
-          reject(err)
+            reject(new Error(err.message))
         }
       })
     })
@@ -87,7 +93,7 @@ export const getApiInner = async <Id extends ChainId>(
 }
 
 const getApiCacheId = (chainId: ChainId, lightClient: LightClients): string =>
-  `${chainId}-${lightClient?.enable ?? "false"}`
+  `${chainId}-${JSON.stringify(lightClient?.enable ?? false)}`
 
 const API_CACHE = new Map<string, Promise<Api<ChainId>>>()
 
@@ -110,7 +116,7 @@ export const getApi = async <Id extends ChainId, Papi = Api<Id>>(
 
 /**
  * Disconnects an API instance and cleans up associated resources
- * @param api The API instance to disconnect
+ * @param api - The API instance to disconnect
  * @returns Promise that resolves when disconnection is complete
  */
 export const disconnect = async <Id extends ChainId>(api: Api<Id>): Promise<void> => {

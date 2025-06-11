@@ -1,4 +1,4 @@
-import { Chain } from "./chains"
+import type { Chain } from "./chains"
 
 export type Assign<T, U> = {
   [K in keyof T]: K extends keyof U ? U[K] : T[K]
@@ -63,4 +63,18 @@ export const westendAssetHubChain = createChain({
   prefix: 42, // default
   decimals: 12,
   symbol: "WND"
+})
+
+export const hydraChain = createChain({
+  id: "hydra",
+  name: "Hydration",
+  specName: "hydra",
+  wsUrls: ["wss://hydration-rpc.n.dwellir.com"],
+  relay: "polkadot",
+  type: "para",
+  chainId: null,
+  blockExplorerUrl: "https://hydration.subscan.io",
+  prefix: 42,
+  decimals: 12,
+  symbol: "HDX"
 })

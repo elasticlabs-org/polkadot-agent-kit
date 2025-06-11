@@ -1,11 +1,9 @@
+import type { Api, KnownChainId, SmoldotClient } from "@polkadot-agent-kit/common"
 import {
-  Api,
-  KnownChainId,
-  SmoldotClient,
-  getApi,
-  getChainSpec,
   disconnect,
   getAllSupportedChains,
+  getApi,
+  getChainSpec,
   specRegistry
 } from "@polkadot-agent-kit/common"
 import { start } from "polkadot-api/smoldot"
@@ -37,8 +35,8 @@ export class PolkadotApi implements IPolkadotApi {
 
   /**
    * Sets the API for a specific chain
-   * @param chainId The ID of the chain
-   * @param api Optional API instance to set
+   * @param chainId - The ID of the chain
+   * @param api - Optional API instance to set
    */
   setApi(chainId: KnownChainId, api?: Api<KnownChainId>) {
     if (api) {
@@ -48,7 +46,7 @@ export class PolkadotApi implements IPolkadotApi {
 
   /**
    * Retrieves the API for a specific chain
-   * @param chainId The ID of the chain
+   * @param chainId - The ID of the chain
    * @returns The API instance for the specified chain
    */
   getApi(chainId: KnownChainId): Api<KnownChainId> {
@@ -94,7 +92,8 @@ export class PolkadotApi implements IPolkadotApi {
           polkadot: "",
           west: "",
           polkadot_asset_hub: "",
-          west_asset_hub: ""
+          west_asset_hub: "",
+          hydra: ""
         }
 
         for (const chain of supportedChains) {
@@ -110,8 +109,7 @@ export class PolkadotApi implements IPolkadotApi {
             })
             return { chain, api }
           } catch (error) {
-            console.error(`Failed to initialize API for ${chain.id}:`, error)
-            throw error
+            throw new Error(`Failed to initialize API for ${chain.id}: ${error instanceof Error ? error.message : String(error)}`)
           }
         })
 
@@ -159,7 +157,7 @@ export class PolkadotApi implements IPolkadotApi {
 
   /**
    * Retrieves the chain spec for a specific chain
-   * @param chainId The ID of the chain
+   * @param chainId - The ID of the chain
    * @returns The chain spec for the specified chain
    */
   getChainSpec(chainId: KnownChainId) {

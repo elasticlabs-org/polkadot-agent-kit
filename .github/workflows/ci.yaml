@@ -1,0 +1,45 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set alternate npm integrity keys
+        run: |
+          echo COREPACK_INTEGRITY_KEYS="$(curl https://registry.npmjs.org/-/npm/v1/keys | jq -c '{npm: .keys}')" >> $GITHUB_ENV
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+      - run: |
+          touch .env
+          echo GH_COMMIT_SHA="${{ github.event.pull_request.head.sha }}" >> .env
+      - name: Install dependencies
+        run: |
+          pnpm install
+      - name: Build
+        run: |
+          pnpm build
+      - name: Compile
+        run: |
+          pnpm compile
+      - name: Format check
+        run: |
+          pnpm format:check
+      - name: Lint check
+        run: |
+          pnpm lint:check
+      - name: Test
+        run: |
+          pnpm test
+

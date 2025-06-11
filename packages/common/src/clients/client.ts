@@ -1,9 +1,10 @@
-import { type PolkadotClient, createClient } from "polkadot-api"
+import { createClient,type PolkadotClient } from "polkadot-api"
+
 import { type Chain, type ChainId, type ChainRelay, getChainById } from "../chains"
-import { getChainSpec, hasChainSpec } from "./chainSpec"
-import { isRelayChain } from "../utils"
-import { getSmChainProvider } from "./smoldotProvider"
 import type { SmoldotClient } from "../types"
+import { isRelayChain } from "../utils"
+import { getChainSpec, hasChainSpec } from "./chainSpec"
+import { getSmChainProvider } from "./smoldotProvider"
 
 export type ClientOptions = {
   lightClients?: {
