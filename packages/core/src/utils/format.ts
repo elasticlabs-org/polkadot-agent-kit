@@ -30,10 +30,7 @@ function getChainPrefix(chainId: KnownChainId): number {
  * convertAddress('5GrwvaEF...', 42);
  * ```
  */
-export function convertAddress(
-  address: string,
-  targetChainId: KnownChainId | number
-): string {
+export function convertAddress(address: string, targetChainId: KnownChainId | number): string {
   try {
     // Get prefix based on input type
     const prefix = typeof targetChainId === "number" ? targetChainId : getChainPrefix(targetChainId)

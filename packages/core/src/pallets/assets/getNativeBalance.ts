@@ -1,5 +1,5 @@
-import type { Api, BalanceInfo,KnownChainId } from "@polkadot-agent-kit/common"
-import { getAllSupportedChains,getChainById } from "@polkadot-agent-kit/common"
+import type { Api, BalanceInfo, KnownChainId } from "@polkadot-agent-kit/common"
+import { getAllSupportedChains, getChainById } from "@polkadot-agent-kit/common"
 
 /**
  * Retrieves the native balance and token information of an account
