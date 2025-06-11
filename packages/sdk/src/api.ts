@@ -1,19 +1,10 @@
-import type { AgentConfig,Api, KnownChainId } from "@polkadot-agent-kit/common"
-import {
-  getAllSupportedChains,
-  getChainById
-} from "@polkadot-agent-kit/common"
-import type { IPolkadotApi} from "@polkadot-agent-kit/core";
+import type { AgentConfig, Api, KnownChainId } from "@polkadot-agent-kit/common"
+import { getAllSupportedChains, getChainById } from "@polkadot-agent-kit/common"
+import type { IPolkadotApi } from "@polkadot-agent-kit/core"
 import { PolkadotApi } from "@polkadot-agent-kit/core"
-import type {
-  BalanceTool,
-  IPolkadotAgentApi,
-  TransferTool
-} from "@polkadot-agent-kit/llm";
-import {
-  PolkadotAgentApi
-} from "@polkadot-agent-kit/llm"
-import { ed25519CreateDerive,sr25519CreateDerive } from "@polkadot-labs/hdkd"
+import type { BalanceTool, IPolkadotAgentApi, TransferTool } from "@polkadot-agent-kit/llm"
+import { PolkadotAgentApi } from "@polkadot-agent-kit/llm"
+import { ed25519CreateDerive, sr25519CreateDerive } from "@polkadot-labs/hdkd"
 import * as ss58 from "@subsquid/ss58"
 
 export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
@@ -42,7 +33,9 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
     try {
       await this.polkadotApi.initializeApi()
     } catch (error) {
-      throw new Error(`PolkadotAgentKit API initialization failed: ${error instanceof Error ? error.message : String(error)}`)
+      throw new Error(
+        `PolkadotAgentKit API initialization failed: ${error instanceof Error ? error.message : String(error)}`
+      )
     }
   }
 

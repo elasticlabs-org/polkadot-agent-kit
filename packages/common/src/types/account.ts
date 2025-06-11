@@ -1,5 +1,5 @@
 import { ed25519 } from "@noble/curves/ed25519"
-import type { PolkadotSigner } from "polkadot-api/signer";
+import type { PolkadotSigner } from "polkadot-api/signer"
 import { getPolkadotSigner } from "polkadot-api/signer"
 export type Hex = Uint8Array | string
 

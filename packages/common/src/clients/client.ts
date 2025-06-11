@@ -1,4 +1,4 @@
-import { createClient,type PolkadotClient } from "polkadot-api"
+import { createClient, type PolkadotClient } from "polkadot-api"
 
 import { type Chain, type ChainId, type ChainRelay, getChainById } from "../chains"
 import type { SmoldotClient } from "../types"

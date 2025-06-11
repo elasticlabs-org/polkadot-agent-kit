@@ -4,10 +4,10 @@ import { formatBalance } from "@polkadot-agent-kit/common"
 import { getNativeBalance } from "@polkadot-agent-kit/core"
 import type { z } from "zod"
 
-import type { BalanceToolResult, balanceToolSchema} from "../types"
+import type { BalanceToolResult, balanceToolSchema } from "../types"
 import { toolConfigBalance } from "../types/balance"
 import { ToolNames } from "../types/common"
-import { executeTool,getApiForChain, validateAndFormatAddress } from "../utils"
+import { executeTool, getApiForChain, validateAndFormatAddress } from "../utils"
 
 /**
  * Returns a tool that checks the balance of a specific address

@@ -58,6 +58,12 @@ export default tseslint.config(
       ],
       "simple-import-sort/imports": "error",
       "simple-import-sort/exports": "error",
+      '@typescript-eslint/ban-ts-comment': [
+        'error',
+        {
+          'ts-ignore': false,
+        },
+      ],
     },
   },
   {

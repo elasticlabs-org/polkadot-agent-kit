@@ -13,7 +13,7 @@ import {
   isChainIdRelay,
   type KnownChainId
 } from "../chains"
-import { type ClientOptions,getClient } from "../clients/client"
+import { type ClientOptions, getClient } from "../clients/client"
 
 export type LightClients = ClientOptions["lightClients"]
 type ApiBase<Id extends ChainId> = Id extends KnownChainId
@@ -55,7 +55,6 @@ export const getApiInner = async <Id extends ChainId>(
   api.chainId = chainId as Id
   api.chain = chain
   api.waitReady = (() => {
-
     type Subscription = {
       unsubscribe: () => void
     }
@@ -81,7 +80,7 @@ export const getApiInner = async <Id extends ChainId>(
           clearTimeout(timeoutId)
 
           if (subscription) subscription.unsubscribe()
-            reject(new Error(err.message))
+          reject(new Error(err.message))
         }
       })
     })
