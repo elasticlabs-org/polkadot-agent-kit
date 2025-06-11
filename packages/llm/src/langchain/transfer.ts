@@ -5,8 +5,8 @@ import { transferNativeCall } from "@polkadot-agent-kit/core"
 import type { z } from "zod"
 
 import type { TransferToolResult, transferToolSchema } from "../types"
-import { toolConfigTransferNative } from "../types/transfer"
 import { ToolNames } from "../types/common"
+import { toolConfigTransferNative } from "../types/transfer"
 import { executeTool, getApiForChain, validateAndFormatMultiAddress } from "../utils"
 /**
  * Returns a tool that transfers native tokens to a specific address
