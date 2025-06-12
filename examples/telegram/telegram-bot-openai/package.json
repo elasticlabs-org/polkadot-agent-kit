@@ -1,0 +1,40 @@
+{
+  "name": "telegram-bot-openai",
+  "version": "1.0.0",
+  "description": "A template example for a telegram bot using polkadot-agent-kit, using typescript",
+  "author": "",
+  "license": "MIT",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "jiti ./src/index.ts",
+    "build": "tsc",
+    "start": "node ./dist/index.js",
+    "clean": "rm -rf dist",
+    "lint": "eslint --fix --quiet src/**/*.ts",
+    "format": "prettier --loglevel silent --write src/**/*.ts"
+  },
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "@polkadot-agent-kit/common": "workspace:*",
+    "@polkadot-agent-kit/llm": "workspace:*",
+    "@polkadot-agent-kit/sdk": "workspace:*",
+    "@polkadot-agent-kit/core": "workspace:*",
+    "telegraf": "^4.16.3",
+    "telegraf-safe-md-reply": "^1.0.0",
+    "@langchain/core": "^0.3.40",
+    "@langchain/openai": "^0.3.17"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.14.1",
+    "eslint": "^9.25.1",
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.9",
+    "prettier": "^3.5.3",
+    "ts-jest": "^29.3.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3",
+    "jiti": "^2.3.3"
+  }
+}

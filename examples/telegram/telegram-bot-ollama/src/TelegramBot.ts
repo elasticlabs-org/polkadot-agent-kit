@@ -1,31 +1,27 @@
 import { Telegraf } from 'telegraf';
-import { ChatOpenAI } from '@langchain/openai';
+import { Ollama } from 'ollama';
 import { Tool } from '@langchain/core/tools';
 import { setupHandlers } from './handlers';
 import { PolkadotAgentKit } from '@polkadot-agent-kit/sdk';
 import { getChainByName, KnownChainId, getAllSupportedChains } from '@polkadot-agent-kit/common';
-
+import OpenAI from 'openai'
 
 interface BotConfig {
   botToken: string;
-  openAiApiKey?: string;
   privateKey?: string;
-  // delegatePrivateKey?: string;
-  // chains: { url: string; name: string; apiKey: string; type: 'RelayChain' | 'ParaChain'; paraId?: number }[];
 }
+
 
 export class TelegramBot {
   private bot: Telegraf;
   private agent: PolkadotAgentKit;
-  private llm: ChatOpenAI;
+  // private llm: OpenAI;
+  private llm: Ollama;
 
   constructor(config: BotConfig) {
     const {
       botToken,
-      openAiApiKey,
       privateKey,
-      // delegatePrivateKey,
-      // chains,
     } = config;
 
     if (!botToken) {
@@ -36,12 +32,10 @@ export class TelegramBot {
 
     this.agent = new PolkadotAgentKit(privateKey as string, {keyType: 'Sr25519'});
 
-    this.llm = new ChatOpenAI({
-      modelName: 'gpt-4',
-      temperature: 0.7,
-      openAIApiKey: openAiApiKey,
-      streaming: true,
+    this.llm = new Ollama({
+      host: process.env.OLLAMA_URL || "http://localhost:11434", // Default value
     });
+
   }
 
   async initialize() {
@@ -56,11 +50,10 @@ export class TelegramBot {
       const checkBalance = this.agent.getNativeBalanceTool();
       // Transfer native tokens to a recipient address on a specific chain.
       const transferNative = this.agent.transferNativeTool();
-      
       setupHandlers(this.bot, this.llm, {
         checkBalance: checkBalance,
         transferNative: transferNative,
-      });
+      } as any);
 
       console.log("Bot initialization complete");
     } catch (error) {

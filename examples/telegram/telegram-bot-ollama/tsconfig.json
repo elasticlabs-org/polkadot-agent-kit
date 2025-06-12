@@ -8,6 +8,5 @@
       "resolveJsonModule": true,
       "strictNullChecks": true,
       "skipLibCheck": true
-    },
-    "include": ["src"]
+    }
   }

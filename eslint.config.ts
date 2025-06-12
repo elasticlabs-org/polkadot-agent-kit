@@ -17,6 +17,7 @@ export default tseslint.config(
       "**/rollup.config.js",
       "**/node_modules/",
       "**/*.test.ts",
+      "**/examples/telegram/*",
     ],
   },
   eslint.configs.recommended,
