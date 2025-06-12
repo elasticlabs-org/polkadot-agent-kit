@@ -27,7 +27,21 @@ This example demonstrates how to build a Telegram bot using the Polkadot Agent K
    pnpm install --ignore-workspace
    ```
 
-3. **Start the Bot**
+3. **Download Ollama Desktop**
+Ollama is a tool designed to make it easy to run large language models (LLMs) like LLaMA, Mistral, Gemma, and others locally on your own machine—especially for developers.
+
+Link: https://ollama.com/
+
+
+4. **Install specific model**
+
+This implementation utilizes the `Qwen3` model to handle reasoning and generate responses within the Polkadot AI Agent framework.
+
+```bash
+ollama run qwen3:latest
+```
+
+5. **Start the Bot**
    ```bash
    pnpm run dev
    ```
