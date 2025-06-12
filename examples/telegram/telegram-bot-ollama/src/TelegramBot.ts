@@ -1,10 +1,7 @@
 import { Telegraf } from 'telegraf';
 import { Ollama } from 'ollama';
-import { Tool } from '@langchain/core/tools';
 import { setupHandlers } from './handlers';
 import { PolkadotAgentKit } from '@polkadot-agent-kit/sdk';
-import { getChainByName, KnownChainId, getAllSupportedChains } from '@polkadot-agent-kit/common';
-import OpenAI from 'openai'
 
 interface BotConfig {
   botToken: string;
@@ -15,7 +12,6 @@ interface BotConfig {
 export class TelegramBot {
   private bot: Telegraf;
   private agent: PolkadotAgentKit;
-  // private llm: OpenAI;
   private llm: Ollama;
 
   constructor(config: BotConfig) {

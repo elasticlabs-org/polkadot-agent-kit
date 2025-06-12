@@ -23,10 +23,7 @@
     "telegraf": "^4.16.3",
     "telegraf-safe-md-reply": "^1.0.0",
     "ollama": "^0.5.16",
-    "openai": "^5.3.0",
-    "@langchain/core": "^0.3.40",
-    "zod": "^3.25.63",
-    "zod-to-json-schema": "^3.24.5"
+    "@langchain/core": "^0.3.40"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",

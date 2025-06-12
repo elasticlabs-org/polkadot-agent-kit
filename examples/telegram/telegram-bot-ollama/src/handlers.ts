@@ -1,10 +1,6 @@
 import { Telegraf } from 'telegraf';
-import { HumanMessage, SystemMessage } from '@langchain/core/messages';
-import { DynamicStructuredTool, Tool } from '@langchain/core/tools';
+import { DynamicStructuredTool } from '@langchain/core/tools';
 import { Ollama } from 'ollama';
-import OpenAI from 'openai'
-import { z } from 'zod';
-import { zodToJsonSchema } from 'zod-to-json-schema';
 import { ToolCall } from '@langchain/core/dist/messages/tool';
 
 
