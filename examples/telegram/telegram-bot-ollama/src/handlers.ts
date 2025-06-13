@@ -1,8 +1,8 @@
 import { Telegraf } from 'telegraf';
 import { DynamicStructuredTool } from '@langchain/core/tools';
 import { Ollama } from 'ollama';
-import { ToolCall } from '@langchain/core/dist/messages/tool';
-
+import { ToolCall as LangChainToolCall } from '@langchain/core/dist/messages/tool';
+import { ToolCall as OllamaToolCall } from 'ollama';
 
 const SYSTEM_PROMPT = `I am a Telegram bot powered by PolkadotAgentKit. I can assist you with:
 - Transferring native tokens on specific chain (e.g., "transfer 1 WND to 5CSox4ZSN4SGLKUG9NYPtfVK9sByXLtxP4hmoF4UgkM4jgDJ on westend_asset_hub")
@@ -25,7 +25,7 @@ Please provide instructions, and I will assist you!`;
 
 export function setupHandlers(
   bot: Telegraf,
-  llm: Ollama ,
+  llm: Ollama,
   toolsByName: Record<string, DynamicStructuredTool>,
 ): void {
 
@@ -43,7 +43,6 @@ export function setupHandlers(
 
   bot.on('text', async (ctx) => {
     const message = ctx.message.text;
-    console.log(message);
     if (message.startsWith('/')) return;
 
     try {
@@ -58,51 +57,10 @@ export function setupHandlers(
         }
       ];
 
-      // Convert DynamicStructuredTool to Ollama Tool format
-      const tools = Object.values(toolsByName).map(tool => {
-
-        const shape = tool.schema._def.shape();
-        
-        // Convert the shape to the format Ollama expects
-        const properties = Object.entries(shape).reduce((acc, [key, value]) => {
-          const def = (value as any)?._def ?? {};
-          acc[key] = {
-            type: def.typeName === 'ZodString' ? 'string' :
-                  def.typeName === 'ZodNumber' ? 'number' :
-                  def.typeName === 'ZodBoolean' ? 'boolean' :
-                  def.typeName === 'ZodArray' ? 'array' : 'object',
-            description: def?.description || '',
-            ...(def?.values && { enum: def.values }),
-            ...(def?.typeName === 'ZodArray' && {
-              items: {
-                type: def?.type?._def?.typeName === 'ZodString' ? 'string' :
-                      def?.type?._def?.typeName === 'ZodNumber' ? 'number' :
-                      def?.type?._def?.typeName === 'ZodBoolean' ? 'boolean' : 'object'
-              }
-            })
-          };
-          return acc;
-        }, {} as Record<string, any>);
-
-        return {
-          type: "function",
-          function: {
-            name: tool.name,
-            description: tool.description,
-            parameters: {
-              type: "object",
-              properties,
-              required: Object.keys(properties)
-            }
-          }
-        };
-      });
-
-      
       const response = await llm.chat({
         model: 'qwen3:latest',
         messages: messages,
-        tools: tools
+        tools: convertToOllamaToolCall(toolsByName)
       });
 
       if (response.message.tool_calls && response.message.tool_calls.length > 0) {
@@ -110,24 +68,24 @@ export function setupHandlers(
           const selectedTool = toolsByName[toCamelCase(toolCall.function.name)];
           if (selectedTool) {
             try {
-            
-              
+
+
               // Convert Ollama tool call format to LangChain ToolCall format
-              const langchainToolCall: ToolCall = {
+              const langchainToolCall: LangChainToolCall = {
                 name: toolCall.function.name,
                 args: toolCall.function.arguments,
                 type: "tool_call"
               };
               
               const toolMessage = await selectedTool.invoke(langchainToolCall);
-              
+
               if (!toolMessage || !toolMessage.content) {
                 await ctx.reply('Tool did not return a response.');
                 return;
               }
 
               const response = JSON.parse(toolMessage.content || '{}');
-              
+
               if (response.error) {
                 await ctx.reply(`Error: ${response.message}`);
               } else {
@@ -165,4 +123,61 @@ export function setupHandlers(
 
 function toCamelCase(snakeStr: string) {
   return snakeStr.replace(/_([a-z])/g, (match, letter) => letter.toUpperCase());
+}
+
+
+// Convert LangChain ToolCall to Ollama ToolCall format
+
+function convertToOllamaToolCall(toolsByName: Record<string, DynamicStructuredTool>) {
+  const tools = Object.values(toolsByName).map(tool => {
+
+    const shape = tool.schema._def.shape();
+
+    // Convert the shape to the format Ollama expects
+    const properties = Object.entries(shape).reduce((acc, [key, value]) => {
+      const def = (value as any)?._def ?? {};
+      acc[key] = {
+        type: def.typeName === 'ZodString' ? 'string' :
+          def.typeName === 'ZodNumber' ? 'number' :
+            def.typeName === 'ZodBoolean' ? 'boolean' :
+              def.typeName === 'ZodArray' ? 'array' : 'object',
+        description: def?.description || '',
+        ...(def?.values && { enum: def.values }),
+        ...(def?.typeName === 'ZodArray' && {
+          items: {
+            type: def?.type?._def?.typeName === 'ZodString' ? 'string' :
+              def?.type?._def?.typeName === 'ZodNumber' ? 'number' :
+                def?.type?._def?.typeName === 'ZodBoolean' ? 'boolean' : 'object'
+          }
+        })
+      };
+      return acc;
+    }, {} as Record<string, any>);
+
+    return {
+      type: "function",
+      function: {
+        name: tool.name,
+        description: tool.description,
+        parameters: {
+          type: "object",
+          properties,
+          required: Object.keys(properties)
+        }
+      }
+    };
+  });
+
+  return tools;
+
+}
+
+// Convert Ollama tool call format to LangChain ToolCall format
+function convertToLangChainToolCall(toolCall: OllamaToolCall)  {
+  return {
+    name: toolCall.function.name,
+    args: toolCall.function.arguments,
+    type: "tool_call"
+  };
+
 }
