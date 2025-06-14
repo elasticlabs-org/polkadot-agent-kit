@@ -2,7 +2,7 @@ import type { PolkadotApi } from "@polkadot-agent-kit/core"
 
 import { checkBalanceTool, transferNativeTool } from "../langchain"
 import type { BalanceTool, TransferTool } from "../types"
-
+import { PolkadotSigner } from "polkadot-api"
 /**
  * Interface for Polkadot API implementations
  * Defines the interface that all Polkadot chain types must follow
@@ -19,7 +19,7 @@ export interface IPolkadotAgentApi {
    * Returns a tool that transfers native tokens to a specific address
    * @returns A dynamic structured tool that transfers native tokens to the specified address
    */
-  transferNativeTool(): TransferTool
+  transferNativeTool(signer: PolkadotSigner): TransferTool
 }
 
 /**
@@ -40,7 +40,7 @@ export class PolkadotAgentApi implements IPolkadotAgentApi {
     return checkBalanceTool(this.api.getAllApis(), address) as BalanceTool
   }
 
-  transferNativeTool(): TransferTool {
-    return transferNativeTool(this.api.getAllApis()) as TransferTool
+  transferNativeTool(signer: PolkadotSigner): TransferTool {
+    return transferNativeTool(this.api.getAllApis(), signer) as TransferTool
   }
 }

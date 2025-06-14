@@ -6,18 +6,19 @@ import type { BalanceTool, IPolkadotAgentApi, TransferTool } from "@polkadot-age
 import { PolkadotAgentApi } from "@polkadot-agent-kit/llm"
 import { ed25519CreateDerive, sr25519CreateDerive } from "@polkadot-labs/hdkd"
 import * as ss58 from "@subsquid/ss58"
+import { getPolkadotSigner, PolkadotSigner } from "polkadot-api/signer"
 
 export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
   private polkadotApi: PolkadotApi
   private agentApi: PolkadotAgentApi
 
-  public wallet: Uint8Array
+  public wallet: string
   public config: AgentConfig
 
   constructor(wallet: string, config: AgentConfig) {
     this.polkadotApi = new PolkadotApi()
     this.agentApi = new PolkadotAgentApi(this.polkadotApi)
-    this.wallet = this.normalizePrivateKey(wallet)
+    this.wallet = wallet
     this.config = config
   }
 
@@ -90,7 +91,7 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
    * @throws \{Error\} If the transfer fails or parameters are invalid
    */
   transferNativeTool(): TransferTool {
-    return this.agentApi.transferNativeTool()
+    return this.agentApi.transferNativeTool(this.getSigner())
   }
 
   /**
@@ -108,8 +109,8 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
   public getCurrentAddress(): string {
     // get chain default address polkadot
     const chain = getChainById("polkadot", getAllSupportedChains())
-    const publicKey = this.getPublicKey()
-    const value = publicKey
+    const keypair = this.getKeypair()
+    const value = keypair.publicKey
     if (!value) {
       return ""
     }
@@ -128,15 +129,30 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
    * const publicKey = agent.getPublicKey();
    * ```
    */
-  private getPublicKey(): Uint8Array {
+  private getKeypair() {
     if (this.config.keyType === "Sr25519") {
       // For Sr25519, use the derive function to get the public key
       const derive = sr25519CreateDerive(this.wallet)
-      return derive(this.config.derivationPath || "").publicKey
+      return derive(this.config.derivationPath || "")
     } else {
       // For Ed25519, use the ed25519 lib
       const derive = ed25519CreateDerive(this.wallet)
-      return derive(this.config.derivationPath || "").publicKey
+      return derive(this.config.derivationPath || "")
+    }
+  }
+
+  private getSigner(): PolkadotSigner {
+    if (this.config.keyType === "Sr25519") {
+      const signer = getPolkadotSigner(this.getKeypair().publicKey, this.config.keyType as "Sr25519" | "Ed25519" | "Ecdsa", (input) =>
+        this.getKeypair().sign(input)
+      );
+
+      return signer
+    } else {
+      const signer = getPolkadotSigner(this.getKeypair().publicKey, this.config.keyType as "Sr25519" | "Ed25519" | "Ecdsa", (input) =>
+        this.getKeypair().sign(input)
+      );
+      return signer
     }
   }
 
