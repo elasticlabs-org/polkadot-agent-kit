@@ -1,10 +1,17 @@
-import { Telegraf } from 'telegraf';
-import { setupHandlers } from './handlers';
-import { PolkadotAgentKit } from '@polkadot-agent-kit/sdk';
-import { getChainByName, KnownChainId, getAllSupportedChains } from '@polkadot-agent-kit/common';
-import { ChatModelFactory, ChatModelOptions, ChatModelWithTools } from './models';
-import { BaseChatModel } from '@langchain/core/language_models/chat_models';
-
+import { Telegraf } from "telegraf";
+import { setupHandlers } from "./handlers";
+import { PolkadotAgentKit } from "@polkadot-agent-kit/sdk";
+import {
+  getChainByName,
+  KnownChainId,
+  getAllSupportedChains,
+} from "@polkadot-agent-kit/common";
+import {
+  ChatModelFactory,
+  ChatModelOptions,
+  ChatModelWithTools,
+} from "./models";
+import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 
 interface BotConfig {
   botToken: string;
@@ -12,18 +19,15 @@ interface BotConfig {
   privateKey?: string;
 }
 
-
-
 export class TelegramBot {
   private bot: Telegraf;
   private agent: PolkadotAgentKit;
   private llm: ChatModelWithTools;
 
-
   private initializeLLM(openAiApiKey?: string): ChatModelWithTools {
     const options: ChatModelOptions = {
-      provider: openAiApiKey ? 'openai' as const : 'ollama' as const,
-      modelName: openAiApiKey ? 'gpt-4o-mini' : 'qwen3:latest',
+      provider: openAiApiKey ? ("openai" as const) : ("ollama" as const),
+      modelName: openAiApiKey ? "gpt-4o-mini" : "qwen3:latest",
       temperature: 0.7,
       verbose: false,
     };
@@ -31,23 +35,19 @@ export class TelegramBot {
   }
 
   constructor(config: BotConfig) {
-    const {
-      botToken,
-      openAiApiKey,
-      privateKey,
-    } = config;
+    const { botToken, openAiApiKey, privateKey } = config;
 
     if (!botToken) {
-      throw new Error('TELEGRAM_BOT_TOKEN must be provided!');
+      throw new Error("TELEGRAM_BOT_TOKEN must be provided!");
     }
 
     this.bot = new Telegraf(botToken);
 
-    this.agent = new PolkadotAgentKit(privateKey as string, { keyType: 'Sr25519' });
-
+    this.agent = new PolkadotAgentKit(privateKey as string, {
+      keyType: "Sr25519",
+    });
 
     this.llm = this.initializeLLM(openAiApiKey);
-
   }
 
   async initialize() {
@@ -57,7 +57,7 @@ export class TelegramBot {
       // Initialize APIs first
       await this.agent.initializeApi();
 
-      // Set up tools 
+      // Set up tools
       // Get balance of agent account
       const checkBalance = this.agent.getNativeBalanceTool();
       // Transfer native tokens to a recipient address on a specific chain.
@@ -75,17 +75,13 @@ export class TelegramBot {
     }
   }
 
-
-
-
   public async start(): Promise<void> {
     try {
       await this.initialize();
       await this.bot.launch();
-      console.log('Bot is running!');
-
+      console.log("Bot is running!");
     } catch (error) {
-      console.error('Failed to start bot:', error);
+      console.error("Failed to start bot:", error);
       throw error;
     }
   }
@@ -95,7 +91,7 @@ export class TelegramBot {
       await this.agent.disconnect();
       this.bot.stop();
     } catch (error) {
-      console.error('Error during shutdown:', error);
+      console.error("Error during shutdown:", error);
     }
   }
 }
