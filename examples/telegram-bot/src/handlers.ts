@@ -1,7 +1,10 @@
 import { Telegraf } from 'telegraf';
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
-import { ChatOpenAI } from '@langchain/openai';
 import { DynamicStructuredTool, Tool } from '@langchain/core/tools';
+import { ChatModelWithTools } from './models';
+
+
+
 
 const SYSTEM_PROMPT = `I am a Telegram bot powered by PolkadotAgentKit. I can assist you with:
 - Transferring native tokens on specific chain (e.g., "transfer 1 WND to 5CSox4ZSN4SGLKUG9NYPtfVK9sByXLtxP4hmoF4UgkM4jgDJ on westend_asset_hub")
@@ -24,7 +27,7 @@ Please provide instructions, and I will assist you!`;
 
 export function setupHandlers(
   bot: Telegraf,
-  llm: ChatOpenAI,
+  llm: ChatModelWithTools,
   toolsByName: Record<string, DynamicStructuredTool>,
 ): void {
 
@@ -42,11 +45,11 @@ export function setupHandlers(
 
   bot.on('text', async (ctx) => {
     const message = ctx.message.text;
-    
+
+
     if (message.startsWith('/')) return;
 
     try {
-
       const llmWithTools = llm.bindTools(Object.values(toolsByName));
       const messages = [
         new SystemMessage({ content: SYSTEM_PROMPT }),
@@ -64,11 +67,11 @@ export function setupHandlers(
               return;
             }
             const response = JSON.parse(toolMessage.content || '{}');
-            
             if (response.error) {
               await ctx.reply(`Error: ${response.message}`);
             } else {
-              await ctx.reply(response.message || response.content || 'No message from tool.');
+              const content = JSON.parse(response.content || '{}');
+              await ctx.reply(content.data || 'No message from tool.');
             }
           } else {
             console.warn(`Tool not found: ${toolCall.name}`);

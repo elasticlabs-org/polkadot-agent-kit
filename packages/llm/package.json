@@ -37,10 +37,8 @@
   "dependencies": {
     "@polkadot-agent-kit/common": "workspace:*",
     "@polkadot-agent-kit/core": "workspace:*",
-    "@langchain/community": "^0.3.19",
     "@langchain/core": "^0.3.40",
     "@langchain/langgraph": "^0.2.33",
-    "@langchain/openai": "^0.3.17",
     "@noble/curves": "^1.6.0",
     "@polkadot-labs/hdkd": "^0.0.13",
     "@polkadot-labs/hdkd-helpers": "^0.0.13",
