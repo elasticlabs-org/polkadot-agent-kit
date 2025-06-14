@@ -143,15 +143,19 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
 
   private getSigner(): PolkadotSigner {
     if (this.config.keyType === "Sr25519") {
-      const signer = getPolkadotSigner(this.getKeypair().publicKey, this.config.keyType as "Sr25519" | "Ed25519" | "Ecdsa", (input) =>
-        this.getKeypair().sign(input)
-      );
+      const signer = getPolkadotSigner(
+        this.getKeypair().publicKey,
+        this.config.keyType as "Sr25519" | "Ed25519" | "Ecdsa",
+        input => this.getKeypair().sign(input)
+      )
 
       return signer
     } else {
-      const signer = getPolkadotSigner(this.getKeypair().publicKey, this.config.keyType as "Sr25519" | "Ed25519" | "Ecdsa", (input) =>
-        this.getKeypair().sign(input)
-      );
+      const signer = getPolkadotSigner(
+        this.getKeypair().publicKey,
+        this.config.keyType as "Sr25519" | "Ed25519" | "Ecdsa",
+        input => this.getKeypair().sign(input)
+      )
       return signer
     }
   }

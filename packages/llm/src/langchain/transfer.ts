@@ -14,7 +14,10 @@ import { PolkadotSigner } from "polkadot-api/signer"
  * @param api - The API instance to use for the transfer
  * @returns A dynamic structured tool that transfers native tokens to the specified address
  */
-export const transferNativeTool = (apis: Map<KnownChainId, Api<KnownChainId>>, signer: PolkadotSigner) => {
+export const transferNativeTool = (
+  apis: Map<KnownChainId, Api<KnownChainId>>,
+  signer: PolkadotSigner
+) => {
   return tool(async ({ amount, to, chain }: z.infer<typeof transferToolSchema>) => {
     return executeTool<TransferToolResult>(
       ToolNames.TRANSFER_NATIVE,
@@ -22,17 +25,20 @@ export const transferNativeTool = (apis: Map<KnownChainId, Api<KnownChainId>>, s
         const api = getApiForChain(apis, chain)
         const formattedAddress = validateAndFormatMultiAddress(to, chain as KnownChainId)
         const parsedAmount = parseUnits(amount, getDecimalsByChainId(chain))
-        const tx = await submitAndWatchTx(transferNativeCall(api, formattedAddress, parsedAmount), signer);
+        const tx = await submitAndWatchTx(
+          transferNativeCall(api, formattedAddress, parsedAmount),
+          signer
+        )
         if (tx.success) {
           return {
             success: tx.success,
-            transactionHash: tx.transactionHash,
+            transactionHash: tx.transactionHash
           }
         } else {
           return {
             success: false,
             transactionHash: tx.transactionHash,
-            error: tx.error,
+            error: tx.error
           }
         }
       },

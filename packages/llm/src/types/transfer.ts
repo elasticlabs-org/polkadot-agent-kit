@@ -41,19 +41,19 @@ export interface TransferToolResult {
   /**
    * Indicates whether the transfer was successful.
    */
-  success: boolean;
+  success: boolean
 
   /**
    * The transaction hash if the transfer was submitted successfully.
    * This may be undefined if the transfer failed.
    */
-  transactionHash?: string;
+  transactionHash?: string
 
   /**
    * An error message if the transfer failed.
    * This will be undefined if the transfer was successful.
    */
-  error?: string;
+  error?: string
 }
 
 /**
