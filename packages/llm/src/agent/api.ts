@@ -1,8 +1,8 @@
 import type { PolkadotApi } from "@polkadot-agent-kit/core"
+import type { PolkadotSigner } from "polkadot-api"
 
 import { checkBalanceTool, transferNativeTool } from "../langchain"
 import type { BalanceTool, TransferTool } from "../types"
-import { PolkadotSigner } from "polkadot-api"
 /**
  * Interface for Polkadot API implementations
  * Defines the interface that all Polkadot chain types must follow

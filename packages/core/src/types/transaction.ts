@@ -1,4 +1,4 @@
-import { PolkadotSigner, TxEvent } from "polkadot-api"
+import type { PolkadotSigner, TxEvent } from "polkadot-api"
 import type { Observable } from "rxjs"
 
 export interface Tx {

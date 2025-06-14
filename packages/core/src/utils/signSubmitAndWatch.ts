@@ -1,12 +1,13 @@
-import { TxEvent, PolkadotSigner } from "polkadot-api"
-import { Tx, TxResult } from "../types"
+import type { PolkadotSigner,TxEvent } from "polkadot-api"
+
+import type { Tx, TxResult } from "../types"
 
 function hasTypeProperty(val: unknown): val is { type: string } {
   return (
     typeof val === "object" &&
     val !== null &&
     "type" in val &&
-    typeof (val as any).type === "string"
+    typeof (val as { type: unknown }).type === "string"
   )
 }
 

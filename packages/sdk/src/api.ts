@@ -6,7 +6,7 @@ import type { BalanceTool, IPolkadotAgentApi, TransferTool } from "@polkadot-age
 import { PolkadotAgentApi } from "@polkadot-agent-kit/llm"
 import { ed25519CreateDerive, sr25519CreateDerive } from "@polkadot-labs/hdkd"
 import * as ss58 from "@subsquid/ss58"
-import { getPolkadotSigner, PolkadotSigner } from "polkadot-api/signer"
+import { getPolkadotSigner, type PolkadotSigner } from "polkadot-api/signer"
 
 export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
   private polkadotApi: PolkadotApi

@@ -1,4 +1,4 @@
-import type { Api, BalanceInfo, KnownChainId } from "@polkadot-agent-kit/common"
+import type { AccountData, Api, BalanceInfo, KnownChainId } from "@polkadot-agent-kit/common"
 import { getAllSupportedChains, getChainById } from "@polkadot-agent-kit/common"
 
 /**
@@ -11,7 +11,7 @@ export const getNativeBalance = async (
   api: Api<KnownChainId>,
   address: string
 ): Promise<BalanceInfo> => {
-  const balance = await api.query.System.Account.getValue(address)
+  const balance = await api.query.System.Account.getValue(address) as AccountData
   const chain = getChainById(api.chainId, getAllSupportedChains())
 
   return {

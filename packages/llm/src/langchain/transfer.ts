@@ -1,14 +1,14 @@
 import { tool } from "@langchain/core/tools"
 import type { Api, KnownChainId } from "@polkadot-agent-kit/common"
 import { getDecimalsByChainId, parseUnits } from "@polkadot-agent-kit/common"
-import { transferNativeCall, submitAndWatchTx } from "@polkadot-agent-kit/core"
+import { submitAndWatchTx,transferNativeCall } from "@polkadot-agent-kit/core"
+import type { PolkadotSigner } from "polkadot-api/signer"
 import type { z } from "zod"
 
 import type { TransferToolResult, transferToolSchema } from "../types"
 import { ToolNames } from "../types/common"
 import { toolConfigTransferNative } from "../types/transfer"
 import { executeTool, getApiForChain, validateAndFormatMultiAddress } from "../utils"
-import { PolkadotSigner } from "polkadot-api/signer"
 /**
  * Returns a tool that transfers native tokens to a specific address
  * @param api - The API instance to use for the transfer
