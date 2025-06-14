@@ -2,16 +2,10 @@ import { Telegraf } from "telegraf";
 import { setupHandlers } from "./handlers";
 import { PolkadotAgentKit } from "@polkadot-agent-kit/sdk";
 import {
-  getChainByName,
-  KnownChainId,
-  getAllSupportedChains,
-} from "@polkadot-agent-kit/common";
-import {
   ChatModelFactory,
   ChatModelOptions,
   ChatModelWithTools,
 } from "./models";
-import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 
 interface BotConfig {
   botToken: string;

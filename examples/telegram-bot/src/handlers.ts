@@ -1,6 +1,6 @@
 import { Telegraf } from "telegraf";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
-import { DynamicStructuredTool, Tool } from "@langchain/core/tools";
+import { DynamicStructuredTool } from "@langchain/core/tools";
 import { ChatModelWithTools } from "./models";
 
 const SYSTEM_PROMPT = `I am a Telegram bot powered by PolkadotAgentKit. I can assist you with:
