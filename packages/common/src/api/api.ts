@@ -16,7 +16,9 @@ import {
 import { type ClientOptions, getClient } from "../clients/client"
 
 export type LightClients = ClientOptions["lightClients"]
+
 type ApiBase<Id extends ChainId> = Id extends KnownChainId
+  // @ts-ignore
   ? TypedApi<Descriptors<Id>>
   : TypedApi<ChainDefinition>
 
@@ -50,6 +52,7 @@ export const getApiInner = async <Id extends ChainId>(
   const client = await getClient(chainId, chains, { lightClients })
   if (!client) throw new Error(`Could not create client for chain ${chainId}`)
 
+  // @ts-ignore
   const api = client.getTypedApi(descriptors ?? polkadot) as Api<Id>
 
   api.chainId = chainId as Id
