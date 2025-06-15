@@ -17,6 +17,8 @@ jobs:
         run: |
           echo COREPACK_INTEGRITY_KEYS="$(curl https://registry.npmjs.org/-/npm/v1/keys | jq -c '{npm: .keys}')" >> $GITHUB_ENV
       - run: corepack enable
+      - name: Install pnpm
+        run: corepack prepare pnpm@10.6.5 --activate
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -30,6 +32,8 @@ jobs:
       - name: Generate Polkadot API descriptors
         run: |
           pnpm papi
+      - name: Remove turbo cache
+        run: rm -rf .turbo
       - name: Build
         run: |
           pnpm build

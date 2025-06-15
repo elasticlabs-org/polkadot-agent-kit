@@ -37,7 +37,8 @@
   "dependencies": {
     "@polkadot-agent-kit/common": "workspace:*",
     "@subsquid/ss58": "^2.0.2",
-    "polkadot-api": "^1.9.13"
+    "polkadot-api": "^1.9.13",
+    "rxjs": "^7.8.2"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.26.0",
