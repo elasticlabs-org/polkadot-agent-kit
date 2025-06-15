@@ -32,6 +32,8 @@ jobs:
       - name: Generate Polkadot API descriptors
         run: |
           pnpm papi
+      - name: Remove turbo cache
+        run: rm -rf .turbo
       - name: Build
         run: |
           pnpm build
