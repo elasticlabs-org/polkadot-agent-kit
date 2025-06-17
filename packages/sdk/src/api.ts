@@ -69,7 +69,7 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
    * Get Native Transfer Tool
    * Creates a tool for transferring native tokens to an address
    *
-   * @param to - The recipient address as MultiAddress
+   * @param to - The recipient address as string
    * @param amount - The amount to transfer as bigint
    * @returns DynamicStructuredTool for transferring native tokens
    *

@@ -1,16 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
-import { validateAndFormatAddress, validateAndFormatMultiAddress } from "./tools"
+import { validateAndFormatAddress } from "./tools"
 import { InvalidAddressError } from "../types"
 
 vi.mock("@polkadot-agent-kit/core", () => ({
   convertAddress: vi.fn(),
-  toMultiAddress: vi.fn()
 }))
 
-import { convertAddress, toMultiAddress } from "@polkadot-agent-kit/core"
+import { convertAddress } from "@polkadot-agent-kit/core"
 
 const mockConvertAddress = vi.mocked(convertAddress)
-const mockToMultiAddress = vi.mocked(toMultiAddress)
 
 describe("validateAndFormatAddress", () => {
   beforeEach(() => {
@@ -152,13 +150,11 @@ describe("validateAndFormatMultiAddress", () => {
       const chain = "polkadot" as any
 
       mockConvertAddress.mockReturnValue(formattedAddress)
-      mockToMultiAddress.mockReturnValue(multiAddress)
 
-      const result = validateAndFormatMultiAddress(inputAddress, chain)
+      const result = validateAndFormatAddress(inputAddress, chain)
 
       expect(mockConvertAddress).toHaveBeenCalledWith(inputAddress, chain)
-      expect(mockToMultiAddress).toHaveBeenCalledWith(formattedAddress)
-      expect(result).toBe(multiAddress)
+      expect(result).toBe(formattedAddress)
     })
 
     it("should handle different MultiAddress types", () => {
@@ -176,13 +172,10 @@ describe("validateAndFormatMultiAddress", () => {
 
       multiAddressTypes.forEach(multiAddress => {
         mockConvertAddress.mockReturnValue(formattedAddress)
-        mockToMultiAddress.mockReturnValue(multiAddress)
 
-        const result = validateAndFormatMultiAddress(inputAddress, chain)
+        const result = validateAndFormatAddress(inputAddress, chain)
 
-        expect(result).toBe(multiAddress)
-        expect(result.type).toBe(multiAddress.type)
-        expect(result.value).toBe(multiAddress.value)
+        expect(result).toBe(formattedAddress)
       })
     })
   })
@@ -194,11 +187,11 @@ describe("validateAndFormatMultiAddress", () => {
 
       mockConvertAddress.mockReturnValue(null as any)
 
-      expect(() => validateAndFormatMultiAddress(invalidAddress, chain)).toThrow(
+      expect(() => validateAndFormatAddress(invalidAddress, chain)).toThrow(
         InvalidAddressError
       )
 
-      expect(mockToMultiAddress).not.toHaveBeenCalled()
+      expect(mockConvertAddress).not.toHaveBeenCalled()
     })
 
     it("should not call toMultiAddress when address validation fails", () => {
@@ -207,11 +200,11 @@ describe("validateAndFormatMultiAddress", () => {
 
       mockConvertAddress.mockReturnValue("")
 
-      expect(() => validateAndFormatMultiAddress(invalidAddress, chain)).toThrow(
+      expect(() => validateAndFormatAddress(invalidAddress, chain)).toThrow(
         InvalidAddressError
       )
 
-      expect(mockToMultiAddress).not.toHaveBeenCalled()
+      expect(mockConvertAddress).not.toHaveBeenCalled()
     })
   })
 
@@ -220,19 +213,14 @@ describe("validateAndFormatMultiAddress", () => {
       const inputAddress = "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"
       const formattedAddress = "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5"
       const chain = "polkadot" as any
-      const conversionError = new Error("Failed to convert to MultiAddress")
 
       mockConvertAddress.mockReturnValue(formattedAddress)
-      mockToMultiAddress.mockImplementation(() => {
-        throw conversionError
-      })
 
-      expect(() => validateAndFormatMultiAddress(inputAddress, chain)).toThrow(
+      expect(() => validateAndFormatAddress(inputAddress, chain)).toThrow(
         "Failed to convert to MultiAddress"
       )
 
       expect(mockConvertAddress).toHaveBeenCalledWith(inputAddress, chain)
-      expect(mockToMultiAddress).toHaveBeenCalledWith(formattedAddress)
     })
   })
 })

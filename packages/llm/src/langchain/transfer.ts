@@ -8,7 +8,7 @@ import type { z } from "zod"
 import type { TransferToolResult, transferToolSchema } from "../types"
 import { ToolNames } from "../types/common"
 import { toolConfigTransferNative } from "../types/transfer"
-import { executeTool, getApiForChain, validateAndFormatMultiAddress } from "../utils"
+import { executeTool, getApiForChain, validateAndFormatAddress } from "../utils"
 /**
  * Returns a tool that transfers native tokens to a specific address
  * @param api - The API instance to use for the transfer
@@ -23,7 +23,7 @@ export const transferNativeTool = (
       ToolNames.TRANSFER_NATIVE,
       async () => {
         const api = getApiForChain(apis, chain)
-        const formattedAddress = validateAndFormatMultiAddress(to, chain as KnownChainId)
+        const formattedAddress = validateAndFormatAddress(to, chain as KnownChainId)
         const parsedAmount = parseUnits(amount, getDecimalsByChainId(chain))
         const tx = await submitAndWatchTx(
           transferNativeCall(api, formattedAddress, parsedAmount),
