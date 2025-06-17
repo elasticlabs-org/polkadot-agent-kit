@@ -3,7 +3,7 @@ import { validateAndFormatAddress } from "./tools"
 import { InvalidAddressError } from "../types"
 
 vi.mock("@polkadot-agent-kit/core", () => ({
-  convertAddress: vi.fn(),
+  convertAddress: vi.fn()
 }))
 
 import { convertAddress } from "@polkadot-agent-kit/core"
@@ -187,9 +187,7 @@ describe("validateAndFormatMultiAddress", () => {
 
       mockConvertAddress.mockReturnValue(null as any)
 
-      expect(() => validateAndFormatAddress(invalidAddress, chain)).toThrow(
-        InvalidAddressError
-      )
+      expect(() => validateAndFormatAddress(invalidAddress, chain)).toThrow(InvalidAddressError)
 
       expect(mockConvertAddress).not.toHaveBeenCalled()
     })
@@ -200,9 +198,7 @@ describe("validateAndFormatMultiAddress", () => {
 
       mockConvertAddress.mockReturnValue("")
 
-      expect(() => validateAndFormatAddress(invalidAddress, chain)).toThrow(
-        InvalidAddressError
-      )
+      expect(() => validateAndFormatAddress(invalidAddress, chain)).toThrow(InvalidAddressError)
 
       expect(mockConvertAddress).not.toHaveBeenCalled()
     })

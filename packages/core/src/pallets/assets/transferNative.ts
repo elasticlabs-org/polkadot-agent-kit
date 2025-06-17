@@ -10,5 +10,6 @@ import type { Tx } from "../../types"
  * @returns The transfer call
  */
 export const transferNativeCall = (api: Api<KnownChainId>, to: string, amount: bigint): Tx => {
+  // @ts-ignore
   return api.tx.Balances.transfer_keep_alive({ dest: to, value: amount })
 }

@@ -18,8 +18,8 @@ import { type ClientOptions, getClient } from "../clients/client"
 export type LightClients = ClientOptions["lightClients"]
 
 type ApiBase<Id extends ChainId> = Id extends KnownChainId
-  // @ts-ignore
-  ? TypedApi<Descriptors<Id>>
+  ? // @ts-ignore
+    TypedApi<Descriptors<Id>>
   : TypedApi<ChainDefinition>
 
 export type Api<Id extends ChainId> = ApiBase<Id> & {

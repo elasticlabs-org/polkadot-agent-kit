@@ -11,7 +11,7 @@ export const getNativeBalance = async (
   api: Api<KnownChainId>,
   address: string
 ): Promise<BalanceInfo> => {
-  const balance = await api.query.System.Account.getValue(address) as AccountData
+  const balance = (await api.query.System.Account.getValue(address)) as AccountData
   const chain = getChainById(api.chainId, getAllSupportedChains())
 
   return {

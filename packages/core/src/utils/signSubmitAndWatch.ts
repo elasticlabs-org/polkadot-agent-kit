@@ -1,4 +1,4 @@
-import type { PolkadotSigner,TxEvent } from "polkadot-api"
+import type { PolkadotSigner, TxEvent } from "polkadot-api"
 
 import type { Tx, TxResult } from "../types"
 

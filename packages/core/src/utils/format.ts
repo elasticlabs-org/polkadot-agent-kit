@@ -48,4 +48,3 @@ export function convertAddress(address: string, targetChainId: KnownChainId | nu
     )
   }
 }
-
