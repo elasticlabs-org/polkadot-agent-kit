@@ -2,11 +2,15 @@ import type { AgentConfig, Api, KnownChainId } from "@polkadot-agent-kit/common"
 import { getAllSupportedChains, getChainById } from "@polkadot-agent-kit/common"
 import type { IPolkadotApi } from "@polkadot-agent-kit/core"
 import { PolkadotApi } from "@polkadot-agent-kit/core"
-import type { BalanceTool, IPolkadotAgentApi, TransferTool } from "@polkadot-agent-kit/llm"
+import type { BalanceTool, IPolkadotAgentApi, TransferTool, XcmTransferNativeAssetTool } from "@polkadot-agent-kit/llm"
 import { PolkadotAgentApi } from "@polkadot-agent-kit/llm"
 import { ed25519CreateDerive, sr25519CreateDerive } from "@polkadot-labs/hdkd"
 import * as ss58 from "@subsquid/ss58"
 import { getPolkadotSigner, type PolkadotSigner } from "polkadot-api/signer"
+import { KeyringPair } from "@polkadot/keyring/types"
+import { Keyring } from "@polkadot/keyring"
+import { cryptoWaitReady } from '@polkadot/util-crypto';
+import { hexToU8a } from '@polkadot/util';
 
 export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
   private polkadotApi: PolkadotApi
@@ -94,6 +98,11 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
     return this.agentApi.transferNativeTool(this.getSigner())
   }
 
+  // xcmTransferNativeTool(): XcmTransferNativeAssetTool {
+  //   console.log("getKeyringPair", this.getKeyringPair());
+  //   console.log("address", this.getKeyringPair().address);
+  //   return this.agentApi.xcmTransferNativeTool(this.getKeyringPair())
+  // }
   /**
    * Get Address
    *
@@ -160,6 +169,12 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
     }
   }
 
+  private getKeyringPair(): KeyringPair {
+    const keyring = new Keyring({ type: 'sr25519' });
+
+    const keypair = keyring.addFromSeed(hexToU8a(this.wallet));
+    return keypair;
+  }
   /**
    * Normalize a private key string to Uint8Array format
    * Handles hex strings with or without 0x prefix
@@ -180,4 +195,5 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
       return new Uint8Array(key.match(/.{1,2}/g)?.map(byte => parseInt(byte, 16)) || [])
     }
   }
+
 }

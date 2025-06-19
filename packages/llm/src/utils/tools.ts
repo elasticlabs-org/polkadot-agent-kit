@@ -15,6 +15,9 @@ export const getApiForChain = (
   apis: Map<KnownChainId, Api<KnownChainId>>,
   chain: string
 ): Api<KnownChainId> => {
+  console.log("chain", chain);
+  console.log("apis", apis);
+
   const api = apis.get(chain as KnownChainId)
   if (!api) {
     const availableChains = Array.from(apis.keys())

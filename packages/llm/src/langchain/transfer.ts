@@ -25,6 +25,7 @@ export const transferNativeTool = (
         const api = getApiForChain(apis, chain)
         const formattedAddress = validateAndFormatAddress(to, chain as KnownChainId)
         const parsedAmount = parseUnits(amount, getDecimalsByChainId(chain))
+        console.log("transferNativeCall", transferNativeCall(api, formattedAddress, parsedAmount));
         const tx = await submitAndWatchTx(
           transferNativeCall(api, formattedAddress, parsedAmount),
           signer

@@ -45,7 +45,8 @@
     "@subsquid/ss58": "^2.0.2",
     "@polkadot/api": "^15.8.1",
     "polkadot-api": "^1.9.13",
-    "zod": "^3.24.3"
+    "zod": "^3.24.3",
+    "@polkadot/keyring": "^13.5.1"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.26.0",

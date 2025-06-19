@@ -17,6 +17,17 @@ When transferring tokens, please provide:
 
 Suggested syntax: "transfer [amount] token to [chain name] to [address]"
 
+
+When transferring tokens through XCM, please provide:
+1. The amount of tokens to transfer (e.g., 1)
+2. The address to receive the tokens (e.g., 5CSox4ZSN4SGLKUG9NYPtfVK9sByXLtxP4hmoF4UgkM4jgDJ)
+3. The name of the source chain (e.g., westend, west_asset_hub)
+4. The name of the destination chain (e.g., westend, west_asset_hub)
+
+
+Suggested syntax: "transfer [amount] token to [address] from [source chain name] to [destination chain name]"
+
+
 When checking proxies, you can specify the chain (e.g., "check proxies on westend") or 
 not specify a chain (the first chain will be used by default)
 
@@ -34,6 +45,7 @@ export function setupHandlers(
         '- Transferring native tokens  (e.g., "transfer 1 token to westend_asset_hub to 5CSox4ZSN4SGLKUG9NYPtfVK9sByXLtxP4hmoF4UgkM4jgDJ")\n' +
         '- Checking balance (e.g., "check balance on west/polkadot/kusama")\n' +
         '- Checking proxies (e.g., "check proxies on westend" or "check proxies")\n' +
+        '- Transfer tokens through XCM (e.g., "transfer 1 WND to 5CSox4ZSN4SGLKUG9NYPtfVK9sByXLtxP4hmoF4UgkM4jgDJ from west to west_asset_hub ")\n' +
         "Try asking something!",
     );
   });
@@ -45,11 +57,13 @@ export function setupHandlers(
 
     try {
       const llmWithTools = llm.bindTools(Object.values(toolsByName));
+      console.log("llmWithTools", llmWithTools);
       const messages = [
         new SystemMessage({ content: SYSTEM_PROMPT }),
         new HumanMessage({ content: message }),
       ];
       const aiMessage = await llmWithTools.invoke(messages);
+      console.log("aiMessage", aiMessage);
       if (aiMessage.tool_calls && aiMessage.tool_calls.length > 0) {
         for (const toolCall of aiMessage.tool_calls) {
           const selectedTool = toolsByName[toCamelCase(toolCall.name)];
@@ -60,6 +74,7 @@ export function setupHandlers(
               return;
             }
             const response = JSON.parse(toolMessage.content || "{}");
+            console.log(response);
             if (response.error) {
               await ctx.reply(`Error: ${response.message}`);
             } else {
