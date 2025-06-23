@@ -31,6 +31,15 @@ Suggested syntax: "transfer [amount] token to [address] from [source chain name]
 When checking proxies, you can specify the chain (e.g., "check proxies on westend") or 
 not specify a chain (the first chain will be used by default)
 
+When mentioning a chain, you must map the user input to the real param such as 
+
+| Real Param | User Input |
+|------------|------------|
+| west | Westend |
+| west_asset_hub | Westend Asset Hub |
+| polkadot | Polkadot |
+| kusama | Kusama |
+
 Please provide instructions, and I will assist you!`;
 
 export function setupHandlers(

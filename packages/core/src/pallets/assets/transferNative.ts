@@ -15,5 +15,6 @@ export const transferNativeCall = (
   to: MultiAddress,
   amount: bigint
 ): Tx => {
-  return api.tx.Balances.transfer_keep_alive({ dest: to, value: amount })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
+  return api.tx.Balances.transfer_keep_alive({ dest: to as any, value: amount })
 }
