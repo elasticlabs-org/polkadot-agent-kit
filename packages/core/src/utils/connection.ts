@@ -1,11 +1,6 @@
-import { constructApiPromise } from "@substrate/asset-transfer-api"
-import type { ApiOptions } from "@polkadot/api/types"
-
-interface ConnectionResult {
-  api: any
-  specName: string
-  safeXcmVersion: number
-}
+import type { ApiOptions} from "@polkadot/api/types"
+import type { ApiInfo} from "@substrate/asset-transfer-api";
+import {constructApiPromise } from "@substrate/asset-transfer-api"
 
 interface ConnectionOptions extends ApiOptions {
   /** Timeout for each connection attempt in milliseconds (default: 10000) */
@@ -26,7 +21,7 @@ interface ConnectionOptions extends ApiOptions {
 export const constructApiPromiseWithTimeout = async (
   wsUrls: string[],
   options: ConnectionOptions = {}
-): Promise<ConnectionResult> => {
+): Promise<ApiInfo> => {
   const { timeout = 10000, maxAttempts = 3, ...apiOptions } = options
 
   if (!wsUrls || wsUrls.length === 0) {
@@ -48,9 +43,6 @@ export const constructApiPromiseWithTimeout = async (
       const errorMessage = error instanceof Error ? error.message : String(error)
       errors.push({ url, error: errorMessage, attempt })
 
-      console.warn(`❌ Failed to connect to ${url} on attempt ${attempt}: ${errorMessage}`)
-
-      // Move to next URL in round-robin fashion
       currentUrlIndex = (currentUrlIndex + 1) % wsUrls.length
     }
   }
@@ -72,22 +64,21 @@ async function connectWithTimeout(
   url: string,
   apiOptions: ApiOptions,
   timeoutMs: number
-): Promise<ConnectionResult> {
+): Promise<ApiInfo> {
   return new Promise((resolve, reject) => {
     // Set up timeout
     const timeoutId = setTimeout(() => {
       reject(new Error(`Connection timeout after ${timeoutMs}ms`))
     }, timeoutMs)
 
-    // Attempt connection
-    constructApiPromise(url, apiOptions as any)
+    constructApiPromise(url, apiOptions)
       .then(result => {
         clearTimeout(timeoutId)
         resolve(result)
       })
       .catch(error => {
         clearTimeout(timeoutId)
-        reject(error)
+        reject(error instanceof Error ? error : new Error(String(error)))
       })
   })
 }

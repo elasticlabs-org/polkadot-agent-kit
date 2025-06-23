@@ -1,6 +1,8 @@
 import type { Api, KnownChainId } from "@polkadot-agent-kit/common"
 import { getAllSupportedChains, getChainById } from "@polkadot-agent-kit/common"
-import { AssetTransferApi, TxResult } from "@substrate/asset-transfer-api"
+import type { TxResult } from "@substrate/asset-transfer-api";
+import { AssetTransferApi } from "@substrate/asset-transfer-api"
+
 import { constructApiPromiseWithTimeout } from "../../utils"
 
 /**
@@ -13,9 +15,9 @@ import { constructApiPromiseWithTimeout } from "../../utils"
  */
 export const xcmTransferNativeAsset = async (
   api: Api<KnownChainId>,
-  to: string, // destination address
-  amount: bigint, // amount to transfer
-  destinationChain: KnownChainId // destination chain (RelayChain or Parachain)
+  to: string,
+  amount: bigint,
+  destinationChain: KnownChainId 
 ): Promise<TxResult<"submittable">> => {
   const sourceChain = getChainById(api.chainId, getAllSupportedChains())
   const destChain = getChainById(destinationChain, getAllSupportedChains())
@@ -40,7 +42,6 @@ export const xcmTransferNativeAsset = async (
     )
     return callInfo
   } catch (e) {
-    console.error(e)
     throw Error(e as string)
   }
 

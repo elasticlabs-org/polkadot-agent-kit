@@ -213,8 +213,8 @@ importers:
         specifier: workspace:*
         version: link:../common
       '@polkadot/api':
-        specifier: ^15.9.2
-        version: 15.10.2
+        specifier: ^16.2.2
+        version: 16.2.2
       '@polkadot/keyring':
         specifier: ^13.5.1
         version: 13.5.2(@polkadot/util-crypto@13.5.1(@polkadot/util@13.5.1))(@polkadot/util@13.5.1)

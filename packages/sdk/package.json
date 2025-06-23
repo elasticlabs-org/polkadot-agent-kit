@@ -48,7 +48,6 @@
     "polkadot-api": "^1.9.13",
     "zod": "^3.24.3",
     "@polkadot/keyring": "^13.5.1",
-    "@polkadot/util-crypto": "^13.5.1",
     "@polkadot/util": "^13.5.1"
   },
   "devDependencies": {

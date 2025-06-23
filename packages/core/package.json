@@ -42,7 +42,7 @@
     "polkadot-api": "^1.9.13",
     "rxjs": "^7.8.2",
     "@substrate/asset-transfer-api": "^0.7.2",
-    "@polkadot/api": "^15.9.2",
+    "@polkadot/api": "^16.2.2",
     "@polkadot/keyring": "^13.5.1"
   },
   "devDependencies": {

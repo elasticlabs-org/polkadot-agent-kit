@@ -1,5 +1,6 @@
 import type { Api, KnownChainId } from "@polkadot-agent-kit/common"
 import type { MultiAddress } from "@polkadot-api/descriptors"
+
 import type { Tx } from "../../types"
 
 /**
@@ -14,6 +15,5 @@ export const transferNativeCall = (
   to: MultiAddress,
   amount: bigint
 ): Tx => {
-  // @ts-expect-error
   return api.tx.Balances.transfer_keep_alive({ dest: to, value: amount })
 }

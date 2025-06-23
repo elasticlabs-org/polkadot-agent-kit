@@ -1,6 +1,7 @@
 import type { Api, KnownChainId } from "@polkadot-agent-kit/common"
 import { convertAddress, toMultiAddress } from "@polkadot-agent-kit/core"
 import type { MultiAddress } from "@polkadot-api/descriptors"
+
 import type { ToolError, ToolResponse } from "../types"
 import { ChainNotAvailableError, ErrorCodes, InvalidAddressError, isAnyToolError } from "../types"
 

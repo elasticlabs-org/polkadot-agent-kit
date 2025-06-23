@@ -1,9 +1,9 @@
+import type { KeyringPair } from "@polkadot/keyring/types"
 import type { PolkadotApi } from "@polkadot-agent-kit/core"
 import type { PolkadotSigner } from "polkadot-api"
 
 import { checkBalanceTool, transferNativeTool, xcmTransferNativeTool } from "../langchain"
 import type { BalanceTool, TransferTool, XcmTransferNativeAssetTool } from "../types"
-import { KeyringPair } from "@polkadot/keyring/types"
 /**
  * Interface for Polkadot API implementations
  * Defines the interface that all Polkadot chain types must follow
