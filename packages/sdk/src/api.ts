@@ -2,15 +2,20 @@ import type { AgentConfig, Api, KnownChainId } from "@polkadot-agent-kit/common"
 import { getAllSupportedChains, getChainById } from "@polkadot-agent-kit/common"
 import type { IPolkadotApi } from "@polkadot-agent-kit/core"
 import { PolkadotApi } from "@polkadot-agent-kit/core"
-import type { BalanceTool, IPolkadotAgentApi, TransferTool, XcmTransferNativeAssetTool } from "@polkadot-agent-kit/llm"
+import type {
+  BalanceTool,
+  IPolkadotAgentApi,
+  TransferTool,
+  XcmTransferNativeAssetTool
+} from "@polkadot-agent-kit/llm"
 import { PolkadotAgentApi } from "@polkadot-agent-kit/llm"
 import { ed25519CreateDerive, sr25519CreateDerive } from "@polkadot-labs/hdkd"
 import * as ss58 from "@subsquid/ss58"
 import { getPolkadotSigner, type PolkadotSigner } from "polkadot-api/signer"
 import { KeyringPair } from "@polkadot/keyring/types"
 import { Keyring } from "@polkadot/keyring"
-import { cryptoWaitReady } from '@polkadot/util-crypto';
-import { hexToU8a } from '@polkadot/util';
+import { cryptoWaitReady } from "@polkadot/util-crypto"
+import { hexToU8a } from "@polkadot/util"
 
 export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
   private polkadotApi: PolkadotApi
@@ -168,10 +173,9 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
   }
 
   private getKeyringPair(): KeyringPair {
-    const keyring = new Keyring({ type: 'sr25519' });
+    const keyring = new Keyring({ type: "sr25519" })
 
-    const keypair = keyring.addFromSeed(hexToU8a(this.wallet));
-    return keypair;
+    const keypair = keyring.addFromSeed(hexToU8a(this.wallet))
+    return keypair
   }
-  
 }

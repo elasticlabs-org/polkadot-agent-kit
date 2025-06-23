@@ -1,69 +1,22 @@
 import type { PolkadotSigner, TxEvent } from "polkadot-api"
-
-import type { Tx, TxResult } from "../types"
 import { KeyringPair } from "@polkadot/keyring/types"
-import { TxResult as TxResultXcm } from '@substrate/asset-transfer-api'
-
-function hasTypeProperty(val: unknown): val is { type: string } {
-  return (
-    typeof val === "object" &&
-    val !== null &&
-    "type" in val &&
-    typeof (val as { type: unknown }).type === "string"
-  )
-}
-
-
-interface SubmitAndWatchOptionsPolkadot {
-  transaction: Tx
-  signer: PolkadotSigner
-}
-
-interface SubmitAndWatchOptionsKeypair {
-  transaction: TxResultXcm<'submittable'>
-  signer: KeyringPair
-}
-
-type SubmitAndWatchOptions = SubmitAndWatchOptionsPolkadot | SubmitAndWatchOptionsKeypair
-
-
-function isTxWithPolkadotSigner(
-  options: SubmitAndWatchOptions
-): options is SubmitAndWatchOptionsPolkadot {
-  return (
-    !!options.transaction &&
-    typeof (options.transaction as any).signSubmitAndWatch === 'function' &&
-    !!options.signer &&
-    options.signer.publicKey instanceof Uint8Array &&
-    typeof (options.signer as any).signTx === 'function' &&
-    typeof (options.signer as any).signBytes === 'function'
-  );
-}
-
-function isTxXcmWithKeypair(
-  options: SubmitAndWatchOptions
-): options is SubmitAndWatchOptionsKeypair {
-  return (
-    !!options.transaction &&
-    typeof (options.transaction as any).tx?.signAndSend === 'function' &&
-    !!options.signer &&
-    typeof (options.signer as any).address === 'string' &&
-    typeof (options.signer as any).sign === 'function'
-  );
-}
-
+import { TxResult as TxResultXcm } from "@substrate/asset-transfer-api"
+import type { Tx, TxResult } from "../types"
+import {
+  SubmitAndWatchOptions,
+  hasTypeProperty,
+  isTxWithPolkadotSigner,
+  isTxXcmWithKeypair
+} from "../types/transaction"
 
 async function submitAndWatchTx(options: SubmitAndWatchOptions): Promise<TxResult> {
   return new Promise((resolve, reject) => {
     try {
-
       // Handle Tx with PolkadotSigner using signSubmitAndWatch
       if (isTxWithPolkadotSigner(options)) {
         try {
-
           options.transaction.signSubmitAndWatch(options.signer).subscribe({
             next: (event: TxEvent) => {
-              
               if (event.type === "finalized") {
                 let finalResult: TxResult
 
@@ -87,7 +40,6 @@ async function submitAndWatchTx(options: SubmitAndWatchOptions): Promise<TxResul
               }
             },
             error: (error: Error) => {
-              
               resolve({
                 success: false,
                 error: `Transaction failed: ${error.message}`
@@ -96,7 +48,6 @@ async function submitAndWatchTx(options: SubmitAndWatchOptions): Promise<TxResul
             complete: () => {}
           })
         } catch (error) {
-      
           resolve({
             success: false,
             error: `Transaction creation failed: ${error instanceof Error ? error.message : String(error)}`
@@ -106,19 +57,20 @@ async function submitAndWatchTx(options: SubmitAndWatchOptions): Promise<TxResul
       // Handle Tx with KeyringPair using signAndSend
       if (isTxXcmWithKeypair(options)) {
         try {
-          options.transaction.tx.signAndSend(options.signer)
-          .then((result: any) => {
-            resolve({
-              success: true,
-              transactionHash: result.toString()
+          options.transaction.tx
+            .signAndSend(options.signer)
+            .then((result: any) => {
+              resolve({
+                success: true,
+                transactionHash: result.toString()
+              })
             })
-          })
-          .catch((error: any) => {
-            resolve({
-              success: false,
-              error: `Transaction failed: ${error.message}`
+            .catch((error: any) => {
+              resolve({
+                success: false,
+                error: `Transaction failed: ${error.message}`
+              })
             })
-          })
         } catch (error) {
           resolve({
             success: false,
@@ -146,14 +98,8 @@ export async function submitTxWithPolkadotSigner(
  * Function to submit a transaction with a KeyringPair
  */
 export async function submitXcmTxWithKeypair(
-  transaction: TxResultXcm<'submittable'>,
+  transaction: TxResultXcm<"submittable">,
   signer: KeyringPair
 ): Promise<TxResult> {
   return submitAndWatchTx({ transaction, signer })
 }
-
-
-
-
-
-

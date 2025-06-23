@@ -4,7 +4,6 @@ import { z } from "zod"
 import type { ToolConfig } from "../types"
 import { ToolNames } from "./common"
 
-
 export const xcmTransferNativeAssetSchema = z.object({
   amount: z.string().describe("The amount of tokens to transfer"),
   to: z.string().describe("The address to transfer the tokens to"),

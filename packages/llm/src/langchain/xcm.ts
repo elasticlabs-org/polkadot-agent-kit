@@ -18,38 +18,49 @@ import { KeyringPair } from "@polkadot/keyring/types"
 export const xcmTransferNativeTool = (
   apis: Map<KnownChainId, Api<KnownChainId>>,
   signer: KeyringPair
-) => {  
-  return tool(async ({ amount, to, sourceChain, destChain }: z.infer<typeof xcmTransferNativeAssetSchema>) => {
-    return executeTool<XcmTransferNativeAssetToolResult>(
-      ToolNames.XCM_TRANSFER_NATIVE_ASSET,
-      async () => {
-        const api = getApiForChain(apis, sourceChain)
-        const formattedAddress = validateAndFormatAddress(to, sourceChain as KnownChainId)
-        const parsedAmount = parseUnits(amount, getDecimalsByChainId(sourceChain))
-        const xcmSubmittable = await xcmTransferNativeAsset(api, formattedAddress, parsedAmount, destChain as KnownChainId)
-        const tx = await submitXcmTxWithKeypair(xcmSubmittable, signer)
-        if (tx.success) {
-          return {
-            success: tx.success,
-            transactionHash: tx.transactionHash
+) => {
+  return tool(
+    async ({
+      amount,
+      to,
+      sourceChain,
+      destChain
+    }: z.infer<typeof xcmTransferNativeAssetSchema>) => {
+      return executeTool<XcmTransferNativeAssetToolResult>(
+        ToolNames.XCM_TRANSFER_NATIVE_ASSET,
+        async () => {
+          const api = getApiForChain(apis, sourceChain)
+          const formattedAddress = validateAndFormatAddress(to, sourceChain as KnownChainId)
+          const parsedAmount = parseUnits(amount, getDecimalsByChainId(sourceChain))
+          const xcmSubmittable = await xcmTransferNativeAsset(
+            api,
+            formattedAddress,
+            parsedAmount,
+            destChain as KnownChainId
+          )
+          const tx = await submitXcmTxWithKeypair(xcmSubmittable, signer)
+          if (tx.success) {
+            return {
+              success: tx.success,
+              transactionHash: tx.transactionHash
+            }
+          } else {
+            return {
+              success: false,
+              transactionHash: tx.transactionHash,
+              error: tx.error
+            }
           }
-        } else {
-          return {
-            success: false,
-            transactionHash: tx.transactionHash,
-            error: tx.error
+        },
+        result => {
+          if (result.success) {
+            return `Tx Hash Successful: ${result.transactionHash}`
+          } else {
+            return `Tx Hash Failed: ${result.transactionHash} with error: ${result.error}`
           }
         }
-      },
-      result => {
-        if (result.success) {
-          return `Tx Hash Successful: ${result.transactionHash}`
-        } else {
-          return `Tx Hash Failed: ${result.transactionHash} with error: ${result.error}`
-        }
-      }
-    )
-  }, toolConfigXcmTransferNativeAsset)
+      )
+    },
+    toolConfigXcmTransferNativeAsset
+  )
 }
-
-

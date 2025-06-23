@@ -1,1 +1,1 @@
-export * from "./nativeAsset";
+export * from "./nativeAsset"

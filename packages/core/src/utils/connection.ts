@@ -1,5 +1,5 @@
-import { constructApiPromise } from '@substrate/asset-transfer-api'
-import type { ApiOptions } from '@polkadot/api/types'
+import { constructApiPromise } from "@substrate/asset-transfer-api"
+import type { ApiOptions } from "@polkadot/api/types"
 
 interface ConnectionResult {
   api: any
@@ -17,7 +17,7 @@ interface ConnectionOptions extends ApiOptions {
 /**
  * Wraps constructApiPromise with timeout and round-robin WebSocket URL selection.
  * If a connection times out or fails, it automatically tries the next URL in the array.
- * 
+ *
  * @param wsUrls - Array of WebSocket URLs to try
  * @param options - Connection options including timeout settings
  * @returns Promise that resolves to the API connection result
@@ -30,7 +30,7 @@ export const constructApiPromiseWithTimeout = async (
   const { timeout = 10000, maxAttempts = 3, ...apiOptions } = options
 
   if (!wsUrls || wsUrls.length === 0) {
-    throw new Error('No WebSocket URLs provided')
+    throw new Error("No WebSocket URLs provided")
   }
 
   let currentUrlIndex = 0
@@ -42,30 +42,26 @@ export const constructApiPromiseWithTimeout = async (
     attempt++
 
     try {
-      
       const result = await connectWithTimeout(url, apiOptions, timeout)
       return result
-      
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error)
       errors.push({ url, error: errorMessage, attempt })
-      
+
       console.warn(`❌ Failed to connect to ${url} on attempt ${attempt}: ${errorMessage}`)
-      
+
       // Move to next URL in round-robin fashion
       currentUrlIndex = (currentUrlIndex + 1) % wsUrls.length
     }
   }
 
   // All attempts failed
-  const errorSummary = errors
-    .map(e => `  Attempt ${e.attempt}: ${e.url} - ${e.error}`)
-    .join('\n')
-  
+  const errorSummary = errors.map(e => `  Attempt ${e.attempt}: ${e.url} - ${e.error}`).join("\n")
+
   throw new Error(
     `Failed to connect to any WebSocket URL after ${maxAttempts} attempts.\n` +
-    `URLs tried: ${wsUrls.join(', ')}\n` +
-    `Errors:\n${errorSummary}`
+      `URLs tried: ${wsUrls.join(", ")}\n` +
+      `Errors:\n${errorSummary}`
   )
 }
 
