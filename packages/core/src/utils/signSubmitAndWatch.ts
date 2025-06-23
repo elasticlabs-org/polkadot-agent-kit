@@ -3,12 +3,8 @@ import type { TxResult as TxResultXcm } from "@substrate/asset-transfer-api"
 import type { PolkadotSigner, TxEvent } from "polkadot-api"
 
 import type { Tx, TxResult } from "../types"
-import type {
-  SubmitAndWatchOptions} from "../types/transaction";
-import {
-  hasTypeProperty,
-  isTxWithPolkadotSigner,
-  isTxXcmWithKeypair} from "../types/transaction"
+import type { SubmitAndWatchOptions } from "../types/transaction"
+import { hasTypeProperty, isTxWithPolkadotSigner, isTxXcmWithKeypair } from "../types/transaction"
 
 async function submitAndWatchTx(options: SubmitAndWatchOptions): Promise<TxResult> {
   return new Promise((resolve, reject) => {
@@ -60,7 +56,7 @@ async function submitAndWatchTx(options: SubmitAndWatchOptions): Promise<TxResul
         try {
           options.transaction.tx
             .signAndSend(options.signer)
-            .then((result) => {
+            .then(result => {
               resolve({
                 success: true,
                 transactionHash: result.toString()

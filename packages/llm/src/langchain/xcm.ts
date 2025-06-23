@@ -5,7 +5,7 @@ import { getDecimalsByChainId, parseUnits } from "@polkadot-agent-kit/common"
 import { submitXcmTxWithKeypair, xcmTransferNativeAsset } from "@polkadot-agent-kit/core"
 import type { z } from "zod"
 
-import type { xcmTransferNativeAssetSchema,XcmTransferNativeAssetToolResult } from "../types"
+import type { xcmTransferNativeAssetSchema, XcmTransferNativeAssetToolResult } from "../types"
 import { ToolNames } from "../types/common"
 import { toolConfigXcmTransferNativeAsset } from "../types/xcm"
 import { executeTool, getApiForChain, validateAndFormatAddress } from "../utils"

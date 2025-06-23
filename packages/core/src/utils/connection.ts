@@ -1,6 +1,6 @@
-import type { ApiOptions} from "@polkadot/api/types"
-import type { ApiInfo} from "@substrate/asset-transfer-api";
-import {constructApiPromise } from "@substrate/asset-transfer-api"
+import type { ApiOptions } from "@polkadot/api/types"
+import type { ApiInfo } from "@substrate/asset-transfer-api"
+import { constructApiPromise } from "@substrate/asset-transfer-api"
 
 interface ConnectionOptions extends ApiOptions {
   /** Timeout for each connection attempt in milliseconds (default: 10000) */
