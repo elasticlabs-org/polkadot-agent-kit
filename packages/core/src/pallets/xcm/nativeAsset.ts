@@ -19,16 +19,9 @@ export const xcmTransferNativeAsset = async (
 ): Promise<TxResult<'submittable'>> => {
     const sourceChain = getChainById(api.chainId, getAllSupportedChains())
     const destChain = getChainById(destinationChain, getAllSupportedChains())
-    console.log("sourceChain", sourceChain);
-    console.log("destChain", destChain);
     const { api: xcmApi, specName, safeXcmVersion } = await constructApiPromiseWithTimeout(sourceChain.wsUrls);
     
     const assetApi = new AssetTransferApi(xcmApi, specName, safeXcmVersion);
-    console.log("to", to);
-    console.log("amount", amount);
-    console.log("symbol", sourceChain.symbol);
-    console.log("chainId", destChain.chainId);
-    let callInfo2: TxResult<'call'>;
     let callInfo: TxResult<'submittable'>;
     try {
         callInfo = await assetApi.createTransferTransaction(
@@ -41,19 +34,7 @@ export const xcmTransferNativeAsset = async (
                 xcmVersion: safeXcmVersion,
             },
         );
-        console.log("callInfo", callInfo);
-        callInfo2 = await assetApi.createTransferTransaction(
-            destChain.chainId?.toString() || "",
-            to,
-            [sourceChain.symbol],
-            [amount.toString()],
-            {
-                format: 'call',
-                xcmVersion: safeXcmVersion,
-            },
-        );
-        const decoded = assetApi.decodeExtrinsic(callInfo2.tx, 'call');
-        console.log("decoded", decoded);
+    return callInfo;
     } catch (e) {
         console.error(e);
         throw Error(e as string);

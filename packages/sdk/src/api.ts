@@ -98,11 +98,9 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
     return this.agentApi.transferNativeTool(this.getSigner())
   }
 
-  // xcmTransferNativeTool(): XcmTransferNativeAssetTool {
-  //   console.log("getKeyringPair", this.getKeyringPair());
-  //   console.log("address", this.getKeyringPair().address);
-  //   return this.agentApi.xcmTransferNativeTool(this.getKeyringPair())
-  // }
+  xcmTransferNativeTool(): XcmTransferNativeAssetTool {
+    return this.agentApi.xcmTransferNativeTool(this.getKeyringPair())
+  }
   /**
    * Get Address
    *
@@ -175,25 +173,5 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
     const keypair = keyring.addFromSeed(hexToU8a(this.wallet));
     return keypair;
   }
-  /**
-   * Normalize a private key string to Uint8Array format
-   * Handles hex strings with or without 0x prefix
-   *
-   * @param key - Private key as string
-   * @returns Uint8Array representation of the key
-   * @internal
-   */
-  private normalizePrivateKey(key: string): Uint8Array {
-    if (key.startsWith("0x")) {
-      return new Uint8Array(
-        key
-          .substring(2)
-          .match(/.{1,2}/g)
-          ?.map(byte => parseInt(byte, 16)) || []
-      )
-    } else {
-      return new Uint8Array(key.match(/.{1,2}/g)?.map(byte => parseInt(byte, 16)) || [])
-    }
-  }
-
+  
 }

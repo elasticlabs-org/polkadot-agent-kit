@@ -1,6 +1,6 @@
 import type { Api, KnownChainId } from "@polkadot-agent-kit/common"
-import { convertAddress } from "@polkadot-agent-kit/core"
-
+import { convertAddress, toMultiAddress } from "@polkadot-agent-kit/core"
+import type { MultiAddress } from "@polkadot-api/descriptors"
 import type { ToolError, ToolResponse } from "../types"
 import { ChainNotAvailableError, ErrorCodes, InvalidAddressError, isAnyToolError } from "../types"
 
@@ -15,8 +15,6 @@ export const getApiForChain = (
   apis: Map<KnownChainId, Api<KnownChainId>>,
   chain: string
 ): Api<KnownChainId> => {
-  console.log("chain", chain);
-  console.log("apis", apis);
 
   const api = apis.get(chain as KnownChainId)
   if (!api) {
@@ -32,6 +30,14 @@ export const validateAndFormatAddress = (address: string, chain: KnownChainId): 
     throw new InvalidAddressError(address)
   }
   return formattedAddress
+}
+
+export const validateAndFormatMultiAddress = (
+  address: string,
+  chain: KnownChainId
+): MultiAddress => {
+  const formattedAddress = validateAndFormatAddress(address, chain)
+  return toMultiAddress(formattedAddress)
 }
 
 /**

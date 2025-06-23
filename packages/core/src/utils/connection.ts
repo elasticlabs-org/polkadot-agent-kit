@@ -42,11 +42,8 @@ export const constructApiPromiseWithTimeout = async (
     attempt++
 
     try {
-      console.log(`🔄 Connection attempt ${attempt}/${maxAttempts}: Trying ${url} (timeout: ${timeout}ms)`)
       
       const result = await connectWithTimeout(url, apiOptions, timeout)
-      
-      console.log(`✅ Successfully connected to ${url} on attempt ${attempt}`)
       return result
       
     } catch (error) {

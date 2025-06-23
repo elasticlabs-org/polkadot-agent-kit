@@ -26,11 +26,8 @@ export const xcmTransferNativeTool = (
         const api = getApiForChain(apis, sourceChain)
         const formattedAddress = validateAndFormatAddress(to, sourceChain as KnownChainId)
         const parsedAmount = parseUnits(amount, getDecimalsByChainId(sourceChain))
-        console.log("Go to here");
         const xcmSubmittable = await xcmTransferNativeAsset(api, formattedAddress, parsedAmount, destChain as KnownChainId)
-        console.log("xcmSubmittable", xcmSubmittable);
         const tx = await submitXcmTxWithKeypair(xcmSubmittable, signer)
-        console.log("tx", tx);
         if (tx.success) {
           return {
             success: tx.success,

@@ -2,6 +2,7 @@ import type { KnownChainId } from "@polkadot-agent-kit/common"
 import { getAllSupportedChains, getChainById } from "@polkadot-agent-kit/common"
 import * as ss58 from "@subsquid/ss58"
 import { AccountId } from "polkadot-api"
+import { MultiAddress } from "@polkadot-api/descriptors"
 
 /**
  * Gets the SS58 prefix for a chain
@@ -47,4 +48,8 @@ export function convertAddress(address: string, targetChainId: KnownChainId | nu
       `Failed to convert address ${address} to format ${targetChainId}: ${error instanceof Error ? error.message : String(error)}`
     )
   }
+}
+
+export function toMultiAddress(address: string): MultiAddress {
+  return MultiAddress.Id(address)
 }

@@ -57,13 +57,11 @@ export function setupHandlers(
 
     try {
       const llmWithTools = llm.bindTools(Object.values(toolsByName));
-      console.log("llmWithTools", llmWithTools);
       const messages = [
         new SystemMessage({ content: SYSTEM_PROMPT }),
         new HumanMessage({ content: message }),
       ];
       const aiMessage = await llmWithTools.invoke(messages);
-      console.log("aiMessage", aiMessage);
       if (aiMessage.tool_calls && aiMessage.tool_calls.length > 0) {
         for (const toolCall of aiMessage.tool_calls) {
           const selectedTool = toolsByName[toCamelCase(toolCall.name)];
@@ -74,7 +72,6 @@ export function setupHandlers(
               return;
             }
             const response = JSON.parse(toolMessage.content || "{}");
-            console.log(response);
             if (response.error) {
               await ctx.reply(`Error: ${response.message}`);
             } else {
