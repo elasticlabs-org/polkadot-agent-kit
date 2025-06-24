@@ -8,7 +8,9 @@ export enum ToolNames {
   /** Tool for checking native token balance */
   CHECK_BALANCE = "check_balance",
   /** Tool for transferring native tokens */
-  TRANSFER_NATIVE = "transfer_native"
+  TRANSFER_NATIVE = "transfer_native",
+  /** Tool for transferring native tokens to a destination chain via xcm */
+  XCM_TRANSFER_NATIVE_ASSET = "xcm_transfer_native_asset"
 }
 /**
  * Interface for tool configuration.

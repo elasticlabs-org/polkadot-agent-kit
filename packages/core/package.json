@@ -35,9 +35,15 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@paraspell/sdk": "^10.5.2",
     "@polkadot-agent-kit/common": "workspace:*",
+    "@polkadot/util-crypto": "^13.5.1",
     "@subsquid/ss58": "^2.0.2",
-    "polkadot-api": "^1.9.13"
+    "polkadot-api": "^1.9.13",
+    "rxjs": "^7.8.2",
+    "@substrate/asset-transfer-api": "^0.7.2",
+    "@polkadot/api": "^16.2.2",
+    "@polkadot/keyring": "^13.5.1"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.26.0",

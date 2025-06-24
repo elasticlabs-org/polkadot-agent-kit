@@ -35,17 +35,20 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@polkadot/api": "^15.8.1",
+    "@langchain/core": "^0.3.40",
+    "@noble/curves": "^1.6.0",
+    "@paraspell/sdk": "^10.5.2",
+    "@polkadot-agent-kit/common": "workspace:*",
     "@polkadot-agent-kit/core": "workspace:*",
     "@polkadot-agent-kit/llm": "workspace:*",
-    "@polkadot-agent-kit/common": "workspace:*",
-    "zod": "^3.24.3",
-    "@langchain/core": "^0.3.40",
-    "polkadot-api": "^1.9.13",
-    "@noble/curves": "^1.6.0",
     "@polkadot-labs/hdkd": "^0.0.13",
     "@polkadot-labs/hdkd-helpers": "^0.0.13",
-    "@subsquid/ss58": "^2.0.2"
+    "@polkadot/api": "^15.8.1",
+    "@subsquid/ss58": "^2.0.2",
+    "polkadot-api": "^1.9.13",
+    "zod": "^3.24.3",
+    "@polkadot/keyring": "^13.5.1",
+    "@polkadot/util": "^13.5.1"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.26.0",

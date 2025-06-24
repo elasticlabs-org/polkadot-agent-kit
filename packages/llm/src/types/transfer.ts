@@ -35,24 +35,25 @@ export const transferToolSchema = z.object({
 export type TransferTool = DynamicStructuredTool<typeof transferToolSchema>
 
 /**
- * Result returned by token transfer tools.
- *
- * @example
- * ```typescript
- * const result: TransferResult = {
- *   amount: "1.5",
- *   address: "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
- *   chain: "polkadot"
- * };
- * ```
+ * The result of a transfer tool operation.
  */
 export interface TransferToolResult {
-  /** The amount of tokens transferred */
-  amount: string
-  /** The recipient address */
-  address: string
-  /** The chain where the transfer occurred */
-  chain: string
+  /**
+   * Indicates whether the transfer was successful.
+   */
+  success: boolean
+
+  /**
+   * The transaction hash if the transfer was submitted successfully.
+   * This may be undefined if the transfer failed.
+   */
+  transactionHash?: string
+
+  /**
+   * An error message if the transfer failed.
+   * This will be undefined if the transfer was successful.
+   */
+  error?: string
 }
 
 /**
