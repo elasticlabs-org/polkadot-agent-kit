@@ -50,8 +50,7 @@
     "polkadot-api": "^1.9.13",
     "zod": "^3.24.3",
     "@polkadot/keyring": "^13.5.1",
-    "@polkadot/util": "^13.5.1",
-    "@langchain/ollama": "^0.2.2"
+    "@polkadot/util": "^13.5.1"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.26.0",
@@ -66,6 +65,9 @@
     "dotenv": "^16.4.7",
     "prettier": "^3.5.3",
     "rollup": "^4.37.0",
-    "rollup-plugin-dts": "^6.2.1"
+    "rollup-plugin-dts": "^6.2.1",
+    "@langchain/ollama": "^0.2.2",
+    "langchain": "^0.1.21",
+    "@agentic/langchain": "^7.6.9"
   }
 }
