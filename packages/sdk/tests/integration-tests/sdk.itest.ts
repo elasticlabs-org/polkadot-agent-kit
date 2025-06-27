@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
-import { PolkadotAgentKit } from '../src/api';
+import { PolkadotAgentKit } from '../../src/api';
 
 
 vi.mock('@langchain/ollama', () => ({
@@ -95,3 +95,5 @@ describe('PolkadotAgentKit E2E', () => {
     });
   });
 });
+
+
