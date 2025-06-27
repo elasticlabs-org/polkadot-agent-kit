@@ -32,7 +32,8 @@
     "format:write": "prettier --write src",
     "test": "vitest run",
     "test:cov": "vitest run --coverage",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:e2e": "vitest run --config ./vitest.config.e2e.ts --sequence.concurrent"
   },
   "dependencies": {
     "@langchain/core": "^0.3.40",
@@ -48,7 +49,8 @@
     "polkadot-api": "^1.9.13",
     "zod": "^3.24.3",
     "@polkadot/keyring": "^13.5.1",
-    "@polkadot/util": "^13.5.1"
+    "@polkadot/util": "^13.5.1",
+    "@langchain/ollama": "^0.2.2"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.26.0",
