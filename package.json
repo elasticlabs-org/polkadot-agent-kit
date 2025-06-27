@@ -58,7 +58,6 @@
     "version-packages": "changeset version",
     "publish-packages": "turbo run build && changeset publish",
     "papi": "papi generate"
-    
   },
   "packageManager": "pnpm@10.6.5",
   "dependencies": {
