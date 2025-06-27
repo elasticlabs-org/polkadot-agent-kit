@@ -236,4 +236,68 @@ describe("PolkadotApi", () => {
       expect(dotTool).not.toBe(westTool)
     })
   })
+
+  describe("transferNativeTool", () => {
+    const createMockTransferTool = (name: string, description: string) => ({
+      name,
+      description,
+      execute: vi.fn(),
+      invoke: vi.fn(),
+      call: vi.fn(),
+      metadata: {},
+      tags: [],
+      callbacks: undefined,
+      verbose: false
+    })
+
+    let mockTransferTool: any
+    let mockAgentPolkadotApi: PolkadotAgentApi
+    const mockSigner = { sign: vi.fn() } as any
+
+    beforeEach(() => {
+      mockTransferTool = createMockTransferTool("transferNative", "Transfer native tokens")
+      mockAgentPolkadotApi = {
+        getNativeBalanceTool: vi.fn(),
+        transferNativeTool: vi.fn().mockReturnValue(mockTransferTool)
+      } as unknown as PolkadotAgentApi
+    })
+
+    it("should return the transfer tool and call it with correct params", async () => {
+      const tool = mockAgentPolkadotApi.transferNativeTool(mockSigner)
+      expect(tool).toBeDefined()
+      expect(tool).toBe(mockTransferTool)
+    })
+  })
+
+  describe("xcmTransferNativeTool", () => {
+    const createMockXcmTool = (name: string, description: string) => ({
+      name,
+      description,
+      execute: vi.fn(),
+      invoke: vi.fn(),
+      call: vi.fn(),
+      metadata: {},
+      tags: [],
+      callbacks: undefined,
+      verbose: false
+    })
+
+    let mockXcmTool: any
+    let mockAgentPolkadotApi: PolkadotAgentApi
+    const mockKeyringPair = { sign: vi.fn() } as any
+
+    beforeEach(() => {
+      mockXcmTool = createMockXcmTool("xcmTransferNative", "XCM transfer native tokens")
+      mockAgentPolkadotApi = {
+        getNativeBalanceTool: vi.fn(),
+        xcmTransferNativeTool: vi.fn().mockReturnValue(mockXcmTool)
+      } as unknown as PolkadotAgentApi
+    })
+
+    it("should return the XCM transfer tool and call it with correct params", async () => {
+      const tool = mockAgentPolkadotApi.xcmTransferNativeTool(mockKeyringPair)
+      expect(tool).toBeDefined()
+      expect(tool).toBe(mockXcmTool)
+    })
+  })
 })

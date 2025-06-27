@@ -32,7 +32,9 @@
     "format:write": "prettier --write src",
     "test": "vitest run",
     "test:cov": "vitest run --coverage",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:e2e": "vitest run --config ./vitest.config.e2e.ts --sequence.concurrent",
+    "test:integration": "vitest run --config ./vitest.config.integration.ts --sequence.concurrent"
   },
   "dependencies": {
     "@langchain/core": "^0.3.40",
@@ -63,6 +65,9 @@
     "dotenv": "^16.4.7",
     "prettier": "^3.5.3",
     "rollup": "^4.37.0",
-    "rollup-plugin-dts": "^6.2.1"
+    "rollup-plugin-dts": "^6.2.1",
+    "@langchain/ollama": "^0.2.2",
+    "langchain": "^0.1.21",
+    "@agentic/langchain": "^7.6.9"
   }
 }
