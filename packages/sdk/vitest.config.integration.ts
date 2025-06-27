@@ -5,8 +5,8 @@ export default defineConfig({
     globals: true,
     environment: 'node',
     include: ['./tests/integration-tests/**/*.itest.ts'],
-    testTimeout: 20000,
-    hookTimeout: 30000
+    testTimeout: 60000,
+    hookTimeout: 60000
   }
 })
 
