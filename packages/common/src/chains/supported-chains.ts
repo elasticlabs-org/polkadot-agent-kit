@@ -4,7 +4,7 @@ export type Assign<T, U> = {
   [K in keyof T]: K extends keyof U ? U[K] : T[K]
 }
 
-const createChain = <const chain extends Chain>(chain: chain) => {
+export const createChain = <const chain extends Chain>(chain: chain) => {
   return chain as Assign<Chain, chain>
 }
 
@@ -50,6 +50,22 @@ export const westendChain = createChain({
   decimals: 12,
   symbol: "WND"
 })
+
+
+export const paseoChain = createChain({
+  id: "paseo",
+  name: "Paseo",
+  specName: "paseo",
+  wsUrls: ["wss://paseo-rpc.polkadot.io"],
+  relay: "paseo",
+  type: "relay",
+  chainId: 0,
+  blockExplorerUrl: "https://paseo.subscan.io",
+  prefix: 42,
+  decimals: 10,
+  symbol: "PAS"
+})
+
 
 export const westendAssetHubChain = createChain({
   id: "west_asset_hub",

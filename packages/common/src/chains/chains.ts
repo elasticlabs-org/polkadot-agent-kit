@@ -3,18 +3,21 @@ import {
   polkadot,
   polkadot_asset_hub,
   west,
-  west_asset_hub
+  west_asset_hub,
+  paseo
 } from "@polkadot-api/descriptors"
 
 import {
   polkadotAssetHubChain,
   polkadotChain,
   westendAssetHubChain,
-  westendChain
+  westendChain,
+  paseoChain
 } from "./supported-chains"
 type DescriptorsRelayType = {
   polkadot: typeof polkadot
   west: typeof west
+  paseo: typeof paseo
 }
 
 type DescriptorsAssetHubType = {
@@ -28,7 +31,8 @@ type DescriptorsParaType = {
 
 const DESCRIPTORS_RELAY: DescriptorsRelayType = {
   polkadot,
-  west
+  west,
+  paseo
 }
 
 const DESCRIPTORS_ASSET_HUB: DescriptorsAssetHubType = {
@@ -81,9 +85,9 @@ export type Chain = {
   chainId: number | null
   type: "system" | "relay" | "para"
   blockExplorerUrl: string | null
-  prefix: number
-  decimals: number
-  symbol: string
+  prefix: number | null
+  decimals: number | null
+  symbol: string | null
 }
 
 export type ChainRelay = Chain & { chainId: null }
@@ -106,7 +110,8 @@ const SUPPORTED_CHAINS: Chain[] = [
   polkadotChain,
   polkadotAssetHubChain,
   westendChain,
-  westendAssetHubChain
+  westendAssetHubChain,
+  paseoChain
 ]
 
 export const getAllSupportedChains = (): Chain[] => {
@@ -119,5 +124,5 @@ export const isSupportedChain = (chainId: unknown): chainId is ChainId => {
 
 export function getDecimalsByChainId(chainId: string): number {
   const chain = getChainById(chainId, getAllSupportedChains())
-  return chain.decimals
+  return chain?.decimals ?? 12
 }

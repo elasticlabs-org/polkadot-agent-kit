@@ -5,6 +5,15 @@ const mockBalanceResult = { balance: '100.00', symbol: 'WND', chain: 'westend' }
 const mockTransferResult = { success: true, transactionHash: '0xMOCKEDTXHASH' };
 const mockXcmResult = { success: true, transactionHash: '0xMOCKEDXCMTXHASH' };
 
+vi.mock('@polkadot-agent-kit/core', () => ({
+  PolkadotApi: vi.fn(() => ({
+    initializeApi: vi.fn().mockResolvedValue(undefined),
+    disconnect: vi.fn().mockResolvedValue(undefined),
+    getApi: vi.fn(),
+    setApi: vi.fn()
+  }))
+}));
+
 vi.mock('../../src/api', () => {
   const mockAgentInstance = {
     initializeApi: vi.fn().mockResolvedValue(undefined),
