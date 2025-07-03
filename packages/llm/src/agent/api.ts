@@ -1,4 +1,3 @@
-import type { KeyringPair } from "@polkadot/keyring/types"
 import type { PolkadotApi } from "@polkadot-agent-kit/core"
 import type { PolkadotSigner } from "polkadot-api"
 

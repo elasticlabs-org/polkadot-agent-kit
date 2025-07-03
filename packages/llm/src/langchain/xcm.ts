@@ -1,25 +1,24 @@
 import { tool } from "@langchain/core/tools"
-import type { KeyringPair } from "@polkadot/keyring/types"
-import type { Api, KnownChainId } from "@polkadot-agent-kit/common"
+import type { KnownChainId } from "@polkadot-agent-kit/common"
 import { getDecimalsByChainId, parseUnits } from "@polkadot-agent-kit/common"
-import { submitTxWithPolkadotSigner, submitXcmTxWithKeypair, xcmTransferNativeAsset } from "@polkadot-agent-kit/core"
+import {
+  submitTxWithPolkadotSigner,
+  xcmTransferNativeAsset
+} from "@polkadot-agent-kit/core"
+import type { PolkadotSigner } from "polkadot-api/signer"
 import type { z } from "zod"
 
 import type { xcmTransferNativeAssetSchema, XcmTransferNativeAssetToolResult } from "../types"
 import { ToolNames } from "../types/common"
 import { toolConfigXcmTransferNativeAsset } from "../types/xcm"
-import { executeTool, getApiForChain, validateAndFormatAddress } from "../utils"
-import { PolkadotSigner } from "polkadot-api/signer"
+import { executeTool, validateAndFormatAddress } from "../utils"
 
 /**
  * Returns a tool that transfers native tokens to a specific address to a destination chain via xcm
  * @param api - The API instance to use for the transfer
  * @returns A dynamic structured tool that transfers native tokens to the specified address to a destination chain via xcm
  */
-export const xcmTransferNativeTool = (
-  signer: PolkadotSigner,
-  sender: string,
-) => {
+export const xcmTransferNativeTool = (signer: PolkadotSigner, sender: string) => {
   return tool(
     async ({
       amount,
