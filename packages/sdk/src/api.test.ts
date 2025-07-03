@@ -284,7 +284,7 @@ describe("PolkadotApi", () => {
 
     let mockXcmTool: any
     let mockAgentPolkadotApi: PolkadotAgentApi
-    const mockKeyringPair = { sign: vi.fn() } as any
+    const mockSigner = { sign: vi.fn() } as any
 
     beforeEach(() => {
       mockXcmTool = createMockXcmTool("xcmTransferNative", "XCM transfer native tokens")
@@ -295,7 +295,10 @@ describe("PolkadotApi", () => {
     })
 
     it("should return the XCM transfer tool and call it with correct params", async () => {
-      const tool = mockAgentPolkadotApi.xcmTransferNativeTool(mockKeyringPair)
+      const tool = mockAgentPolkadotApi.xcmTransferNativeTool(
+        mockSigner,
+        "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"
+      )
       expect(tool).toBeDefined()
       expect(tool).toBe(mockXcmTool)
     })

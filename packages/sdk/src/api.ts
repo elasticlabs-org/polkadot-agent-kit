@@ -103,7 +103,7 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
   }
 
   xcmTransferNativeTool(): XcmTransferNativeAssetTool {
-    return this.agentApi.xcmTransferNativeTool(this.getKeyringPair())
+    return this.agentApi.xcmTransferNativeTool(this.getSigner(), this.getCurrentAddress())
   }
   /**
    * Get Address

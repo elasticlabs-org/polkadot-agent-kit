@@ -1,4 +1,3 @@
-import type { KeyringPair } from "@polkadot/keyring/types"
 import type { PolkadotApi } from "@polkadot-agent-kit/core"
 import type { PolkadotSigner } from "polkadot-api"
 
@@ -26,7 +25,7 @@ export interface IPolkadotAgentApi {
   //  * Returns a tool that transfers native tokens to a specific address via xcm
   //  * @returns A dynamic structured tool that transfers native tokens to the specified address via xcm
   //  */
-  xcmTransferNativeTool(signer: KeyringPair): XcmTransferNativeAssetTool
+  xcmTransferNativeTool(signer: PolkadotSigner, sender: string): XcmTransferNativeAssetTool
 }
 
 /**
@@ -51,7 +50,7 @@ export class PolkadotAgentApi implements IPolkadotAgentApi {
     return transferNativeTool(this.api.getAllApis(), signer) as TransferTool
   }
 
-  xcmTransferNativeTool(signer: KeyringPair): XcmTransferNativeAssetTool {
-    return xcmTransferNativeTool(this.api.getAllApis(), signer) as XcmTransferNativeAssetTool
+  xcmTransferNativeTool(signer: PolkadotSigner, sender: string): XcmTransferNativeAssetTool {
+    return xcmTransferNativeTool(signer, sender) as XcmTransferNativeAssetTool
   }
 }
