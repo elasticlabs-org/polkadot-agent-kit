@@ -1,8 +1,7 @@
-import type { TDestination, TNodeDotKsmWithRelayChains, TPapiTransaction } from "@paraspell/sdk";
+import type { TDestination, TNodeDotKsmWithRelayChains, TPapiTransaction } from "@paraspell/sdk"
 import { Builder } from "@paraspell/sdk"
 import type { KnownChainId } from "@polkadot-agent-kit/common"
 import { getAllSupportedChains, getChainById } from "@polkadot-agent-kit/common"
-
 
 /**
  * Builds an XCM transaction to transfer a native asset from one chain to another.
