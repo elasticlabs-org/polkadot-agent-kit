@@ -89,7 +89,7 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
    * });
    * ```
    *
-   * @throws {Error} If the transfer fails or parameters are invalid
+   * @throws \{Error\} If the transfer fails or parameters are invalid
    */
   transferNativeTool(): TransferTool {
     return this.agentApi.transferNativeTool(this.getSigner())
@@ -107,20 +107,20 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
    * const xcmTransferTool = agent.xcmTransferNativeTool();
    *
    * // Tool can be used with LangChain for cross-chain transfers
-   * const result = await xcmTransferTool.call({
+   * const result = await xcmTransferTool.call(\{
    *   amount: "1",
    *   to: "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
-   *   sourceChain: "Polkadot",
-   *   destChain: "Polkadot Asset Hub"
-   * });
+   *   sourceChain: "polkadot",
+   *   destChain: "polkadot_asset_hub"
+   * \});
    * ```
    *
-   * @throws {Error} If the XCM transfer fails or parameters are invalid
+   * @throws \{Error\} If the XCM transfer fails or parameters are invalid
    */
-
   xcmTransferNativeTool(): XcmTransferNativeAssetTool {
     return this.agentApi.xcmTransferNativeTool(this.getSigner(), this.getCurrentAddress())
   }
+
   /**
    * Get Address
    *
