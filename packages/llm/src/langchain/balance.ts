@@ -29,7 +29,7 @@ export const checkBalanceTool = (apis: Map<KnownChainId, Api<KnownChainId>>, add
           balance: formattedBalance,
           symbol: balanceInfo.symbol,
           chain
-        }
+        } as unknown as BalanceToolResult
       },
       result => `Balance on ${result.chain}: ${result.balance} ${result.symbol}`
     )
