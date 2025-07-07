@@ -35,7 +35,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@paraspell/sdk": "^10.5.2",
+    "@paraspell/sdk": "^10.10.1",
     "@polkadot-agent-kit/common": "workspace:*",
     "@subsquid/ss58": "^2.0.2",
     "polkadot-api": "^1.9.13",
