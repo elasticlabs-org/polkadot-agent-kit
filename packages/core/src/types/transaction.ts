@@ -33,10 +33,10 @@ export function isTxWithPolkadotSigner(
 ): options is SubmitAndWatchOptionsPolkadot {
   return (
     !!options.transaction &&
-    typeof (options.transaction).signSubmitAndWatch === "function" &&
+    typeof options.transaction.signSubmitAndWatch === "function" &&
     !!options.signer &&
     options.signer.publicKey instanceof Uint8Array &&
-    typeof (options.signer).signTx === "function" &&
-    typeof (options.signer).signBytes === "function"
+    typeof options.signer.signTx === "function" &&
+    typeof options.signer.signBytes === "function"
   )
 }
