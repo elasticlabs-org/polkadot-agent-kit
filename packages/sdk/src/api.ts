@@ -1,6 +1,3 @@
-import { Keyring } from "@polkadot/keyring"
-import type { KeyringPair } from "@polkadot/keyring/types"
-import { hexToU8a } from "@polkadot/util"
 import type { AgentConfig, Api, KnownChainId } from "@polkadot-agent-kit/common"
 import { getAllSupportedChains, getChainById } from "@polkadot-agent-kit/common"
 import type { IPolkadotApi } from "@polkadot-agent-kit/core"
@@ -169,12 +166,5 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
       )
       return signer
     }
-  }
-
-  private getKeyringPair(): KeyringPair {
-    const keyring = new Keyring({ type: "sr25519" })
-
-    const keypair = keyring.addFromSeed(hexToU8a(this.wallet))
-    return keypair
   }
 }

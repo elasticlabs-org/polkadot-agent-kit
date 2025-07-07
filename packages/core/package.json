@@ -37,20 +37,14 @@
   "dependencies": {
     "@paraspell/sdk": "^10.5.2",
     "@polkadot-agent-kit/common": "workspace:*",
-    "@polkadot/util-crypto": "^13.5.1",
     "@subsquid/ss58": "^2.0.2",
     "polkadot-api": "^1.9.13",
-    "rxjs": "^7.8.2",
-    "@substrate/asset-transfer-api": "^0.7.2",
-    "@polkadot/api": "^16.2.2",
-    "@polkadot/keyring": "^13.5.1"
+    "rxjs": "^7.8.2"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.26.0",
     "@babel/preset-env": "^7.26.9",
     "@codecov/rollup-plugin": "^1.9.0",
-    "@polkadot/api": "^15.8.1",
-    "@polkadot/types": "^15.8.1",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-typescript": "^12.1.2",
