@@ -74,30 +74,49 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
    * Get Native Transfer Tool
    * Creates a tool for transferring native tokens to an address
    *
-   * @param to - The recipient address as string
-   * @param amount - The amount to transfer as bigint
    * @returns DynamicStructuredTool for transferring native tokens
    *
    * @example
    * ```typescript
    * // Create a transfer tool
-   * const transferTool = agent.transferNativeTool(
-   *   "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
-   *   BigInt(1000000000000) // 1 DOT in planck
-   * );
+   * const transferTool = agent.transferNativeTool();
    *
    * // Tool can be used with LangChain
-   * const result = await transferTool.call(\{
-   *   address: to,
-   *   amount: amount
-   * \});
+   * const result = await transferTool.call({
+   *   amount: "1",
+   *   to: "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
+   *   chain: "polkadot"
+   * });
    * ```
    *
-   * @throws \{Error\} If the transfer fails or parameters are invalid
+   * @throws {Error} If the transfer fails or parameters are invalid
    */
   transferNativeTool(): TransferTool {
     return this.agentApi.transferNativeTool(this.getSigner())
   }
+
+  /**
+   * Get XCM Transfer Native Tool
+   * Creates a tool for transferring native tokens across chains using XCM (Cross-Consensus Messaging)
+   *
+   * @returns DynamicStructuredTool for cross-chain native token transfers
+   *
+   * @example
+   * ```typescript
+   * // Create an XCM transfer tool
+   * const xcmTransferTool = agent.xcmTransferNativeTool();
+   *
+   * // Tool can be used with LangChain for cross-chain transfers
+   * const result = await xcmTransferTool.call({
+   *   amount: "1",
+   *   to: "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
+   *   sourceChain: "Polkadot",
+   *   destChain: "Polkadot Asset Hub"
+   * });
+   * ```
+   *
+   * @throws {Error} If the XCM transfer fails or parameters are invalid
+   */
 
   xcmTransferNativeTool(): XcmTransferNativeAssetTool {
     return this.agentApi.xcmTransferNativeTool(this.getSigner(), this.getCurrentAddress())
