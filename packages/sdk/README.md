@@ -80,7 +80,6 @@ const xcmTool = agent.xcmTransferNativeTool(signer, sender)
 
 // Dynamic chain tools
 const initChainTool = agent.getInitializeChainApiTool()
-const statusTool = agent.getChainStatusTool()
 
 // Use with LangChain
 const tools = [
@@ -88,7 +87,6 @@ const tools = [
   transferTool,
   xcmTool,
   initChainTool,
-  statusTool
 ]
 ```
 
@@ -142,20 +140,6 @@ interface PolkadotAgentKitConfig {
   chains?: KnownChainId[] // Optional: restrict to specific chains
 }
 ```
-
-## Error Handling
-
-All operations return structured results:
-
-```typescript
-interface ChainOperationResult {
-  success: boolean
-  chainId: string
-  message: string
-  error?: string
-}
-```
-
 ## Examples
 
 See the `/examples` directory for complete examples including:
