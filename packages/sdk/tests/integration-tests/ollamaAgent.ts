@@ -57,6 +57,21 @@ function wrapXcmTool(agentKit: PolkadotAgentKit) {
   });
 }
 
+function wrapInitializeChainApiTool(agentKit: PolkadotAgentKit) {
+  return new DynamicStructuredTool({
+    name: "initializeChainApiTool",
+    description: "Initialize a chain API when it's not available. Use this when other tools fail due to chain not being initialized.",
+    schema: z.object({
+      chainId: z.string().describe("The chain ID to initialize (e.g., 'west', 'polkadot', 'hydra')")
+    }),
+    func: async ({ chainId }) => {
+      const tool = agentKit.getInitializeChainApiTool();
+      const result = await tool.call({ chainId });
+      return JSON.stringify(result);
+    }
+  });
+}
+
 export class OllamaAgent {
   private agentExecutor: AgentExecutor | undefined;
 
@@ -77,6 +92,7 @@ export class OllamaAgent {
       wrapBalanceTool(this.agentKit),
       wrapTransferTool(this.agentKit),
       wrapXcmTool(this.agentKit),
+      wrapInitializeChainApiTool(this.agentKit),
     ];
 
     // Use SYSTEM_PROMPT as the system message

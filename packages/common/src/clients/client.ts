@@ -1,6 +1,13 @@
 import { createClient, type PolkadotClient } from "polkadot-api"
 
-import { type Chain, type ChainId, type ChainRelay, getChainById } from "../chains"
+import {
+  type Chain,
+  type ChainId,
+  type ChainRelay,
+  getChainById,
+  isChainAllowed,
+  type KnownChainId
+} from "../chains"
 import type { SmoldotClient } from "../types"
 import { isRelayChain } from "../utils"
 import { getChainSpec, hasChainSpec } from "./chainSpec"
@@ -12,6 +19,7 @@ export type ClientOptions = {
     smoldot: SmoldotClient
     chainSpecs: Partial<Record<ChainId, string>>
   }
+  allowedChains?: KnownChainId[]
 }
 
 export const getClientCacheId = (chainId: ChainId, { lightClients }: ClientOptions) =>
@@ -24,6 +32,12 @@ export const getClient = (
   chains: Chain[],
   options: ClientOptions
 ): Promise<PolkadotClient> => {
+  // Validate chain access
+  if (!isChainAllowed(chainId, options.allowedChains)) {
+    const allowedChainsStr = options.allowedChains?.join(", ") || "all"
+    throw new Error(`Chain '${chainId}' is not allowed. Allowed chains: ${allowedChainsStr}`)
+  }
+
   const cacheKey = getClientCacheId(chainId, options)
   if (!CLIENTS_CACHE.has(cacheKey)) {
     const chain = getChainById(chainId, chains)
@@ -59,7 +73,12 @@ export const getRelayChainClient = async (chain: ChainRelay, options: ClientOpti
   const { smoldot, chainSpecs } = options.lightClients
 
   const chainSpec = getChainSpec(chain.id, chainSpecs)
-  const smChainProvider = await getSmChainProvider(smoldot, { chainId: chain.id, chainSpec })
+  const smChainProvider = await getSmChainProvider(
+    smoldot,
+    { chainId: chain.id, chainSpec },
+    undefined,
+    options.allowedChains
+  )
   // fallback to smoldot
   return createClient(smChainProvider)
 }
@@ -92,7 +111,8 @@ export const getParaChainClient = async (chain: Chain, options: ClientOptions) =
     await getSmChainProvider(
       smoldot,
       { chainId: chain.id, chainSpec: paraChainSpec },
-      { chainId: relayChainId, chainSpec: relayChainSpec }
+      { chainId: relayChainId, chainSpec: relayChainSpec },
+      options.allowedChains
     )
   )
 }

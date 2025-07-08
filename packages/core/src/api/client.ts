@@ -1,11 +1,16 @@
-import type { Api, KnownChainId, SmoldotClient } from "@polkadot-agent-kit/common"
+import type {
+  Api,
+  ChainOperationResult,
+  KnownChainId,
+  SmoldotClient} from "@polkadot-agent-kit/common"
 import {
   disconnect,
   getAllSupportedChains,
   getApi,
   getChainSpec,
-  specRegistry
-} from "@polkadot-agent-kit/common"
+  getFilteredChains,
+  isChainAllowed,
+  specRegistry} from "@polkadot-agent-kit/common"
 import { start } from "polkadot-api/smoldot"
 
 /**
@@ -17,6 +22,14 @@ export interface IPolkadotApi {
   initializeApi(): Promise<void>
   disconnect(): Promise<void>
   getApi(chainId: KnownChainId): Api<KnownChainId>
+  getAllowedChains(): KnownChainId[]
+  validateChainAccess(chainId: KnownChainId): void
+
+  // Dynamic chain initialization methods
+  initializeChainApi(chainId: KnownChainId): Promise<ChainOperationResult>
+  isChainInitialized(chainId: KnownChainId): boolean
+  getInitializedChains(): KnownChainId[]
+  removeChainApi(chainId: KnownChainId): Promise<ChainOperationResult>
 }
 
 /**
@@ -28,9 +41,31 @@ export class PolkadotApi implements IPolkadotApi {
   private initialized = false
   private smoldotClient: SmoldotClient
   private initPromise: Promise<void> | null = null
+  private allowedChains?: KnownChainId[]
 
-  constructor() {
+  constructor(allowedChains?: KnownChainId[]) {
     this.smoldotClient = start()
+    this.allowedChains = allowedChains
+  }
+
+  /**
+   * Get the list of allowed chains
+   * @returns Array of allowed chain IDs
+   */
+  getAllowedChains(): KnownChainId[] {
+    return this.allowedChains || getAllSupportedChains().map(chain => chain.id as KnownChainId)
+  }
+
+  /**
+   * Validate if a chain is allowed to be accessed
+   * @param chainId - The chain ID to validate
+   * @throws Error if chain is not allowed
+   */
+  validateChainAccess(chainId: KnownChainId): void {
+    if (!isChainAllowed(chainId, this.allowedChains)) {
+      const allowedChainsStr = this.allowedChains?.join(", ") || "all"
+      throw new Error(`Chain '${chainId}' is not allowed. Allowed chains: ${allowedChainsStr}`)
+    }
   }
 
   /**
@@ -39,6 +74,7 @@ export class PolkadotApi implements IPolkadotApi {
    * @param api - Optional API instance to set
    */
   setApi(chainId: KnownChainId, api?: Api<KnownChainId>) {
+    this.validateChainAccess(chainId)
     if (api) {
       this._apis.set(chainId, api)
     }
@@ -50,6 +86,8 @@ export class PolkadotApi implements IPolkadotApi {
    * @returns The API instance for the specified chain
    */
   getApi(chainId: KnownChainId): Api<KnownChainId> {
+    this.validateChainAccess(chainId)
+
     if (!this.initialized) {
       throw new Error("APIs not initialized. Call initializeApi() first.")
     }
@@ -86,7 +124,8 @@ export class PolkadotApi implements IPolkadotApi {
 
     this.initPromise = (async () => {
       try {
-        const supportedChains = getAllSupportedChains()
+        // Get filtered chains based on allowed chains
+        const supportedChains = getFilteredChains(this.allowedChains)
 
         const chainSpecs: Record<KnownChainId, string> = {
           polkadot: "",
@@ -164,5 +203,126 @@ export class PolkadotApi implements IPolkadotApi {
    */
   getChainSpec(chainId: KnownChainId) {
     return getChainSpec(chainId, specRegistry())
+  }
+
+  /**
+   * Dynamically initialize a single chain API
+   * @param chainId - The chain ID to initialize
+   * @returns Promise resolving to operation result
+   */
+  async initializeChainApi(chainId: KnownChainId): Promise<ChainOperationResult> {
+    try {
+      // Check if chain is already initialized
+      if (this._apis.has(chainId)) {
+        return {
+          success: true,
+          chainId,
+          message: `Chain '${chainId}' is already initialized`
+        }
+      }
+
+      // Get chain configuration from supported chains
+      const allChains = getAllSupportedChains()
+      const chainConfig = allChains.find(chain => chain.id === chainId)
+
+      if (!chainConfig) {
+        return {
+          success: false,
+          chainId,
+          message: `Chain '${chainId}' is not supported`,
+          error: `Available chains: ${allChains.map(c => c.id).join(", ")}`
+        }
+      }
+
+      // Build chain specs for this specific chain
+      const chainSpecs: Partial<Record<KnownChainId, string>> = {}
+      try {
+        chainSpecs[chainId] = this.getChainSpec(chainId)
+      } catch (error) {
+        return {
+          success: false,
+          chainId,
+          message: `Failed to get chain specification for '${chainId}'`,
+          error: error instanceof Error ? error.message : String(error)
+        }
+      }
+
+      // Initialize the API for this specific chain
+      const api = await getApi(chainId, [chainConfig], true, {
+        enable: true,
+        smoldot: this.smoldotClient,
+        chainSpecs
+      })
+
+      // Store the API
+      this._apis.set(chainId, api)
+
+      return {
+        success: true,
+        chainId,
+        message: `Successfully initialized '${chainId}' chain API`
+      }
+    } catch (error) {
+      return {
+        success: false,
+        chainId,
+        message: `Failed to initialize '${chainId}' chain API`,
+        error: error instanceof Error ? error.message : String(error)
+      }
+    }
+  }
+
+  /**
+   * Check if a chain is currently initialized
+   * @param chainId - The chain ID to check
+   * @returns True if the chain is initialized
+   */
+  isChainInitialized(chainId: KnownChainId): boolean {
+    return this._apis.has(chainId)
+  }
+
+  /**
+   * Get list of currently initialized chains
+   * @returns Array of initialized chain IDs
+   */
+  getInitializedChains(): KnownChainId[] {
+    return Array.from(this._apis.keys())
+  }
+
+  /**
+   * Remove a chain API and disconnect it
+   * @param chainId - The chain ID to remove
+   * @returns Promise resolving to operation result
+   */
+  async removeChainApi(chainId: KnownChainId): Promise<ChainOperationResult> {
+    try {
+      const api = this._apis.get(chainId)
+      if (!api) {
+        return {
+          success: true,
+          chainId,
+          message: `Chain '${chainId}' is not initialized`
+        }
+      }
+
+      // Disconnect the specific chain API
+      await disconnect(api)
+
+      // Remove from the map
+      this._apis.delete(chainId)
+
+      return {
+        success: true,
+        chainId,
+        message: `Successfully removed '${chainId}' chain API`
+      }
+    } catch (error) {
+      return {
+        success: false,
+        chainId,
+        message: `Failed to remove '${chainId}' chain API`,
+        error: error instanceof Error ? error.message : String(error)
+      }
+    }
   }
 }

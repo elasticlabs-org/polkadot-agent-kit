@@ -19,6 +19,21 @@ vi.mock("@polkadot-agent-kit/common", () => ({
     { id: "polkadot_asset_hub", name: "Polkadot Asset Hub", symbol: "DOT", decimals: 10 },
     { id: "west_asset_hub", name: "Westend Asset Hub", symbol: "WND", decimals: 12 }
   ]),
+  getFilteredChains: vi.fn(allowedChains => {
+    const allChains = [
+      { id: "polkadot", name: "Polkadot", symbol: "DOT", decimals: 10 },
+      { id: "west", name: "Westend", symbol: "WND", decimals: 12 },
+      { id: "polkadot_asset_hub", name: "Polkadot Asset Hub", symbol: "DOT", decimals: 10 },
+      { id: "west_asset_hub", name: "Westend Asset Hub", symbol: "WND", decimals: 12 }
+    ]
+    if (!allowedChains) return allChains
+    return allChains.filter(chain => allowedChains.includes(chain.id))
+  }),
+  isChainAllowed: vi.fn((chainId, allowedChains) => {
+    if (!allowedChains) return true
+    return allowedChains.includes(chainId)
+  }),
+  getDefaultChains: vi.fn(() => ["polkadot", "west", "polkadot_asset_hub", "west_asset_hub"]),
   getApi: vi.fn(() =>
     Promise.resolve({
       disconnect: vi.fn().mockResolvedValue(undefined),
@@ -301,6 +316,190 @@ describe("PolkadotApi", () => {
       )
       expect(tool).toBeDefined()
       expect(tool).toBe(mockXcmTool)
+    })
+  })
+
+  describe("Chain Limitation", () => {
+    it("should initialize APIs only for allowed chains", async () => {
+      const allowedChains: KnownChainId[] = ["polkadot", "west"]
+      const polkadotApiWithLimitation = new PolkadotApi(allowedChains)
+
+      await polkadotApiWithLimitation.initializeApi()
+
+      expect(polkadotApiWithLimitation["initialized"]).toBe(true)
+      expect(polkadotApiWithLimitation["allowedChains"]).toEqual(allowedChains)
+
+      // Verify that getFilteredChains was called with the correct allowed chains
+      const commonModule = await import("@polkadot-agent-kit/common")
+      expect(commonModule.getFilteredChains).toHaveBeenCalledWith(allowedChains)
+    })
+
+    it("should validate chain access correctly", () => {
+      const allowedChains: KnownChainId[] = ["polkadot", "west"]
+      const polkadotApiWithLimitation = new PolkadotApi(allowedChains)
+
+      // Should not throw for allowed chains
+      expect(() => polkadotApiWithLimitation.validateChainAccess("polkadot")).not.toThrow()
+      expect(() => polkadotApiWithLimitation.validateChainAccess("west")).not.toThrow()
+
+      // Should throw for disallowed chains
+      expect(() => polkadotApiWithLimitation.validateChainAccess("polkadot_asset_hub")).toThrow()
+      expect(() => polkadotApiWithLimitation.validateChainAccess("west_asset_hub")).toThrow()
+    })
+
+    it("should return correct allowed chains list", () => {
+      const testCases: Array<{
+        chains: KnownChainId[] | undefined
+        expected: KnownChainId[]
+      }> = [
+        {
+          chains: undefined,
+          expected: ["polkadot", "west", "polkadot_asset_hub", "west_asset_hub"] as KnownChainId[]
+        },
+        { chains: ["polkadot"] as KnownChainId[], expected: ["polkadot"] as KnownChainId[] },
+        {
+          chains: ["polkadot", "west"] as KnownChainId[],
+          expected: ["polkadot", "west"] as KnownChainId[]
+        },
+        { chains: [] as KnownChainId[], expected: [] as KnownChainId[] }
+      ]
+
+      testCases.forEach(({ chains, expected }) => {
+        const polkadotApiWithLimitation = new PolkadotApi(chains)
+        expect(polkadotApiWithLimitation.getAllowedChains()).toEqual(expected)
+      })
+    })
+
+    it("should throw descriptive error for unauthorized chain access", () => {
+      const polkadotApiWithLimitation = new PolkadotApi(["polkadot"] as KnownChainId[])
+
+      expect(() => polkadotApiWithLimitation.validateChainAccess("west")).toThrow(
+        "Chain 'west' is not allowed. Allowed chains: polkadot"
+      )
+    })
+
+    it("should handle empty chains array", () => {
+      const polkadotApiWithLimitation = new PolkadotApi([] as KnownChainId[])
+
+      expect(polkadotApiWithLimitation.getAllowedChains()).toEqual([])
+      expect(() => polkadotApiWithLimitation.validateChainAccess("polkadot")).toThrow()
+    })
+
+    it("should validate chain access during setApi", () => {
+      const polkadotApiWithLimitation = new PolkadotApi(["polkadot"] as KnownChainId[])
+      const mockChainApi = {} as Api<KnownChainId>
+
+      // Should work for allowed chains
+      expect(() => polkadotApiWithLimitation.setApi("polkadot", mockChainApi)).not.toThrow()
+
+      // Should throw for disallowed chains
+      expect(() => polkadotApiWithLimitation.setApi("west", mockChainApi)).toThrow()
+    })
+
+    it("should validate chain access during getApi", async () => {
+      const polkadotApiWithLimitation = new PolkadotApi(["polkadot"] as KnownChainId[])
+      await polkadotApiWithLimitation.initializeApi()
+
+      // Should work for allowed chains
+      expect(() => polkadotApiWithLimitation.getApi("polkadot")).not.toThrow()
+
+      // Should throw for disallowed chains
+      expect(() => polkadotApiWithLimitation.getApi("west")).toThrow()
+    })
+  })
+
+  describe("Dynamic Chain Management", () => {
+    it("should initialize a new chain API successfully", async () => {
+      const polkadotApi = new PolkadotApi()
+
+      // Mock the chain initialization
+      const mockResult = {
+        success: true,
+        chainId: "hydra" as KnownChainId,
+        message: "Successfully initialized hydra chain API"
+      }
+
+      vi.spyOn(polkadotApi, "initializeChainApi").mockResolvedValue(mockResult)
+
+      const result = await polkadotApi.initializeChainApi("hydra")
+
+      expect(result.success).toBe(true)
+      expect(result.chainId).toBe("hydra")
+      expect(result.message).toContain("Successfully initialized hydra chain API")
+    })
+
+    it("should handle chain initialization failure", async () => {
+      const polkadotApi = new PolkadotApi()
+
+      const mockResult = {
+        success: false,
+        chainId: "invalid_chain" as KnownChainId,
+        message: "Chain 'invalid_chain' is not supported",
+        error: "Available chains: polkadot, west, polkadot_asset_hub, west_asset_hub"
+      }
+
+      vi.spyOn(polkadotApi, "initializeChainApi").mockResolvedValue(mockResult)
+
+      const result = await polkadotApi.initializeChainApi("invalid_chain" as KnownChainId)
+
+      expect(result.success).toBe(false)
+      expect(result.chainId).toBe("invalid_chain")
+      expect(result.error).toContain("Available chains")
+    })
+
+    it("should check if chain is initialized", () => {
+      const polkadotApi = new PolkadotApi()
+
+      vi.spyOn(polkadotApi, "isChainInitialized").mockReturnValue(true)
+
+      const isInitialized = polkadotApi.isChainInitialized("polkadot")
+
+      expect(isInitialized).toBe(true)
+    })
+
+    it("should return list of initialized chains", () => {
+      const polkadotApi = new PolkadotApi()
+      const mockChains: KnownChainId[] = ["polkadot", "west"]
+
+      vi.spyOn(polkadotApi, "getInitializedChains").mockReturnValue(mockChains)
+
+      const chains = polkadotApi.getInitializedChains()
+
+      expect(chains).toEqual(["polkadot", "west"])
+    })
+
+    it("should remove chain API successfully", async () => {
+      const polkadotApi = new PolkadotApi()
+
+      const mockResult = {
+        success: true,
+        chainId: "hydra" as KnownChainId,
+        message: "Successfully removed hydra chain API"
+      }
+
+      vi.spyOn(polkadotApi, "removeChainApi").mockResolvedValue(mockResult)
+
+      const result = await polkadotApi.removeChainApi("hydra")
+
+      expect(result.success).toBe(true)
+      expect(result.message).toContain("Successfully removed hydra chain API")
+    })
+
+    it("should handle removing non-initialized chain", async () => {
+      const polkadotApi = new PolkadotApi()
+
+      const mockResult = {
+        success: true,
+        chainId: "hydra" as KnownChainId,
+        message: "Chain 'hydra' is not initialized"
+      }
+
+      vi.spyOn(polkadotApi, "removeChainApi").mockResolvedValue(mockResult)
+
+      const result = await polkadotApi.removeChainApi("hydra")
+
+      expect(result.success).toBe(true)
+      expect(result.message).toContain("is not initialized")
     })
   })
 })

@@ -1,4 +1,9 @@
-import type { AgentConfig, Api, KnownChainId } from "@polkadot-agent-kit/common"
+import type {
+  AgentConfig,
+  Api,
+  KnownChainId,
+  ChainOperationResult,
+} from "@polkadot-agent-kit/common"
 import { getAllSupportedChains, getChainById } from "@polkadot-agent-kit/common"
 import type { IPolkadotApi } from "@polkadot-agent-kit/core"
 import { PolkadotApi } from "@polkadot-agent-kit/core"
@@ -21,10 +26,27 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
   public config: AgentConfig
 
   constructor(wallet: string, config: AgentConfig) {
-    this.polkadotApi = new PolkadotApi()
+    this.polkadotApi = new PolkadotApi(config.chains)
     this.agentApi = new PolkadotAgentApi(this.polkadotApi)
     this.wallet = wallet
     this.config = config
+  }
+
+  /**
+   * Get the list of allowed chains
+   * @returns Array of allowed chain IDs
+   */
+  getAllowedChains(): KnownChainId[] {
+    return this.agentApi.getAllowedChains()
+  }
+
+  /**
+   * Validate if a chain is allowed to be accessed
+   * @param chainId - The chain ID to validate
+   * @throws Error if chain is not allowed
+   */
+  validateChainAccess(chainId: KnownChainId): void {
+    this.agentApi.validateChainAccess(chainId)
   }
 
   setApi(chainId: KnownChainId, api?: Api<KnownChainId>) {
@@ -47,6 +69,95 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
 
   disconnect(): Promise<void> {
     return this.polkadotApi.disconnect()
+  }
+
+  // Dynamic chain management methods
+
+  /**
+   * Dynamically initialize a new chain API
+   * @param chainId - The chain ID to initialize
+   * @returns Promise resolving to operation result
+   *
+   * @example
+   * ```typescript
+   * const result = await agent.initializeChainApi('kusama');
+   * if (result.success) {
+   *   console.log('Chain initialized:', result.message);
+   * }
+   * ```
+   */
+  async initializeChainApi(chainId: KnownChainId): Promise<ChainOperationResult> {
+    return this.polkadotApi.initializeChainApi(chainId)
+  }
+
+  /**
+   * Check if a chain is currently initialized
+   * @param chainId - The chain ID to check
+   * @returns True if the chain is initialized
+   *
+   * @example
+   * ```typescript
+   * if (agent.isChainInitialized('kusama')) {
+   *   // Chain is ready to use
+   * }
+   * ```
+   */
+  isChainInitialized(chainId: KnownChainId): boolean {
+    return this.polkadotApi.isChainInitialized(chainId)
+  }
+
+  /**
+   * Get list of currently initialized chains
+   * @returns Array of initialized chain IDs
+   *
+   * @example
+   * ```typescript
+   * const chains = agent.getInitializedChains();
+   * console.log('Available chains:', chains);
+   * ```
+   */
+  getInitializedChains(): KnownChainId[] {
+    return this.polkadotApi.getInitializedChains()
+  }
+
+  /**
+   * Remove a chain API and free up resources
+   * @param chainId - The chain ID to remove
+   * @returns Promise resolving to operation result
+   *
+   * @example
+   * ```typescript
+   * const result = await agent.removeChainApi('kusama');
+   * if (result.success) {
+   *   console.log('Chain removed:', result.message);
+   * }
+   * ```
+   */
+  async removeChainApi(chainId: KnownChainId): Promise<ChainOperationResult> {
+    return this.polkadotApi.removeChainApi(chainId)
+  }
+
+  // Dynamic chain management tools
+
+  /**
+   * Get Initialize Chain API Tool
+   * Creates a tool for dynamically initializing chain APIs
+   *
+   * @returns DynamicStructuredTool for initializing chain APIs
+   *
+   * @example
+   * ```typescript
+   * // Create an initialize chain tool
+   * const initTool = agent.getInitializeChainApiTool();
+   *
+   * // Tool can be used with LangChain
+   * const result = await initTool.call({
+   *   chainId: "kusama"
+   * });
+   * ```
+   */
+  getInitializeChainApiTool() {
+    return this.agentApi.getInitializeChainApiTool()
   }
 
   /**
