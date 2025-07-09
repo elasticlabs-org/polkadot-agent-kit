@@ -32,4 +32,3 @@ export interface ChainOperationResult {
   message: string
   error?: string
 }
-

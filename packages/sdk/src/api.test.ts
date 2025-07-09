@@ -467,39 +467,5 @@ describe("PolkadotApi", () => {
 
       expect(chains).toEqual(["polkadot", "west"])
     })
-
-    it("should remove chain API successfully", async () => {
-      const polkadotApi = new PolkadotApi()
-
-      const mockResult = {
-        success: true,
-        chainId: "hydra" as KnownChainId,
-        message: "Successfully removed hydra chain API"
-      }
-
-      vi.spyOn(polkadotApi, "removeChainApi").mockResolvedValue(mockResult)
-
-      const result = await polkadotApi.removeChainApi("hydra")
-
-      expect(result.success).toBe(true)
-      expect(result.message).toContain("Successfully removed hydra chain API")
-    })
-
-    it("should handle removing non-initialized chain", async () => {
-      const polkadotApi = new PolkadotApi()
-
-      const mockResult = {
-        success: true,
-        chainId: "hydra" as KnownChainId,
-        message: "Chain 'hydra' is not initialized"
-      }
-
-      vi.spyOn(polkadotApi, "removeChainApi").mockResolvedValue(mockResult)
-
-      const result = await polkadotApi.removeChainApi("hydra")
-
-      expect(result.success).toBe(true)
-      expect(result.message).toContain("is not initialized")
-    })
   })
 })

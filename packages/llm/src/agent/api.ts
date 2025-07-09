@@ -6,12 +6,14 @@ import {
   checkBalanceTool,
   initializeChainApiTool,
   transferNativeTool,
-  xcmTransferNativeTool} from "../langchain"
+  xcmTransferNativeTool
+} from "../langchain"
 import type {
   BalanceTool,
   InitializeChainApiTool,
   TransferTool,
-  XcmTransferNativeAssetTool} from "../types"
+  XcmTransferNativeAssetTool
+} from "../types"
 /**
  * Interface for Polkadot API implementations
  * Defines the interface that all Polkadot chain types must follow
@@ -54,7 +56,6 @@ export interface IPolkadotAgentApi {
    * @returns A dynamic structured tool that initializes chain APIs
    */
   getInitializeChainApiTool(): InitializeChainApiTool
-
 }
 
 /**

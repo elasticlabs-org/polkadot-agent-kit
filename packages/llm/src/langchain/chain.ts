@@ -3,9 +3,7 @@ import type { KnownChainId } from "@polkadot-agent-kit/common"
 import type { PolkadotApi } from "@polkadot-agent-kit/core"
 import type { z } from "zod"
 
-import type {
-  initializeChainApiSchema,
-  InitializeChainApiToolResult} from "../types"
+import type { initializeChainApiSchema, InitializeChainApiToolResult } from "../types"
 import { toolConfigInitializeChainApi } from "../types/chain"
 import { ToolNames } from "../types/common"
 import { executeTool } from "../utils"

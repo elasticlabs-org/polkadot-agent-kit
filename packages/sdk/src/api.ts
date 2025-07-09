@@ -1,9 +1,8 @@
 import type {
   AgentConfig,
   Api,
-  KnownChainId,
   ChainOperationResult,
-} from "@polkadot-agent-kit/common"
+  KnownChainId} from "@polkadot-agent-kit/common"
 import { getAllSupportedChains, getChainById } from "@polkadot-agent-kit/common"
 import type { IPolkadotApi } from "@polkadot-agent-kit/core"
 import { PolkadotApi } from "@polkadot-agent-kit/core"
@@ -119,24 +118,6 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
   getInitializedChains(): KnownChainId[] {
     return this.polkadotApi.getInitializedChains()
   }
-
-  /**
-   * Remove a chain API and free up resources
-   * @param chainId - The chain ID to remove
-   * @returns Promise resolving to operation result
-   *
-   * @example
-   * ```typescript
-   * const result = await agent.removeChainApi('kusama');
-   * if (result.success) {
-   *   console.log('Chain removed:', result.message);
-   * }
-   * ```
-   */
-  async removeChainApi(chainId: KnownChainId): Promise<ChainOperationResult> {
-    return this.polkadotApi.removeChainApi(chainId)
-  }
-
   // Dynamic chain management tools
 
   /**

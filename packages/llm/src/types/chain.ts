@@ -39,7 +39,6 @@ export interface InitializeChainApiToolResult {
  */
 export type InitializeChainApiTool = DynamicStructuredTool
 
-
 /**
  * Configuration object for the chain initialization tool.
  * Used internally by LangChain to register and execute the tool.

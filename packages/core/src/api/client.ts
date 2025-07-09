@@ -2,7 +2,8 @@ import type {
   Api,
   ChainOperationResult,
   KnownChainId,
-  SmoldotClient} from "@polkadot-agent-kit/common"
+  SmoldotClient
+} from "@polkadot-agent-kit/common"
 import {
   disconnect,
   getAllSupportedChains,
@@ -10,7 +11,8 @@ import {
   getChainSpec,
   getFilteredChains,
   isChainAllowed,
-  specRegistry} from "@polkadot-agent-kit/common"
+  specRegistry
+} from "@polkadot-agent-kit/common"
 import { start } from "polkadot-api/smoldot"
 
 /**
@@ -29,7 +31,6 @@ export interface IPolkadotApi {
   initializeChainApi(chainId: KnownChainId): Promise<ChainOperationResult>
   isChainInitialized(chainId: KnownChainId): boolean
   getInitializedChains(): KnownChainId[]
-  removeChainApi(chainId: KnownChainId): Promise<ChainOperationResult>
 }
 
 /**
@@ -287,42 +288,5 @@ export class PolkadotApi implements IPolkadotApi {
    */
   getInitializedChains(): KnownChainId[] {
     return Array.from(this._apis.keys())
-  }
-
-  /**
-   * Remove a chain API and disconnect it
-   * @param chainId - The chain ID to remove
-   * @returns Promise resolving to operation result
-   */
-  async removeChainApi(chainId: KnownChainId): Promise<ChainOperationResult> {
-    try {
-      const api = this._apis.get(chainId)
-      if (!api) {
-        return {
-          success: true,
-          chainId,
-          message: `Chain '${chainId}' is not initialized`
-        }
-      }
-
-      // Disconnect the specific chain API
-      await disconnect(api)
-
-      // Remove from the map
-      this._apis.delete(chainId)
-
-      return {
-        success: true,
-        chainId,
-        message: `Successfully removed '${chainId}' chain API`
-      }
-    } catch (error) {
-      return {
-        success: false,
-        chainId,
-        message: `Failed to remove '${chainId}' chain API`,
-        error: error instanceof Error ? error.message : String(error)
-      }
-    }
   }
 }
