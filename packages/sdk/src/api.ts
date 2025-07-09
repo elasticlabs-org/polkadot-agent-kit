@@ -2,7 +2,8 @@ import type {
   AgentConfig,
   Api,
   ChainOperationResult,
-  KnownChainId} from "@polkadot-agent-kit/common"
+  KnownChainId
+} from "@polkadot-agent-kit/common"
 import { getAllSupportedChains, getChainById } from "@polkadot-agent-kit/common"
 import type { IPolkadotApi } from "@polkadot-agent-kit/core"
 import { PolkadotApi } from "@polkadot-agent-kit/core"
