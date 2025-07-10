@@ -59,11 +59,11 @@ export class PolkadotAgentApi implements IPolkadotAgentApi {
   }
 
   getNativeBalanceTool(address: string): BalanceTool {
-    return checkBalanceTool(this.api.getAllApis(), address) as unknown as BalanceTool
+    return checkBalanceTool(this.api, address) as unknown as BalanceTool
   }
 
   transferNativeTool(signer: PolkadotSigner): TransferTool {
-    return transferNativeTool(this.api.getAllApis(), signer) as unknown as TransferTool
+    return transferNativeTool(this.api, signer) as unknown as TransferTool
   }
 
   xcmTransferNativeTool(signer: PolkadotSigner, sender: string): XcmTransferNativeAssetTool {

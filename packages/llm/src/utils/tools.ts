@@ -1,4 +1,4 @@
-import type { Api, KnownChainId } from "@polkadot-agent-kit/common"
+import type { KnownChainId } from "@polkadot-agent-kit/common"
 import { convertAddress, toMultiAddress } from "@polkadot-agent-kit/core"
 import type { MultiAddress } from "@polkadot-api/descriptors"
 
@@ -11,18 +11,6 @@ import { ChainNotAvailableError, ErrorCodes, InvalidAddressError, isAnyToolError
  * tool_call_id values in the format: `${prefix}_${timestamp}`
  */
 const generateToolCallId = (prefix: string): string => `${prefix}_${Date.now()}`
-
-export const getApiForChain = (
-  apis: Map<KnownChainId, Api<KnownChainId>>,
-  chain: string
-): Api<KnownChainId> => {
-  const api = apis.get(chain as KnownChainId)
-  if (!api) {
-    const availableChains = Array.from(apis.keys())
-    throw new ChainNotAvailableError(chain, availableChains)
-  }
-  return api
-}
 
 export const validateAndFormatAddress = (address: string, chain: KnownChainId): string => {
   const formattedAddress = convertAddress(address, chain)
