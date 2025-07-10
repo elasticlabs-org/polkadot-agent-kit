@@ -1,7 +1,6 @@
 import type {
   AgentConfig,
   Api,
-  ChainOperationResult,
   KnownChainId
 } from "@polkadot-agent-kit/common"
 import { getAllSupportedChains, getChainById } from "@polkadot-agent-kit/common"
@@ -32,23 +31,6 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
     this.config = config
   }
 
-  /**
-   * Get the list of allowed chains
-   * @returns Array of allowed chain IDs
-   */
-  getAllowedChains(): KnownChainId[] {
-    return this.agentApi.getAllowedChains()
-  }
-
-  /**
-   * Validate if a chain is allowed to be accessed
-   * @param chainId - The chain ID to validate
-   * @throws Error if chain is not allowed
-   */
-  validateChainAccess(chainId: KnownChainId): void {
-    this.agentApi.validateChainAccess(chainId)
-  }
-
   setApi(chainId: KnownChainId, api?: Api<KnownChainId>) {
     this.polkadotApi.setApi(chainId, api)
   }
@@ -71,54 +53,6 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
     return this.polkadotApi.disconnect()
   }
 
-  // Dynamic chain management methods
-
-  /**
-   * Dynamically initialize a new chain API
-   * @param chainId - The chain ID to initialize
-   * @returns Promise resolving to operation result
-   *
-   * @example
-   * ```typescript
-   * const result = await agent.initializeChainApi('kusama');
-   * if (result.success) {
-   *   console.log('Chain initialized:', result.message);
-   * }
-   * ```
-   */
-  async initializeChainApi(chainId: KnownChainId): Promise<ChainOperationResult> {
-    return this.polkadotApi.initializeChainApi(chainId)
-  }
-
-  /**
-   * Check if a chain is currently initialized
-   * @param chainId - The chain ID to check
-   * @returns True if the chain is initialized
-   *
-   * @example
-   * ```typescript
-   * if (agent.isChainInitialized('kusama')) {
-   *   // Chain is ready to use
-   * }
-   * ```
-   */
-  isChainInitialized(chainId: KnownChainId): boolean {
-    return this.polkadotApi.isChainInitialized(chainId)
-  }
-
-  /**
-   * Get list of currently initialized chains
-   * @returns Array of initialized chain IDs
-   *
-   * @example
-   * ```typescript
-   * const chains = agent.getInitializedChains();
-   * console.log('Available chains:', chains);
-   * ```
-   */
-  getInitializedChains(): KnownChainId[] {
-    return this.polkadotApi.getInitializedChains()
-  }
   // Dynamic chain management tools
 
   /**

@@ -10,7 +10,6 @@ import {
   getApi,
   getChainSpec,
   getFilteredChains,
-  isChainAllowed,
   specRegistry
 } from "@polkadot-agent-kit/common"
 import { start } from "polkadot-api/smoldot"
@@ -24,13 +23,6 @@ export interface IPolkadotApi {
   initializeApi(): Promise<void>
   disconnect(): Promise<void>
   getApi(chainId: KnownChainId): Api<KnownChainId>
-  getAllowedChains(): KnownChainId[]
-  validateChainAccess(chainId: KnownChainId): void
-
-  // Dynamic chain initialization methods
-  initializeChainApi(chainId: KnownChainId): Promise<ChainOperationResult>
-  isChainInitialized(chainId: KnownChainId): boolean
-  getInitializedChains(): KnownChainId[]
 }
 
 /**
@@ -50,32 +42,11 @@ export class PolkadotApi implements IPolkadotApi {
   }
 
   /**
-   * Get the list of allowed chains
-   * @returns Array of allowed chain IDs
-   */
-  getAllowedChains(): KnownChainId[] {
-    return this.allowedChains || getAllSupportedChains().map(chain => chain.id as KnownChainId)
-  }
-
-  /**
-   * Validate if a chain is allowed to be accessed
-   * @param chainId - The chain ID to validate
-   * @throws Error if chain is not allowed
-   */
-  validateChainAccess(chainId: KnownChainId): void {
-    if (!isChainAllowed(chainId, this.allowedChains)) {
-      const allowedChainsStr = this.allowedChains?.join(", ") || "all"
-      throw new Error(`Chain '${chainId}' is not allowed. Allowed chains: ${allowedChainsStr}`)
-    }
-  }
-
-  /**
    * Sets the API for a specific chain
    * @param chainId - The ID of the chain
    * @param api - Optional API instance to set
    */
   setApi(chainId: KnownChainId, api?: Api<KnownChainId>) {
-    this.validateChainAccess(chainId)
     if (api) {
       this._apis.set(chainId, api)
     }
@@ -87,8 +58,6 @@ export class PolkadotApi implements IPolkadotApi {
    * @returns The API instance for the specified chain
    */
   getApi(chainId: KnownChainId): Api<KnownChainId> {
-    this.validateChainAccess(chainId)
-
     if (!this.initialized) {
       throw new Error("APIs not initialized. Call initializeApi() first.")
     }
@@ -271,22 +240,5 @@ export class PolkadotApi implements IPolkadotApi {
         error: error instanceof Error ? error.message : String(error)
       }
     }
-  }
-
-  /**
-   * Check if a chain is currently initialized
-   * @param chainId - The chain ID to check
-   * @returns True if the chain is initialized
-   */
-  isChainInitialized(chainId: KnownChainId): boolean {
-    return this._apis.has(chainId)
-  }
-
-  /**
-   * Get list of currently initialized chains
-   * @returns Array of initialized chain IDs
-   */
-  getInitializedChains(): KnownChainId[] {
-    return Array.from(this._apis.keys())
   }
 }

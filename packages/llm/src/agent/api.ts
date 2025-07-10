@@ -1,4 +1,3 @@
-import type { KnownChainId } from "@polkadot-agent-kit/common"
 import type { PolkadotApi } from "@polkadot-agent-kit/core"
 import type { PolkadotSigner } from "polkadot-api"
 
@@ -39,19 +38,6 @@ export interface IPolkadotAgentApi {
   xcmTransferNativeTool(signer: PolkadotSigner, sender: string): XcmTransferNativeAssetTool
 
   /**
-   * Get the list of allowed chains
-   * @returns Array of allowed chain IDs
-   */
-  getAllowedChains(): KnownChainId[]
-
-  /**
-   * Validate if a chain is allowed to be accessed
-   * @param chainId - The chain ID to validate
-   * @throws Error if chain is not allowed
-   */
-  validateChainAccess(chainId: KnownChainId): void
-
-  /**
    * Returns a tool that initializes a new chain API dynamically
    * @returns A dynamic structured tool that initializes chain APIs
    */
@@ -70,23 +56,6 @@ export class PolkadotAgentApi implements IPolkadotAgentApi {
 
   constructor(api: PolkadotApi) {
     this.api = api
-  }
-
-  /**
-   * Get the list of allowed chains
-   * @returns Array of allowed chain IDs
-   */
-  getAllowedChains(): KnownChainId[] {
-    return this.api.getAllowedChains()
-  }
-
-  /**
-   * Validate if a chain is allowed to be accessed
-   * @param chainId - The chain ID to validate
-   * @throws Error if chain is not allowed
-   */
-  validateChainAccess(chainId: KnownChainId): void {
-    this.api.validateChainAccess(chainId)
   }
 
   getNativeBalanceTool(address: string): BalanceTool {
