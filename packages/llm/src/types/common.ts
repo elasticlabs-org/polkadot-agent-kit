@@ -12,7 +12,9 @@ export enum ToolNames {
   /** Tool for transferring native tokens to a destination chain via xcm */
   XCM_TRANSFER_NATIVE_ASSET = "xcm_transfer_native_asset",
   /** Tool for dynamically initializing chain APIs */
-  INITIALIZE_CHAIN_API = "initialize_chain_api"
+  INITIALIZE_CHAIN_API = "initialize_chain_api",
+  /** Tool for swapping tokens */
+  SWAP_TOKENS = "swap_tokens"
 }
 
 /**
