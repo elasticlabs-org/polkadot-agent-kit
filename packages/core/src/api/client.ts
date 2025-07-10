@@ -1,9 +1,15 @@
-import type { Api, KnownChainId, SmoldotClient } from "@polkadot-agent-kit/common"
+import type {
+  Api,
+  ChainOperationResult,
+  KnownChainId,
+  SmoldotClient
+} from "@polkadot-agent-kit/common"
 import {
   disconnect,
   getAllSupportedChains,
   getApi,
   getChainSpec,
+  getFilteredChains,
   specRegistry
 } from "@polkadot-agent-kit/common"
 import { start } from "polkadot-api/smoldot"
@@ -28,9 +34,11 @@ export class PolkadotApi implements IPolkadotApi {
   private initialized = false
   private smoldotClient: SmoldotClient
   private initPromise: Promise<void> | null = null
+  private allowedChains?: KnownChainId[]
 
-  constructor() {
+  constructor(allowedChains?: KnownChainId[]) {
     this.smoldotClient = start()
+    this.allowedChains = allowedChains
   }
 
   /**
@@ -86,7 +94,8 @@ export class PolkadotApi implements IPolkadotApi {
 
     this.initPromise = (async () => {
       try {
-        const supportedChains = getAllSupportedChains()
+        // Get filtered chains based on allowed chains
+        const supportedChains = getFilteredChains(this.allowedChains)
 
         const chainSpecs: Record<KnownChainId, string> = {
           polkadot: "",
@@ -164,5 +173,72 @@ export class PolkadotApi implements IPolkadotApi {
    */
   getChainSpec(chainId: KnownChainId) {
     return getChainSpec(chainId, specRegistry())
+  }
+
+  /**
+   * Dynamically initialize a single chain API
+   * @param chainId - The chain ID to initialize
+   * @returns Promise resolving to operation result
+   */
+  async initializeChainApi(chainId: KnownChainId): Promise<ChainOperationResult> {
+    try {
+      // Check if chain is already initialized
+      if (this._apis.has(chainId)) {
+        return {
+          success: true,
+          chainId,
+          message: `Chain '${chainId}' is already initialized`
+        }
+      }
+
+      // Get chain configuration from supported chains
+      const allChains = getAllSupportedChains()
+      const chainConfig = allChains.find(chain => chain.id === chainId)
+
+      if (!chainConfig) {
+        return {
+          success: false,
+          chainId,
+          message: `Chain '${chainId}' is not supported`,
+          error: `Available chains: ${allChains.map(c => c.id).join(", ")}`
+        }
+      }
+
+      // Build chain specs for this specific chain
+      const chainSpecs: Partial<Record<KnownChainId, string>> = {}
+      try {
+        chainSpecs[chainId] = this.getChainSpec(chainId)
+      } catch (error) {
+        return {
+          success: false,
+          chainId,
+          message: `Failed to get chain specification for '${chainId}'`,
+          error: error instanceof Error ? error.message : String(error)
+        }
+      }
+
+      // Initialize the API for this specific chain
+      const api = await getApi(chainId, [chainConfig], true, {
+        enable: true,
+        smoldot: this.smoldotClient,
+        chainSpecs
+      })
+
+      // Store the API
+      this._apis.set(chainId, api)
+
+      return {
+        success: true,
+        chainId,
+        message: `Successfully initialized '${chainId}' chain API`
+      }
+    } catch (error) {
+      return {
+        success: false,
+        chainId,
+        message: `Failed to initialize '${chainId}' chain API`,
+        error: error instanceof Error ? error.message : String(error)
+      }
+    }
   }
 }

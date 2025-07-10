@@ -7,7 +7,7 @@ let agentKit: PolkadotAgentKit;
 let ollamaAgent: OllamaAgent;
 
 beforeAll(async () => {
-  agentKit = new PolkadotAgentKit(AGENT_PRIVATE_KEY, { keyType: 'Sr25519' });
+  agentKit = new PolkadotAgentKit(AGENT_PRIVATE_KEY, { keyType: 'Sr25519', chains: ['west', 'west_asset_hub'] });
   await agentKit.initializeApi();
   ollamaAgent = new OllamaAgent(agentKit);
   await ollamaAgent.init();
@@ -46,6 +46,13 @@ describe('PolkadotAgentKit Integration with OllamaAgent', () => {
     const userQuery = `transfer 0.001 WND to ${RECIPIENT} from Westend Asset Hub to Westend`;
     const result = await ollamaAgent.ask(userQuery);
     console.log('XCM Transfer Query Result (Asset Hub → Westend):', result);
+    await sleep(20000);
+    expect(result.output).toBeDefined();
+  });
+
+  it('should initialize a chain API if it is not initialized when user asks for any onchain interaction on it', async () => {
+    const result = await ollamaAgent.ask('check balance on Polkadot');
+    console.log('Polkadot Balance Query Result:', result);
     await sleep(20000);
     expect(result.output).toBeDefined();
   });

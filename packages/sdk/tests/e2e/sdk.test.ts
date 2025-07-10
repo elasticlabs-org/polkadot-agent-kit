@@ -1,28 +1,33 @@
 import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import { PolkadotAgentKit } from '../../src/api';
+import type { AgentConfig } from '@polkadot-agent-kit/common';
 
 const mockBalanceResult = { balance: '100.00', symbol: 'WND', chain: 'westend' };
 const mockTransferResult = { success: true, transactionHash: '0xMOCKEDTXHASH' };
 const mockXcmResult = { success: true, transactionHash: '0xMOCKEDXCMTXHASH' };
 
 vi.mock('../../src/api', () => {
-  const mockAgentInstance = {
-    initializeApi: vi.fn().mockResolvedValue(undefined),
-    getNativeBalanceTool: vi.fn(() => ({
-      call: vi.fn(async (input: any) => mockBalanceResult)
-    })),
-    transferNativeTool: vi.fn(() => ({
-      call: vi.fn(async (input: any) => mockTransferResult)
-    })),
-    xcmTransferNativeTool: vi.fn(() => ({
-      call: vi.fn(async (input: any) => mockXcmResult)
-    })),
-    getCurrentAddress: vi.fn(() => '5FakeAddress'),
-    disconnect: vi.fn().mockResolvedValue(undefined),
-  };
-
   return {
-    PolkadotAgentKit: vi.fn().mockImplementation(() => mockAgentInstance)
+    PolkadotAgentKit: vi.fn().mockImplementation((privateKey: string, config?: AgentConfig) => {
+
+      const instanceConfig = config ? { ...config } : { keyType: 'Sr25519' };
+      
+      return {
+        initializeApi: vi.fn().mockResolvedValue(undefined),
+        getNativeBalanceTool: vi.fn(() => ({
+          call: vi.fn(async (input: any) => mockBalanceResult)
+        })),
+        transferNativeTool: vi.fn(() => ({
+          call: vi.fn(async (input: any) => mockTransferResult)
+        })),
+        xcmTransferNativeTool: vi.fn(() => ({
+          call: vi.fn(async (input: any) => mockXcmResult)
+        })),
+        getCurrentAddress: vi.fn(() => '5FakeAddress'),
+        disconnect: vi.fn().mockResolvedValue(undefined),
+        config: instanceConfig,
+      };
+    })
   };
 });
 
@@ -99,3 +104,4 @@ describe('PolkadotAgentKit E2E', () => {
     });
   });
 });
+

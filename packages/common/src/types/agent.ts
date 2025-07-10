@@ -1,3 +1,5 @@
+import type { KnownChainId } from "../chains"
+
 /** Key type supported by the agent */
 export type KeyType = "Sr25519" | "Ed25519"
 
@@ -19,4 +21,14 @@ export interface AgentConfig {
   delegateDerivationPath?: string
   /** Optional delegate key type (defaults to main keyType) */
   delegateKeyType?: KeyType
+  /** Chains to use (defaults to all chains) */
+  chains?: KnownChainId[]
+}
+
+/** Result type for dynamic chain operations */
+export interface ChainOperationResult {
+  success: boolean
+  chainId: KnownChainId
+  message: string
+  error?: string
 }

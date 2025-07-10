@@ -121,3 +121,38 @@ export function getDecimalsByChainId(chainId: string): number {
   const chain = getChainById(chainId, getAllSupportedChains())
   return chain.decimals
 }
+
+/**
+ * Filter supported chains based on allowed chain IDs
+ * @param allowedChains - Array of allowed chain IDs, if undefined returns all chains
+ * @returns Filtered array of chains
+ */
+export const getFilteredChains = (allowedChains?: KnownChainId[]): Chain[] => {
+  if (!allowedChains) {
+    return getAllSupportedChains()
+  }
+
+  return SUPPORTED_CHAINS.filter(chain => allowedChains.includes(chain.id as KnownChainId))
+}
+
+/**
+ * Check if a chain is allowed based on the configuration
+ * @param chainId - Chain ID to check
+ * @param allowedChains - Array of allowed chain IDs, if undefined all chains are allowed
+ * @returns True if chain is allowed, false otherwise
+ */
+export const isChainAllowed = (chainId: ChainId, allowedChains?: KnownChainId[]): boolean => {
+  if (!allowedChains) {
+    return true // All chains allowed if no restriction
+  }
+
+  return allowedChains.includes(chainId as KnownChainId)
+}
+
+/**
+ * Get default chains when no specific chains are configured
+ * @returns Array of all supported chain IDs
+ */
+export const getDefaultChains = (): KnownChainId[] => {
+  return SUPPORTED_CHAINS.map(chain => chain.id as KnownChainId)
+}

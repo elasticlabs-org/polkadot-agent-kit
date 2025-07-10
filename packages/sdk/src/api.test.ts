@@ -19,6 +19,21 @@ vi.mock("@polkadot-agent-kit/common", () => ({
     { id: "polkadot_asset_hub", name: "Polkadot Asset Hub", symbol: "DOT", decimals: 10 },
     { id: "west_asset_hub", name: "Westend Asset Hub", symbol: "WND", decimals: 12 }
   ]),
+  getFilteredChains: vi.fn(allowedChains => {
+    const allChains = [
+      { id: "polkadot", name: "Polkadot", symbol: "DOT", decimals: 10 },
+      { id: "west", name: "Westend", symbol: "WND", decimals: 12 },
+      { id: "polkadot_asset_hub", name: "Polkadot Asset Hub", symbol: "DOT", decimals: 10 },
+      { id: "west_asset_hub", name: "Westend Asset Hub", symbol: "WND", decimals: 12 }
+    ]
+    if (!allowedChains) return allChains
+    return allChains.filter(chain => allowedChains.includes(chain.id))
+  }),
+  isChainAllowed: vi.fn((chainId, allowedChains) => {
+    if (!allowedChains) return true
+    return allowedChains.includes(chainId)
+  }),
+  getDefaultChains: vi.fn(() => ["polkadot", "west", "polkadot_asset_hub", "west_asset_hub"]),
   getApi: vi.fn(() =>
     Promise.resolve({
       disconnect: vi.fn().mockResolvedValue(undefined),

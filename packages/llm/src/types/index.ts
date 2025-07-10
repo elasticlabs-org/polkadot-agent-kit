@@ -1,4 +1,5 @@
 export * from "./balance"
+export * from "./chain"
 export * from "./common"
 export * from "./errors"
 export * from "./transfer"

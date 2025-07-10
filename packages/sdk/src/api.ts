@@ -21,7 +21,7 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
   public config: AgentConfig
 
   constructor(wallet: string, config: AgentConfig) {
-    this.polkadotApi = new PolkadotApi()
+    this.polkadotApi = new PolkadotApi(config.chains)
     this.agentApi = new PolkadotAgentApi(this.polkadotApi)
     this.wallet = wallet
     this.config = config
@@ -47,6 +47,29 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
 
   disconnect(): Promise<void> {
     return this.polkadotApi.disconnect()
+  }
+
+  // Dynamic chain management tools
+
+  /**
+   * Get Initialize Chain API Tool
+   * Creates a tool for dynamically initializing chain APIs
+   *
+   * @returns DynamicStructuredTool for initializing chain APIs
+   *
+   * @example
+   * ```typescript
+   * // Create an initialize chain tool
+   * const initTool = agent.getInitializeChainApiTool();
+   *
+   * // Tool can be used with LangChain
+   * const result = await initTool.call({
+   *   chainId: "kusama"
+   * });
+   * ```
+   */
+  getInitializeChainApiTool() {
+    return this.agentApi.getInitializeChainApiTool()
   }
 
   /**
