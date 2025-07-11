@@ -1,5 +1,5 @@
 import { tool } from "@langchain/core/tools"
-import type { KnownChainId } from "@polkadot-agent-kit/common"
+import { getDecimalsByChainId, parseUnits, type KnownChainId } from "@polkadot-agent-kit/common"
 import { submitTxWithPolkadotSigner, swapTokens } from "@polkadot-agent-kit/core"
 import type { PolkadotSigner } from "polkadot-api/signer"
 import type { z } from "zod"
@@ -28,34 +28,21 @@ export const swapTokensTool = (signer: PolkadotSigner, sender: string) => {
       return executeTool<SwapTokensToolResult>(
         ToolNames.SWAP_TOKENS,
         async () => {
-          // Use provided sender/receiver or fall back to defaults
+
           const swapSender =  sender
-          const swapReceiver = optionalReceiver || sender
+          const swapReceiver = optionalReceiver ? optionalReceiver : sender
+          const formattedAmount = parseUnits(amount, 10)
 
-          // Validate addresses
-          const formattedSender = validateAndFormatAddress(swapSender, from as KnownChainId)
-          const formattedReceiver = validateAndFormatAddress(swapReceiver, to as KnownChainId)
-
-
-
-          // TODO: Execute the router plan transactions
-          // The RouterPlan structure and execution method need to be investigated
-          // from the @paraspell/xcm-router documentation or source code
-          
-          // For now, we'll return a placeholder success response
-          // This should be updated once we understand how to execute TRouterPlan
           try {
-            // Placeholder: In a real implementation, we would execute the routerPlan here
-            // Example: await routerPlan.execute() or similar method
             const routerPlan = await swapTokens(
                 {
                   from,
                   to,
                   currencyFrom,
                   currencyTo,
-                  amount,
-                  sender: formattedSender,
-                  receiver: formattedReceiver
+                  amount: BigInt(formattedAmount).toString(),
+                  sender: swapSender,
+                  receiver: swapReceiver
                 },
                 signer
               )
@@ -69,7 +56,7 @@ export const swapTokensTool = (signer: PolkadotSigner, sender: string) => {
                   toChain: to,
                   fromCurrency: currencyFrom,
                   toCurrency: currencyTo,
-                  fromAmount: amount,
+                  fromAmount: formattedAmount.toString(),
                   success: true,
                   transactionHash: tx.transactionHash
                 }
@@ -79,7 +66,7 @@ export const swapTokensTool = (signer: PolkadotSigner, sender: string) => {
                   toChain: to,
                   fromCurrency: currencyFrom,
                   toCurrency: currencyTo,
-                  fromAmount: amount,
+                  fromAmount: formattedAmount.toString(),
                   success: false,
                   transactionHash: tx.transactionHash,
                   error: tx.error
@@ -94,7 +81,7 @@ export const swapTokensTool = (signer: PolkadotSigner, sender: string) => {
               toChain: to,
               fromCurrency: currencyFrom,
               toCurrency: currencyTo,
-              fromAmount: amount,
+              fromAmount: formattedAmount.toString(),
               error: error instanceof Error ? error.message : "Unknown error occurred"
             }
           }

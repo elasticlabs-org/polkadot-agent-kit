@@ -36,11 +36,7 @@ export const swapTokensToolSchema = z.object({
     .describe("The symbol of the token to swap to (e.g., 'DOT', 'KSM', 'HDX', 'USDT')"),
   amount: z
     .string()
-    .describe("The amount of the source token to swap (as string, in base units)"),
-  sender: z
-    .string()
-    .optional()
-    .describe("Optional sender address (defaults to empty string if not provided)"),
+    .describe("The amount of the source token to swap"),
   receiver: z
     .string()
     .optional()
@@ -108,7 +104,7 @@ export interface SwapTokensToolResult {
  *
  * @example
  * ```typescript
- * const tool = tool(async ({ from, to, currencyFrom, currencyTo, amount, sender, receiver }) => {
+ * const tool = tool(async ({ from, to, currencyFrom, currencyTo, amount, receiver }) => {
  *   // token swap implementation
  * }, toolConfigSwapTokens);
  * ```

@@ -1,9 +1,8 @@
-import type { TDestination, TNodeDotKsmWithRelayChains, TPapiTransaction } from "@paraspell/sdk"
-import type { KnownChainId } from "@polkadot-agent-kit/common"
-import { getAllSupportedChains, getChainById } from "@polkadot-agent-kit/common"
-import { RouterBuilder, RouterBuilderCore, TRouterPlan } from '@paraspell/xcm-router'
-import type { PolkadotSigner } from "polkadot-api/signer"
+import type { TNodeDotKsmWithRelayChains } from "@paraspell/sdk"
 
+import { RouterBuilder, TRouterPlan } from '@paraspell/xcm-router'
+import type { PolkadotSigner } from "polkadot-api/signer"
+import { getSupportedAssets, getAssetMultiLocation, TCurrencyInput, getAssetId, TMultiLocationValueWithOverride } from "@paraspell/assets";
 
 export interface SwapTokenArgs {
     from: string;
@@ -54,14 +53,17 @@ export const swapTokens = async (
     args: SwapTokenArgs,
     signer: PolkadotSigner
 ): Promise<TRouterPlan> => {
-    const sourceChain = getChainById(args.from, getAllSupportedChains())
-    const destinationChain = getChainById(args.to, getAllSupportedChains())
+
+    const currencyFromMultiLocation = getAssetMultiLocation(args.from as TNodeDotKsmWithRelayChains, {symbol: args.currencyFrom})
+    const currencyToMultiLocation = getAssetMultiLocation(args.to as TNodeDotKsmWithRelayChains, {symbol: args.currencyTo})
+
+
     const routerPlan = await RouterBuilder()
-    .from(sourceChain.name as TNodeDotKsmWithRelayChains)
-    .to(destinationChain.name as TNodeDotKsmWithRelayChains)
+    .from(args.from as TNodeDotKsmWithRelayChains)
+    .to(args.to as TNodeDotKsmWithRelayChains)
     .exchange('HydrationDex') // only Hydration is supported for now
-    .currencyFrom({ symbol: args.currencyFrom })
-    .currencyTo({ symbol: args.currencyTo })
+    .currencyFrom({ multilocation: currencyFromMultiLocation as TMultiLocationValueWithOverride })
+    .currencyTo({ multilocation: currencyToMultiLocation as TMultiLocationValueWithOverride })
     .amount(args.amount)
     .slippagePct('1')
     .senderAddress(args.sender || '')
