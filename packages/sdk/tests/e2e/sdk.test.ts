@@ -25,7 +25,7 @@ vi.mock('../../src/api', () => {
           call: vi.fn(async (input: any) => mockXcmResult)
         })),
         getCurrentAddress: vi.fn(() => '5FakeAddress'),
-        swapCrossChainTokensTool: vi.fn(() => ({
+        swapTokensTool: vi.fn(() => ({
           call: vi.fn(async (input: any) => mockSwapResult)
         })),
         disconnect: vi.fn().mockResolvedValue(undefined),
@@ -87,9 +87,19 @@ const scenarios = [
     }
   },
   {
-    name: 'swapCrossChainTokensTool 1 DOT from Polkadot to USDT on Asset Hub',
-    arrange: (agent: PolkadotAgentKit) => agent.swapCrossChainTokensTool(),
+    name: 'swapTokensTool 1 DOT from Polkadot to USDT on Asset Hub',
+    arrange: (agent: PolkadotAgentKit) => agent.swapTokensTool(),
     act: (tool: any) => tool.call({ from: 'Polkadot', to: 'AssetHubPolkadot', currencyFrom: 'DOT', currencyTo: 'USDT', amount: (1 * 10 ** 10).toString() }),
+    assert: (result: any) => {
+      expect(result).toEqual(mockSwapResult);
+      expect(result.success).toBe(true);
+      expect(result.transactionHash).toBe('0xMOCKEDSWAPTXHASH');
+    }
+  },
+  {
+    name: 'swapTokensTool 1 DOT to USDT on HydrationDex',
+    arrange: (agent: PolkadotAgentKit) => agent.swapTokensTool(),
+    act: (tool: any) => tool.call({ currencyFrom: 'DOT', currencyTo: 'USDT', amount: (1 * 10 ** 10).toString(), dex: 'HydrationDex' }),
     assert: (result: any) => {
       expect(result).toEqual(mockSwapResult);
       expect(result.success).toBe(true);

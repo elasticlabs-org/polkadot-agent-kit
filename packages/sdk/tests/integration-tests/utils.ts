@@ -86,7 +86,7 @@ When transferring tokens through XCM, please provide:
 3. The name of the source chain (convert to real param)
 4. The name of the destination chain (convert to real param)
 
-When swapping tokens, please provide:
+When swapping tokens cross-chain, please provide:
 1. The amount of tokens to swap (e.g., 1)
 2. The symbol of the token to swap from (e.g., 'DOT', 'KSM', 'HDX')
 3. The symbol of the token to swap to (e.g., 'DOT', 'KSM', 'HDX', 'USDT')
@@ -94,15 +94,28 @@ When swapping tokens, please provide:
 5. The name of the destination chain (convert to real param)
 6. The receiver address (optional - if not provided, defaults to sender)
 
+When swapping tokens DEX-specific, please provide:
+1. The amount of tokens to swap (e.g., 1)
+2. The symbol of the token to swap from (e.g., 'DOT', 'KSM', 'HDX')
+3. The symbol of the token to swap to (e.g., 'DOT', 'KSM', 'HDX', 'USDT')
+4. The name of the DEX (e.g., 'HydrationDex', default is 'HydrationDex' if dex is not provided)
+5. The receiver address (optional - if not provided, defaults to sender)
 
 Note: The sender address is handled automatically by the system.
 
-For example:
+For example cross-chain swap:
 User: "swap 0.1 DOT from Polkadot to USDT on Hydra"
-Tool call should use: from: "Polkadot", to: "Hydra", currencyFrom: "DOT", currencyTo: "USDT", amount: "0.1"
+Tool call should use: from: "Polkadot", to: "Hydra", currencyFrom: "DOT", currencyTo: "USDt", amount: "0.1"
 
 User: "swap 0.1 DOT from Polkadot to USDT on Hydra to 5D7jcv6aYbhbYGVY8k65oemM6FVNoyBfoVkuJ5cbFvbefftr"
-Tool call should use: from: "Polkadot", to: "Hydra", currencyFrom: "DOT", currencyTo: "USDT", amount: "0.1", receiver: "5D7jcv6aYbhbYGVY8k65oemM6FVNoyBfoVkuJ5cbFvbefftr"
+Tool call should use: from: "Polkadot", to: "Hydra", currencyFrom: "DOT", currencyTo: "USDt", amount: "0.1", receiver: "5D7jcv6aYbhbYGVY8k65oemM6FVNoyBfoVkuJ5cbFvbefftr"
+
+For example DEX-specific swap:
+User: "swap 0.1 DOT to USDT to 5D7jcv6aYbhbYGVY8k65oemM6FVNoyBfoVkuJ5cbFvbefftr on HydrationDex"
+Tool call should use: currencyFrom: "DOT", currencyTo: "USDT", amount: "0.1", dex: "HydrationDex", receiver: "5D7jcv6aYbhbYGVY8k65oemM6FVNoyBfoVkuJ5cbFvbefftr"
+
+User: "swap 0.1 DOT to USDT on HydrationDex to 5D7jcv6aYbhbYGVY8k65oemM6FVNoyBfoVkuJ5cbFvbefftr"
+Tool call should use: currencyFrom: "DOT", currencyTo: "USDT", amount: "0.1", dex: "HydrationDex", receiver: "5D7jcv6aYbhbYGVY8k65oemM6FVNoyBfoVkuJ5cbFvbefftr"
 
 When checking proxies, you can specify the chain (convert to real param) or not specify a chain (the first chain will be used by default)
 

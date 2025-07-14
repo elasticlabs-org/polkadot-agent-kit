@@ -14,7 +14,7 @@ export enum ToolNames {
   /** Tool for dynamically initializing chain APIs */
   INITIALIZE_CHAIN_API = "initialize_chain_api",
   /** Tool for swapping tokens */
-  SWAP_CROSS_CHAIN_TOKENS = "swap_cross_chain_tokens"
+  SWAP_TOKENS = "swap_tokens"
 }
 
 /**

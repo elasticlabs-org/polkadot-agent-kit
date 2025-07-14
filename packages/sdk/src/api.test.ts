@@ -318,5 +318,4 @@ describe("PolkadotApi", () => {
       expect(tool).toBe(mockXcmTool)
     })
   })
-
 })

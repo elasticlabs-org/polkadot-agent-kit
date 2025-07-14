@@ -74,7 +74,7 @@ function wrapInitializeChainApiTool(agentKit: PolkadotAgentKit) {
 
 function wrapSwapTokensTool(agentKit: PolkadotAgentKit) {
   return new DynamicStructuredTool({
-    name: "swapCrossChainTokensTool",
+    name: "SwapTokensTool",
     description: "Swap tokens across different chains using the Hydration DEX",
     schema: z.object({
       from: z.string().describe("The source chain ID where the swap originates (e.g., 'Polkadot', 'AssetHubPolkadot', 'Hydra', 'Kusama')"),
@@ -85,7 +85,7 @@ function wrapSwapTokensTool(agentKit: PolkadotAgentKit) {
       receiver: z.string().optional().describe("The receiver address for the swap")
     }),
     func: async ({ from, to, currencyFrom, currencyTo, amount, receiver }) => {
-      const tool = agentKit.swapCrossChainTokensTool();
+      const tool = agentKit.swapTokensTool();
       const result = await tool.call({ from, to, currencyFrom, currencyTo, amount, receiver });
       return JSON.stringify(result);
     }

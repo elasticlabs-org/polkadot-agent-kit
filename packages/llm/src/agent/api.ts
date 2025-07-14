@@ -4,14 +4,14 @@ import type { PolkadotSigner } from "polkadot-api"
 import {
   checkBalanceTool,
   initializeChainApiTool,
-  swapCrossChainTokensTool,
+  swapTokensTool,
   transferNativeTool,
   xcmTransferNativeTool
 } from "../langchain"
 import type {
   BalanceTool,
   InitializeChainApiTool,
-  SwapCrossChainTokensTool,
+  SwapTokensTool,
   TransferTool,
   XcmTransferNativeAssetTool
 } from "../types"
@@ -49,7 +49,7 @@ export interface IPolkadotAgentApi {
    * Returns a tool that swaps tokens across different chains using the Hydration DEX
    * @returns A dynamic structured tool that swaps tokens across different chains using the Hydration DEX
    */
-  swapCrossChainTokensTool(signer: PolkadotSigner, sender: string): SwapCrossChainTokensTool
+  swapTokensTool(signer: PolkadotSigner, sender: string): SwapTokensTool
 }
 
 /**
@@ -82,7 +82,7 @@ export class PolkadotAgentApi implements IPolkadotAgentApi {
     return initializeChainApiTool(this.api) as unknown as InitializeChainApiTool
   }
 
-  swapCrossChainTokensTool(signer: PolkadotSigner, sender: string): SwapCrossChainTokensTool {
-    return swapCrossChainTokensTool(signer, sender) as unknown as SwapCrossChainTokensTool
+  swapTokensTool(signer: PolkadotSigner, sender: string): SwapTokensTool {
+    return swapTokensTool(signer, sender) as unknown as SwapTokensTool
   }
 }
