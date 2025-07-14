@@ -21,7 +21,7 @@ import { ToolNames } from "../common"
  * }
  * ```
  */
-export const swapTokensToolSchema = z.object({
+export const swapCrossChainTokensToolSchema = z.object({
   from: z
     .string()
     .describe(
@@ -60,7 +60,7 @@ export const swapTokensToolSchema = z.object({
  * });
  * ```
  */
-export type SwapCrossChainTokensTool = DynamicStructuredTool<typeof swapTokensToolSchema>
+export type SwapCrossChainTokensTool = DynamicStructuredTool<typeof swapCrossChainTokensToolSchema>
 
 /**
  * Result returned by token swap tools.
@@ -79,7 +79,7 @@ export type SwapCrossChainTokensTool = DynamicStructuredTool<typeof swapTokensTo
  * };
  * ```
  */
-export interface SwapTokensToolResult {
+export interface SwapCrossChainTokensToolResult {
   /** Whether the swap was successful */
   success: boolean
   /** Transaction hash if successful */
@@ -112,7 +112,7 @@ export interface SwapTokensToolResult {
  * ```
  */
 export const toolConfigSwapTokens: ToolConfig = {
-  name: ToolNames.SWAP_TOKENS,
+  name: ToolNames.SWAP_CROSS_CHAIN_TOKENS,
   description: "Swap tokens across different chains using the Hydration DEX through XCM routing",
-  schema: swapTokensToolSchema
+  schema: swapCrossChainTokensToolSchema
 }

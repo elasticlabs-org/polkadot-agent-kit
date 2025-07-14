@@ -4,7 +4,7 @@ import type { PolkadotSigner } from "polkadot-api/signer"
 import type { z } from "zod"
 
 import { ToolNames } from "../../types/common"
-import type { SwapTokensToolResult,swapTokensToolSchema } from "../../types/defi/swap"
+import type { SwapCrossChainTokensToolResult,swapCrossChainTokensToolSchema } from "../../types/defi/swap"
 import { toolConfigSwapTokens } from "../../types/defi/swap"
 import { executeTool } from "../../utils"
 
@@ -23,9 +23,9 @@ export const swapCrossChainTokensTool = (signer: PolkadotSigner, sender: string)
       currencyTo,
       amount,
       receiver: optionalReceiver
-    }: z.infer<typeof swapTokensToolSchema>) => {
-      return executeTool<SwapTokensToolResult>(
-        ToolNames.SWAP_TOKENS,
+    }: z.infer<typeof swapCrossChainTokensToolSchema>) => {
+      return executeTool<SwapCrossChainTokensToolResult>(
+        ToolNames.SWAP_CROSS_CHAIN_TOKENS,
         async () => {
           const swapSender = sender
           const swapReceiver = optionalReceiver ? optionalReceiver : sender
