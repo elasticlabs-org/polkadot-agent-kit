@@ -5,6 +5,7 @@ import type { AgentConfig } from '@polkadot-agent-kit/common';
 const mockBalanceResult = { balance: '100.00', symbol: 'WND', chain: 'westend' };
 const mockTransferResult = { success: true, transactionHash: '0xMOCKEDTXHASH' };
 const mockXcmResult = { success: true, transactionHash: '0xMOCKEDXCMTXHASH' };
+const mockSwapResult = { success: true, transactionHash: '0xMOCKEDSWAPTXHASH' };
 
 vi.mock('../../src/api', () => {
   return {
@@ -24,6 +25,9 @@ vi.mock('../../src/api', () => {
           call: vi.fn(async (input: any) => mockXcmResult)
         })),
         getCurrentAddress: vi.fn(() => '5FakeAddress'),
+        swapCrossChainTokensTool: vi.fn(() => ({
+          call: vi.fn(async (input: any) => mockSwapResult)
+        })),
         disconnect: vi.fn().mockResolvedValue(undefined),
         config: instanceConfig,
       };
@@ -80,6 +84,16 @@ const scenarios = [
       expect(result).toEqual(mockXcmResult);
       expect(result.success).toBe(true);
       expect(result.transactionHash).toBe('0xMOCKEDXCMTXHASH');
+    }
+  },
+  {
+    name: 'swapCrossChainTokensTool 1 DOT from Polkadot to USDT on Asset Hub',
+    arrange: (agent: PolkadotAgentKit) => agent.swapCrossChainTokensTool(),
+    act: (tool: any) => tool.call({ from: 'Polkadot', to: 'AssetHubPolkadot', currencyFrom: 'DOT', currencyTo: 'USDT', amount: (1 * 10 ** 10).toString() }),
+    assert: (result: any) => {
+      expect(result).toEqual(mockSwapResult);
+      expect(result.success).toBe(true);
+      expect(result.transactionHash).toBe('0xMOCKEDSWAPTXHASH');
     }
   }
 ];

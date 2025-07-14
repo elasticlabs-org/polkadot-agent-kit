@@ -5,7 +5,7 @@ import { PolkadotApi } from "@polkadot-agent-kit/core"
 import type {
   BalanceTool,
   IPolkadotAgentApi,
-  SwapTokensTool,
+  SwapCrossChainTokensTool,
   TransferTool,
   XcmTransferNativeAssetTool
 } from "@polkadot-agent-kit/llm"
@@ -145,15 +145,14 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
     return this.agentApi.xcmTransferNativeTool(this.getSigner(), this.getCurrentAddress())
   }
 
-
   /**
    * Get Swap Tokens Tool
    * Creates a tool for swapping tokens across different chains using the Hydration DEX
    *
    * @returns DynamicStructuredTool for swapping tokens across different chains using the Hydration DEX
    */
-  swapTokensTool(): SwapTokensTool {
-    return this.agentApi.swapTokensTool(this.getSigner(), this.getCurrentAddress())
+  swapCrossChainTokensTool(): SwapCrossChainTokensTool {
+    return this.agentApi.swapCrossChainTokensTool(this.getSigner(), this.getCurrentAddress())
   }
 
   /**

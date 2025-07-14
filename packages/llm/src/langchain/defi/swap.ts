@@ -1,13 +1,12 @@
 import { tool } from "@langchain/core/tools"
-import { getDecimalsByChainId, parseUnits, type KnownChainId } from "@polkadot-agent-kit/common"
-import { submitTxWithPolkadotSigner, swapTokens } from "@polkadot-agent-kit/core"
+import { submitTxWithPolkadotSigner, swapCrossChainTokens } from "@polkadot-agent-kit/core"
 import type { PolkadotSigner } from "polkadot-api/signer"
 import type { z } from "zod"
 
-import type { swapTokensToolSchema, SwapTokensToolResult } from "../../types/defi/swap"
 import { ToolNames } from "../../types/common"
+import type { SwapTokensToolResult,swapTokensToolSchema } from "../../types/defi/swap"
 import { toolConfigSwapTokens } from "../../types/defi/swap"
-import { executeTool, validateAndFormatAddress } from "../../utils"
+import { executeTool } from "../../utils"
 
 /**
  * Returns a tool that swaps tokens across different chains using the Hydration DEX
@@ -15,7 +14,7 @@ import { executeTool, validateAndFormatAddress } from "../../utils"
  * @param sender - The sender address for the swap
  * @returns A dynamic structured tool that executes cross-chain token swaps
  */
-export const swapTokensTool = (signer: PolkadotSigner, sender: string) => {
+export const swapCrossChainTokensTool = (signer: PolkadotSigner, sender: string) => {
   return tool(
     async ({
       from,
@@ -28,52 +27,48 @@ export const swapTokensTool = (signer: PolkadotSigner, sender: string) => {
       return executeTool<SwapTokensToolResult>(
         ToolNames.SWAP_TOKENS,
         async () => {
-
-          const swapSender =  sender
+          const swapSender = sender
           const swapReceiver = optionalReceiver ? optionalReceiver : sender
-          const formattedAmount = parseUnits(amount, 10)
 
           try {
-            const routerPlan = await swapTokens(
-                {
-                  from,
-                  to,
-                  currencyFrom,
-                  currencyTo,
-                  amount: BigInt(formattedAmount).toString(),
-                  sender: swapSender,
-                  receiver: swapReceiver
-                },
-                signer
-              )
-    
-              const swapTx = routerPlan[0].tx
-              const tx = await submitTxWithPolkadotSigner(swapTx, signer);
+            const routerPlan = await swapCrossChainTokens(
+              {
+                from,
+                to,
+                currencyFrom,
+                currencyTo,
+                amount: amount,
+                sender: swapSender,
+                receiver: swapReceiver
+              },
+              signer
+            )
 
-              if (tx.success) {
-                return {
-                  fromChain: from,
-                  toChain: to,
-                  fromCurrency: currencyFrom,
-                  toCurrency: currencyTo,
-                  fromAmount: formattedAmount.toString(),
-                  success: true,
-                  transactionHash: tx.transactionHash
-                }
-              } else {
-                return {
-                  fromChain: from,
-                  toChain: to,
-                  fromCurrency: currencyFrom,
-                  toCurrency: currencyTo,
-                  fromAmount: formattedAmount.toString(),
-                  success: false,
-                  transactionHash: tx.transactionHash,
-                  error: tx.error
-                }
+            const swapTx = routerPlan[0].tx
+            const tx = await submitTxWithPolkadotSigner(swapTx, signer)
+
+            if (tx.success) {
+              return {
+                fromChain: from,
+                toChain: to,
+                fromCurrency: currencyFrom,
+                toCurrency: currencyTo,
+                fromAmount: amount,
+                success: true,
+                transactionHash: tx.transactionHash
               }
-            
-
+            } else {
+              return {
+                fromChain: from,
+                toChain: to,
+                fromCurrency: currencyFrom,
+                toCurrency: currencyTo,
+                fromAmount: amount,
+                success: false,
+                transactionHash: tx.transactionHash,
+                error: tx.error
+              }
+            }
           } catch (error) {
             return {
               success: false,
@@ -81,7 +76,7 @@ export const swapTokensTool = (signer: PolkadotSigner, sender: string) => {
               toChain: to,
               fromCurrency: currencyFrom,
               toCurrency: currencyTo,
-              fromAmount: formattedAmount.toString(),
+              fromAmount: amount,
               error: error instanceof Error ? error.message : "Unknown error occurred"
             }
           }

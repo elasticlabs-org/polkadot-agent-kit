@@ -12,7 +12,7 @@ import { ToolNames } from "../common"
  * ```typescript
  * {
  *   from: "polkadot",
- *   to: "hydra", 
+ *   to: "hydra",
  *   currencyFrom: "DOT",
  *   currencyTo: "HDX",
  *   amount: "10000000000",
@@ -24,19 +24,21 @@ import { ToolNames } from "../common"
 export const swapTokensToolSchema = z.object({
   from: z
     .string()
-    .describe("The source chain ID where the swap originates (e.g., 'polkadot', 'kusama', 'hydra')"),
+    .describe(
+      "The source chain ID where the swap originates (e.g., 'polkadot', 'kusama', 'hydra')"
+    ),
   to: z
     .string()
-    .describe("The destination chain ID where the swap completes (e.g., 'polkadot', 'kusama', 'hydra')"),
+    .describe(
+      "The destination chain ID where the swap completes (e.g., 'polkadot', 'kusama', 'hydra')"
+    ),
   currencyFrom: z
     .string()
     .describe("The symbol of the token to swap from (e.g., 'DOT', 'KSM', 'HDX')"),
   currencyTo: z
     .string()
     .describe("The symbol of the token to swap to (e.g., 'DOT', 'KSM', 'HDX', 'USDT')"),
-  amount: z
-    .string()
-    .describe("The amount of the source token to swap"),
+  amount: z.string().describe("The amount of the source token to swap"),
   receiver: z
     .string()
     .optional()
@@ -49,8 +51,8 @@ export const swapTokensToolSchema = z.object({
  * @example
  * ```typescript
  * const swapTool: SwapTokensTool = swapTokensTool(apis, signer);
- * const result = await swapTool.invoke({ 
- *   from: "polkadot", 
+ * const result = await swapTool.invoke({
+ *   from: "polkadot",
  *   to: "hydra",
  *   currencyFrom: "DOT",
  *   currencyTo: "HDX",
@@ -58,7 +60,7 @@ export const swapTokensToolSchema = z.object({
  * });
  * ```
  */
-export type SwapTokensTool = DynamicStructuredTool<typeof swapTokensToolSchema>
+export type SwapCrossChainTokensTool = DynamicStructuredTool<typeof swapTokensToolSchema>
 
 /**
  * Result returned by token swap tools.
