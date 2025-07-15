@@ -15,7 +15,6 @@ import { getPairSupported } from "../utils/defi"
 
 // Constants
 const DEFAULT_SLIPPAGE_PCT = "1"
-const DEFAULT_DECIMALS = 10
 const HYDRATION_DEX = "HydrationDex"
 
 export interface SwapTokenArgs {
@@ -118,7 +117,12 @@ async function executeCrossChainSwap(
  */
 async function executeDexSwap(args: SwapTokenArgs, signer: PolkadotSigner): Promise<TRouterPlan> {
   const { currencyFrom, currencyTo } = validateAndGetDexPair(args)
-  const formattedAmount = parseUnits(args.amount, DEFAULT_DECIMALS)
+  const decimals = getAssetDecimals("Hydration", args.currencyFrom)
+  if (!decimals) {
+    throw new Error(`Failed to get decimals for ${args.currencyFrom} on Hydration`)
+  }
+
+  const formattedAmount = parseUnits(args.amount, decimals)
 
   // Validate fees before proceeding
   await validateSwapFees({

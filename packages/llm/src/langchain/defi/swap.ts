@@ -4,13 +4,11 @@ import type { PolkadotSigner } from "polkadot-api/signer"
 import type { z } from "zod"
 
 import { ToolNames } from "../../types/common"
+import { withTimeoutAndRetry } from "../../types/common"
+import { DEFAULT_DEX, UNKNOWN_ERROR_MESSAGE } from "../../types/constants"
 import type { SwapTokensToolResult, swapTokensToolSchema } from "../../types/defi/swap"
 import { toolConfigSwapTokens } from "../../types/defi/swap"
 import { executeTool } from "../../utils"
-
-// Constants
-const DEFAULT_DEX = "HydrationDex"
-const UNKNOWN_ERROR_MESSAGE = "Unknown error occurred"
 
 // Types for internal use
 interface SwapContext {
@@ -47,9 +45,11 @@ export const swapTokensTool = (signer: PolkadotSigner, sender: string) => {
         const swapContext = createSwapContext(input, sender)
 
         try {
-          const routerPlan = await executeSwap(swapContext, signer)
-          const swapTx = routerPlan[0].tx
-          const transactionResult = await submitTxWithPolkadotSigner(swapTx, signer)
+          const transactionResult = await withTimeoutAndRetry(async () => {
+            const routerPlan = await executeSwap(swapContext, signer)
+            const swapTx = routerPlan[0].tx
+            return await submitTxWithPolkadotSigner(swapTx, signer)
+          })
 
           return createSwapResult(swapContext, transactionResult)
         } catch (error) {

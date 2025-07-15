@@ -1,5 +1,7 @@
 import type { z } from "zod"
 
+import { MAX_RETRIES, RETRY_DELAY_MS, SWAP_TIMEOUT_MS } from "./constants"
+
 /**
  * Enum for tool names used across the application.
  * These constants ensure consistency in tool naming and prevent typos.
@@ -42,4 +44,43 @@ export interface ToolConfig {
 export interface ToolResponse {
   content: string
   tool_call_id: string
+}
+
+/**
+ * Executes operation with timeout and retry logic
+ */
+export async function withTimeoutAndRetry<T>(
+  operation: () => Promise<T>,
+  timeoutMs: number = SWAP_TIMEOUT_MS,
+  maxRetries: number = MAX_RETRIES
+): Promise<T> {
+  let lastError: Error
+
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error(`Operation timed out after ${timeoutMs}ms`)), timeoutMs)
+      })
+
+      return await Promise.race([operation(), timeoutPromise])
+    } catch (error) {
+      lastError = error as Error
+
+      if (attempt === maxRetries) break
+
+      // Only retry on network/timeout errors
+      if (
+        lastError.message.includes("timeout") ||
+        lastError.message.includes("network") ||
+        lastError.message.includes("connection")
+      ) {
+        await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS))
+        continue
+      }
+
+      break // Don't retry on other errors
+    }
+  }
+
+  throw lastError!
 }
