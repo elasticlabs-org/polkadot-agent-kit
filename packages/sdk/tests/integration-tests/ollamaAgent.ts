@@ -72,6 +72,29 @@ function wrapInitializeChainApiTool(agentKit: PolkadotAgentKit) {
   });
 }
 
+function wrapSwapTokensTool(agentKit: PolkadotAgentKit) {
+  return new DynamicStructuredTool({
+    name: "SwapTokensTool",
+    description: "Swap tokens across different chains using the Hydration DEX",
+    schema: z.object({
+      from: z.string().describe("The source chain ID where the swap originates (e.g., 'Polkadot', 'AssetHubPolkadot', 'Hydra', 'Kusama')"),
+      to: z.string().describe("The destination chain ID where the swap completes (e.g., 'Polkadot', 'AssetHubPolkadot', 'Hydra', 'Kusama')"),
+      currencyFrom: z.string().describe("The symbol of the token to swap from (e.g., 'DOT', 'KSM', 'HDX')"),
+      currencyTo: z.string().describe("The symbol of the token to swap to (e.g., 'DOT', 'KSM', 'HDX', 'USDT')"),
+      amount: z.string().describe("The amount of the source token to swap"),
+      receiver: z.string().optional().describe("The receiver address for the swap")
+    }),
+    func: async ({ from, to, currencyFrom, currencyTo, amount, receiver }) => {
+      const tool = agentKit.swapTokensTool();
+      const result = await tool.call({ from, to, currencyFrom, currencyTo, amount, receiver });
+      return JSON.stringify(result);
+    }
+  });
+}
+
+
+
+
 export class OllamaAgent {
   private agentExecutor: AgentExecutor | undefined;
 
@@ -93,6 +116,7 @@ export class OllamaAgent {
       wrapTransferTool(this.agentKit),
       wrapXcmTool(this.agentKit),
       wrapInitializeChainApiTool(this.agentKit),
+      wrapSwapTokensTool(this.agentKit)
     ];
 
     // Use SYSTEM_PROMPT as the system message

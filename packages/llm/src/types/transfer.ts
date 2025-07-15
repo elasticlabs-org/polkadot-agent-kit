@@ -1,7 +1,7 @@
 import type { DynamicStructuredTool } from "@langchain/core/tools"
 import { z } from "zod"
 
-import type { ToolConfig } from "../types"
+import type { ToolConfig } from "./common"
 import { ToolNames } from "./common"
 
 /**

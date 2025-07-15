@@ -39,7 +39,7 @@
   "dependencies": {
     "@langchain/core": "^0.3.40",
     "@noble/curves": "^1.6.0",
-    "@paraspell/sdk": "^10.10.1",
+    "@paraspell/sdk": "^10.10.7",
     "@polkadot-agent-kit/common": "workspace:*",
     "@polkadot-agent-kit/core": "workspace:*",
     "@polkadot-agent-kit/llm": "workspace:*",
