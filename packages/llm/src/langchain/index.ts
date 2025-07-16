@@ -1,5 +1,6 @@
 export * from "./balance"
 export * from "./chain"
 export * from "./defi/swap"
+export * from "./staking"
 export * from "./transfer"
 export * from "./xcm"

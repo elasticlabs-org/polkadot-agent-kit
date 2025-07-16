@@ -64,4 +64,12 @@ describe('PolkadotAgentKit Integration with OllamaAgent', () => {
     expect(result.output).toBeDefined();
   });
 
+  it('should nominate to a pool on Paseo using Ollama agent', async () => {
+    const result = await ollamaAgent.ask('nominate 1 PAS to pool 1 on Paseo');
+    console.log('OllamaAgent Nominate Query Result:', result);
+    await sleep(20000);
+    expect(result.output).toBeDefined();
+  });
+
+
 });

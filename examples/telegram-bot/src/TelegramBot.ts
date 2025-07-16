@@ -61,12 +61,14 @@ export class TelegramBot {
       const xcmTransferNativeAsset = this.agent.xcmTransferNativeTool();
 
       const swapTokens = this.agent.swapTokensTool();
+      const joinPool = this.agent.joinPoolTool();
 
       setupHandlers(this.bot, this.llm, {
         checkBalance: checkBalance,
         transferNative: transferNative,
         xcmTransferNativeAsset: xcmTransferNativeAsset,
         swapTokens: swapTokens,
+        joinPool: joinPool,
       });
 
       console.log("Bot initialization complete");

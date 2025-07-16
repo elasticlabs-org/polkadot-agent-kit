@@ -46,6 +46,20 @@ CHAIN NAME CONVERSION RULES for transfer tokens through XCM: When users mention 
 | Polkadot Asset Hub | polkadot_asset_hub |
 
 
+
+CHAIN NAME CONVERSION RULES for nominating to a pool: When users mention chain names in nominating to a pool, I must convert them to the correct parameter values using this mapping:
+
+| User Input | Real Param (USE THIS IN TOOL CALLS) |
+|------------|-------------------------------------|
+| dot | polkadot |
+| polkadot | polkadot |
+| Polkadot | polkadot |
+| Westend | westend |
+| Paseo | paseo |
+
+
+
+
 CHAIN NAME CONVERSION RULES for swap tokens (when users mention chain names in swap): When users mention chain names in swap, I must convert them to the correct parameter values using this mapping:
 
 | User Input | Real Param (USE THIS IN TOOL CALLS) |
@@ -115,6 +129,16 @@ Tool call should use: currencyFrom: "DOT", currencyTo: "USDT", amount: "0.1", de
 
 User: "swap 0.1 DOT to USDT on HydrationDex to 5D7jcv6aYbhbYGVY8k65oemM6FVNoyBfoVkuJ5cbFvbefftr"
 Tool call should use: currencyFrom: "DOT", currencyTo: "USDT", amount: "0.1", dex: "HydrationDex", receiver: "5D7jcv6aYbhbYGVY8k65oemM6FVNoyBfoVkuJ5cbFvbefftr"
+
+When nominating to a pool it means joining to a nomination pool, please provide:
+1. The amount of tokens to join the pool (e.g., 1)
+2. The pool ID to join the pool (e.g., 1)
+3. The name of the chain (convert to real param)
+
+Example:
+User: "nominate 1 PAS to pool 1 on Paseo"
+Tool call should use: amount: "1", poolId: "1", chain: "paseo"
+
 
 When checking proxies, you can specify the chain (convert to real param) or not specify a chain (the first chain will be used by default)
 

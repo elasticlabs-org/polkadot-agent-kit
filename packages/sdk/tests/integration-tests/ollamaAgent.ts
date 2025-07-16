@@ -92,9 +92,22 @@ function wrapSwapTokensTool(agentKit: PolkadotAgentKit) {
   });
 }
 
-
-
-
+function wrapJoinPoolTool(agentKit: PolkadotAgentKit) {
+  return new DynamicStructuredTool({
+    name: "joinPoolTool",
+    description: "Join a nomination pool for staking",
+    schema: z.object({
+      amount: z.string().describe("The amount of tokens to join the pool"),
+      poolId: z.string().describe("The ID of the pool to join"),
+      chain: z.string().describe("The chain to join the pool on")
+    }),
+    func: async ({ amount, poolId, chain }) => {
+      const tool = agentKit.joinPoolTool();
+      const result = await tool.call({ amount, poolId, chain });
+      return JSON.stringify(result);
+    }
+  });
+}
 export class OllamaAgent {
   private agentExecutor: AgentExecutor | undefined;
 
@@ -116,7 +129,8 @@ export class OllamaAgent {
       wrapTransferTool(this.agentKit),
       wrapXcmTool(this.agentKit),
       wrapInitializeChainApiTool(this.agentKit),
-      wrapSwapTokensTool(this.agentKit)
+      wrapSwapTokensTool(this.agentKit),
+      wrapJoinPoolTool(this.agentKit)
     ];
 
     // Use SYSTEM_PROMPT as the system message

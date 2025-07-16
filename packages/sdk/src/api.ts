@@ -156,6 +156,115 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
   }
 
   /**
+   * Get Join Pool Tool
+   * Creates a tool for joining a nomination pool for staking
+   *
+   * @returns DynamicStructuredTool for joining nomination pools
+   *
+   * @example
+   * ```typescript
+   * // Create a join pool tool
+   * const joinPoolTool = agent.joinPoolTool();
+   *
+   * // Tool can be used with LangChain
+   * const result = await joinPoolTool.call({
+   *   amount: "1.5",
+   *   poolId: 1,
+   *   chain: "polkadot"
+   * });
+   * ```
+   */
+  joinPoolTool() {
+    return (this.agentApi).joinPoolTool(this.getSigner())
+  }
+
+  /**
+   * Get Bond Extra Tool
+   * Creates a tool for bonding extra tokens to a nomination pool
+   *
+   * @returns DynamicStructuredTool for bonding extra tokens
+   *
+   * @example
+   * ```typescript
+   * // Create a bond extra tool
+   * const bondExtraTool = agent.bondExtraTool();
+   *
+   * // Tool can be used with LangChain
+   * const result = await bondExtraTool.call({
+   *   type: "FreeBalance",
+   *   chain: "polkadot"
+   * });
+   * ```
+   */
+  bondExtraTool() {
+    return (this.agentApi).bondExtraTool(this.getSigner())
+  }
+
+  /**
+   * Get Unbond Tool
+   * Creates a tool for unbonding tokens from a nomination pool
+   *
+   * @returns DynamicStructuredTool for unbonding tokens
+   *
+   * @example
+   * ```typescript
+   * // Create an unbond tool
+   * const unbondTool = agent.unbondTool();
+   *
+   * // Tool can be used with LangChain
+   * const result = await unbondTool.call({
+   *   amount: "1.5",
+   *   chain: "polkadot"
+   * });
+   * ```
+   */
+  unbondTool() {
+    return (this.agentApi).unbondTool(this.getSigner(), this.getCurrentAddress())
+  }
+
+  /**
+   * Get Withdraw Unbonded Tool
+   * Creates a tool for withdrawing unbonded tokens from a nomination pool
+   *
+   * @returns DynamicStructuredTool for withdrawing unbonded tokens
+   *
+   * @example
+   * ```typescript
+   * // Create a withdraw unbonded tool
+   * const withdrawUnbondedTool = agent.withdrawUnbondedTool();
+   *
+   * // Tool can be used with LangChain
+   * const result = await withdrawUnbondedTool.call({
+   *   slashingSpans: 0,
+   *   chain: "polkadot"
+   * });
+   * ```
+   */
+  withdrawUnbondedTool() {
+    return (this.agentApi).withdrawUnbondedTool(this.getSigner(), this.getCurrentAddress())
+  }
+
+  /**
+   * Get Claim Rewards Tool
+   * Creates a tool for claiming rewards from a nomination pool
+   *
+   * @returns DynamicStructuredTool for claiming rewards
+   *
+   * @example
+   * ```typescript
+   * // Create a claim rewards tool
+   * const claimRewardsTool = agent.claimRewardsTool();
+   *
+   * // Tool can be used with LangChain
+   * const result = await claimRewardsTool.call({
+   *   chain: "polkadot"
+   * });
+   * ```
+   */
+  claimRewardsTool() {
+    return (this.agentApi).claimRewardsTool(this.getSigner())
+  }
+  /**
    * Get Address
    *
    * @returns The address as string
