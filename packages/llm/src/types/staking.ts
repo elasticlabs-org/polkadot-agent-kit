@@ -19,26 +19,47 @@ import { ToolNames } from "./common"
  */
 export const joinPoolToolSchema = z.object({
   amount: z.string().describe("The amount of tokens to bond in the pool"),
-  poolId: z.string().describe("The ID of the pool to join"),
   chain: z.string().describe("The chain to join the pool on")
 })
 
 /**
- * Schema for the bond extra tool input.
- * Defines the structure and validation rules for bonding extra tokens.
+ * Schema for the bond extra tool input. This is a discriminated union based on the `type` field.
+ *
+ * - If `type` is `"FreeBalance"`, an `amount` must be provided.
+ * - If `type` is `"Rewards"`, no `amount` is needed as all pending rewards will be re-staked.
  *
  * @example
- * ```typescript
+ * // Bonding from free balance
  * {
- *   type: "FreeBalance",  // Type of extra bonding
- *   chain: "polkadot"  // Target chain
+ *   type: "FreeBalance",
+ *   amount: "1.5",
+ *   chain: "polkadot"
  * }
- * ```
+ *
+ * @example
+ * // Re-staking rewards
+ * {
+ *   type: "Rewards",
+ *   chain: "polkadot"
+ * }
  */
-export const bondExtraToolSchema = z.object({
-  type: z.enum(["FreeBalance", "Rewards"]).describe("The type of extra bonding (FreeBalance or Rewards)"),
-  chain: z.string().describe("The chain to bond extra tokens on")
-})
+export const bondExtraToolSchema = z
+  .discriminatedUnion("type", [
+    z.object({
+      type: z.literal("FreeBalance"),
+      amount: z
+        .string()
+        .describe("The amount of tokens to bond from your free balance."),
+      chain: z.string().describe("The chain to bond extra tokens on."),
+    }),
+    z.object({
+      type: z.literal("Rewards"),
+      chain: z.string().describe("The chain to bond rewards on."),
+    }),
+  ])
+  .describe(
+    "Bonds extra funds to a nomination pool. Use 'FreeBalance' to bond a specific amount from your wallet, or 'Rewards' to re-stake your earned rewards."
+  )
 
 /**
  * Schema for the unbond tool input.

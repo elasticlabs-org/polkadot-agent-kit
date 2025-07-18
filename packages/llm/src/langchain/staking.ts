@@ -1,7 +1,7 @@
 import { tool } from "@langchain/core/tools"
 import type { Api, ChainIdRelay } from "@polkadot-agent-kit/common"
 import { getAllSupportedChains, getChainById } from "@polkadot-agent-kit/common"
-import type { PolkadotApi } from "@polkadot-agent-kit/core"
+import type { PolkadotApi, Tx } from "@polkadot-agent-kit/core"
 import type { PolkadotSigner } from "polkadot-api"
 import type { z } from "zod"
 
@@ -22,12 +22,12 @@ import {
 } from "../types/staking"
 import { ToolNames } from "../types/common"
 import { executeTool, validateAndFormatMultiAddress } from "../utils"
-import { 
-  joinPoolTx, 
-  bondExtraTx, 
-  unbondTx, 
-  withdrawUnbondedTx, 
-  claimRewardsTx, 
+import {
+  joinPoolTx,
+  bondExtraTx,
+  unbondTx,
+  withdrawUnbondedTx,
+  claimRewardsTx,
   submitTxWithPolkadotSigner
 } from "@polkadot-agent-kit/core"
 
@@ -38,22 +38,22 @@ import {
  * @returns A dynamic structured tool for joining nomination pools
  */
 export const joinPoolTool = (polkadotApi: PolkadotApi, signer: PolkadotSigner) => {
-  return tool(async ({ amount, poolId, chain }: z.infer<typeof joinPoolToolSchema>) => {
+  return tool(async ({ amount, chain }: z.infer<typeof joinPoolToolSchema>) => {
     return executeTool<StakingToolResult>(
       ToolNames.JOIN_POOL,
       async () => {
         const api = polkadotApi.getApi(chain as ChainIdRelay) as Api<ChainIdRelay>
         const chainInfo = getChainById(chain as ChainIdRelay, getAllSupportedChains())
         const amountBigInt = BigInt(amount) * BigInt(10 ** chainInfo.decimals)
-        
-        const tx = joinPoolTx(api, amountBigInt, Number(poolId))
+
+        const tx = await joinPoolTx(api, amountBigInt)
 
         const result = await submitTxWithPolkadotSigner(tx, signer)
         if (result.success) {
           return {
             success: true,
             transactionHash: result.transactionHash,
-            data: { poolId, amount, chain }
+            data: { amount, chain }
           }
         } else {
           return {
@@ -65,7 +65,7 @@ export const joinPoolTool = (polkadotApi: PolkadotApi, signer: PolkadotSigner) =
       },
       result => {
         if (result.success) {
-          return `Successfully joined pool ${poolId} with ${amount} tokens on ${chain}. Transaction hash: ${result.transactionHash}`
+          return `Successfully joined pool with ${amount} tokens on ${chain}. Transaction hash: ${result.transactionHash}`
         } else {
           return `Tx Hash Failed: ${result.transactionHash} with error: ${result.error}`
         }
@@ -81,16 +81,23 @@ export const joinPoolTool = (polkadotApi: PolkadotApi, signer: PolkadotSigner) =
  * @returns A dynamic structured tool for bonding extra tokens
  */
 export const bondExtraTool = (polkadotApi: PolkadotApi, signer: PolkadotSigner) => {
-  return tool(async ({ type, chain }: z.infer<typeof bondExtraToolSchema>) => {
+  return tool(async (input: z.infer<typeof bondExtraToolSchema>) => {
     return executeTool<StakingToolResult>(
       ToolNames.BOND_EXTRA,
       async () => {
-        const api = polkadotApi.getApi(chain as ChainIdRelay) as Api<ChainIdRelay>
 
-        
-        const tx = bondExtraTx(api, type as "FreeBalance" | "Rewards")
-        
-      const result = await submitTxWithPolkadotSigner(tx, signer)
+        const api = polkadotApi.getApi(input.chain as ChainIdRelay) as Api<ChainIdRelay>
+        const chainInfo = getChainById(input.chain as ChainIdRelay, getAllSupportedChains())
+        let tx: Tx
+        if (input.type === "FreeBalance") {
+          const amountBigInt = BigInt(input.amount!) * BigInt(10 ** chainInfo.decimals)
+          tx = bondExtraTx(api, "FreeBalance", amountBigInt)
+        } else {
+          // For "Rewards" type, we don't need amount
+          tx = bondExtraTx(api, "Rewards")
+        }
+
+        const result = await submitTxWithPolkadotSigner(tx, signer)
         if (result.success) {
           return {
             success: result.success,
@@ -106,7 +113,7 @@ export const bondExtraTool = (polkadotApi: PolkadotApi, signer: PolkadotSigner) 
       },
       result => {
         if (result.success) {
-          return `Successfully bonded extra tokens (${type}) on ${chain}. Transaction hash: ${result.transactionHash}`
+          return `Successfully bonded extra tokens (${input.type}) on ${input.chain}. Transaction hash: ${result.transactionHash}`
         } else {
           return `Tx Hash Failed: ${result.transactionHash} with error: ${result.error}`
         }
@@ -133,11 +140,11 @@ export const unbondTool = (polkadotApi: PolkadotApi, signer: PolkadotSigner, add
         const formattedAddress = validateAndFormatMultiAddress(address, chain as ChainIdRelay)
         const chainInfo = getChainById(chain as ChainIdRelay, getAllSupportedChains())
         const amountBigInt = BigInt(amount) * BigInt(10 ** chainInfo.decimals)
-        
+
         const tx = unbondTx(api, formattedAddress, amountBigInt)
-        
+
         const result = await submitTxWithPolkadotSigner(tx, signer)
-        
+
         if (result.success) {
           return {
             success: result.success,
@@ -181,9 +188,9 @@ export const withdrawUnbondedTool = (polkadotApi: PolkadotApi, signer: PolkadotS
         const api = polkadotApi.getApi(chain as ChainIdRelay) as Api<ChainIdRelay>
         const formattedAddress = validateAndFormatMultiAddress(address, chain as ChainIdRelay)
         const tx = withdrawUnbondedTx(api, formattedAddress, slashingSpans)
-        
+
         const result = await submitTxWithPolkadotSigner(tx, signer)
-        
+
         if (result.success) {
           return {
             success: result.success,
@@ -222,11 +229,11 @@ export const claimRewardsTool = (polkadotApi: PolkadotApi, signer: PolkadotSigne
       ToolNames.CLAIM_REWARDS,
       async () => {
         const api = polkadotApi.getApi(chain as ChainIdRelay) as Api<ChainIdRelay>
-        
+
         const tx = claimRewardsTx(api)
-        
+
         const result = await submitTxWithPolkadotSigner(tx, signer)
-        
+
         if (result.success) {
           return {
             success: result.success,

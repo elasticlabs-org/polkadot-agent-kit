@@ -132,13 +132,44 @@ Tool call should use: currencyFrom: "DOT", currencyTo: "USDT", amount: "0.1", de
 
 When nominating to a pool it means joining to a nomination pool, please provide:
 1. The amount of tokens to join the pool (e.g., 1)
-2. The pool ID to join the pool (e.g., 1)
-3. The name of the chain (convert to real param)
+2. The name of the chain (convert to real param)
 
-Example:
-User: "nominate 1 PAS to pool 1 on Paseo"
-Tool call should use: amount: "1", poolId: "1", chain: "paseo"
+When a user wants to "bond," "stake," or "nominate" tokens to a nomination pool, follow this two-step process:
 
+1.  **First Attempt: Use joinPool**
+    - This is your default action for adding funds to a pool.
+    - Ask for the amount of tokens and the chain name.
+    - Execute the joinPool tool.
+
+2.  **Second Attempt (Contingency): Use bondExtra**
+    - **Condition**: Only use this if the "joinPool" tool fails with the EXACT error: "NominationPools.AccountBelongsToOtherPool".
+    - **Action**: This error means the user is already in a pool. You must automatically call the "bondExtra" tool to add the funds to their existing pool.
+    - Use the same amount and chain the user provided initially. Do not ask for confirmation.
+
+### bondExtra Tool Instructions
+
+**EXECUTION COMMAND**: When you see "bond extra" + amount + chain, you MUST call the bondExtra tool immediately.
+
+**NO THINKING - ONLY ACTION**: Do not explain, do not think - just call the tool.
+
+**Tool Call Format**:
+- For "bond extra [amount] [token] on [chain]": Call bondExtra with type "FreeBalance", amount "[amount]", chain "[chain]"
+- For "re-stake rewards on [chain]": Call bondExtra with type "Rewards", chain "[chain]"
+
+**Examples**:
+- User: "bond extra 2 PAS on paseo" → CALL bondExtra(type: "FreeBalance", amount: "2", chain: "paseo")
+- User: "re-stake my rewards on paseo" → CALL bondExtra(type: "Rewards", chain: "paseo")
+
+**MANDATORY**: You must call the tool, not just think about it.
+
+### Example Workflow: Automatic Fallback
+
+**User:** "bond 100 DOT on Polkadot"
+**Your Process:**
+1.  **First, CALL**: joinPool with amount "100", chain "polkadot".
+2.  **If it fails with NominationPools.AccountBelongsToOtherPool**:
+    - **Then, CALL**: bondExtra with type "FreeBalance", amount "100", chain "polkadot".
+3.  **If it fails with any other error**: Report the specific error to the user.
 
 When checking proxies, you can specify the chain (convert to real param) or not specify a chain (the first chain will be used by default)
 
@@ -157,6 +188,9 @@ export function setupHandlers(
         '- Checking balance (e.g., "check balance on west/polkadot/kusama")\n' +
         '- Checking proxies (e.g., "check proxies on westend" or "check proxies")\n' +
         '- Transfer tokens through XCM (e.g., "transfer 1 WND to 5CSox4ZSN4SGLKUG9NYPtfVK9sByXLtxP4hmoF4UgkM4jgDJ from west to west_asset_hub ")\n' +
+        '- Bonding to a pool (e.g., "bond 100 DOT on Polkadot")\n' +
+        '- Re-staking rewards (e.g., "re-stake my rewards on Paseo")\n' +
+        '- Swapping tokens (e.g., "swap 1 DOT to USDT on Hydra")\n' +
         "Try asking something!",
     );
   });
@@ -173,8 +207,10 @@ export function setupHandlers(
         new HumanMessage({ content: message }),
       ];
       const aiMessage = await llmWithTools.invoke(messages);
+      
       if (aiMessage.tool_calls && aiMessage.tool_calls.length > 0) {
         for (const toolCall of aiMessage.tool_calls) {
+          
           const selectedTool = toolsByName[toCamelCase(toolCall.name)];
           if (selectedTool) {
             const toolMessage = await selectedTool.invoke(toolCall);

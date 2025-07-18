@@ -10,7 +10,12 @@ import type { Tx } from "../../types"
  */
 export const bondExtraTx = (
   api: Api<ChainIdRelay>,
-  extra: "FreeBalance" | "Rewards"
+  type: "FreeBalance" | "Rewards",
+  amount?: bigint
 ): Tx => {
-  return api.tx.NominationPools.bond_extra({ extra: {type: 'Rewards', value: undefined}})
+  if (type === "FreeBalance") {
+    return api.tx.NominationPools.bond_extra({ extra: {type: "FreeBalance", value: amount ?? BigInt(0)}})
+  } else {
+    return api.tx.NominationPools.bond_extra({ extra: {type: "Rewards", value: undefined}})
+  }
 }
