@@ -318,4 +318,250 @@ describe("PolkadotApi", () => {
       expect(tool).toBe(mockXcmTool)
     })
   })
+
+  // Nomination Pool Tests
+  describe("joinPoolTool", () => {
+    const createMockJoinPoolTool = (name: string, description: string) => ({
+      name,
+      description,
+      execute: vi.fn(),
+      invoke: vi.fn(),
+      call: vi.fn(),
+      metadata: {},
+      tags: [],
+      callbacks: undefined,
+      verbose: false
+    })
+
+    let mockJoinPoolTool: any
+    let mockAgentPolkadotApi: PolkadotAgentApi
+    const mockSigner = { sign: vi.fn() } as any
+
+    beforeEach(() => {
+      mockJoinPoolTool = createMockJoinPoolTool("joinPool", "Join nomination pool")
+      mockAgentPolkadotApi = {
+        getNativeBalanceTool: vi.fn(),
+        joinPoolTool: vi.fn().mockReturnValue(mockJoinPoolTool)
+      } as unknown as PolkadotAgentApi
+    })
+
+    it("should return the join pool tool and call it with correct params", async () => {
+      const tool = mockAgentPolkadotApi.joinPoolTool(mockSigner)
+      expect(tool).toBeDefined()
+      expect(tool).toBe(mockJoinPoolTool)
+    })
+
+    it("should handle join pool tool creation with different signers", () => {
+      const mockSigner2 = { sign: vi.fn() } as any
+      const tool1 = mockAgentPolkadotApi.joinPoolTool(mockSigner)
+      const tool2 = mockAgentPolkadotApi.joinPoolTool(mockSigner2)
+
+      expect(tool1).toBeDefined()
+      expect(tool2).toBeDefined()
+      expect(tool1).toBe(mockJoinPoolTool)
+      expect(tool2).toBe(mockJoinPoolTool)
+    })
+  })
+
+  describe("bondExtraTool", () => {
+    const createMockBondExtraTool = (name: string, description: string) => ({
+      name,
+      description,
+      execute: vi.fn(),
+      invoke: vi.fn(),
+      call: vi.fn(),
+      metadata: {},
+      tags: [],
+      callbacks: undefined,
+      verbose: false
+    })
+
+    let mockBondExtraTool: any
+    let mockAgentPolkadotApi: PolkadotAgentApi
+    const mockSigner = { sign: vi.fn() } as any
+
+    beforeEach(() => {
+      mockBondExtraTool = createMockBondExtraTool("bondExtra", "Bond extra tokens")
+      mockAgentPolkadotApi = {
+        getNativeBalanceTool: vi.fn(),
+        bondExtraTool: vi.fn().mockReturnValue(mockBondExtraTool)
+      } as unknown as PolkadotAgentApi
+    })
+
+    it("should return the bond extra tool and call it with correct params", async () => {
+      const tool = mockAgentPolkadotApi.bondExtraTool(mockSigner)
+      expect(tool).toBeDefined()
+      expect(tool).toBe(mockBondExtraTool)
+    })
+
+    it("should handle bond extra tool creation with different signers", () => {
+      const mockSigner2 = { sign: vi.fn() } as any
+      const tool1 = mockAgentPolkadotApi.bondExtraTool(mockSigner)
+      const tool2 = mockAgentPolkadotApi.bondExtraTool(mockSigner2)
+
+      expect(tool1).toBeDefined()
+      expect(tool2).toBeDefined()
+      expect(tool1).toBe(mockBondExtraTool)
+      expect(tool2).toBe(mockBondExtraTool)
+    })
+  })
+
+  describe("unbondTool", () => {
+    const createMockUnbondTool = (name: string, description: string) => ({
+      name,
+      description,
+      execute: vi.fn(),
+      invoke: vi.fn(),
+      call: vi.fn(),
+      metadata: {},
+      tags: [],
+      callbacks: undefined,
+      verbose: false
+    })
+
+    let mockUnbondTool: any
+    let mockAgentPolkadotApi: PolkadotAgentApi
+    const mockSigner = { sign: vi.fn() } as any
+    const mockAddress = "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"
+
+    beforeEach(() => {
+      mockUnbondTool = createMockUnbondTool("unbond", "Unbond tokens from nomination pool")
+      mockAgentPolkadotApi = {
+        getNativeBalanceTool: vi.fn(),
+        unbondTool: vi.fn().mockReturnValue(mockUnbondTool)
+      } as unknown as PolkadotAgentApi
+    })
+
+    it("should return the unbond tool and call it with correct params", async () => {
+      const tool = mockAgentPolkadotApi.unbondTool(mockSigner, mockAddress)
+      expect(tool).toBeDefined()
+      expect(tool).toBe(mockUnbondTool)
+    })
+
+    it("should handle unbond tool creation with different addresses", () => {
+      const mockAddress2 = "5D7jcv6aYbhbYGVY8k65oemM6FVNoyBfoVkuJ5cbFvbefftr"
+      const tool1 = mockAgentPolkadotApi.unbondTool(mockSigner, mockAddress)
+      const tool2 = mockAgentPolkadotApi.unbondTool(mockSigner, mockAddress2)
+
+      expect(tool1).toBeDefined()
+      expect(tool2).toBeDefined()
+      expect(tool1).toBe(mockUnbondTool)
+      expect(tool2).toBe(mockUnbondTool)
+    })
+
+    it("should handle unbond tool creation with different signers", () => {
+      const mockSigner2 = { sign: vi.fn() } as any
+      const tool1 = mockAgentPolkadotApi.unbondTool(mockSigner, mockAddress)
+      const tool2 = mockAgentPolkadotApi.unbondTool(mockSigner2, mockAddress)
+
+      expect(tool1).toBeDefined()
+      expect(tool2).toBeDefined()
+      expect(tool1).toBe(mockUnbondTool)
+      expect(tool2).toBe(mockUnbondTool)
+    })
+  })
+
+  describe("withdrawUnbondedTool", () => {
+    const createMockWithdrawUnbondedTool = (name: string, description: string) => ({
+      name,
+      description,
+      execute: vi.fn(),
+      invoke: vi.fn(),
+      call: vi.fn(),
+      metadata: {},
+      tags: [],
+      callbacks: undefined,
+      verbose: false
+    })
+
+    let mockWithdrawUnbondedTool: any
+    let mockAgentPolkadotApi: PolkadotAgentApi
+    const mockSigner = { sign: vi.fn() } as any
+    const mockAddress = "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"
+
+    beforeEach(() => {
+      mockWithdrawUnbondedTool = createMockWithdrawUnbondedTool(
+        "withdrawUnbonded",
+        "Withdraw unbonded tokens"
+      )
+      mockAgentPolkadotApi = {
+        getNativeBalanceTool: vi.fn(),
+        withdrawUnbondedTool: vi.fn().mockReturnValue(mockWithdrawUnbondedTool)
+      } as unknown as PolkadotAgentApi
+    })
+
+    it("should return the withdraw unbonded tool and call it with correct params", async () => {
+      const tool = mockAgentPolkadotApi.withdrawUnbondedTool(mockSigner, mockAddress)
+      expect(tool).toBeDefined()
+      expect(tool).toBe(mockWithdrawUnbondedTool)
+    })
+
+    it("should handle withdraw unbonded tool creation with different addresses", () => {
+      const mockAddress2 = "5D7jcv6aYbhbYGVY8k65oemM6FVNoyBfoVkuJ5cbFvbefftr"
+      const tool1 = mockAgentPolkadotApi.withdrawUnbondedTool(mockSigner, mockAddress)
+      const tool2 = mockAgentPolkadotApi.withdrawUnbondedTool(mockSigner, mockAddress2)
+
+      expect(tool1).toBeDefined()
+      expect(tool2).toBeDefined()
+      expect(tool1).toBe(mockWithdrawUnbondedTool)
+      expect(tool2).toBe(mockWithdrawUnbondedTool)
+    })
+
+    it("should handle withdraw unbonded tool creation with different signers", () => {
+      const mockSigner2 = { sign: vi.fn() } as any
+      const tool1 = mockAgentPolkadotApi.withdrawUnbondedTool(mockSigner, mockAddress)
+      const tool2 = mockAgentPolkadotApi.withdrawUnbondedTool(mockSigner2, mockAddress)
+
+      expect(tool1).toBeDefined()
+      expect(tool2).toBeDefined()
+      expect(tool1).toBe(mockWithdrawUnbondedTool)
+      expect(tool2).toBe(mockWithdrawUnbondedTool)
+    })
+  })
+
+  describe("claimRewardsTool", () => {
+    const createMockClaimRewardsTool = (name: string, description: string) => ({
+      name,
+      description,
+      execute: vi.fn(),
+      invoke: vi.fn(),
+      call: vi.fn(),
+      metadata: {},
+      tags: [],
+      callbacks: undefined,
+      verbose: false
+    })
+
+    let mockClaimRewardsTool: any
+    let mockAgentPolkadotApi: PolkadotAgentApi
+    const mockSigner = { sign: vi.fn() } as any
+
+    beforeEach(() => {
+      mockClaimRewardsTool = createMockClaimRewardsTool(
+        "claimRewards",
+        "Claim rewards from nomination pool"
+      )
+      mockAgentPolkadotApi = {
+        getNativeBalanceTool: vi.fn(),
+        claimRewardsTool: vi.fn().mockReturnValue(mockClaimRewardsTool)
+      } as unknown as PolkadotAgentApi
+    })
+
+    it("should return the claim rewards tool and call it with correct params", async () => {
+      const tool = mockAgentPolkadotApi.claimRewardsTool(mockSigner)
+      expect(tool).toBeDefined()
+      expect(tool).toBe(mockClaimRewardsTool)
+    })
+
+    it("should handle claim rewards tool creation with different signers", () => {
+      const mockSigner2 = { sign: vi.fn() } as any
+      const tool1 = mockAgentPolkadotApi.claimRewardsTool(mockSigner)
+      const tool2 = mockAgentPolkadotApi.claimRewardsTool(mockSigner2)
+
+      expect(tool1).toBeDefined()
+      expect(tool2).toBeDefined()
+      expect(tool1).toBe(mockClaimRewardsTool)
+      expect(tool2).toBe(mockClaimRewardsTool)
+    })
+  })
 })

@@ -92,8 +92,48 @@ function wrapSwapTokensTool(agentKit: PolkadotAgentKit) {
   });
 }
 
+function wrapJoinPoolTool(agentKit: PolkadotAgentKit) {
+  return new DynamicStructuredTool({
+    name: "joinPoolTool",
+    description: "Join a nomination pool for staking",
+    schema: z.object({
+      amount: z.string().describe("The amount of tokens to join the pool"),
+      poolId: z.string().describe("The ID of the pool to join"),
+      chain: z.string().describe("The chain to join the pool on")
+    }),
+    func: async ({ amount, poolId, chain }) => {
+      const tool = agentKit.joinPoolTool();
+      const result = await tool.call({ amount, poolId, chain });
+      return JSON.stringify(result);
+    }
+  });
+}
 
 
+
+
+function wrapBondExtraTool(agentKit: PolkadotAgentKit) {
+  return new DynamicStructuredTool({
+    name: "bondExtraTool",
+    description: "Bond extra tokens to a nomination pool. Use 'FreeBalance' to bond a specific amount from your wallet, or 'Rewards' to re-stake your earned rewards.",
+    schema: z.discriminatedUnion("type", [
+      z.object({
+        type: z.literal("FreeBalance"),
+        amount: z.string().describe("The amount of tokens to bond from your free balance."),
+        chain: z.string().describe("The chain to bond extra tokens on."),
+      }),
+      z.object({
+        type: z.literal("Rewards"),
+        chain: z.string().describe("The chain to bond rewards on."),
+      }),
+    ]),
+    func: async (input) => {
+      const tool = agentKit.bondExtraTool();
+      const result = await tool.call(input);
+      return JSON.stringify(result);
+    }
+  });
+}
 
 export class OllamaAgent {
   private agentExecutor: AgentExecutor | undefined;
@@ -116,7 +156,9 @@ export class OllamaAgent {
       wrapTransferTool(this.agentKit),
       wrapXcmTool(this.agentKit),
       wrapInitializeChainApiTool(this.agentKit),
-      wrapSwapTokensTool(this.agentKit)
+      wrapSwapTokensTool(this.agentKit),
+      wrapJoinPoolTool(this.agentKit),
+      wrapBondExtraTool(this.agentKit)
     ];
 
     // Use SYSTEM_PROMPT as the system message

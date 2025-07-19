@@ -1,5 +1,6 @@
 import {
   hydra,
+  paseo,
   polkadot,
   polkadot_asset_hub,
   west,
@@ -7,6 +8,7 @@ import {
 } from "@polkadot-api/descriptors"
 
 import {
+  paseoChain,
   polkadotAssetHubChain,
   polkadotChain,
   westendAssetHubChain,
@@ -15,6 +17,7 @@ import {
 type DescriptorsRelayType = {
   polkadot: typeof polkadot
   west: typeof west
+  paseo: typeof paseo
 }
 
 type DescriptorsAssetHubType = {
@@ -28,7 +31,8 @@ type DescriptorsParaType = {
 
 const DESCRIPTORS_RELAY: DescriptorsRelayType = {
   polkadot,
-  west
+  west,
+  paseo
 }
 
 const DESCRIPTORS_ASSET_HUB: DescriptorsAssetHubType = {
@@ -106,7 +110,8 @@ const SUPPORTED_CHAINS: Chain[] = [
   polkadotChain,
   polkadotAssetHubChain,
   westendChain,
-  westendAssetHubChain
+  westendAssetHubChain,
+  paseoChain
 ]
 
 export const getAllSupportedChains = (): Chain[] => {

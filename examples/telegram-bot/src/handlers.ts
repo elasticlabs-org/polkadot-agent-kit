@@ -46,6 +46,20 @@ CHAIN NAME CONVERSION RULES for transfer tokens through XCM: When users mention 
 | Polkadot Asset Hub | polkadot_asset_hub |
 
 
+
+CHAIN NAME CONVERSION RULES for nominating to a pool: When users mention chain names in nominating to a pool, I must convert them to the correct parameter values using this mapping:
+
+| User Input | Real Param (USE THIS IN TOOL CALLS) |
+|------------|-------------------------------------|
+| dot | polkadot |
+| polkadot | polkadot |
+| Polkadot | polkadot |
+| Westend | westend |
+| Paseo | paseo |
+
+
+
+
 CHAIN NAME CONVERSION RULES for swap tokens (when users mention chain names in swap): When users mention chain names in swap, I must convert them to the correct parameter values using this mapping:
 
 | User Input | Real Param (USE THIS IN TOOL CALLS) |
@@ -116,6 +130,56 @@ Tool call should use: currencyFrom: "DOT", currencyTo: "USDT", amount: "0.1", de
 User: "swap 0.1 DOT to USDT on HydrationDex to 5D7jcv6aYbhbYGVY8k65oemM6FVNoyBfoVkuJ5cbFvbefftr"
 Tool call should use: currencyFrom: "DOT", currencyTo: "USDT", amount: "0.1", dex: "HydrationDex", receiver: "5D7jcv6aYbhbYGVY8k65oemM6FVNoyBfoVkuJ5cbFvbefftr"
 
+When nominating to a pool it means joining to a nomination pool, please provide:
+1. The amount of tokens to join the pool (e.g., 1)
+2. The name of the chain (convert to real param)
+
+When user wants to bond extra tokens from their wallet, I must call the bondExtraTool with:
+1. type: "FreeBalance" (must be this exact string)
+2. amount: [amount as string, e.g., "100"]
+3. chain: [converted chain name as per chain conversion rules]
+
+Example: For "bond 100 DOT on Polkadot", call bondExtraTool with:
+{ "type": "FreeBalance", "amount": "100", "chain": "polkadot" }
+
+When user requests to re-stake rewards, I must call the bondExtraTool with EXACTLY these parameters:
+1. type: "Rewards" (must be this exact string)
+2. chain: [converted chain name as per chain conversion rules]
+
+Example: For "re-stake my rewards on Paseo", call bondExtraTool with:
+{ "type": "Rewards", "chain": "paseo" }
+
+IMPORTANT: Always use the EXACT parameter structure shown in examples above. The "type" field is a discriminator and must match exactly.
+
+when user wants to unbond tokens from a pool, I must call the unbondTool with:
+1. amount: [amount as string, e.g., "100"]
+2. chain: [converted chain name as per chain conversion rules]
+
+Example: For "unbond 100 DOT on Polkadot", call unbondTool with:
+{ "amount": "100", "chain": "polkadot" }
+
+when user wants to claim rewards from a pool, I must call the claimRewardsTools with:
+1. chain: [converted chain name as per chain conversion rules]
+
+Example: For "claim rewards from pool on paseo", call claimRewardsTool with:
+{ "chain": "paseo" }
+
+
+--- TOOL-SPECIFIC RULES ---
+
+1. To 'unbond' tokens (start the unbonding process):
+   - Use the 'unbond' tool.
+   - Requires 'amount' (string) and 'chain' (string).
+   - Example: User says "unbond 10 DOT on Polkadot" -> Call 'unbond' with { amount: "10", chain: "polkadot" }
+
+2. To 'withdraw unbonded' tokens (after the unbonding period):
+   - Use the 'withdrawUnbondedTool'.
+   - Requires 'slashingSpans' (string) and 'chain' (string).
+   - CRITICAL: If the user says "amount", use that value for 'slashingSpans'.
+   - Example: User says "withdraw unbonded with 1 amount on Paseo" -> Call 'withdrawUnbondedTool' with { slashingSpans: "1", chain: "paseo" }
+
+--- END OF TOOL-SPECIFIC RULES ---
+
 When checking proxies, you can specify the chain (convert to real param) or not specify a chain (the first chain will be used by default)
 
 Please provide instructions, and I will assist you!`;
@@ -133,6 +197,12 @@ export function setupHandlers(
         '- Checking balance (e.g., "check balance on west/polkadot/kusama")\n' +
         '- Checking proxies (e.g., "check proxies on westend" or "check proxies")\n' +
         '- Transfer tokens through XCM (e.g., "transfer 1 WND to 5CSox4ZSN4SGLKUG9NYPtfVK9sByXLtxP4hmoF4UgkM4jgDJ from west to west_asset_hub ")\n' +
+        '- Bonding to a pool (e.g., "bond 100 DOT on Polkadot")\n' +
+        '- Re-staking rewards (e.g., "re-stake my rewards on Paseo")\n' +
+        '- Unbonding tokens from a pool (e.g., "unbond 100 DOT on Polkadot")\n' +
+        '- Claiming rewards from a pool (e.g., "claim rewards from pool on paseo")\n' +
+        '- Withdraw unbonded from a pool (e.g, "withdraw unbonded with 1 amount from pool on paseo")\n' +
+        '- Swapping tokens (e.g., "swap 1 DOT to USDT on Hydra")\n' +
         "Try asking something!",
     );
   });

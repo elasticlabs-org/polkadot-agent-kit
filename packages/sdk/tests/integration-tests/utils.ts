@@ -47,6 +47,20 @@ CHAIN NAME CONVERSION RULES for transfer tokens through XCM: When users mention 
 | Polkadot Asset Hub | polkadot_asset_hub |
 
 
+
+CHAIN NAME CONVERSION RULES for nominating to a pool: When users mention chain names in nominating to a pool, I must convert them to the correct parameter values using this mapping:
+
+| User Input | Real Param (USE THIS IN TOOL CALLS) |
+|------------|-------------------------------------|
+| dot | polkadot |
+| polkadot | polkadot |
+| Polkadot | polkadot |
+| Westend | westend |
+| Paseo | paseo |
+
+
+
+
 CHAIN NAME CONVERSION RULES for swap tokens (when users mention chain names in swap): When users mention chain names in swap, I must convert them to the correct parameter values using this mapping:
 
 | User Input | Real Param (USE THIS IN TOOL CALLS) |
@@ -116,6 +130,56 @@ Tool call should use: currencyFrom: "DOT", currencyTo: "USDT", amount: "0.1", de
 
 User: "swap 0.1 DOT to USDT on HydrationDex to 5D7jcv6aYbhbYGVY8k65oemM6FVNoyBfoVkuJ5cbFvbefftr"
 Tool call should use: currencyFrom: "DOT", currencyTo: "USDT", amount: "0.1", dex: "HydrationDex", receiver: "5D7jcv6aYbhbYGVY8k65oemM6FVNoyBfoVkuJ5cbFvbefftr"
+
+When nominating to a pool it means joining to a nomination pool, please provide:
+1. The amount of tokens to join the pool (e.g., 1)
+2. The name of the chain (convert to real param)
+
+When a user wants to "bond," "stake," or "nominate" tokens to a nomination pool, follow this two-step process:
+
+1.  **First Attempt: Use joinPool**
+    - This is your default action for adding funds to a pool.
+    - Ask for the amount of tokens and the chain name.
+    - Execute the joinPool tool.
+
+2.  **Second Attempt (Contingency): Use bondExtra**
+    - **Condition**: Only use this if the joinPool tool fails with the EXACT error: "NominationPools.AccountBelongsToOtherPool".
+    - **Action**: This error means the user is already in a pool. You must automatically use the bondExtra tool to add the funds to their existing pool.
+    - **For bondExtra, you have two options**:
+      *   **FreeBalance**: Bond a specific amount from the user's wallet balance
+      *   **Rewards**: Re-stake all pending rewards earned from the pool
+    - Use the same amount and chain the user provided initially. Do not ask for confirmation.
+
+### Bond Extra Tool Usage
+
+When using bondExtra tool, you must specify the bonding type:
+
+**For FreeBalance bonding:**
+- Use type: "FreeBalance" and provide the amount of tokens to bond
+- Example: bondExtra with type: "FreeBalance", amount: "100", chain: "polkadot"
+
+**For Rewards re-staking:**
+- Use type: "Rewards" (no amount needed, all pending rewards will be re-staked)
+- Example: bondExtra with type: "Rewards", chain: "polkadot"
+
+### Example Workflow
+
+**User says:** "bond 100 DOT on Polkadot"
+
+**Your internal process:**
+1.  **Initial Tool Call**: joinPool with amount: "100", chain: "polkadot"
+2.  **Check Result**:
+    *   **If successful**: Report to the user: "I have successfully bonded 100 DOT to a nomination pool on Polkadot."
+    *   **If it fails with NominationPools.AccountBelongsToOtherPool**:
+        *   **Automatic Follow-up Tool Call**: bondExtra with type: "FreeBalance", amount: "100", chain: "polkadot"
+        *   Report the final result of the bondExtra call to the user.
+    *   **If it fails with any other error**: Report the specific error to the user.
+
+**User says:** "re-stake my rewards on Polkadot"
+
+**Your response:**
+- Use bondExtra with type: "Rewards", chain: "polkadot"
+- Report the result to the user.
 
 When checking proxies, you can specify the chain (convert to real param) or not specify a chain (the first chain will be used by default)
 

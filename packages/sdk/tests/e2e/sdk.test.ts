@@ -7,6 +7,13 @@ const mockTransferResult = { success: true, transactionHash: '0xMOCKEDTXHASH' };
 const mockXcmResult = { success: true, transactionHash: '0xMOCKEDXCMTXHASH' };
 const mockSwapResult = { success: true, transactionHash: '0xMOCKEDSWAPTXHASH' };
 
+// Nomination pool mock results
+const mockJoinPoolResult = { success: true, transactionHash: '0xMOCKEDJOINPOOLTXHASH', data: { amount: '10', chain: 'polkadot' } };
+const mockBondExtraResult = { success: true, transactionHash: '0xMOCKEDBONDEXTRATXHASH' };
+const mockUnbondResult = { success: true, transactionHash: '0xMOCKEDUNBONDTXHASH' };
+const mockWithdrawUnbondedResult = { success: true, transactionHash: '0xMOCKEDWITHDRAWTXHASH' };
+const mockClaimRewardsResult = { success: true, transactionHash: '0xMOCKEDCLAIMREWARDSTXHASH' };
+
 vi.mock('../../src/api', () => {
   return {
     PolkadotAgentKit: vi.fn().mockImplementation((privateKey: string, config?: AgentConfig) => {
@@ -28,6 +35,22 @@ vi.mock('../../src/api', () => {
         swapTokensTool: vi.fn(() => ({
           call: vi.fn(async (input: any) => mockSwapResult)
         })),
+        // Nomination pool tools
+        joinPoolTool: vi.fn(() => ({
+          call: vi.fn(async (input: any) => mockJoinPoolResult)
+        })),
+        bondExtraTool: vi.fn(() => ({
+          call: vi.fn(async (input: any) => mockBondExtraResult)
+        })),
+        unbondTool: vi.fn(() => ({
+          call: vi.fn(async (input: any) => mockUnbondResult)
+        })),
+        withdrawUnbondedTool: vi.fn(() => ({
+          call: vi.fn(async (input: any) => mockWithdrawUnbondedResult)
+        })),
+        claimRewardsTool: vi.fn(() => ({
+          call: vi.fn(async (input: any) => mockClaimRewardsResult)
+        })),
         disconnect: vi.fn().mockResolvedValue(undefined),
         config: instanceConfig,
       };
@@ -42,7 +65,6 @@ vi.mock('@langchain/ollama', () => ({
     }))
   }))
 }));
-
 
 const scenarios = [
   {
@@ -104,6 +126,118 @@ const scenarios = [
       expect(result).toEqual(mockSwapResult);
       expect(result.success).toBe(true);
       expect(result.transactionHash).toBe('0xMOCKEDSWAPTXHASH');
+    }
+  },
+  // Nomination Pool Tests
+  {
+    name: 'joinPoolTool join nomination pool with 10 DOT on Polkadot',
+    arrange: (agent: PolkadotAgentKit) => agent.joinPoolTool(),
+    act: (tool: any) => tool.call({ amount: '10', chain: 'polkadot' }),
+    assert: (result: any) => {
+      expect(result).toEqual(mockJoinPoolResult);
+      expect(result.success).toBe(true);
+      expect(result.transactionHash).toBe('0xMOCKEDJOINPOOLTXHASH');
+      expect(result.data).toEqual({ amount: '10', chain: 'polkadot' });
+    }
+  },
+  {
+    name: 'joinPoolTool join nomination pool with 5 KSM on Kusama',
+    arrange: (agent: PolkadotAgentKit) => agent.joinPoolTool(),
+    act: (tool: any) => tool.call({ amount: '5', chain: 'kusama' }),
+    assert: (result: any) => {
+      expect(result).toEqual(mockJoinPoolResult);
+      expect(result.success).toBe(true);
+      expect(result.transactionHash).toBe('0xMOCKEDJOINPOOLTXHASH');
+    }
+  },
+  {
+    name: 'bondExtraTool bond 2 DOT from free balance on Polkadot',
+    arrange: (agent: PolkadotAgentKit) => agent.bondExtraTool(),
+    act: (tool: any) => tool.call({ type: 'FreeBalance', amount: '2', chain: 'polkadot' }),
+    assert: (result: any) => {
+      expect(result).toEqual(mockBondExtraResult);
+      expect(result.success).toBe(true);
+      expect(result.transactionHash).toBe('0xMOCKEDBONDEXTRATXHASH');
+    }
+  },
+  {
+    name: 'bondExtraTool re-stake rewards on Polkadot',
+    arrange: (agent: PolkadotAgentKit) => agent.bondExtraTool(),
+    act: (tool: any) => tool.call({ type: 'Rewards', chain: 'polkadot' }),
+    assert: (result: any) => {
+      expect(result).toEqual(mockBondExtraResult);
+      expect(result.success).toBe(true);
+      expect(result.transactionHash).toBe('0xMOCKEDBONDEXTRATXHASH');
+    }
+  },
+  {
+    name: 'bondExtraTool bond 1 KSM from free balance on Kusama',
+    arrange: (agent: PolkadotAgentKit) => agent.bondExtraTool(),
+    act: (tool: any) => tool.call({ type: 'FreeBalance', amount: '1', chain: 'kusama' }),
+    assert: (result: any) => {
+      expect(result).toEqual(mockBondExtraResult);
+      expect(result.success).toBe(true);
+      expect(result.transactionHash).toBe('0xMOCKEDBONDEXTRATXHASH');
+    }
+  },
+  {
+    name: 'unbondTool unbond 3 DOT from nomination pool on Polkadot',
+    arrange: (agent: PolkadotAgentKit) => agent.unbondTool(),
+    act: (tool: any) => tool.call({ amount: '3', chain: 'polkadot' }),
+    assert: (result: any) => {
+      expect(result).toEqual(mockUnbondResult);
+      expect(result.success).toBe(true);
+      expect(result.transactionHash).toBe('0xMOCKEDUNBONDTXHASH');
+    }
+  },
+  {
+    name: 'unbondTool unbond 1.5 KSM from nomination pool on Kusama',
+    arrange: (agent: PolkadotAgentKit) => agent.unbondTool(),
+    act: (tool: any) => tool.call({ amount: '1.5', chain: 'kusama' }),
+    assert: (result: any) => {
+      expect(result).toEqual(mockUnbondResult);
+      expect(result.success).toBe(true);
+      expect(result.transactionHash).toBe('0xMOCKEDUNBONDTXHASH');
+    }
+  },
+  {
+    name: 'withdrawUnbondedTool withdraw unbonded tokens with 0 slashing spans on Polkadot',
+    arrange: (agent: PolkadotAgentKit) => agent.withdrawUnbondedTool(),
+    act: (tool: any) => tool.call({ slashingSpans: '0', chain: 'polkadot' }),
+    assert: (result: any) => {
+      expect(result).toEqual(mockWithdrawUnbondedResult);
+      expect(result.success).toBe(true);
+      expect(result.transactionHash).toBe('0xMOCKEDWITHDRAWTXHASH');
+    }
+  },
+  {
+    name: 'withdrawUnbondedTool withdraw unbonded tokens with 2 slashing spans on Kusama',
+    arrange: (agent: PolkadotAgentKit) => agent.withdrawUnbondedTool(),
+    act: (tool: any) => tool.call({ slashingSpans: '2', chain: 'kusama' }),
+    assert: (result: any) => {
+      expect(result).toEqual(mockWithdrawUnbondedResult);
+      expect(result.success).toBe(true);
+      expect(result.transactionHash).toBe('0xMOCKEDWITHDRAWTXHASH');
+    }
+  },
+  {
+    name: 'claimRewardsTool claim rewards from nomination pool on Polkadot',
+    arrange: (agent: PolkadotAgentKit) => agent.claimRewardsTool(),
+    act: (tool: any) => tool.call({ chain: 'polkadot' }),
+    assert: (result: any) => {
+      expect(result).toEqual(mockClaimRewardsResult);
+      expect(result.success).toBe(true);
+      expect(result.transactionHash).toBe('0xMOCKEDCLAIMREWARDSTXHASH');
+    }
+  },
+  {
+    name: 'claimRewardsTool claim rewards from nomination pool on Kusama',
+    arrange: (agent: PolkadotAgentKit) => agent.claimRewardsTool(),
+    act: (tool: any) => tool.call({ chain: 'kusama' }),
+    assert: (result: any) => {
+      expect(result).toEqual(mockClaimRewardsResult);
+      expect(result.success).toBe(true);
+      expect(result.transactionHash).toBe('0xMOCKEDCLAIMREWARDSTXHASH');
     }
   }
 ];

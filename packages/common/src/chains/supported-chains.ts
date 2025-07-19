@@ -78,3 +78,17 @@ export const hydraChain = createChain({
   decimals: 12,
   symbol: "HDX"
 })
+
+export const paseoChain = createChain({
+  id: "paseo",
+  name: "Paseo",
+  specName: "paseo-testnet",
+  wsUrls: ["wss://paseo.dotters.network"],
+  relay: "paseo",
+  type: "relay",
+  chainId: null,
+  blockExplorerUrl: "https://paseo.subscan.io",
+  prefix: 0,
+  decimals: 10,
+  symbol: "PAS"
+})
