@@ -2,17 +2,25 @@ import { tool } from "@langchain/core/tools"
 import type { Api, ChainIdRelay } from "@polkadot-agent-kit/common"
 import { getAllSupportedChains, getChainById } from "@polkadot-agent-kit/common"
 import type { PolkadotApi, Tx } from "@polkadot-agent-kit/core"
+import {
+  bondExtraTx,
+  claimRewardsTx,
+  joinPoolTx,
+  submitTxWithPolkadotSigner,
+  unbondTx,
+  withdrawUnbondedTx} from "@polkadot-agent-kit/core"
 import type { PolkadotSigner } from "polkadot-api"
 import type { z } from "zod"
 
 import type {
-  StakingToolResult,
   bondExtraToolSchema,
   claimRewardsToolSchema,
   joinPoolToolSchema,
+  StakingToolResult,
   unbondToolSchema,
   withdrawUnbondedToolSchema
 } from "../types"
+import { ToolNames } from "../types/common"
 import {
   toolConfigBondExtra,
   toolConfigClaimRewards,
@@ -20,16 +28,7 @@ import {
   toolConfigUnbond,
   toolConfigWithdrawUnbonded
 } from "../types/staking"
-import { ToolNames } from "../types/common"
 import { executeTool, validateAndFormatMultiAddress } from "../utils"
-import {
-  joinPoolTx,
-  bondExtraTx,
-  unbondTx,
-  withdrawUnbondedTx,
-  claimRewardsTx,
-  submitTxWithPolkadotSigner
-} from "@polkadot-agent-kit/core"
 
 /**
  * Returns a tool that joins a nomination pool
@@ -81,19 +80,17 @@ export const joinPoolTool = (polkadotApi: PolkadotApi, signer: PolkadotSigner) =
  * @returns A dynamic structured tool for bonding extra tokens
  */
 export const bondExtraTool = (polkadotApi: PolkadotApi, signer: PolkadotSigner) => {
-  return tool(async (input: z.infer<typeof bondExtraToolSchema>) => {
+  return tool(async ({ type, amount, chain }: z.infer<typeof bondExtraToolSchema>) => {
     return executeTool<StakingToolResult>(
       ToolNames.BOND_EXTRA,
       async () => {
-
-        const api = polkadotApi.getApi(input.chain as ChainIdRelay) as Api<ChainIdRelay>
-        const chainInfo = getChainById(input.chain as ChainIdRelay, getAllSupportedChains())
+        const api = polkadotApi.getApi(chain as ChainIdRelay) as Api<ChainIdRelay>
+        const chainInfo = getChainById(chain as ChainIdRelay, getAllSupportedChains())
         let tx: Tx
-        if (input.type === "FreeBalance") {
-          const amountBigInt = BigInt(input.amount!) * BigInt(10 ** chainInfo.decimals)
+        if (type === "FreeBalance") {
+          const amountBigInt = BigInt(amount!) * BigInt(10 ** chainInfo.decimals)
           tx = bondExtraTx(api, "FreeBalance", amountBigInt)
         } else {
-          // For "Rewards" type, we don't need amount
           tx = bondExtraTx(api, "Rewards")
         }
 
@@ -113,7 +110,7 @@ export const bondExtraTool = (polkadotApi: PolkadotApi, signer: PolkadotSigner) 
       },
       result => {
         if (result.success) {
-          return `Successfully bonded extra tokens (${input.type}) on ${input.chain}. Transaction hash: ${result.transactionHash}`
+          return `Successfully bonded extra tokens (${type}) on ${chain}. Transaction hash: ${result.transactionHash}`
         } else {
           return `Tx Hash Failed: ${result.transactionHash} with error: ${result.error}`
         }
@@ -121,8 +118,6 @@ export const bondExtraTool = (polkadotApi: PolkadotApi, signer: PolkadotSigner) 
     )
   }, toolConfigBondExtra)
 }
-
-
 
 /**
  * Returns a tool that unbonds tokens from a nomination pool
@@ -169,10 +164,6 @@ export const unbondTool = (polkadotApi: PolkadotApi, signer: PolkadotSigner, add
   }, toolConfigUnbond)
 }
 
-
-
-
-
 /**
  * Returns a tool that withdraws unbonded tokens from a nomination pool
  * @param polkadotApi - The Polkadot API instance
@@ -180,14 +171,18 @@ export const unbondTool = (polkadotApi: PolkadotApi, signer: PolkadotSigner, add
  * @param address - The address to withdraw for
  * @returns A dynamic structured tool for withdrawing unbonded tokens
  */
-export const withdrawUnbondedTool = (polkadotApi: PolkadotApi, signer: PolkadotSigner, address: string) => {
+export const withdrawUnbondedTool = (
+  polkadotApi: PolkadotApi,
+  signer: PolkadotSigner,
+  address: string
+) => {
   return tool(async ({ slashingSpans, chain }: z.infer<typeof withdrawUnbondedToolSchema>) => {
     return executeTool<StakingToolResult>(
       ToolNames.WITHDRAW_UNBONDED,
       async () => {
         const api = polkadotApi.getApi(chain as ChainIdRelay) as Api<ChainIdRelay>
         const formattedAddress = validateAndFormatMultiAddress(address, chain as ChainIdRelay)
-        const tx = withdrawUnbondedTx(api, formattedAddress, slashingSpans)
+        const tx = withdrawUnbondedTx(api, formattedAddress, Number(slashingSpans))
 
         const result = await submitTxWithPolkadotSigner(tx, signer)
 
@@ -214,8 +209,6 @@ export const withdrawUnbondedTool = (polkadotApi: PolkadotApi, signer: PolkadotS
     )
   }, toolConfigWithdrawUnbonded)
 }
-
-
 
 /**
  * Returns a tool that claims rewards from a nomination pool

@@ -9,13 +9,11 @@ import { ToolNames } from "./common"
  * Defines the structure and validation rules for joining nomination pools.
  *
  * @example
- * ```typescript
- * {
- *   amount: "1.5",  // Amount of tokens to bond
- *   poolId: 1,  // Pool ID to join
- *   chain: "polkadot"  // Target chain
- * }
- * ```
+ *   \{
+ *     amount: "1.5",  // Amount of tokens to bond
+ *     poolId: 1,      // Pool ID to join
+ *     chain: "polkadot"  // Target chain
+ *   \}
  */
 export const joinPoolToolSchema = z.object({
   amount: z.string().describe("The amount of tokens to bond in the pool"),
@@ -23,40 +21,31 @@ export const joinPoolToolSchema = z.object({
 })
 
 /**
- * Schema for the bond extra tool input. This is a discriminated union based on the `type` field.
+ * Schema for the bond extra tool input. This uses an enum-based approach for the `type` field.
  *
- * - If `type` is `"FreeBalance"`, an `amount` must be provided.
- * - If `type` is `"Rewards"`, no `amount` is needed as all pending rewards will be re-staked.
- *
- * @example
- * // Bonding from free balance
- * {
- *   type: "FreeBalance",
- *   amount: "1.5",
- *   chain: "polkadot"
- * }
+ * - If `type` is "FreeBalance", an `amount` should be provided to bond specific tokens from wallet.
+ * - If `type` is "Rewards", no `amount` is needed as all pending rewards will be re-staked.
  *
  * @example
- * // Re-staking rewards
- * {
- *   type: "Rewards",
- *   chain: "polkadot"
- * }
+ *   // Bonding from free balance
+ *   \{
+ *     type: "FreeBalance",
+ *     amount: "1.5",
+ *     chain: "polkadot"
+ *   \}
+ *
+ *   // Re-staking rewards
+ *   \{
+ *     type: "Rewards",
+ *     chain: "polkadot"
+ *   \}
  */
 export const bondExtraToolSchema = z
-  .discriminatedUnion("type", [
-    z.object({
-      type: z.literal("FreeBalance"),
-      amount: z
-        .string()
-        .describe("The amount of tokens to bond from your free balance."),
-      chain: z.string().describe("The chain to bond extra tokens on."),
-    }),
-    z.object({
-      type: z.literal("Rewards"),
-      chain: z.string().describe("The chain to bond rewards on."),
-    }),
-  ])
+  .object({
+    type: z.enum(["FreeBalance", "Rewards"]).describe("Type of bonding operation"),
+    amount: z.string().optional().describe("Amount to bond (required for FreeBalance)"),
+    chain: z.string().describe("Chain name")
+  })
   .describe(
     "Bonds extra funds to a nomination pool. Use 'FreeBalance' to bond a specific amount from your wallet, or 'Rewards' to re-stake your earned rewards."
   )
@@ -66,12 +55,10 @@ export const bondExtraToolSchema = z
  * Defines the structure and validation rules for unbonding tokens.
  *
  * @example
- * ```typescript
- * {
- *   amount: "1.5",  // Amount of tokens to unbond
- *   chain: "polkadot"  // Target chain
- * }
- * ```
+ *   \{
+ *     amount: "1.5",  // Amount of tokens to unbond
+ *     chain: "polkadot"  // Target chain
+ *   \}
  */
 export const unbondToolSchema = z.object({
   amount: z.string().describe("The amount of tokens to unbond"),
@@ -83,15 +70,13 @@ export const unbondToolSchema = z.object({
  * Defines the structure and validation rules for withdrawing unbonded tokens.
  *
  * @example
- * ```typescript
- * {
- *   slashingSpans: 0,  // Number of slashing spans
- *   chain: "polkadot"  // Target chain
- * }
- * ```
+ *   \{
+ *     slashingSpans: 0,  // Number of slashing spans
+ *     chain: "polkadot"  // Target chain
+ *   \}
  */
 export const withdrawUnbondedToolSchema = z.object({
-  slashingSpans: z.number().describe("The number of slashing spans"),
+  slashingSpans: z.string().describe("The number of slashing spans"),
   chain: z.string().describe("The chain to withdraw unbonded tokens on")
 })
 
@@ -100,16 +85,13 @@ export const withdrawUnbondedToolSchema = z.object({
  * Defines the structure and validation rules for claiming rewards.
  *
  * @example
- * ```typescript
- * {
- *   chain: "polkadot"  // Target chain
- * }
- * ```
+ *   \{
+ *     chain: "polkadot"  // Target chain
+ *   \}
  */
 export const claimRewardsToolSchema = z.object({
   chain: z.string().describe("The chain to claim rewards on")
 })
-
 
 /**
  * Type for a join pool tool that validates input using joinPoolToolSchema.
@@ -160,7 +142,7 @@ export interface StakingToolResult {
   /**
    * Additional data returned by the operation.
    */
-  data?: any
+  data?: unknown
 }
 
 /**

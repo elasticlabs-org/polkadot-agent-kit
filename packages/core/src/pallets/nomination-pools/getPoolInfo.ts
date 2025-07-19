@@ -28,11 +28,11 @@ export const getPoolInfo = async (
 ): Promise<PoolInfo | null> => {
   try {
     const poolInfo = await api.query.NominationPools.BondedPools.getValue(poolId)
-    
+
     if (!poolInfo) {
       return null
     }
-    
+
     return {
       id: poolId,
       state: poolInfo.state.type,
@@ -42,11 +42,10 @@ export const getPoolInfo = async (
         depositor: poolInfo.roles.depositor,
         root: poolInfo.roles.root,
         nominator: poolInfo.roles.nominator,
-        bouncer: poolInfo.roles.bouncer,
+        bouncer: poolInfo.roles.bouncer
       }
     }
   } catch (error) {
-    console.error(`Error fetching pool info for pool ${poolId}:`, error)
-    return null
+    throw new Error(`Error fetching pool info for pool ${poolId}: ${String(error)}`)
   }
-} 
+}

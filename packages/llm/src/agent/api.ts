@@ -97,7 +97,6 @@ export interface IPolkadotAgentApi {
    * @returns A dynamic structured tool that claims rewards
    */
   claimRewardsTool(signer: PolkadotSigner): ClaimRewardsTool
-
 }
 
 /**
@@ -153,5 +152,4 @@ export class PolkadotAgentApi implements IPolkadotAgentApi {
   claimRewardsTool(signer: PolkadotSigner): ClaimRewardsTool {
     return claimRewardsTool(this.api, signer) as unknown as ClaimRewardsTool
   }
-
 }

@@ -175,7 +175,7 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
    * ```
    */
   joinPoolTool() {
-    return (this.agentApi).joinPoolTool(this.getSigner())
+    return this.agentApi.joinPoolTool(this.getSigner())
   }
 
   /**
@@ -197,7 +197,7 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
    * ```
    */
   bondExtraTool() {
-    return (this.agentApi).bondExtraTool(this.getSigner())
+    return this.agentApi.bondExtraTool(this.getSigner())
   }
 
   /**
@@ -219,7 +219,7 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
    * ```
    */
   unbondTool() {
-    return (this.agentApi).unbondTool(this.getSigner(), this.getCurrentAddress())
+    return this.agentApi.unbondTool(this.getSigner(), this.getCurrentAddress())
   }
 
   /**
@@ -241,7 +241,7 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
    * ```
    */
   withdrawUnbondedTool() {
-    return (this.agentApi).withdrawUnbondedTool(this.getSigner(), this.getCurrentAddress())
+    return this.agentApi.withdrawUnbondedTool(this.getSigner(), this.getCurrentAddress())
   }
 
   /**
@@ -262,7 +262,7 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
    * ```
    */
   claimRewardsTool() {
-    return (this.agentApi).claimRewardsTool(this.getSigner())
+    return this.agentApi.claimRewardsTool(this.getSigner())
   }
   /**
    * Get Address

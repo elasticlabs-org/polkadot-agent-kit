@@ -4,6 +4,11 @@ import type { Tx, TxResult } from "../types"
 import type { SubmitAndWatchOptions } from "../types/transaction"
 import { hasTypeProperty, isTxWithPolkadotSigner } from "../types/transaction"
 
+interface DispatchErrorValue {
+  type: string;
+  value?: { type?: string };
+}
+
 async function submitAndWatchTx(options: SubmitAndWatchOptions): Promise<TxResult> {
   return new Promise((resolve, reject) => {
     try {
@@ -14,10 +19,10 @@ async function submitAndWatchTx(options: SubmitAndWatchOptions): Promise<TxResul
             next: (event: TxEvent) => {
               if (event.type === "finalized") {
                 let finalResult: TxResult
-                if ( 'dispatchError' in event && event.dispatchError) {
+                if ("dispatchError" in event && event.dispatchError) {
                   const dispatchError = event.dispatchError
-                  const value = dispatchError.value as { type: string; value: any }
-                  const moduleType = value.type 
+                  const value = dispatchError.value as DispatchErrorValue
+                  const moduleType = value.type
                   const errorValue = value.value
                   const errorType = hasTypeProperty(errorValue) ? errorValue.type : undefined
                   finalResult = {

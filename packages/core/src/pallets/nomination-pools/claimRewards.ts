@@ -7,8 +7,6 @@ import type { Tx } from "../../types"
  * @param api - The API instance to use for the transaction
  * @returns The claim rewards transaction call
  */
-export const claimRewardsTx = (
-  api: Api<ChainIdRelay>
-): Tx => {
+export const claimRewardsTx = (api: Api<ChainIdRelay>): Tx => {
   return api.tx.NominationPools.claim_payout()
 }

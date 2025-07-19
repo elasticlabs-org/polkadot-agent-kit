@@ -1,6 +1,6 @@
 import type { Api, ChainIdRelay } from "@polkadot-agent-kit/common"
-import type { Tx } from "../../types"
 
+import type { Tx } from "../../types"
 
 /**
  * Creates a bond extra transaction call
@@ -14,8 +14,10 @@ export const bondExtraTx = (
   amount?: bigint
 ): Tx => {
   if (type === "FreeBalance") {
-    return api.tx.NominationPools.bond_extra({ extra: {type: "FreeBalance", value: amount ?? BigInt(0)}})
+    return api.tx.NominationPools.bond_extra({
+      extra: { type: "FreeBalance", value: amount ?? BigInt(0) }
+    })
   } else {
-    return api.tx.NominationPools.bond_extra({ extra: {type: "Rewards", value: undefined}})
+    return api.tx.NominationPools.bond_extra({ extra: { type: "Rewards", value: undefined } })
   }
 }

@@ -1,4 +1,3 @@
-
 import type { Api, ChainIdRelay } from "@polkadot-agent-kit/common"
 
 /**
@@ -17,17 +16,14 @@ export interface PoolInfo {
   }
 }
 
-const getAllPoolsInfo = async (
-  api: Api<ChainIdRelay>
-): Promise<PoolInfo[]> => {
+const getAllPoolsInfo = async (api: Api<ChainIdRelay>): Promise<PoolInfo[]> => {
   try {
-    const allPoolEntries =
-      await api.query.NominationPools.BondedPools.getEntries()
+    const allPoolEntries = await api.query.NominationPools.BondedPools.getEntries()
 
     if (!allPoolEntries) {
       return []
     }
-    return allPoolEntries.map((entry) => {
+    return allPoolEntries.map(entry => {
       const poolId = entry.keyArgs[0]
       const poolInfo = entry.value
       return {
@@ -39,19 +35,16 @@ const getAllPoolsInfo = async (
           depositor: poolInfo.roles.depositor,
           root: poolInfo.roles.root,
           nominator: poolInfo.roles.nominator,
-          bouncer: poolInfo.roles.bouncer,
-        },
+          bouncer: poolInfo.roles.bouncer
+        }
       }
     })
   } catch (error) {
-    console.error(`Error fetching all pool info:`, error)
-    return []
+    throw new Error(`Error fetching all pool info: ${String(error)}`)
   }
 }
 
-export const findBestPoolId = async (
-  api: Api<ChainIdRelay>
-): Promise<number | null> => {
+export const findBestPoolId = async (api: Api<ChainIdRelay>): Promise<number | null> => {
   try {
     const allPools = await getAllPoolsInfo(api)
 
@@ -59,14 +52,10 @@ export const findBestPoolId = async (
       return null
     }
 
-    const bestPool = allPools.reduce((max, pool) =>
-      pool.points > max.points ? pool : max
-    )
+    const bestPool = allPools.reduce((max, pool) => (pool.points > max.points ? pool : max))
 
     return bestPool.id
   } catch (error) {
-    console.error(`Error finding best pool:`, error)
-    return null
+    throw new Error(`Error finding best pool: ${String(error)}`)
   }
 }
-

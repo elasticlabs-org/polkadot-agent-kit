@@ -63,6 +63,9 @@ export class TelegramBot {
       const swapTokens = this.agent.swapTokensTool();
       const joinPool = this.agent.joinPoolTool();
       const bondExtra = this.agent.bondExtraTool();
+      const unbond = this.agent.unbondTool();
+      const claimRewards = this.agent.claimRewardsTool();
+      const withdrawUnbonded = this.agent.withdrawUnbondedTool();
 
       setupHandlers(this.bot, this.llm, {
         checkBalance: checkBalance,
@@ -71,6 +74,9 @@ export class TelegramBot {
         swapTokens: swapTokens,
         joinPool: joinPool,
         bondExtra: bondExtra,
+        unbond: unbond,
+        claimRewards: claimRewards,
+        withdrawUnbonded: withdrawUnbonded
       });
 
       console.log("Bot initialization complete");

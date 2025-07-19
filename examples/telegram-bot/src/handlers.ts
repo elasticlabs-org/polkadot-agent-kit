@@ -134,42 +134,51 @@ When nominating to a pool it means joining to a nomination pool, please provide:
 1. The amount of tokens to join the pool (e.g., 1)
 2. The name of the chain (convert to real param)
 
-When a user wants to "bond," "stake," or "nominate" tokens to a nomination pool, follow this two-step process:
+When user wants to bond extra tokens from their wallet, I must call the bondExtraTool with:
+1. type: "FreeBalance" (must be this exact string)
+2. amount: [amount as string, e.g., "100"]
+3. chain: [converted chain name as per chain conversion rules]
 
-1.  **First Attempt: Use joinPool**
-    - This is your default action for adding funds to a pool.
-    - Ask for the amount of tokens and the chain name.
-    - Execute the joinPool tool.
+Example: For "bond 100 DOT on Polkadot", call bondExtraTool with:
+{ "type": "FreeBalance", "amount": "100", "chain": "polkadot" }
 
-2.  **Second Attempt (Contingency): Use bondExtra**
-    - **Condition**: Only use this if the "joinPool" tool fails with the EXACT error: "NominationPools.AccountBelongsToOtherPool".
-    - **Action**: This error means the user is already in a pool. You must automatically call the "bondExtra" tool to add the funds to their existing pool.
-    - Use the same amount and chain the user provided initially. Do not ask for confirmation.
+When user requests to re-stake rewards, I must call the bondExtraTool with EXACTLY these parameters:
+1. type: "Rewards" (must be this exact string)
+2. chain: [converted chain name as per chain conversion rules]
 
-### bondExtra Tool Instructions
+Example: For "re-stake my rewards on Paseo", call bondExtraTool with:
+{ "type": "Rewards", "chain": "paseo" }
 
-**EXECUTION COMMAND**: When you see "bond extra" + amount + chain, you MUST call the bondExtra tool immediately.
+IMPORTANT: Always use the EXACT parameter structure shown in examples above. The "type" field is a discriminator and must match exactly.
 
-**NO THINKING - ONLY ACTION**: Do not explain, do not think - just call the tool.
+when user wants to unbond tokens from a pool, I must call the unbondTool with:
+1. amount: [amount as string, e.g., "100"]
+2. chain: [converted chain name as per chain conversion rules]
 
-**Tool Call Format**:
-- For "bond extra [amount] [token] on [chain]": Call bondExtra with type "FreeBalance", amount "[amount]", chain "[chain]"
-- For "re-stake rewards on [chain]": Call bondExtra with type "Rewards", chain "[chain]"
+Example: For "unbond 100 DOT on Polkadot", call unbondTool with:
+{ "amount": "100", "chain": "polkadot" }
 
-**Examples**:
-- User: "bond extra 2 PAS on paseo" → CALL bondExtra(type: "FreeBalance", amount: "2", chain: "paseo")
-- User: "re-stake my rewards on paseo" → CALL bondExtra(type: "Rewards", chain: "paseo")
+when user wants to claim rewards from a pool, I must call the claimRewardsTools with:
+1. chain: [converted chain name as per chain conversion rules]
 
-**MANDATORY**: You must call the tool, not just think about it.
+Example: For "claim rewards from pool on paseo", call claimRewardsTool with:
+{ "chain": "paseo" }
 
-### Example Workflow: Automatic Fallback
 
-**User:** "bond 100 DOT on Polkadot"
-**Your Process:**
-1.  **First, CALL**: joinPool with amount "100", chain "polkadot".
-2.  **If it fails with NominationPools.AccountBelongsToOtherPool**:
-    - **Then, CALL**: bondExtra with type "FreeBalance", amount "100", chain "polkadot".
-3.  **If it fails with any other error**: Report the specific error to the user.
+--- TOOL-SPECIFIC RULES ---
+
+1. To 'unbond' tokens (start the unbonding process):
+   - Use the 'unbond' tool.
+   - Requires 'amount' (string) and 'chain' (string).
+   - Example: User says "unbond 10 DOT on Polkadot" -> Call 'unbond' with { amount: "10", chain: "polkadot" }
+
+2. To 'withdraw unbonded' tokens (after the unbonding period):
+   - Use the 'withdrawUnbondedTool'.
+   - Requires 'slashingSpans' (string) and 'chain' (string).
+   - CRITICAL: If the user says "amount", use that value for 'slashingSpans'.
+   - Example: User says "withdraw unbonded with 1 amount on Paseo" -> Call 'withdrawUnbondedTool' with { slashingSpans: "1", chain: "paseo" }
+
+--- END OF TOOL-SPECIFIC RULES ---
 
 When checking proxies, you can specify the chain (convert to real param) or not specify a chain (the first chain will be used by default)
 
@@ -190,6 +199,9 @@ export function setupHandlers(
         '- Transfer tokens through XCM (e.g., "transfer 1 WND to 5CSox4ZSN4SGLKUG9NYPtfVK9sByXLtxP4hmoF4UgkM4jgDJ from west to west_asset_hub ")\n' +
         '- Bonding to a pool (e.g., "bond 100 DOT on Polkadot")\n' +
         '- Re-staking rewards (e.g., "re-stake my rewards on Paseo")\n' +
+        '- Unbonding tokens from a pool (e.g., "unbond 100 DOT on Polkadot")\n' +
+        '- Claiming rewards from a pool (e.g., "claim rewards from pool on paseo")\n' +
+        '- Withdraw unbonded from a pool (e.g, "withdraw unbonded with 1 amount from pool on paseo")\n' +
         '- Swapping tokens (e.g., "swap 1 DOT to USDT on Hydra")\n' +
         "Try asking something!",
     );
@@ -207,10 +219,8 @@ export function setupHandlers(
         new HumanMessage({ content: message }),
       ];
       const aiMessage = await llmWithTools.invoke(messages);
-      
       if (aiMessage.tool_calls && aiMessage.tool_calls.length > 0) {
         for (const toolCall of aiMessage.tool_calls) {
-          
           const selectedTool = toolsByName[toCamelCase(toolCall.name)];
           if (selectedTool) {
             const toolMessage = await selectedTool.invoke(toolCall);

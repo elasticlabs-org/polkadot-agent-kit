@@ -80,15 +80,15 @@ export const hydraChain = createChain({
 })
 
 export const paseoChain = createChain({
-  id: 'paseo',
-  name: 'Paseo',
-  specName: 'paseo-testnet',
-  wsUrls: ['wss://paseo.dotters.network'],
-  relay: 'paseo',
-  type: 'relay',
+  id: "paseo",
+  name: "Paseo",
+  specName: "paseo-testnet",
+  wsUrls: ["wss://paseo.dotters.network"],
+  relay: "paseo",
+  type: "relay",
   chainId: null,
-  blockExplorerUrl: 'https://paseo.subscan.io',
+  blockExplorerUrl: "https://paseo.subscan.io",
   prefix: 0,
   decimals: 10,
   symbol: "PAS"
-});
+})

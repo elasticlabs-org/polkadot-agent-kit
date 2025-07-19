@@ -1,9 +1,7 @@
-import type { Api, ChainIdRelay, KnownChainId } from "@polkadot-agent-kit/common"
+import type { Api, ChainIdRelay } from "@polkadot-agent-kit/common"
 import type { MultiAddress } from "@polkadot-api/descriptors"
-import type { PolkadotSigner } from "polkadot-api"
 
-import type { Tx, TxResult } from "../../types"
-import { submitTxWithPolkadotSigner } from "../../utils"
+import type { Tx } from "../../types"
 
 /**
  * Creates an unbond transaction call
@@ -17,5 +15,8 @@ export const unbondTx = (
   memberAccount: MultiAddress,
   unbondingPoints: bigint
 ): Tx => {
-  return api.tx.NominationPools.unbond({ member_account: memberAccount, unbonding_points: unbondingPoints })
+  return api.tx.NominationPools.unbond({
+    member_account: memberAccount,
+    unbonding_points: unbondingPoints
+  })
 }

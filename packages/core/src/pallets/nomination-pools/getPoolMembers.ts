@@ -23,25 +23,24 @@ export const getPoolMembers = async (
 ): Promise<PoolMember[]> => {
   try {
     const poolMemberEntries = await api.query.NominationPools.PoolMembers.getEntries()
-    
+
     return poolMemberEntries
       .filter(({ value }) => value && value.pool_id === poolId)
       .map(({ keyArgs, value }) => {
         const account = keyArgs[0] as string
-        
+
         return {
           account,
           poolId: value.pool_id,
           points: value.points,
           lastRecordedRewardCounter: value.last_recorded_reward_counter,
-          unbondingEras: value.unbonding_eras.map((era: any) => ({
-            era: era.era,
-            value: era.value
+          unbondingEras: value.unbonding_eras.map(([era, value]) => ({
+            era,
+            value
           }))
         }
       })
   } catch (error) {
-    console.error(`Error fetching pool members for pool ${poolId}:`, error)
-    return []
+    throw new Error(`Error fetching pool members for pool ${poolId}: ${String(error)}`)
   }
-} 
+}
