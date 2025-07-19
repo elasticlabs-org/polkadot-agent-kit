@@ -5,8 +5,8 @@ import type { SubmitAndWatchOptions } from "../types/transaction"
 import { hasTypeProperty, isTxWithPolkadotSigner } from "../types/transaction"
 
 interface DispatchErrorValue {
-  type: string;
-  value?: { type?: string };
+  type: string
+  value?: { type?: string }
 }
 
 async function submitAndWatchTx(options: SubmitAndWatchOptions): Promise<TxResult> {

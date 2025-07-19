@@ -4,7 +4,7 @@ import type { MultiAddress } from "@polkadot-api/descriptors"
 import type { Tx } from "../../types"
 
 /**
- * Creates a withdraw unbonded transaction call 
+ * Creates a withdraw unbonded transaction call
  * @param api - The API instance to use for the transaction
  * @param memberAccount - The account to withdraw unbonded tokens for
  * @param numSlashingSpans - The number of slashing spans
