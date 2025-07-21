@@ -16,7 +16,19 @@ export enum ToolNames {
   /** Tool for dynamically initializing chain APIs */
   INITIALIZE_CHAIN_API = "initialize_chain_api",
   /** Tool for swapping tokens */
-  SWAP_TOKENS = "swap_tokens"
+  SWAP_TOKENS = "swap_tokens",
+  /** Tool for joining a nomination pool */
+  JOIN_POOL = "join_pool",
+  /** Tool for bonding extra tokens to a nomination pool */
+  BOND_EXTRA = "bond_extra",
+  /** Tool for unbonding tokens from a nomination pool */
+  UNBOND = "unbond",
+  /** Tool for withdrawing unbonded tokens from a nomination pool */
+  WITHDRAW_UNBONDED = "withdraw_unbonded",
+  /** Tool for claiming rewards from a nomination pool */
+  CLAIM_REWARDS = "claim_rewards",
+  /** Tool for getting nomination pool information */
+  GET_POOL_INFO = "get_pool_info"
 }
 
 /**

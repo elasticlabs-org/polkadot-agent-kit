@@ -1,5 +1,6 @@
 import type {
   Api,
+  ChainIdRelay,
   ChainOperationResult,
   KnownChainId,
   SmoldotClient
@@ -57,7 +58,7 @@ export class PolkadotApi implements IPolkadotApi {
    * @param chainId - The ID of the chain
    * @returns The API instance for the specified chain
    */
-  getApi(chainId: KnownChainId): Api<KnownChainId> {
+  getApi(chainId: KnownChainId): Api<KnownChainId | ChainIdRelay> {
     if (!this.initialized) {
       throw new Error("APIs not initialized. Call initializeApi() first.")
     }
@@ -102,7 +103,8 @@ export class PolkadotApi implements IPolkadotApi {
           west: "",
           polkadot_asset_hub: "",
           west_asset_hub: "",
-          hydra: ""
+          hydra: "",
+          paseo: ""
         }
 
         for (const chain of supportedChains) {
