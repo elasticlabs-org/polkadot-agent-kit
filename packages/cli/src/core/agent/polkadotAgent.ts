@@ -1,7 +1,6 @@
 import { PolkadotAgentKit } from '@polkadot-agent-kit/sdk';
-import { configManager } from '../config/manager.js';
-import { AgentMetadata } from '../../types/agent.js';
-import { logger } from '../../utils/logger.js';
+import { AgentMetadata } from '../../types/agent';
+import { logger } from '../../utils/logger';
 import { ChatOllama } from "@langchain/ollama";
 import { AgentExecutor, createToolCallingAgent } from "langchain/agents";
 import { DynamicStructuredTool } from "@langchain/core/tools";

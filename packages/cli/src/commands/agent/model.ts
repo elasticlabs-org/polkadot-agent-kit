@@ -3,10 +3,10 @@ import inquirer from 'inquirer';
 import fs from 'fs-extra';
 import * as path from 'path';
 import chalk from 'chalk';
-import { configManager } from '../../core/config/manager.js';
-import { logger } from '../../utils/logger.js';
-import { CLIError } from '../../types/commands.js';
-import { AgentMetadata } from '../../types/agent.js';
+import { configManager } from '../../core/config/manager';
+import { logger } from '../../utils/logger';
+import { CLIError } from '../../types/commands';
+import { AgentMetadata } from '../../types/agent';
 
 export const modelCommand = new Command('model')
   .description('Manage agent model settings')

@@ -2,9 +2,9 @@ import { Command } from 'commander';
 import inquirer from 'inquirer';
 import chalk from 'chalk';
 import { table } from 'table';
-import { configManager } from '../core/config/manager.js';
-import { logger } from '../utils/logger.js';
-import { CLIError } from '../types/commands.js';
+import { configManager } from '../core/config/manager';
+import { logger } from '../utils/logger';
+import { CLIError } from '../types/commands';
 
 export const configCommand = new Command('config')
   .description('Manage CLI configuration')

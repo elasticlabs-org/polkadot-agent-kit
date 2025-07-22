@@ -3,11 +3,11 @@ import fs from 'fs-extra';
 import * as path from 'path';
 import * as readline from 'readline';
 import chalk from 'chalk';
-import { configManager } from '../../core/config/manager.js';
-import { logger } from '../../utils/logger.js';
-import { AgentChatOptions, CLIError } from '../../types/commands.js';
-import { AgentMetadata, ChatMessage } from '../../types/agent.js';
-import { PolkadotCLIAgent } from '../../core/agent/polkadotAgent.js';
+import { configManager } from '../../core/config/manager';
+import { logger } from '../../utils/logger';
+import { AgentChatOptions, CLIError } from '../../types/commands';
+import { AgentMetadata, ChatMessage } from '../../types/agent';
+import { PolkadotCLIAgent } from '../../core/agent/polkadotAgent';
 
 export const chatCommand = new Command('chat')
   .description('Start an interactive chat session with an AI agent')

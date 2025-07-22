@@ -3,9 +3,9 @@ import * as path from 'path';
 import * as os from 'os';
 import pkg from 'lodash';
 const { get, set, merge, cloneDeep } = pkg;
-import { CLIConfig, CLIConfigSchema, DEFAULT_CONFIG } from '../../types/config.js';
-import { ConfigurationError } from '../../types/commands.js';
-import { logger } from '../../utils/logger.js';
+import { CLIConfig, CLIConfigSchema, DEFAULT_CONFIG } from '../../types/config';
+import { ConfigurationError } from '../../types/commands';
+import { logger } from '../../utils/logger';
 
 export class ConfigManager {
   private static instance: ConfigManager;

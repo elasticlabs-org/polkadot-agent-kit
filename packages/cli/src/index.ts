@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
-import chalk from 'chalk';
 import { configManager } from './core/config/manager';
 import { logger } from './utils/logger';
 import { CLIError } from './types/commands';

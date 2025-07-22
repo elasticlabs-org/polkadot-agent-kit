@@ -3,9 +3,9 @@ import inquirer from 'inquirer';
 import fs from 'fs-extra';
 import * as path from 'path';
 import chalk from 'chalk';
-import { configManager } from '../../core/config/manager.js';
-import { logger } from '../../utils/logger.js';
-import { AgentCreateOptions, CLIError } from '../../types/commands.js';
+import { configManager } from '../../core/config/manager';
+import { logger } from '../../utils/logger';
+import { AgentCreateOptions, CLIError } from '../../types/commands';
 import {
   AVAILABLE_TOOLS,
   TOOL_DESCRIPTIONS,
