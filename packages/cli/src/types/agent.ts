@@ -1,5 +1,12 @@
 import { z } from 'zod';
 
+// Polkadot Agent Kit configuration schema
+export const PolkadotAgentConfigSchema = z.object({
+  privateKey: z.string(),
+  keyType: z.enum(['Sr25519', 'Ed25519']).default('Sr25519'),
+  chains: z.array(z.string()).optional(), // If undefined, all chains are used
+});
+
 // Agent metadata schema
 export const AgentMetadataSchema = z.object({
   name: z.string(),
@@ -11,6 +18,7 @@ export const AgentMetadataSchema = z.object({
   maxTokens: z.number().positive().optional(),
   description: z.string().optional(),
   tags: z.array(z.string()).default([]),
+  polkadotConfig: PolkadotAgentConfigSchema,
   createdAt: z.date(),
   updatedAt: z.date(),
   lastUsed: z.date().optional(),
@@ -47,6 +55,7 @@ export const ProviderStatusSchema = z.object({
 });
 
 // Type exports
+export type PolkadotAgentConfig = z.infer<typeof PolkadotAgentConfigSchema>;
 export type AgentMetadata = z.infer<typeof AgentMetadataSchema>;
 export type AgentCreationOptions = z.infer<typeof AgentCreationOptionsSchema>;
 export type ChatMessage = z.infer<typeof ChatMessageSchema>;

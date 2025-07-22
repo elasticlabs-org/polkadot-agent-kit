@@ -6,12 +6,14 @@ import chalk from 'chalk';
 import { configManager } from '../../core/config/manager.js';
 import { logger } from '../../utils/logger.js';
 import { AgentCreateOptions, CLIError } from '../../types/commands.js';
-import { 
-  AVAILABLE_TOOLS, 
-  TOOL_DESCRIPTIONS, 
+import {
+  AVAILABLE_TOOLS,
+  TOOL_DESCRIPTIONS,
   DEFAULT_SYSTEM_PROMPTS,
-  AgentMetadata 
+  AgentMetadata,
+  PolkadotAgentConfig
 } from '../../types/agent.js';
+import { getAllSupportedChains } from '@polkadot-agent-kit/common';
 
 export const createCommand = new Command('create')
   .description('Create a new AI agent')
@@ -80,15 +82,9 @@ async function getAgentConfig(name: string, options: AgentCreateOptions) {
     return await interactiveAgentSetup(name, options);
   }
   
-  const config = configManager.getConfig();
-  
-  return {
-    name,
-    provider: options.provider || config.llm.defaultProvider,
-    model: options.model || getDefaultModel(options.provider || config.llm.defaultProvider),
-    tools: options.tools ? options.tools.split(',').map(t => t.trim()) : config.agents.defaultTools,
-    description: options.description || `AI agent for Polkadot operations`,
-  };
+  // For non-interactive mode, we still need private key, so force interactive mode
+  logger.info(chalk.yellow('🔐 Private key configuration is required. Switching to interactive mode...'));
+  return await interactiveAgentSetup(name, options);
 }
 
 function getDefaultModel(provider: string): string {
@@ -106,6 +102,84 @@ function getDefaultModel(provider: string): string {
 async function interactiveAgentSetup(name: string, options: AgentCreateOptions) {
   const config = configManager.getConfig();
   
+  // Step 1: Private Key Import
+  logger.info(chalk.blue('\n🔐 Step 1: Private Key Configuration'));
+  const privateKeyQuestions = [
+    {
+      type: 'password',
+      name: 'privateKey',
+      message: 'Enter your private key (hex format, e.g., 0x...):',
+      mask: '*',
+      validate: (input: string) => {
+        if (!input) {
+          return 'Private key is required';
+        }
+        if (!input.startsWith('0x') || input.length !== 66) {
+          return 'Private key must be in hex format (0x followed by 64 characters)';
+        }
+        return true;
+      }
+    },
+    {
+      type: 'list',
+      name: 'keyType',
+      message: 'Choose key type:',
+      choices: [
+        { name: 'Sr25519 (Recommended)', value: 'Sr25519' },
+        { name: 'Ed25519', value: 'Ed25519' },
+      ],
+      default: 'Sr25519'
+    }
+  ];
+
+  const privateKeyAnswers = await inquirer.prompt(privateKeyQuestions);
+
+  // Step 2: Network Selection
+  logger.info(chalk.blue('\n🌐 Step 2: Network Configuration'));
+  const supportedChains = getAllSupportedChains();
+  const chainChoices = supportedChains.map(chain => ({
+    name: `${chain.name} (${chain.symbol})`,
+    value: chain.id,
+    checked: true // Default to all chains selected
+  }));
+
+  const networkQuestions = [
+    {
+      type: 'list',
+      name: 'networkSelection',
+      message: 'Choose network configuration:',
+      choices: [
+        { name: 'All supported networks (Recommended)', value: 'all' },
+        { name: 'Select specific networks', value: 'specific' },
+      ],
+      default: 'all'
+    }
+  ];
+
+  const networkAnswer = await inquirer.prompt(networkQuestions);
+  let selectedChains: string[] | undefined;
+
+  if (networkAnswer.networkSelection === 'specific') {
+    const chainSelectionQuestions = [
+      {
+        type: 'checkbox',
+        name: 'chains',
+        message: 'Select networks to support:',
+        choices: chainChoices,
+        validate: (input: string[]) => {
+          if (input.length === 0) {
+            return 'Please select at least one network';
+          }
+          return true;
+        }
+      }
+    ];
+    const chainAnswers = await inquirer.prompt(chainSelectionQuestions);
+    selectedChains = chainAnswers.chains;
+  }
+
+  // Step 3: LLM Provider Selection
+  logger.info(chalk.blue('\n🤖 Step 3: LLM Provider Configuration'));
   const questions = [
     {
       type: 'list',
@@ -208,6 +282,11 @@ async function interactiveAgentSetup(name: string, options: AgentCreateOptions) 
     description: finalAnswers.description,
     systemPrompt,
     temperature: finalAnswers.temperature,
+    polkadotConfig: {
+      privateKey: privateKeyAnswers.privateKey,
+      keyType: privateKeyAnswers.keyType,
+      chains: selectedChains,
+    },
   };
 }
 
@@ -252,6 +331,7 @@ function createAgentMetadata(config: any): AgentMetadata {
     maxTokens: config.maxTokens,
     description: config.description,
     tags: config.tags || [],
+    polkadotConfig: config.polkadotConfig,
     createdAt: now,
     updatedAt: now,
     usageCount: 0,

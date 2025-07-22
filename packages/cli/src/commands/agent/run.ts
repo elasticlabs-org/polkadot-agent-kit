@@ -6,24 +6,94 @@ import { configManager } from '../../core/config/manager.js';
 import { logger } from '../../utils/logger.js';
 import { AgentRunOptions, CLIError } from '../../types/commands.js';
 import { AgentMetadata } from '../../types/agent.js';
+import { PolkadotAgentKit } from '@polkadot-agent-kit/sdk';
 
 export const runCommand = new Command('run')
   .description('Execute a command with an AI agent')
-  .argument('<name>', 'Agent name')
-  .argument('<command>', 'Command to execute')
   .option('-f, --format <format>', 'Output format (json|table|raw)', 'raw')
   .option('-t, --timeout <timeout>', 'Request timeout in seconds', '30')
-  .option('-v, --verbose', 'Verbose output', false)
-  .action(async (name: string, command: string, options: AgentRunOptions) => {
+  .option('-v, --verbose', 'Verbose output', false);
+
+// Check balance subcommand
+runCommand
+  .command('check-balance')
+  .description('Check the balance of the agent wallet')
+  .requiredOption('-a, --agent <agent>', 'Agent name')
+  .option('-c, --chain <chain>', 'Chain to check balance on', 'polkadot')
+  .action(async (options: { agent: string, chain?: string }, cmd) => {
+    const parentOptions = cmd.parent?.opts() as AgentRunOptions;
+    const agentName = options.agent;
     try {
-      await runAgentCommand(name, command, options);
+      await runCheckBalanceCommand(agentName, options.chain || 'polkadot', parentOptions);
     } catch (error) {
-      throw new CLIError(`Failed to run agent command: ${error instanceof Error ? error.message : String(error)}`);
+      throw new CLIError(`Failed to check balance: ${error instanceof Error ? error.message : String(error)}`);
     }
   });
 
-async function runAgentCommand(agentName: string, command: string, options: AgentRunOptions): Promise<void> {
-  // Load agent
+// Transfer subcommand
+runCommand
+  .command('transfer')
+  .description('Transfer tokens to an address')
+  .requiredOption('-a, --agent <agent>', 'Agent name')
+  .argument('<amount>', 'Amount of tokens to transfer')
+  .argument('<address>', 'Address to receive the tokens')
+  .option('-c, --chain <chain>', 'Destination chain', 'polkadot')
+  .action(async (amount: string, address: string, options: { agent: string, chain?: string }, cmd) => {
+    const parentOptions = cmd.parent?.opts() as AgentRunOptions;
+    const agentName = options.agent;
+    try {
+      await runTransferCommand(agentName, amount, address, options.chain || 'polkadot', parentOptions);
+    } catch (error) {
+      throw new CLIError(`Failed to transfer tokens: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  });
+
+// XCM transfer subcommand
+runCommand
+  .command('xcm')
+  .description('Transfer tokens via XCM between chains')
+  .requiredOption('-a, --agent <agent>', 'Agent name')
+  .argument('<amount>', 'Amount of tokens to transfer')
+  .argument('<address>', 'Address to receive the tokens')
+  .argument('<source-chain>', 'Source chain')
+  .argument('<dest-chain>', 'Destination chain')
+  .action(async (amount: string, address: string, sourceChain: string, destChain: string, options: { agent: string }, cmd) => {
+    const parentOptions = cmd.parent?.opts() as AgentRunOptions;
+    const agentName = options.agent;
+    try {
+      await runXcmCommand(agentName, amount, address, sourceChain, destChain, parentOptions);
+    } catch (error) {
+      throw new CLIError(`Failed to execute XCM transfer: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  });
+
+// Swap subcommand
+runCommand
+  .command('swap')
+  .description('Swap tokens')
+  .requiredOption('-a, --agent <agent>', 'Agent name')
+  .argument('<amount>', 'Amount of tokens to swap')
+  .argument('<from-currency>', 'Currency to swap from')
+  .argument('<to-currency>', 'Currency to swap to')
+  .argument('<source-chain>', 'Source chain for cross-chain swap')
+  .argument('<destination-chain>', 'Destination chain for cross-chain swap')
+  .option('--dex <dex>', 'DEX to use for the swap')
+  .option('--receiver <address>', 'Receiver address (defaults to sender)')
+  .action(async (amount: string, fromCurrency: string, toCurrency: string, options: {
+    agent: string;
+    receiver?: string;
+  }, cmd) => {
+    const parentOptions = cmd.parent?.opts() as AgentRunOptions;
+    const agentName = options.agent;
+    try {
+      await runSwapCommand(agentName, amount, fromCurrency, toCurrency, options, parentOptions);
+    } catch (error) {
+      throw new CLIError(`Failed to execute swap: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  });
+
+// Check balance command
+async function runCheckBalanceCommand(agentName: string, chain: string, options: AgentRunOptions): Promise<void> {
   const agent = await loadAgent(agentName);
   if (!agent) {
     throw new Error(`Agent "${agentName}" not found`);
@@ -33,20 +103,88 @@ async function runAgentCommand(agentName: string, command: string, options: Agen
     displayAgentInfo(agent);
   }
 
-  logger.info(chalk.blue(`🚀 Executing command with agent "${agentName}"...`));
+  logger.info(chalk.blue(`🚀 Checking balance for agent "${agentName}" on ${chain}...`));
   
   try {
-    // Execute command
-    const result = await executeCommand(agent, command, options);
-    
-    // Display result
+    const result = await executeBalanceCheckCommand(agent, chain);
     displayResult(result, options);
-    
-    // Update agent usage
     await updateAgentUsage(agentName);
-    
   } catch (error) {
-    logger.error(`Command execution failed: ${error instanceof Error ? error.message : String(error)}`);
+    logger.error(`Balance check failed: ${error instanceof Error ? error.message : String(error)}`);
+    process.exit(1);
+  }
+}
+
+// Transfer command
+async function runTransferCommand(agentName: string, amount: string, address: string, chain: string, options: AgentRunOptions): Promise<void> {
+  const agent = await loadAgent(agentName);
+  if (!agent) {
+    throw new Error(`Agent "${agentName}" not found`);
+  }
+
+  if (options.verbose) {
+    displayAgentInfo(agent);
+  }
+
+  logger.info(chalk.blue(`🚀 Transferring ${amount} tokens to ${address} on ${chain} with agent "${agentName}"...`));
+  
+  try {
+    const result = await executeTransferCommand(agent, amount, address, chain);
+    displayResult(result, options);
+    await updateAgentUsage(agentName);
+  } catch (error) {
+    logger.error(`Transfer failed: ${error instanceof Error ? error.message : String(error)}`);
+    process.exit(1);
+  }
+}
+
+// XCM command
+async function runXcmCommand(agentName: string, amount: string, address: string, sourceChain: string, destChain: string, options: AgentRunOptions): Promise<void> {
+  const agent = await loadAgent(agentName);
+  if (!agent) {
+    throw new Error(`Agent "${agentName}" not found`);
+  }
+
+  if (options.verbose) {
+    displayAgentInfo(agent);
+  }
+
+  logger.info(chalk.blue(`🚀 XCM transfer of ${amount} tokens to ${address} from ${sourceChain} to ${destChain} with agent "${agentName}"...`));
+  
+  try {
+    const result = await executeXcmTransferCommand(agent, amount, address, sourceChain, destChain);
+    displayResult(result, options);
+    await updateAgentUsage(agentName);
+  } catch (error) {
+    logger.error(`XCM transfer failed: ${error instanceof Error ? error.message : String(error)}`);
+    process.exit(1);
+  }
+}
+
+// Swap command
+async function runSwapCommand(agentName: string, amount: string, fromCurrency: string, toCurrency: string, swapOptions: {
+  fromChain?: string;
+  toChain?: string;
+  dex?: string;
+  receiver?: string;
+}, options: AgentRunOptions): Promise<void> {
+  const agent = await loadAgent(agentName);
+  if (!agent) {
+    throw new Error(`Agent "${agentName}" not found`);
+  }
+
+  if (options.verbose) {
+    displayAgentInfo(agent);
+  }
+
+  logger.info(chalk.blue(`🚀 Swapping ${amount} ${fromCurrency} to ${toCurrency} with agent "${agentName}"...`));
+  
+  try {
+    const result = await executeSwapCommand(agent, amount, fromCurrency, toCurrency, swapOptions);
+    displayResult(result, options);
+    await updateAgentUsage(agentName);
+  } catch (error) {
+    logger.error(`Swap failed: ${error instanceof Error ? error.message : String(error)}`);
     process.exit(1);
   }
 }
@@ -84,84 +222,210 @@ function displayAgentInfo(agent: AgentMetadata): void {
   console.log(chalk.gray(`Provider: ${agent.provider}`));
   console.log(chalk.gray(`Model: ${agent.model}`));
   console.log(chalk.gray(`Tools: ${agent.tools.join(', ')}`));
+  console.log(chalk.gray(`Key Type: ${agent.polkadotConfig.keyType}`));
+  console.log(chalk.gray(`Networks: ${agent.polkadotConfig.chains ? agent.polkadotConfig.chains.join(', ') : 'All supported networks'}`));
   console.log();
 }
 
-async function executeCommand(agent: AgentMetadata, command: string, options: AgentRunOptions): Promise<any> {
-  // This is a placeholder implementation
-  // In a real implementation, this would integrate with the actual LLM providers
-  // and execute the command using the agent's tools
-  
-  logger.info(`Processing command: "${command}"`);
-  
-  // Simulate processing time
-  await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
-  
-  // Mock result based on command and agent configuration
-  const result = generateMockResult(agent, command);
-  
-  return result;
-}
-
-function generateMockResult(agent: AgentMetadata, command: string): any {
-  const commandLower = command.toLowerCase();
-  
-  // Mock different types of responses based on command content
-  if (commandLower.includes('balance')) {
+// New execution functions for subcommands
+async function executeBalanceCheckCommand(agent: AgentMetadata, chain: string): Promise<any> {
+  try {
+    // Initialize PolkadotAgentKit with the agent's configuration
+    const agentKit = new PolkadotAgentKit(agent.polkadotConfig.privateKey, {
+      keyType: agent.polkadotConfig.keyType,
+      chains: agent.polkadotConfig.chains as any,
+    });
+    const agentAddress = agentKit.getCurrentAddress();
+    logger.info('Initializing Polkadot Agent Kit...');
+    await agentKit.initializeApi();
+    
+    logger.info(`Checking balance on chain: ${chain}`);
+    
+    // Get the balance tool and execute it
+    const balanceTool = agentKit.getNativeBalanceTool();
+    const balanceResult = await balanceTool.call({ chain });
+    
     return {
       type: 'balance',
       data: {
-        address: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
-        balance: '10.5 DOT',
-        chain: 'polkadot',
-        timestamp: new Date().toISOString(),
+        agent: agent.name,
+        address: agentAddress,
+        chain,
+        balance: balanceResult,
+        rawResult: balanceResult,
       },
       success: true,
-      message: 'Balance retrieved successfully'
+      message: `Balance check completed for ${chain}`
+    };
+    
+  } catch (error) {
+    logger.error(`Balance check failed: ${error instanceof Error ? error.message : String(error)}`);
+    
+    return {
+      type: 'error',
+      data: {
+        agent: agent.name,
+        error: error instanceof Error ? error.message : String(error),
+      },
+      success: false,
+      message: 'Balance check failed'
     };
   }
-  
-  if (commandLower.includes('transfer')) {
+}
+
+async function executeTransferCommand(agent: AgentMetadata, amount: string, address: string, chain: string): Promise<any> {
+  try {
+    // Initialize PolkadotAgentKit with the agent's configuration
+    const agentKit = new PolkadotAgentKit(agent.polkadotConfig.privateKey, {
+      keyType: agent.polkadotConfig.keyType,
+      chains: agent.polkadotConfig.chains as any,
+    });
+    
+    logger.info('Initializing Polkadot Agent Kit...');
+    await agentKit.initializeApi();
+    
+    logger.info(`Transferring ${amount} tokens to ${address} on ${chain}`);
+    
+    // Get the transfer tool and execute it
+    const transferTool = agentKit.transferNativeTool();
+    const transferResult = await transferTool.call({ to: address, amount, chain });
+    
+    
     return {
       type: 'transfer',
       data: {
-        from: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
-        to: '1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2',
-        amount: '1.0 DOT',
-        txHash: '0x1234567890abcdef',
-        status: 'pending',
+        agent: agent.name,
+        amount,
+        to: address,
+        chain,
+        result: transferResult,
       },
       success: true,
-      message: 'Transfer initiated successfully'
+      message: `Transfer completed on ${chain}`
     };
-  }
-  
-  if (commandLower.includes('staking') || commandLower.includes('stake')) {
+    
+  } catch (error) {
+    logger.error(`Transfer failed: ${error instanceof Error ? error.message : String(error)}`);
+    
     return {
-      type: 'staking',
+      type: 'error',
       data: {
-        validator: '1FRMM8PEiWXYax7rpS6X4XZX1aAAxSWx1CrKTyrVYhV24fg',
-        amount: '100 DOT',
-        status: 'bonded',
-        rewards: '0.5 DOT',
+        agent: agent.name,
+        error: error instanceof Error ? error.message : String(error),
       },
-      success: true,
-      message: 'Staking operation completed'
+      success: false,
+      message: 'Transfer failed'
     };
   }
-  
-  // Default response
-  return {
-    type: 'general',
-    data: {
-      command,
-      agent: agent.name,
-      tools: agent.tools,
-      response: `I processed your command "${command}" using my available tools: ${agent.tools.join(', ')}. This is a mock response for demonstration purposes.`,
-    },
-    success: true,
-    message: 'Command processed successfully'
-  };
+}
+
+async function executeXcmTransferCommand(agent: AgentMetadata, amount: string, address: string, sourceChain: string, destChain: string): Promise<any> {
+  try {
+    // Initialize PolkadotAgentKit with the agent's configuration
+    const agentKit = new PolkadotAgentKit(agent.polkadotConfig.privateKey, {
+      keyType: agent.polkadotConfig.keyType,
+      chains: agent.polkadotConfig.chains as any,
+    });
+    
+    logger.info('Initializing Polkadot Agent Kit...');
+    await agentKit.initializeApi();
+    
+    logger.info(`XCM transfer of ${amount} tokens to ${address} from ${sourceChain} to ${destChain}`);
+    
+    // Get the XCM transfer tool and execute it
+    const xcmTool = agentKit.xcmTransferNativeTool();
+    const xcmResult = await xcmTool.call({ to: address , amount, sourceChain, destChain });
+    
+    
+    return {
+      type: 'xcm',
+      data: {
+        agent: agent.name,
+        amount,
+        to: address,
+        sourceChain,
+        destChain,
+        result: xcmResult,
+      },
+      success: true,
+      message: `XCM transfer completed from ${sourceChain} to ${destChain}`
+    };
+    
+  } catch (error) {
+    logger.error(`XCM transfer failed: ${error instanceof Error ? error.message : String(error)}`);
+    
+    return {
+      type: 'error',
+      data: {
+        agent: agent.name,
+        error: error instanceof Error ? error.message : String(error),
+      },
+      success: false,
+      message: 'XCM transfer failed'
+    };
+  }
+}
+
+async function executeSwapCommand(agent: AgentMetadata, amount: string, fromCurrency: string, toCurrency: string, swapOptions: {
+  fromChain?: string;
+  toChain?: string;
+  dex?: string;
+  receiver?: string;
+}): Promise<any> {
+  try {
+    // Initialize PolkadotAgentKit with the agent's configuration
+    const agentKit = new PolkadotAgentKit(agent.polkadotConfig.privateKey, {
+      keyType: agent.polkadotConfig.keyType,
+      chains: agent.polkadotConfig.chains as any,
+    });
+    
+    logger.info('Initializing Polkadot Agent Kit...');
+    await agentKit.initializeApi();
+    
+    logger.info(`Swapping ${amount} ${fromCurrency} to ${toCurrency}`);
+    
+    // Get the swap tool and execute it
+    const swapTool = agentKit.swapTokensTool();
+    const swapResult = await swapTool.call({
+      amount,
+      from: swapOptions.fromChain,
+      to: swapOptions.toChain,
+      currencyFrom: fromCurrency,
+      currencyTo: toCurrency,
+      dex: swapOptions.dex,
+      receiver: swapOptions.receiver,
+    });
+    
+    // Clean up
+    await agentKit.disconnect();
+    
+    return {
+      type: 'swap',
+      data: {
+        agent: agent.name,
+        amount,
+        fromCurrency,
+        toCurrency,
+        swapOptions,
+        result: swapResult,
+      },
+      success: true,
+      message: `Swap completed: ${amount} ${fromCurrency} to ${toCurrency}`
+    };
+    
+  } catch (error) {
+    logger.error(`Swap failed: ${error instanceof Error ? error.message : String(error)}`);
+    
+    return {
+      type: 'error',
+      data: {
+        agent: agent.name,
+        error: error instanceof Error ? error.message : String(error),
+      },
+      success: false,
+      message: 'Swap failed'
+    };
+  }
 }
 
 function displayResult(result: any, options: AgentRunOptions): void {
@@ -206,17 +470,50 @@ function displayRawResult(result: any): void {
   }
   
   if (result.type === 'balance') {
-    console.log(chalk.green(`Balance: ${result.data.balance}`));
+    console.log(chalk.green(`\n💰 Balance Information:`));
     console.log(chalk.gray(`Address: ${result.data.address}`));
     console.log(chalk.gray(`Chain: ${result.data.chain}`));
-  } else if (result.type === 'transfer') {
-    console.log(chalk.green(`Transfer Status: ${result.data.status}`));
-    console.log(chalk.gray(`Amount: ${result.data.amount}`));
-    console.log(chalk.gray(`From: ${result.data.from}`));
-    console.log(chalk.gray(`To: ${result.data.to}`));
-    if (result.data.txHash) {
-      console.log(chalk.gray(`Transaction Hash: ${result.data.txHash}`));
+    
+    console.log(chalk.white(JSON.stringify(result.data.rawResult, null, 2)));
+
+  } else if (result.type === 'info') {
+    console.log(chalk.blue(`\n📋 Available Commands:`));
+    if (result.data.availableCommands) {
+      result.data.availableCommands.forEach((cmd: string) => {
+        console.log(chalk.gray(`  • ${cmd}`));
+      });
     }
+    console.log(chalk.white(`\n${result.data.message}`));
+  } else if (result.type === 'success') {
+    console.log(chalk.green(`Agent Address: ${result.data.address}`));
+    console.log(chalk.gray(`Networks: ${result.data.networks}`));
+    console.log(chalk.gray(`Available Tools: ${result.data.tools.join(', ')}`));
+    console.log(chalk.white(result.data.message));
+  } else if (result.type === 'error') {
+    console.log(chalk.red(`Error: ${result.data.error}`));
+  } else if (result.type === 'transfer') {
+    console.log(chalk.green(`\n💸 Transfer Information:`));
+    console.log(chalk.gray(`Amount: ${result.data.amount}`));
+    console.log(chalk.gray(`To: ${result.data.to}`));
+    console.log(chalk.gray(`Chain: ${result.data.chain}`));
+    console.log(chalk.white(JSON.stringify(result.data.result, null, 2)));
+  } else if (result.type === 'xcm') {
+    console.log(chalk.green(`\n🌉 XCM Transfer Information:`));
+    console.log(chalk.gray(`Amount: ${result.data.amount}`));
+    console.log(chalk.gray(`To: ${result.data.to}`));
+    console.log(chalk.gray(`From: ${result.data.sourceChain} to ${result.data.destChain}`));
+    console.log(chalk.white(JSON.stringify(result.data.result, null, 2)));
+  } else if (result.type === 'swap') {
+    console.log(chalk.green(`\n🔄 Swap Information:`));
+    console.log(chalk.gray(`Amount: ${result.data.amount}`));
+    console.log(chalk.gray(`From: ${result.data.fromCurrency} to ${result.data.toCurrency}`));
+    if (result.data.swapOptions.fromChain && result.data.swapOptions.toChain) {
+      console.log(chalk.gray(`Chains: ${result.data.swapOptions.fromChain} to ${result.data.swapOptions.toChain}`));
+    }
+    if (result.data.swapOptions.dex) {
+      console.log(chalk.gray(`DEX: ${result.data.swapOptions.dex}`));
+    }
+    console.log(chalk.white(JSON.stringify(result.data.result, null, 2)));
   } else if (result.type === 'staking') {
     console.log(chalk.green(`Staking Status: ${result.data.status}`));
     console.log(chalk.gray(`Amount: ${result.data.amount}`));
