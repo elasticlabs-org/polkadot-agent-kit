@@ -7,10 +7,12 @@ import { configManager } from '../../core/config/manager.js';
 import { logger } from '../../utils/logger.js';
 import { AgentChatOptions, CLIError } from '../../types/commands.js';
 import { AgentMetadata, ChatMessage } from '../../types/agent.js';
+import { PolkadotCLIAgent } from '../../core/agent/polkadotAgent.js';
 
 export const chatCommand = new Command('chat')
   .description('Start an interactive chat session with an AI agent')
   .argument('<name>', 'Agent name')
+  .option('-i, --interactive', 'Interactive mode', true)
   .option('--history', 'Show chat history', false)
   .option('--save', 'Save chat history', true)
   .option('--timeout <timeout>', 'Request timeout in seconds', '30')
@@ -150,7 +152,6 @@ async function runInteractiveChat(agent: AgentMetadata, options: AgentChatOption
     try {
       // Show typing indicator
       const typingInterval = showTypingIndicator();
-
       // Send message to agent
       const response = await sendMessageToAgent(agent, message, options);
       
@@ -241,20 +242,19 @@ function showTypingIndicator(): NodeJS.Timeout {
 }
 
 async function sendMessageToAgent(agent: AgentMetadata, message: string, options: AgentChatOptions): Promise<string> {
-  // This is a placeholder implementation
-  // In a real implementation, this would integrate with the actual LLM providers
-  
-  // Simulate API call delay
-  await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
-  
-  // Mock response based on agent configuration
-  const responses = [
-    `I understand you want to ${message.toLowerCase()}. As a ${agent.provider} agent with ${agent.tools.join(', ')} tools, I can help you with Polkadot operations.`,
-    `Let me process your request: "${message}". I have access to ${agent.tools.length} tools to assist you.`,
-    `Based on your message about "${message}", I can help you with various Polkadot operations using my available tools.`,
-  ];
-  
-  return responses[Math.floor(Math.random() * responses.length)] || 'I\'m sorry, I don\'t have the information to answer that question.';
+  try {
+    logger.info("Go to here again in send message to agent ");
+    // Initialize the Polkadot CLI Agent
+    const cliAgent = new PolkadotCLIAgent(agent);
+    await cliAgent.initialize();
+    // Send the message to the agent
+    const response = await cliAgent.ask(message);
+    
+    return response;
+  } catch (error) {
+    logger.error(`Agent communication failed: ${error instanceof Error ? error.message : String(error)}`);
+    return `I encountered an error processing your request: ${error instanceof Error ? error.message : String(error)}. Please try again or check your configuration.`;
+  }
 }
 
 async function saveChatMessage(agentName: string, role: 'user' | 'assistant', content: string): Promise<void> {

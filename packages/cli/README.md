@@ -52,7 +52,7 @@ pak agent chat my-agent
 ### 4. Execute Commands
 
 ```bash
-pak agent run my-agent "check my balance"
+pak agent run check-balance -a <your agent name> 
 ```
 
 ## Commands

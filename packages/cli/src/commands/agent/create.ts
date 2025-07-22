@@ -9,7 +9,7 @@ import { AgentCreateOptions, CLIError } from '../../types/commands.js';
 import {
   AVAILABLE_TOOLS,
   TOOL_DESCRIPTIONS,
-  DEFAULT_SYSTEM_PROMPTS,
+  DEFAULT_SYSTEM_PROMPT,
   AgentMetadata,
   PolkadotAgentConfig
 } from '../../types/agent.js';
@@ -59,7 +59,6 @@ async function createAgent(name: string, options: AgentCreateOptions): Promise<v
   logger.success(chalk.green(`✅ Agent "${name}" created successfully!`));
   logger.info(chalk.cyan('\nNext steps:'));
   logger.info(chalk.white(`  pak agent chat ${name}`));
-  logger.info(chalk.white(`  pak agent run ${name} "check my balance"`));
 }
 
 function isValidAgentName(name: string): boolean {
@@ -89,7 +88,7 @@ async function getAgentConfig(name: string, options: AgentCreateOptions) {
 
 function getDefaultModel(provider: string): string {
   const config = configManager.getConfig();
-  
+  logger.debug("Go to getDefaultModel");
   if (provider === 'ollama') {
     return config.llm.ollama?.defaultModel || 'llama2';
   } else if (provider === 'openai') {
@@ -198,6 +197,7 @@ async function interactiveAgentSetup(name: string, options: AgentCreateOptions) 
 
   // Get available models for the selected provider
   const availableModels = await getAvailableModels(provider);
+  logger.debug("Available Models:", availableModels);
   
   const modelQuestions = [
     {
@@ -222,41 +222,20 @@ async function interactiveAgentSetup(name: string, options: AgentCreateOptions) 
         }
         return true;
       }
-    },
-    {
-      type: 'list',
-      name: 'systemPromptType',
-      message: 'Choose system prompt template:',
-      choices: [
-        { name: 'General - All-purpose Polkadot assistant', value: 'general' },
-        { name: 'Trading - DeFi and trading focused', value: 'trading' },
-        { name: 'Staking - Staking and governance focused', value: 'staking' },
-        { name: 'Custom - I\'ll provide my own', value: 'custom' },
-      ],
-      default: 'general'
     }
   ];
 
   const answers = await inquirer.prompt(modelQuestions);
 
-  let systemPrompt = DEFAULT_SYSTEM_PROMPTS[answers.systemPromptType as keyof typeof DEFAULT_SYSTEM_PROMPTS];
+  let systemPrompt = DEFAULT_SYSTEM_PROMPT
   
-  if (answers.systemPromptType === 'custom') {
-    const customPrompt = await inquirer.prompt([{
-      type: 'editor',
-      name: 'systemPrompt',
-      message: 'Enter your custom system prompt:',
-      default: DEFAULT_SYSTEM_PROMPTS.general
-    }]);
-    systemPrompt = customPrompt.systemPrompt;
-  }
 
   const finalQuestions = [
     {
       type: 'input',
       name: 'description',
       message: 'Agent description:',
-      default: options.description || `${answers.systemPromptType} AI agent for Polkadot operations`
+      default: options.description || `AI agent for Polkadot operations`
     },
     {
       type: 'number',
