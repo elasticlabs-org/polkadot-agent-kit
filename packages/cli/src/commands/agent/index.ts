@@ -1,13 +1,14 @@
-import { Command } from 'commander';
-import { createCommand } from './create';
-import { listCommand } from './list';
-import { chatCommand } from './chat';
-import { runCommand } from './run';
-import { deleteCommand } from './delete';
-import { modelCommand } from './model';
+import { Command } from "commander";
 
-export const agentCommands = new Command('agent')
-  .description('Manage AI agents')
+import { chatCommand } from "./chat";
+import { createCommand } from "./create";
+import { deleteCommand } from "./delete";
+import { listCommand } from "./list";
+import { modelCommand } from "./model";
+import { runCommand } from "./run";
+
+export const agentCommands = new Command("agent")
+  .description("Manage AI agents")
   .addCommand(createCommand)
   .addCommand(listCommand)
   .addCommand(chatCommand)

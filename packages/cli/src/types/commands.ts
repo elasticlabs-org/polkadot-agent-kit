@@ -17,16 +17,16 @@ export interface Command {
 // CLI Core interface
 export interface CLICore {
   configManager: any; // Will be properly typed when implemented
-  agentManager: any;  // Will be properly typed when implemented
-  llmManager: any;    // Will be properly typed when implemented
-  logger: any;        // Will be properly typed when implemented
+  agentManager: any; // Will be properly typed when implemented
+  llmManager: any; // Will be properly typed when implemented
+  logger: any; // Will be properly typed when implemented
 }
 
 // Init command options
 export interface InitOptions {
   name?: string;
   template?: string;
-  llmProvider?: 'ollama' | 'openai';
+  llmProvider?: "ollama" | "openai";
   interactive?: boolean;
 }
 
@@ -41,7 +41,7 @@ export interface ConfigCommands {
 
 // Agent command options
 export interface AgentCreateOptions {
-  provider?: 'ollama' | 'openai';
+  provider?: "ollama" | "openai";
   model?: string;
   tools?: string;
   description?: string;
@@ -50,12 +50,12 @@ export interface AgentCreateOptions {
 
 export interface AgentListOptions {
   provider?: string;
-  format?: 'table' | 'json';
+  format?: "table" | "json";
   filter?: string;
 }
 
 export interface AgentRunOptions {
-  format?: 'json' | 'table' | 'raw';
+  format?: "json" | "table" | "raw";
   timeout?: number;
   verbose?: boolean;
 }
@@ -68,36 +68,45 @@ export interface AgentChatOptions {
 
 // Error types
 export class CLIError extends Error {
-  constructor(message: string, public code?: string) {
+  constructor(
+    message: string,
+    public code?: string,
+  ) {
     super(message);
-    this.name = 'CLIError';
+    this.name = "CLIError";
   }
 }
 
 export class ValidationError extends CLIError {
   constructor(message: string) {
-    super(message, 'VALIDATION_ERROR');
-    this.name = 'ValidationError';
+    super(message, "VALIDATION_ERROR");
+    this.name = "ValidationError";
   }
 }
 
 export class ConfigurationError extends CLIError {
   constructor(message: string) {
-    super(message, 'CONFIGURATION_ERROR');
-    this.name = 'ConfigurationError';
+    super(message, "CONFIGURATION_ERROR");
+    this.name = "ConfigurationError";
   }
 }
 
 export class ProviderError extends CLIError {
-  constructor(message: string, public provider: string) {
-    super(message, 'PROVIDER_ERROR');
-    this.name = 'ProviderError';
+  constructor(
+    message: string,
+    public provider: string,
+  ) {
+    super(message, "PROVIDER_ERROR");
+    this.name = "ProviderError";
   }
 }
 
 export class AgentError extends CLIError {
-  constructor(message: string, public agentName?: string) {
-    super(message, 'AGENT_ERROR');
-    this.name = 'AgentError';
+  constructor(
+    message: string,
+    public agentName?: string,
+  ) {
+    super(message, "AGENT_ERROR");
+    this.name = "AgentError";
   }
 }

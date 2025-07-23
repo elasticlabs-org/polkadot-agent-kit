@@ -1,11 +1,12 @@
-import { PolkadotAgentKit } from '@polkadot-agent-kit/sdk';
-import { AgentMetadata } from '../../types/agent';
-import { logger } from '../../utils/logger';
-import { ChatOllama } from "@langchain/ollama";
-import { AgentExecutor, createToolCallingAgent } from "langchain/agents";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { DynamicStructuredTool } from "@langchain/core/tools";
+import { ChatOllama } from "@langchain/ollama";
+import { PolkadotAgentKit } from "@polkadot-agent-kit/sdk";
+import { AgentExecutor, createToolCallingAgent } from "langchain/agents";
 import { z } from "zod";
-import { ChatPromptTemplate } from '@langchain/core/prompts';
+
+import type { AgentMetadata } from "../../types/agent";
+import { logger } from "../../utils/logger";
 
 // System prompt for the CLI agent
 const SYSTEM_PROMPT = `I am a Polkadot Agent Kit CLI assistant. I can help you with:
@@ -95,13 +96,13 @@ function wrapBalanceTool(agentKit: PolkadotAgentKit) {
     name: "getNativeBalanceTool",
     description: "Get native token balance for an address on a specific chain",
     schema: z.object({
-      chain: z.string().describe("The chain to check balance on")
+      chain: z.string().describe("The chain to check balance on"),
     }),
     func: async ({ chain }: { chain: string }) => {
       const tool = agentKit.getNativeBalanceTool();
       const result = await tool.call({ chain });
       return JSON.stringify(result);
-    }
+    },
   });
 }
 
@@ -112,13 +113,21 @@ function wrapTransferTool(agentKit: PolkadotAgentKit) {
     schema: z.object({
       to: z.string(),
       amount: z.string(),
-      chain: z.string()
+      chain: z.string(),
     }),
-    func: async ({ to, amount, chain }: { to: string, amount: string, chain: string }) => {
+    func: async ({
+      to,
+      amount,
+      chain,
+    }: {
+      to: string;
+      amount: string;
+      chain: string;
+    }) => {
       const tool = agentKit.transferNativeTool();
       const result = await tool.call({ to, amount, chain });
       return JSON.stringify(result);
-    }
+    },
   });
 }
 
@@ -130,28 +139,43 @@ function wrapXcmTool(agentKit: PolkadotAgentKit) {
       to: z.string(),
       amount: z.string(),
       sourceChain: z.string(),
-      destChain: z.string()
+      destChain: z.string(),
     }),
-    func: async ({ to, amount, sourceChain, destChain }: { to: string, amount: string, sourceChain: string, destChain: string }) => {
+    func: async ({
+      to,
+      amount,
+      sourceChain,
+      destChain,
+    }: {
+      to: string;
+      amount: string;
+      sourceChain: string;
+      destChain: string;
+    }) => {
       const tool = agentKit.xcmTransferNativeTool();
       const result = await tool.call({ to, amount, sourceChain, destChain });
       return JSON.stringify(result);
-    }
+    },
   });
 }
 
 function wrapInitializeChainApiTool(agentKit: PolkadotAgentKit) {
   return new DynamicStructuredTool({
     name: "initializeChainApiTool",
-    description: "Initialize a chain API when it's not available. Use this when other tools fail due to chain not being initialized.",
+    description:
+      "Initialize a chain API when it's not available. Use this when other tools fail due to chain not being initialized.",
     schema: z.object({
-      chainId: z.string().describe("The chain ID to initialize (e.g., 'west', 'polkadot', 'hydra')")
+      chainId: z
+        .string()
+        .describe(
+          "The chain ID to initialize (e.g., 'west', 'polkadot', 'hydra')",
+        ),
     }),
     func: async ({ chain }: { chain: string }) => {
       const tool = agentKit.getInitializeChainApiTool();
       const result = await tool.call({ chain });
       return JSON.stringify(result);
-    }
+    },
   });
 }
 
@@ -160,18 +184,58 @@ function wrapSwapTokensTool(agentKit: PolkadotAgentKit) {
     name: "SwapTokensTool",
     description: "Swap tokens across different chains using the Hydration DEX",
     schema: z.object({
-      from: z.string().describe("The source chain ID where the swap originates (e.g., 'Polkadot', 'AssetHubPolkadot', 'Hydra', 'Kusama')"),
-      to: z.string().describe("The destination chain ID where the swap completes (e.g., 'Polkadot', 'AssetHubPolkadot', 'Hydra', 'Kusama')"),
-      currencyFrom: z.string().describe("The symbol of the token to swap from (e.g., 'DOT', 'KSM', 'HDX')"),
-      currencyTo: z.string().describe("The symbol of the token to swap to (e.g., 'DOT', 'KSM', 'HDX', 'USDT')"),
+      from: z
+        .string()
+        .describe(
+          "The source chain ID where the swap originates (e.g., 'Polkadot', 'AssetHubPolkadot', 'Hydra', 'Kusama')",
+        ),
+      to: z
+        .string()
+        .describe(
+          "The destination chain ID where the swap completes (e.g., 'Polkadot', 'AssetHubPolkadot', 'Hydra', 'Kusama')",
+        ),
+      currencyFrom: z
+        .string()
+        .describe(
+          "The symbol of the token to swap from (e.g., 'DOT', 'KSM', 'HDX')",
+        ),
+      currencyTo: z
+        .string()
+        .describe(
+          "The symbol of the token to swap to (e.g., 'DOT', 'KSM', 'HDX', 'USDT')",
+        ),
       amount: z.string().describe("The amount of the source token to swap"),
-      receiver: z.string().optional().describe("The receiver address for the swap")
+      receiver: z
+        .string()
+        .optional()
+        .describe("The receiver address for the swap"),
     }),
-    func: async ({ from, to, currencyFrom, currencyTo, amount, receiver }: { from: string, to: string, currencyFrom: string, currencyTo: string, amount: string, receiver: string | undefined }) => {
+    func: async ({
+      from,
+      to,
+      currencyFrom,
+      currencyTo,
+      amount,
+      receiver,
+    }: {
+      from: string;
+      to: string;
+      currencyFrom: string;
+      currencyTo: string;
+      amount: string;
+      receiver: string | undefined;
+    }) => {
       const tool = agentKit.swapTokensTool();
-      const result = await tool.call({ from, to, currencyFrom, currencyTo, amount, receiver });
+      const result = await tool.call({
+        from,
+        to,
+        currencyFrom,
+        currencyTo,
+        amount,
+        receiver,
+      });
       return JSON.stringify(result);
-    }
+    },
   });
 }
 
@@ -181,13 +245,13 @@ function wrapJoinPoolTool(agentKit: PolkadotAgentKit) {
     description: "Join a nomination pool for staking",
     schema: z.object({
       amount: z.string().describe("The amount of tokens to join the pool"),
-      chain: z.string().describe("The chain to join the pool on")
+      chain: z.string().describe("The chain to join the pool on"),
     }),
-    func: async ({ amount, chain }: { amount: string, chain: string }) => {
+    func: async ({ amount, chain }: { amount: string; chain: string }) => {
       const tool = agentKit.joinPoolTool();
       const result = await tool.call({ amount, chain });
       return JSON.stringify(result);
-    }
+    },
   });
 }
 
@@ -220,13 +284,13 @@ function wrapUnbondTool(agentKit: PolkadotAgentKit) {
     description: "Unbond tokens from a nomination pool",
     schema: z.object({
       amount: z.string().describe("The amount of tokens to unbond"),
-      chain: z.string().describe("The chain to unbond tokens on")
+      chain: z.string().describe("The chain to unbond tokens on"),
     }),
-    func: async ({ amount, chain }: { amount: string, chain: string }) => {
+    func: async ({ amount, chain }: { amount: string; chain: string }) => {
       const tool = agentKit.unbondTool();
       const result = await tool.call({ amount, chain });
       return JSON.stringify(result);
-    }
+    },
   });
 }
 
@@ -236,13 +300,19 @@ function wrapWithdrawUnbondedTool(agentKit: PolkadotAgentKit) {
     description: "Withdraw unbonded tokens from a nomination pool",
     schema: z.object({
       slashingSpans: z.string().describe("The number of slashing spans"),
-      chain: z.string().describe("The chain to withdraw unbonded tokens on")
+      chain: z.string().describe("The chain to withdraw unbonded tokens on"),
     }),
-    func: async ({ slashingSpans, chain }: { slashingSpans: string, chain: string }) => {
+    func: async ({
+      slashingSpans,
+      chain,
+    }: {
+      slashingSpans: string;
+      chain: string;
+    }) => {
       const tool = agentKit.withdrawUnbondedTool();
       const result = await tool.call({ slashingSpans, chain });
       return JSON.stringify(result);
-    }
+    },
   });
 }
 
@@ -251,13 +321,13 @@ function wrapClaimRewardsTool(agentKit: PolkadotAgentKit) {
     name: "claimRewardsTool",
     description: "Claim rewards from a nomination pool",
     schema: z.object({
-      chain: z.string().describe("The chain to claim rewards on")
+      chain: z.string().describe("The chain to claim rewards on"),
     }),
     func: async ({ chain }: { chain: string }) => {
       const tool = agentKit.claimRewardsTool();
       const result = await tool.call({ chain });
       return JSON.stringify(result);
-    }
+    },
   });
 }
 
@@ -266,9 +336,7 @@ export class PolkadotCLIAgent {
   private agentExecutor: AgentExecutor | undefined;
   private initialized = false;
 
-  constructor(
-    private agent: AgentMetadata
-  ) { }
+  constructor(private agent: AgentMetadata) {}
 
   async initialize(): Promise<void> {
     if (this.initialized) return;
@@ -281,8 +349,8 @@ export class PolkadotCLIAgent {
         logger.error("Private key is not set in the agent configuration");
       }
       this.agentKit = new PolkadotAgentKit(privateKey, {
-        keyType: 'Sr25519',
-        chains: ['polkadot', 'west', 'polkadot_asset_hub', 'west_asset_hub']
+        keyType: "Sr25519",
+        chains: ["polkadot", "west", "polkadot_asset_hub", "west_asset_hub"],
       });
       await this.agentKit.initializeApi();
 
@@ -296,16 +364,16 @@ export class PolkadotCLIAgent {
       // Prepare tools as LangChain-compatible DynamicStructuredTool instances
       const tools = [];
 
-      if (this.agent.tools.includes('balance')) {
+      if (this.agent.tools.includes("balance")) {
         tools.push(wrapBalanceTool(this.agentKit));
       }
 
-      if (this.agent.tools.includes('transfer')) {
+      if (this.agent.tools.includes("transfer")) {
         tools.push(wrapTransferTool(this.agentKit));
         tools.push(wrapXcmTool(this.agentKit));
       }
 
-      if (this.agent.tools.includes('staking')) {
+      if (this.agent.tools.includes("staking")) {
         tools.push(wrapJoinPoolTool(this.agentKit));
         // tools.push(wrapBondExtraTool(this.agentKit));
         tools.push(wrapUnbondTool(this.agentKit));
@@ -313,7 +381,7 @@ export class PolkadotCLIAgent {
         tools.push(wrapClaimRewardsTool(this.agentKit));
       }
 
-      if (this.agent.tools.includes('swap')) {
+      if (this.agent.tools.includes("swap")) {
         tools.push(wrapSwapTokensTool(this.agentKit));
       }
 
@@ -325,11 +393,11 @@ export class PolkadotCLIAgent {
         llm: llm as any,
         tools: tools as any,
         prompt: ChatPromptTemplate.fromMessages([
-          ['system', SYSTEM_PROMPT],
-          ['placeholder', '{chat_history}'],
-          ['human', '{input}'],
-          ['placeholder', '{agent_scratchpad}']
-        ]) as any
+          ["system", SYSTEM_PROMPT],
+          ["placeholder", "{chat_history}"],
+          ["human", "{input}"],
+          ["placeholder", "{agent_scratchpad}"],
+        ]) as any,
       });
 
       this.agentExecutor = new AgentExecutor({
@@ -338,10 +406,11 @@ export class PolkadotCLIAgent {
         verbose: true,
       });
 
-
       this.initialized = true;
     } catch (error) {
-      logger.error(`Failed to initialize agent: ${error instanceof Error ? error.message : String(error)}`);
+      logger.error(
+        `Failed to initialize agent: ${error instanceof Error ? error.message : String(error)}`,
+      );
       throw error;
     }
   }
@@ -357,12 +426,16 @@ export class PolkadotCLIAgent {
 
     try {
       const result = await this.agentExecutor.invoke({ input: query });
-      return result.output || "I couldn't process your request. Please try again.";
+      return (
+        result.output || "I couldn't process your request. Please try again."
+      );
     } catch (error) {
-      logger.error(`Agent query failed: ${error instanceof Error ? error.message : String(error)}`);
+      logger.error(
+        `Agent query failed: ${error instanceof Error ? error.message : String(error)}`,
+      );
 
       // Check if it's an Ollama connection error
-      if (error instanceof Error && error.message.includes('ECONNREFUSED')) {
+      if (error instanceof Error && error.message.includes("ECONNREFUSED")) {
         return "I couldn't connect to Ollama. Please make sure Ollama is running and the model is available. You can start Ollama with: `ollama serve` and pull the model with: `ollama pull qwen2.5:latest`";
       }
 

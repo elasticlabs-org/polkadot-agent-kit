@@ -1,11 +1,12 @@
-import fs from 'fs-extra';
-import * as path from 'path';
-import * as os from 'os';
-import pkg from 'lodash';
+import fs from "fs-extra";
+import pkg from "lodash";
+import * as os from "os";
+import * as path from "path";
 const { get, set, merge, cloneDeep } = pkg;
-import { CLIConfig, CLIConfigSchema, DEFAULT_CONFIG } from '../../types/config';
-import { ConfigurationError } from '../../types/commands';
-import { logger } from '../../utils/logger';
+import { ConfigurationError } from "../../types/commands";
+import type { CLIConfig } from "../../types/config";
+import { CLIConfigSchema, DEFAULT_CONFIG } from "../../types/config";
+import { logger } from "../../utils/logger";
 
 export class ConfigManager {
   private static instance: ConfigManager;
@@ -14,8 +15,8 @@ export class ConfigManager {
   private projectConfigPath: string;
 
   constructor() {
-    this.globalConfigPath = path.join(os.homedir(), '.pak', 'config.json');
-    this.projectConfigPath = path.join(process.cwd(), 'pak.config.json');
+    this.globalConfigPath = path.join(os.homedir(), ".pak", "config.json");
+    this.projectConfigPath = path.join(process.cwd(), "pak.config.json");
     this.config = DEFAULT_CONFIG;
   }
 
@@ -31,16 +32,18 @@ export class ConfigManager {
       await this.ensureConfigDirectories();
       await this.loadConfiguration();
       await this.validateConfiguration();
-      logger.debug('Configuration manager initialized');
+      logger.debug("Configuration manager initialized");
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      throw new ConfigurationError(`Failed to initialize configuration: ${message}`);
+      throw new ConfigurationError(
+        `Failed to initialize configuration: ${message}`,
+      );
     }
   }
 
   private async ensureConfigDirectories(): Promise<void> {
     const globalDir = path.dirname(this.globalConfigPath);
-    const agentsDir = path.join(globalDir, 'agents');
+    const agentsDir = path.join(globalDir, "agents");
 
     await fs.ensureDir(globalDir);
     await fs.ensureDir(agentsDir);
@@ -53,7 +56,7 @@ export class ConfigManager {
     const projectConfig = await this.loadConfigFile(this.projectConfigPath);
 
     this.config = this.mergeConfigs(defaultConfig, globalConfig, projectConfig);
-    logger.debug('Configuration loaded and merged');
+    logger.debug("Configuration loaded and merged");
   }
 
   private async loadConfigFile(filePath: string): Promise<Partial<CLIConfig>> {
@@ -81,7 +84,7 @@ export class ConfigManager {
     try {
       const result = CLIConfigSchema.safeParse(this.config);
       if (!result.success) {
-        logger.warn('Configuration validation failed, using defaults');
+        logger.warn("Configuration validation failed, using defaults");
         this.config = merge(cloneDeep(DEFAULT_CONFIG), this.config);
       }
     } catch (error) {
@@ -95,9 +98,13 @@ export class ConfigManager {
     return cloneDeep(DEFAULT_CONFIG);
   }
 
-  async save(updates: Partial<CLIConfig>, scope: 'global' | 'project' = 'global'): Promise<void> {
+  async save(
+    updates: Partial<CLIConfig>,
+    scope: "global" | "project" = "global",
+  ): Promise<void> {
     try {
-      const targetPath = scope === 'global' ? this.globalConfigPath : this.projectConfigPath;
+      const targetPath =
+        scope === "global" ? this.globalConfigPath : this.projectConfigPath;
       const existingConfig = await this.loadConfigFile(targetPath);
       const mergedConfig = merge(existingConfig, updates);
 
@@ -119,20 +126,27 @@ export class ConfigManager {
     return value;
   }
 
-  async set(key: string, value: any, scope: 'global' | 'project' = 'global'): Promise<void> {
+  async set(
+    key: string,
+    value: any,
+    scope: "global" | "project" = "global",
+  ): Promise<void> {
     const updates = set({}, key, value);
     await this.save(updates, scope);
-    logger.debug(`Set config ${key} = ${JSON.stringify(value)} in ${scope} scope`);
+    logger.debug(
+      `Set config ${key} = ${JSON.stringify(value)} in ${scope} scope`,
+    );
   }
 
   getConfig(): CLIConfig {
     return cloneDeep(this.config);
   }
 
-  async reset(scope: 'global' | 'project' = 'global'): Promise<void> {
+  async reset(scope: "global" | "project" = "global"): Promise<void> {
     try {
-      const targetPath = scope === 'global' ? this.globalConfigPath : this.projectConfigPath;
-      
+      const targetPath =
+        scope === "global" ? this.globalConfigPath : this.projectConfigPath;
+
       if (await fs.pathExists(targetPath)) {
         await fs.remove(targetPath);
         logger.info(`Reset ${scope} configuration`);
@@ -152,11 +166,16 @@ export class ConfigManager {
       logger.success(`Configuration exported to ${filePath}`);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      throw new ConfigurationError(`Failed to export configuration: ${message}`);
+      throw new ConfigurationError(
+        `Failed to export configuration: ${message}`,
+      );
     }
   }
 
-  async import(filePath: string, scope: 'global' | 'project' = 'global'): Promise<void> {
+  async import(
+    filePath: string,
+    scope: "global" | "project" = "global",
+  ): Promise<void> {
     try {
       if (!(await fs.pathExists(filePath))) {
         throw new Error(`Configuration file not found: ${filePath}`);
@@ -164,16 +183,20 @@ export class ConfigManager {
 
       const importedConfig = await fs.readJson(filePath);
       const result = CLIConfigSchema.safeParse(importedConfig);
-      
+
       if (!result.success) {
-        throw new Error(`Invalid configuration format: ${result.error.message}`);
+        throw new Error(
+          `Invalid configuration format: ${result.error.message}`,
+        );
       }
 
       await this.save(importedConfig, scope);
       logger.success(`Configuration imported from ${filePath}`);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      throw new ConfigurationError(`Failed to import configuration: ${message}`);
+      throw new ConfigurationError(
+        `Failed to import configuration: ${message}`,
+      );
     }
   }
 
@@ -181,30 +204,34 @@ export class ConfigManager {
     return this.flattenConfig(this.config);
   }
 
-  private flattenConfig(obj: any, prefix = ''): Record<string, any> {
+  private flattenConfig(obj: any, prefix = ""): Record<string, any> {
     const flattened: Record<string, any> = {};
-    
+
     for (const [key, value] of Object.entries(obj)) {
       const newKey = prefix ? `${prefix}.${key}` : key;
-      
-      if (value && typeof value === 'object' && !Array.isArray(value)) {
+
+      if (value && typeof value === "object" && !Array.isArray(value)) {
         Object.assign(flattened, this.flattenConfig(value, newKey));
       } else {
         flattened[newKey] = value;
       }
     }
-    
+
     return flattened;
   }
 
   async validate(): Promise<{ valid: boolean; errors: string[] }> {
     const errors: string[] = [];
-    
+
     try {
       // Validate configuration schema
       const result = CLIConfigSchema.safeParse(this.config);
       if (!result.success) {
-        errors.push(...result.error.errors.map(e => `${e.path.join('.')}: ${e.message}`));
+        errors.push(
+          ...result.error.errors.map(
+            (e) => `${e.path.join(".")}: ${e.message}`,
+          ),
+        );
       }
 
       // Validate file paths exist
@@ -214,8 +241,13 @@ export class ConfigManager {
       }
 
       // Validate LLM provider configurations
-      if (this.config.llm.defaultProvider === 'openai' && !this.config.llm.openai?.apiKey) {
-        errors.push('OpenAI API key is required when using OpenAI as default provider');
+      if (
+        this.config.llm.defaultProvider === "openai" &&
+        !this.config.llm.openai?.apiKey
+      ) {
+        errors.push(
+          "OpenAI API key is required when using OpenAI as default provider",
+        );
       }
 
       return { valid: errors.length === 0, errors };
@@ -227,7 +259,7 @@ export class ConfigManager {
   }
 
   private expandPath(filePath: string): string {
-    if (filePath.startsWith('~/')) {
+    if (filePath.startsWith("~/")) {
       return path.join(os.homedir(), filePath.slice(2));
     }
     return path.resolve(filePath);

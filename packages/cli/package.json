@@ -35,9 +35,6 @@
     "lint": "eslint --fix src",
     "format:check": "prettier --check src",
     "format:write": "prettier --write src",
-    "test": "vitest run",
-    "test:cov": "vitest run --coverage",
-    "test:watch": "vitest",
     "dev": "tsx src/index.ts",
     "start": "node bin/pak.js"
   },
@@ -73,16 +70,14 @@
     "@types/fs-extra": "^11.0.4",
     "@types/lodash": "^4.14.202",
     "@types/node": "^22.13.13",
-    "@vitest/coverage-v8": "^3.0.9",
     "prettier": "^3.5.3",
     "rollup": "^4.37.0",
     "rollup-plugin-dts": "^6.2.1",
     "tsx": "^4.7.0",
-    "typescript": "^5.8.2",
-    "vitest": "^3.0.9"
+    "typescript": "^5.8.2"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   },
   "keywords": [
     "polkadot",

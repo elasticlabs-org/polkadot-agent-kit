@@ -1,15 +1,14 @@
 #!/usr/bin/env node
 
-import { Command } from 'commander';
-import { configManager } from './core/config/manager';
-import { logger } from './utils/logger';
-import { CLIError } from './types/commands';
+import { Command } from "commander";
 
-
-import { initCommand } from './commands/init';
-import { configCommand } from './commands/config';
-import { agentCommands } from './commands/agent/index';
-import { docsCommand } from './commands/docs';
+import { agentCommands } from "./commands/agent/index";
+import { configCommand } from "./commands/config";
+import { docsCommand } from "./commands/docs";
+import { initCommand } from "./commands/init";
+import { configManager } from "./core/config/manager";
+import { CLIError } from "./types/commands";
+import { logger } from "./utils/logger";
 
 const program = new Command();
 
@@ -20,18 +19,18 @@ async function main() {
 
     // Set up the main CLI program
     program
-      .name('pak')
-      .description('Polkadot Agent Kit CLI - AI Agent Management for Polkadot')
-      .version('1.0.0')
-      .option('-v, --verbose', 'Enable verbose logging')
-      .option('--no-color', 'Disable colored output')
-      .hook('preAction', (thisCommand) => {
+      .name("pak")
+      .description("Polkadot Agent Kit CLI - AI Agent Management for Polkadot")
+      .version("1.0.0")
+      .option("-v, --verbose", "Enable verbose logging")
+      .option("--no-color", "Disable colored output")
+      .hook("preAction", (thisCommand) => {
         const options = thisCommand.opts();
         if (options.verbose) {
-          logger.info('Verbose mode enabled');
+          logger.info("Verbose mode enabled");
         }
         if (!options.color) {
-          logger.info('Color output disabled');
+          logger.info("Color output disabled");
         }
       });
 
@@ -43,10 +42,10 @@ async function main() {
 
     // Global error handler
     program.exitOverride((err) => {
-      if (err.code === 'commander.help') {
+      if (err.code === "commander.help") {
         process.exit(0);
       }
-      if (err.code === 'commander.version') {
+      if (err.code === "commander.version") {
         process.exit(0);
       }
       throw err;
@@ -54,7 +53,6 @@ async function main() {
 
     // Parse command line arguments
     await program.parseAsync(process.argv);
-
   } catch (error) {
     handleError(error);
     process.exit(1);
@@ -69,37 +67,40 @@ function handleError(error: unknown): void {
     }
   } else if (error instanceof Error) {
     logger.error(`Unexpected error: ${error.message}`);
-    logger.debug(error.stack || 'No stack trace available');
+    logger.debug(error.stack || "No stack trace available");
   } else {
     logger.error(`Unknown error: ${String(error)}`);
   }
 }
 
 // Handle unhandled promise rejections
-process.on('unhandledRejection', (reason, promise) => {
-  logger.error('Unhandled Rejection at:', promise, 'reason:', reason);
+process.on("unhandledRejection", (reason, promise) => {
+  logger.error("Unhandled Rejection at:", promise, "reason:", reason);
   process.exit(1);
 });
 
 // Handle uncaught exceptions
-process.on('uncaughtException', (error) => {
-  logger.error('Uncaught Exception:', error);
+process.on("uncaughtException", (error) => {
+  logger.error("Uncaught Exception:", error);
   process.exit(1);
 });
 
 // Graceful shutdown
-process.on('SIGINT', () => {
-  logger.info('\nReceived SIGINT. Gracefully shutting down...');
+process.on("SIGINT", () => {
+  logger.info("\nReceived SIGINT. Gracefully shutting down...");
   process.exit(0);
 });
 
-process.on('SIGTERM', () => {
-  logger.info('Received SIGTERM. Gracefully shutting down...');
+process.on("SIGTERM", () => {
+  logger.info("Received SIGTERM. Gracefully shutting down...");
   process.exit(0);
 });
 
 // Start the CLI
-if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.includes('pak.js')) {
+if (
+  import.meta.url === `file://${process.argv[1]}` ||
+  process.argv[1]?.includes("pak.js")
+) {
   main().catch(handleError);
 }
 

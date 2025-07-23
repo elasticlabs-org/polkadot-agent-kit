@@ -1,16 +1,16 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 // Polkadot Agent Kit configuration schema
 export const PolkadotAgentConfigSchema = z.object({
   privateKey: z.string(),
-  keyType: z.enum(['Sr25519', 'Ed25519']).default('Sr25519'),
+  keyType: z.enum(["Sr25519", "Ed25519"]).default("Sr25519"),
   chains: z.array(z.string()).optional(), // If undefined, all chains are used
 });
 
 // Agent metadata schema
 export const AgentMetadataSchema = z.object({
   name: z.string(),
-  provider: z.enum(['ollama', 'openai']),
+  provider: z.enum(["ollama", "openai"]),
   model: z.string(),
   tools: z.array(z.string()),
   systemPrompt: z.string().optional(),
@@ -23,13 +23,13 @@ export const AgentMetadataSchema = z.object({
   updatedAt: z.date(),
   lastUsed: z.date().optional(),
   usageCount: z.number().nonnegative().default(0),
-  version: z.string().default('1.0.0'),
+  version: z.string().default("1.0.0"),
 });
 
 // Agent creation options schema
 export const AgentCreationOptionsSchema = z.object({
   name: z.string(),
-  provider: z.enum(['ollama', 'openai']),
+  provider: z.enum(["ollama", "openai"]),
   model: z.string(),
   tools: z.array(z.string()).optional(),
   systemPrompt: z.string().optional(),
@@ -41,7 +41,7 @@ export const AgentCreationOptionsSchema = z.object({
 
 // Chat message schema
 export const ChatMessageSchema = z.object({
-  role: z.enum(['user', 'assistant', 'system']),
+  role: z.enum(["user", "assistant", "system"]),
   content: z.string(),
   timestamp: z.date(),
 });
@@ -87,30 +87,29 @@ export interface LLMProvider {
 
 // Available tools
 export const AVAILABLE_TOOLS = [
-  'balance',
-  'transfer',
-  'xcm',
-  'staking',
-  'swap',
-  'governance',
-  'identity',
-  'multisig',
+  "balance",
+  "transfer",
+  "xcm",
+  "staking",
+  "swap",
+  "governance",
+  "identity",
+  "multisig",
 ] as const;
 
-export type AvailableTool = typeof AVAILABLE_TOOLS[number];
+export type AvailableTool = (typeof AVAILABLE_TOOLS)[number];
 
 // Tool descriptions for UI
 export const TOOL_DESCRIPTIONS: Record<AvailableTool, string> = {
-  balance: 'Check token balances on various chains',
-  transfer: 'Transfer tokens between accounts',
-  xcm: 'Cross-chain transfers using XCM',
-  staking: 'Staking operations (nominate, bond, unbond)',
-  swap: 'Token swapping via DEX protocols',
-  governance: 'Participate in governance voting',
-  identity: 'Manage on-chain identity',
-  multisig: 'Multi-signature wallet operations',
+  balance: "Check token balances on various chains",
+  transfer: "Transfer tokens between accounts",
+  xcm: "Cross-chain transfers using XCM",
+  staking: "Staking operations (nominate, bond, unbond)",
+  swap: "Token swapping via DEX protocols",
+  governance: "Participate in governance voting",
+  identity: "Manage on-chain identity",
+  multisig: "Multi-signature wallet operations",
 };
-
 
 export const DEFAULT_SYSTEM_PROMPT = `I am a Telegram bot powered by PolkadotAgentKit. I can assist you with:
 - Transferring native tokens on specific chain (e.g., "transfer 1 WND to 5CSox4ZSN4SGLKUG9NYPtfVK9sByXLtxP4hmoF4UgkM4jgDJ on westend_asset_hub")
@@ -292,4 +291,3 @@ Example: For "claim rewards from pool on paseo", call claimRewardsTool with:
 When checking proxies, you can specify the chain (convert to real param) or not specify a chain (the first chain will be used by default)
 
 Please provide instructions, and I will assist you!`;
-

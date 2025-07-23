@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import chalk from "chalk";
 
 export interface LogLevel {
   ERROR: 0;
@@ -11,7 +11,7 @@ export class Logger {
   private level: number;
   private colors: boolean;
 
-  constructor(level: keyof LogLevel = 'INFO', colors: boolean = true) {
+  constructor(level: keyof LogLevel = "INFO", colors: boolean = true) {
     this.level = this.getLevelValue(level);
     this.colors = colors;
   }
@@ -23,33 +23,38 @@ export class Logger {
 
   error(message: string, ...args: any[]): void {
     if (this.level >= 0) {
-      this.log('ERROR', message, chalk.red, ...args);
+      this.log("ERROR", message, chalk.red, ...args);
     }
   }
 
   warn(message: string, ...args: any[]): void {
     if (this.level >= 1) {
-      this.log('WARN', message, chalk.yellow, ...args);
+      this.log("WARN", message, chalk.yellow, ...args);
     }
   }
 
   info(message: string, ...args: any[]): void {
     if (this.level >= 2) {
-      this.log('INFO', message, chalk.blue, ...args);
+      this.log("INFO", message, chalk.blue, ...args);
     }
   }
 
   debug(message: string, ...args: any[]): void {
     if (this.level >= 3) {
-      this.log('DEBUG', message, chalk.gray, ...args);
+      this.log("DEBUG", message, chalk.gray, ...args);
     }
   }
 
   success(message: string, ...args: any[]): void {
-    this.log('SUCCESS', message, chalk.green, ...args);
+    this.log("SUCCESS", message, chalk.green, ...args);
   }
 
-  private log(level: string, message: string, colorFn: any, ...args: any[]): void {
+  private log(
+    level: string,
+    message: string,
+    colorFn: any,
+    ...args: any[]
+  ): void {
     const timestamp = new Date().toISOString();
     const prefix = this.colors ? colorFn(`[${level}]`) : `[${level}]`;
     const formattedMessage = this.colors ? message : message;
@@ -71,7 +76,7 @@ export class Logger {
   }
 
   logProvider(provider: string, status: string): void {
-    const statusColor = status === 'connected' ? chalk.green : chalk.red;
+    const statusColor = status === "connected" ? chalk.green : chalk.red;
     this.info(`Provider ${chalk.cyan(provider)}: ${statusColor(status)}`);
   }
 }
@@ -80,8 +85,13 @@ export class Logger {
 export const logger = new Logger();
 
 // Helper functions for quick logging
-export const logError = (message: string, ...args: any[]) => logger.error(message, ...args);
-export const logWarn = (message: string, ...args: any[]) => logger.warn(message, ...args);
-export const logInfo = (message: string, ...args: any[]) => logger.info(message, ...args);
-export const logDebug = (message: string, ...args: any[]) => logger.debug(message, ...args);
-export const logSuccess = (message: string, ...args: any[]) => logger.success(message, ...args);
+export const logError = (message: string, ...args: any[]) =>
+  logger.error(message, ...args);
+export const logWarn = (message: string, ...args: any[]) =>
+  logger.warn(message, ...args);
+export const logInfo = (message: string, ...args: any[]) =>
+  logger.info(message, ...args);
+export const logDebug = (message: string, ...args: any[]) =>
+  logger.debug(message, ...args);
+export const logSuccess = (message: string, ...args: any[]) =>
+  logger.success(message, ...args);
