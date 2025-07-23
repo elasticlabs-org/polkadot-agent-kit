@@ -30,50 +30,20 @@ npm link
 
 ## Quick Start
 
-### 1. Initialize a New Project
+### 1. Create Your First Agent
 
 ```bash
-pak init my-polkadot-agent
-cd my-polkadot-agent
+pak agent create my-agent --interactive
 ```
 
-### 2. Create Your First Agent
-
-```bash
-pak agent create my-agent --provider ollama --interactive
-```
-
-### 3. Chat with Your Agent
+### 2. Chat with Your Agent
 
 ```bash
 pak agent chat my-agent
 ```
 
-### 4. Execute Commands
-
-```bash
-pak agent run check-balance -a <your agent name> 
-```
 
 ## Commands
-
-### Project Management
-
-#### `pak init [name]`
-Initialize a new Polkadot Agent Kit project.
-
-**Options:**
-- `-t, --template <template>` - Project template (default, trading, staking)
-- `-p, --provider <provider>` - LLM provider (ollama, openai)
-- `-i, --interactive` - Interactive setup
-
-**Examples:**
-```bash
-pak init my-project
-pak init trading-bot --template trading --provider openai
-pak init --interactive
-```
-
 ### Configuration Management
 
 #### `pak config`
@@ -259,16 +229,13 @@ Agents can be equipped with various tools:
 - **xcm** - Cross-chain transfers using XCM
 - **staking** - Staking operations (nominate, bond, unbond)
 - **swap** - Token swapping via DEX protocols
-- **governance** - Participate in governance voting
-- **identity** - Manage on-chain identity
-- **multisig** - Multi-signature wallet operations
 
 ## LLM Providers
 
 ### Ollama (Local)
 
 1. Install Ollama: https://ollama.ai/
-2. Pull a model: `ollama pull llama2`
+2. Pull a model: `ollama pull qwen3:latest`
 3. Configure the CLI:
    ```bash
    pak config set llm.defaultProvider ollama
@@ -283,25 +250,6 @@ Agents can be equipped with various tools:
    pak config set llm.defaultProvider openai
    pak config set llm.openai.apiKey your-api-key
    ```
-
-## Environment Variables
-
-You can also configure the CLI using environment variables:
-
-```bash
-# LLM Configuration
-PAK_LLM_PROVIDER=ollama
-PAK_OLLAMA_BASE_URL=http://localhost:11434
-PAK_OPENAI_API_KEY=your-api-key
-
-# Agent Configuration
-PAK_AGENTS_STORAGE=~/.pak/agents
-PAK_AGENTS_MAX_HISTORY=100
-
-# UI Configuration
-PAK_UI_COLOR=true
-PAK_UI_VERBOSE=false
-```
 
 ## Examples
 
@@ -321,21 +269,6 @@ pak agent chat trading-bot
 # Execute trading commands
 pak agent run trading-bot "What's my DOT balance?"
 pak agent run trading-bot "Swap 10 DOT for USDC on HydraDX"
-```
-
-### Staking Helper Example
-
-```bash
-# Create a staking-focused agent
-pak agent create staking-helper \
-  --provider ollama \
-  --model llama2 \
-  --tools balance,staking,governance \
-  --description "AI assistant for Polkadot staking operations"
-
-# Check staking status
-pak agent run staking-helper "Show my current staking rewards"
-pak agent run staking-helper "Find the best validators to nominate"
 ```
 
 ## Troubleshooting
@@ -401,10 +334,6 @@ pnpm install
 
 # Build the CLI package
 pnpm build --filter @polkadot-agent-kit/cli
-
-# Run tests
-pnpm test --filter @polkadot-agent-kit/cli
-```
 
 ### Contributing
 
