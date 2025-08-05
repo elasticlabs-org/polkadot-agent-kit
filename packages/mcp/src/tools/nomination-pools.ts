@@ -7,15 +7,10 @@ import type { PolkadotAgentKit } from "@polkadot-agent-kit/sdk";
 
 import type { StakingResult } from "../types/index.js";
 import {
-  type BondExtraParams,
   bondExtraSchema,
-  type ClaimRewardsParams,
   claimRewardsSchema,
-  type JoinPoolParams,
   joinPoolSchema,
-  type UnbondParams,
   unbondSchema,
-  type WithdrawUnbondedParams,
   withdrawUnbondedSchema,
 } from "../types/schemas";
 import { executeTool } from "../utils/index";
