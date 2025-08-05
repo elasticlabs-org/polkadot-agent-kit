@@ -1,0 +1,51 @@
+{
+  "name": "@polkadot-agent-kit/mcp",
+  "version": "1.0.0",
+  "description": "Model Context Protocol server for Polkadot Agent Kit",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elasticlabs-org/polkadot-agent-kit.git",
+    "directory": "packages/mcp"
+  },
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "clean": "rm -rf dist .turbo node_modules",
+    "compile": "tsc --noEmit",
+    "build": "rollup -c",
+    "lint:check": "eslint src",
+    "lint": "eslint --fix src",
+    "format:check": "prettier --check src",
+    "format:write": "prettier --write src",
+    "start": "node dist/index.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.13.1",
+    "@polkadot-agent-kit/common": "workspace:*",
+    "@polkadot-agent-kit/core": "workspace:*",
+    "@polkadot-agent-kit/llm": "workspace:*",
+    "@polkadot-agent-kit/sdk": "workspace:*",
+    "polkadot-api": "^1.9.13",
+    "zod": "^3.24.3",
+    "mcps-logger": "^1.0.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^12.1.2",
+    "@rollup/plugin-json": "^6.1.0",
+    "rollup": "^4.37.0",
+    "rollup-plugin-dts": "^6.2.1"
+  }
+} 

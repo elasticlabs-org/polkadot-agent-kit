@@ -97,7 +97,6 @@ export class PolkadotApi implements IPolkadotApi {
       try {
         // Get filtered chains based on allowed chains
         const supportedChains = getFilteredChains(this.allowedChains)
-
         const chainSpecs: Record<KnownChainId, string> = {
           polkadot: "",
           west: "",
