@@ -1,4 +1,5 @@
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+
 import { MCPError, MCPErrorType } from "../types/index.js";
 
 export function formatErrorResponse(error: Error): CallToolResult {
@@ -39,30 +40,34 @@ export function formatSuccessResponse(message: string): CallToolResult {
 export async function executeTool<T>(
   toolName: string,
   operation: () => Promise<T>,
-  formatter: (result: T) => string
+  formatter: (result: T) => string,
 ): Promise<CallToolResult> {
   try {
     const result = await operation();
     return formatSuccessResponse(formatter(result));
   } catch (error) {
-    console.error(`Error in ${toolName}:`, error);
-    return formatErrorResponse(error instanceof Error ? error : new Error(String(error)));
+    return formatErrorResponse(
+      error instanceof Error ? error : new Error(String(error)),
+    );
   }
 }
 
-export function validateAndFormatAddress(address: string, chain: string): string {
+export function validateAndFormatAddress(
+  address: string,
+  chain: string,
+): string {
   // Basic validation - in a real implementation, you'd use proper address validation
   if (!address || address.length < 47 || address.length > 48) {
     throw new MCPError(
       MCPErrorType.INVALID_ADDRESS,
-      `Invalid address format for chain ${chain}`
+      `Invalid address format for chain ${chain}`,
     );
   }
   return address;
 }
 
 export function sleep(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export * from './config'; 
+export * from "./config";

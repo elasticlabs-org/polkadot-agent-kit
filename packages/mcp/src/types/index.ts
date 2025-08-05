@@ -1,4 +1,3 @@
-
 export interface PolkadotMCPServerConfig {
   name: string;
   version: string;
@@ -46,7 +45,7 @@ export interface XcmTransferResult {
 export enum MCPErrorType {
   VALIDATION_ERROR = "validation_error",
   NETWORK_ERROR = "network_error",
-  CHAIN_ERROR = "chain_error", 
+  CHAIN_ERROR = "chain_error",
   INSUFFICIENT_FUNDS = "insufficient_funds",
   INVALID_ADDRESS = "invalid_address",
   TOOL_NOT_FOUND = "tool_not_found",
@@ -56,11 +55,11 @@ export class MCPError extends Error {
   constructor(
     public type: MCPErrorType,
     message: string,
-    public details?: any
+    public details?: any,
   ) {
     super(message);
     this.name = "MCPError";
   }
 }
 
-export * from './schemas'; 
+export * from "./schemas";

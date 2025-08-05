@@ -1,19 +1,21 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 // Base schemas
 export const chainSchema = z.enum(["polkadot", "kusama", "westend"]);
 export const addressSchema = z.string().min(47).max(48);
-export const amountSchema = z.string().refine(
-  (amount) => /^\d+(\.\d+)?$/.test(amount) && parseFloat(amount) > 0,
-  "Amount must be a positive number"
-);
+export const amountSchema = z
+  .string()
+  .refine(
+    (amount) => /^\d+(\.\d+)?$/.test(amount) && parseFloat(amount) > 0,
+    "Amount must be a positive number",
+  );
 
 // Balance tool schemas
 export const checkBalanceSchema = z.object({
-  chain: chainSchema
+  chain: chainSchema,
 });
 
-// Transfer tool schemas  
+// Transfer tool schemas
 export const transferNativeSchema = z.object({
   to: addressSchema,
   amount: amountSchema,
@@ -51,19 +53,54 @@ export const poolBondExtraSchema = z.object({
 export const xcmTransferSchema = z.object({
   amount: amountSchema.describe("The amount of tokens to transfer"),
   to: addressSchema.describe("The address to transfer the tokens to"),
-  sourceChain: z.enum(["polkadot", "kusama", "westend", "polkadot_asset_hub", "west_asset_hub", "hydra"]).describe("The source chain to transfer from"),
-  destChain: z.enum(["polkadot", "kusama", "westend", "polkadot_asset_hub", "west_asset_hub", "hydra"]).describe("The destination chain to transfer to")
+  sourceChain: z
+    .enum([
+      "polkadot",
+      "kusama",
+      "westend",
+      "polkadot_asset_hub",
+      "west_asset_hub",
+      "hydra",
+    ])
+    .describe("The source chain to transfer from"),
+  destChain: z
+    .enum([
+      "polkadot",
+      "kusama",
+      "westend",
+      "polkadot_asset_hub",
+      "west_asset_hub",
+      "hydra",
+    ])
+    .describe("The destination chain to transfer to"),
 });
 
 // DeFi tool schemas - updated to match SDK interface
 export const swapTokensSchema = z.object({
-  from: z.string().optional().describe("Source chain for cross-chain swap (e.g., 'Polkadot', 'Hydra')"),
-  to: z.string().optional().describe("Destination chain for cross-chain swap (e.g., 'Polkadot', 'Hydra')"),
-  currencyFrom: z.string().describe("Token symbol to swap from (e.g., 'DOT', 'KSM', 'HDX')"),
-  currencyTo: z.string().describe("Token symbol to swap to (e.g., 'DOT', 'KSM', 'HDX', 'USDT')"),
+  from: z
+    .string()
+    .optional()
+    .describe("Source chain for cross-chain swap (e.g., 'Polkadot', 'Hydra')"),
+  to: z
+    .string()
+    .optional()
+    .describe(
+      "Destination chain for cross-chain swap (e.g., 'Polkadot', 'Hydra')",
+    ),
+  currencyFrom: z
+    .string()
+    .describe("Token symbol to swap from (e.g., 'DOT', 'KSM', 'HDX')"),
+  currencyTo: z
+    .string()
+    .describe("Token symbol to swap to (e.g., 'DOT', 'KSM', 'HDX', 'USDT')"),
   amount: amountSchema.describe("Amount of source token to swap"),
-  receiver: addressSchema.optional().describe("Optional receiver address (defaults to sender)"),
-  dex: z.string().optional().describe("DEX name for specific DEX swaps (e.g., 'HydrationDex')")
+  receiver: addressSchema
+    .optional()
+    .describe("Optional receiver address (defaults to sender)"),
+  dex: z
+    .string()
+    .optional()
+    .describe("DEX name for specific DEX swaps (e.g., 'HydrationDex')"),
 });
 
 // Nomination pools tool schemas
@@ -73,8 +110,12 @@ export const joinPoolSchema = z.object({
 });
 
 export const bondExtraSchema = z.object({
-  type: z.enum(["FreeBalance", "Rewards"]).describe("Type of bonding operation"),
-  amount: amountSchema.optional().describe("Amount to bond (required for FreeBalance)"),
+  type: z
+    .enum(["FreeBalance", "Rewards"])
+    .describe("Type of bonding operation"),
+  amount: amountSchema
+    .optional()
+    .describe("Amount to bond (required for FreeBalance)"),
   chain: chainSchema,
 });
 
