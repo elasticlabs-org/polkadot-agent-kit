@@ -33,6 +33,14 @@ export interface SwapResult {
   success: boolean;
   transactionHash?: string;
   error?: string;
+  data?: any;
+}
+
+export interface XcmTransferResult {
+  success: boolean;
+  transactionHash?: string;
+  error?: string;
+  data?: any;
 }
 
 export enum MCPErrorType {

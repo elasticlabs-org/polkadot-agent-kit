@@ -92,13 +92,11 @@ export class PolkadotApi implements IPolkadotApi {
     if (this.initialized) {
       return
     }
-    console.log("Go to here");
 
     this.initPromise = (async () => {
       try {
         // Get filtered chains based on allowed chains
         const supportedChains = getFilteredChains(this.allowedChains)
-        console.log("supportedChains", supportedChains);
         const chainSpecs: Record<KnownChainId, string> = {
           polkadot: "",
           west: "",
@@ -111,11 +109,10 @@ export class PolkadotApi implements IPolkadotApi {
         for (const chain of supportedChains) {
           chainSpecs[chain.id as KnownChainId] = this.getChainSpec(chain.id as KnownChainId)
         }
-        console.log("Chain specs:", chainSpecs);
+
 
         const apiInitPromises = supportedChains.map(async chain => {
           try {
-            console.log("Go to init promises");
             const api = await getApi(chain.id as KnownChainId, [chain], true, {
               enable: true,
               smoldot: this.smoldotClient,
@@ -130,9 +127,7 @@ export class PolkadotApi implements IPolkadotApi {
         })
 
         const results = await Promise.all(apiInitPromises)
-        console.log("Hello Results:", results);
         for (const { chain, api } of results) {
-          console.log("Go to here set api");
           this._apis.set(chain.id as KnownChainId, api)
         }
 
