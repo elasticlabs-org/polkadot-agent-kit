@@ -5,6 +5,7 @@ import { PolkadotApi } from "@polkadot-agent-kit/core"
 import type {
   BalanceTool,
   IPolkadotAgentApi,
+  RegisterIdentityTool,
   SwapTokensTool,
   TransferTool,
   XcmTransferNativeAssetTool
@@ -263,6 +264,10 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
    */
   claimRewardsTool() {
     return this.agentApi.claimRewardsTool(this.getSigner())
+  }
+
+  registerIdentityTool(): RegisterIdentityTool {
+    return this.agentApi.registerIdentityTool(this.getSigner())
   }
   /**
    * Get Address

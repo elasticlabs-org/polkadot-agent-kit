@@ -103,7 +103,8 @@ export class PolkadotApi implements IPolkadotApi {
           polkadot_asset_hub: "",
           west_asset_hub: "",
           hydra: "",
-          paseo: ""
+          paseo: "",
+          paseo_people: ""
         }
 
         for (const chain of supportedChains) {

@@ -4,7 +4,8 @@ import {
   polkadot,
   polkadot_asset_hub,
   west,
-  west_asset_hub
+  west_asset_hub,
+  paseo_people
 } from "@polkadot-api/descriptors"
 
 import {
@@ -12,7 +13,8 @@ import {
   polkadotAssetHubChain,
   polkadotChain,
   westendAssetHubChain,
-  westendChain
+  westendChain,
+  paseoPeopleChain
 } from "./supported-chains"
 type DescriptorsRelayType = {
   polkadot: typeof polkadot
@@ -27,6 +29,7 @@ type DescriptorsAssetHubType = {
 
 type DescriptorsParaType = {
   hydra: typeof hydra
+  paseo_people: typeof paseo_people
 }
 
 const DESCRIPTORS_RELAY: DescriptorsRelayType = {
@@ -41,7 +44,8 @@ const DESCRIPTORS_ASSET_HUB: DescriptorsAssetHubType = {
 }
 
 const DESCRIPTORS_PARA: DescriptorsParaType = {
-  hydra
+  hydra,
+  paseo_people
 }
 
 export const DESCRIPTORS_ALL = {
@@ -111,7 +115,8 @@ const SUPPORTED_CHAINS: Chain[] = [
   polkadotAssetHubChain,
   westendChain,
   westendAssetHubChain,
-  paseoChain
+  paseoChain,
+  paseoPeopleChain
 ]
 
 export const getAllSupportedChains = (): Chain[] => {

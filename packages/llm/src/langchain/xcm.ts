@@ -1,11 +1,20 @@
 import { tool } from "@langchain/core/tools"
-import type { KnownChainId } from "@polkadot-agent-kit/common"
+import type { Api, ChainIdRelay, KnownChainId } from "@polkadot-agent-kit/common"
 import { getDecimalsByChainId, parseUnits } from "@polkadot-agent-kit/common"
-import { submitTxWithPolkadotSigner, xcmTransferNativeAsset } from "@polkadot-agent-kit/core"
+import {
+  submitTxWithPolkadotSigner,
+  xcmTransferNativeAsset,
+  registerIdentity
+} from "@polkadot-agent-kit/core"
+import type { PolkadotApi } from "@polkadot-agent-kit/core"
 import type { PolkadotSigner } from "polkadot-api/signer"
 import type { z } from "zod"
 
-import type { xcmTransferNativeAssetSchema, XcmTransferNativeAssetToolResult } from "../types"
+import type {
+  RegisterIdentityToolResult,
+  xcmTransferNativeAssetSchema,
+  XcmTransferNativeAssetToolResult
+} from "../types"
 import { ToolNames } from "../types/common"
 import { toolConfigXcmTransferNativeAsset } from "../types/xcm"
 import { executeTool, validateAndFormatAddress } from "../utils"

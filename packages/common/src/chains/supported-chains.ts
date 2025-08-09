@@ -92,3 +92,17 @@ export const paseoChain = createChain({
   decimals: 10,
   symbol: "PAS"
 })
+
+export const paseoPeopleChain = createChain({
+  id: "paseo_people",
+  name: "PeoplePaseo",
+  specName: "paseo-people",
+  wsUrls: ["wss://people-paseo.dotters.network"],
+  relay: "paseo",
+  type: "system",
+  chainId: 1004,
+  blockExplorerUrl: "https://people-paseo.subscan.io/",
+  prefix: 0,
+  decimals: 10,
+  symbol: "PAS"
+})
