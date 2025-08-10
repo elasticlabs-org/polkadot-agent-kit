@@ -39,6 +39,7 @@ export class TelegramBot {
 
     this.agent = new PolkadotAgentKit(privateKey as string, {
       keyType: "Sr25519",
+      chains: ["paseo","paseo_people"]
     });
 
     this.llm = this.initializeLLM(openAiApiKey);
@@ -66,6 +67,7 @@ export class TelegramBot {
       const unbond = this.agent.unbondTool();
       const claimRewards = this.agent.claimRewardsTool();
       const withdrawUnbonded = this.agent.withdrawUnbondedTool();
+      const registerIdentity = this.agent.registerIdentityTool();
 
       setupHandlers(this.bot, this.llm, {
         checkBalance: checkBalance,
@@ -76,7 +78,8 @@ export class TelegramBot {
         bondExtra: bondExtra,
         unbond: unbond,
         claimRewards: claimRewards,
-        withdrawUnbonded: withdrawUnbonded
+        withdrawUnbonded: withdrawUnbonded,
+        registerIdentity: registerIdentity
       });
 
       console.log("Bot initialization complete");

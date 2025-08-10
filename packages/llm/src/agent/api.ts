@@ -7,6 +7,7 @@ import {
   claimRewardsTool,
   initializeChainApiTool,
   joinPoolTool,
+  registerIdentityTool,
   swapTokensTool,
   transferNativeTool,
   unbondTool,
@@ -19,6 +20,7 @@ import type {
   ClaimRewardsTool,
   InitializeChainApiTool,
   JoinPoolTool,
+  RegisterIdentityTool,
   SwapTokensTool,
   TransferTool,
   UnbondTool,
@@ -97,6 +99,13 @@ export interface IPolkadotAgentApi {
    * @returns A dynamic structured tool that claims rewards
    */
   claimRewardsTool(signer: PolkadotSigner): ClaimRewardsTool
+
+  /**
+   * Returns a tool that registers an identity on People Chain
+   * @param signer - The signer to use for transactions
+   * @returns A dynamic structured tool that registers an identity on People Chain
+   */
+  registerIdentityTool(signer: PolkadotSigner): RegisterIdentityTool
 }
 
 /**
@@ -151,5 +160,9 @@ export class PolkadotAgentApi implements IPolkadotAgentApi {
 
   claimRewardsTool(signer: PolkadotSigner): ClaimRewardsTool {
     return claimRewardsTool(this.api, signer) as unknown as ClaimRewardsTool
+  }
+
+  registerIdentityTool(signer: PolkadotSigner): RegisterIdentityTool {
+    return registerIdentityTool(this.api, signer) as unknown as RegisterIdentityTool
   }
 }

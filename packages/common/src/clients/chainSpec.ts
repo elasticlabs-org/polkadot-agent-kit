@@ -1,4 +1,5 @@
 import { chainSpec as paseoSpec } from "polkadot-api/chains/paseo"
+import { chainSpec as paseoPeopleSpec } from "polkadot-api/chains/paseo_people"
 import { chainSpec as polkadotSpec } from "polkadot-api/chains/polkadot"
 import { chainSpec as polkadotAssetHubSpec } from "polkadot-api/chains/polkadot_asset_hub"
 import { chainSpec as westSpec } from "polkadot-api/chains/westend2"
@@ -34,7 +35,6 @@ export function getChainSpec(
   if (cachedSpec) {
     return cachedSpec
   }
-
   // Get spec from registry
   const chainSpec = specRegistry[chainId]
   if (!chainSpec) {
@@ -74,6 +74,7 @@ export function specRegistry(): Partial<Record<ChainId, string>> {
     west: westSpec,
     polkadot_asset_hub: polkadotAssetHubSpec,
     west_asset_hub: westAssetHubSpec,
-    paseo: paseoSpec
+    paseo: paseoSpec,
+    paseo_people: paseoPeopleSpec
   }
 }

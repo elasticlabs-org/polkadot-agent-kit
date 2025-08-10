@@ -8,6 +8,8 @@ export const SYSTEM_PROMPT = `I am a Telegram bot powered by PolkadotAgentKit. I
 - Checking WND balance on Westend (e.g., "check balance")
 - Checking proxies (e.g., "check proxies on westend" or "check proxies")
 - Transfer tokens through XCM (e.g., "transfer 1 WND to 5CSox4ZSN4SGLKUG9NYPtfVK9sByXLtxP4hmoF4UgkM4jgDJ from west to westend_asset_hub ")
+- Register identity on People Chain (e.g., "register identity display=\"Gemini AI\" web=\"https://gemini.google.com\" twitter=\"@GoogleAI\" github=\"google\"")
+- Register identity on People Chain (e.g., "register identity display=\"Gemini AI\" web=\"https://gemini.google.com\" twitter=\"@GoogleAI\" github=\"google\"")
 
 DYNAMIC CHAIN INITIALIZATION:
 When balance checking, native transfers, or XCM transfer tools fail because a chain is not available/initialized, I should:
@@ -178,6 +180,14 @@ Example: For "claim rewards from pool on paseo", call claimRewardsTool with:
    - CRITICAL: If the user says "amount", use that value for 'slashingSpans'.
    - Example: User says "withdraw unbonded with 1 amount on Paseo" -> Call 'withdrawUnbondedTool' with { slashingSpans: "1", chain: "paseo" }
 
+3. To 'register identity' on People Chain:
+   - Use the 'register_identity' tool.
+-  - Parameters: any of the optional strings among display, legal, web, matrix, email, image, twitter, github, discord.
+-  - Example: User says "register identity display="Gemini AI" twitter="@GoogleAI"" -> Call 'register_identity' with { display: "Gemini AI", twitter: "@GoogleAI" }
++  - Parameters: provide at least one of: display, legal, web, matrix, email, image, twitter, github, discord (all strings, optional individually).
++  - Example A: User says "register identity with email abc@gmail.com" -> Call 'register_identity' with { email: "abc@gmail.com" }
++  - Example B: User says "register identity display="Gemini AI" twitter="@GoogleAI"" -> Call 'register_identity' with { display: "Gemini AI", twitter: "@GoogleAI" }
+
 --- END OF TOOL-SPECIFIC RULES ---
 
 When checking proxies, you can specify the chain (convert to real param) or not specify a chain (the first chain will be used by default)
@@ -196,7 +206,8 @@ export function setupHandlers(
         '- Transferring native tokens  (e.g., "transfer 1 token to westend_asset_hub to 5CSox4ZSN4SGLKUG9NYPtfVK9sByXLtxP4hmoF4UgkM4jgDJ")\n' +
         '- Checking balance (e.g., "check balance on west/polkadot/kusama")\n' +
         '- Checking proxies (e.g., "check proxies on westend" or "check proxies")\n' +
-        '- Transfer tokens through XCM (e.g., "transfer 1 WND to 5CSox4ZSN4SGLKUG9NYPtfVK9sByXLtxP4hmoF4UgkM4jgDJ from west to west_asset_hub ")\n' +
+        '- Transfer tokens through XCM (e.g., "transfer 1 WND to 5CSox4ZSN4SGLKUG9NYPtfVK9sByXLtxP4hmoF4UgkM4jgDJ from west to westend_asset_hub ")\n' +
+        '- Register identity on People Chain (e.g., "register identity display=\"Gemini AI\" web=\"https://gemini.google.com\" twitter=\"@GoogleAI\" github=\"google\"")' +
         '- Bonding to a pool (e.g., "bond 100 DOT on Polkadot")\n' +
         '- Re-staking rewards (e.g., "re-stake my rewards on Paseo")\n' +
         '- Unbonding tokens from a pool (e.g., "unbond 100 DOT on Polkadot")\n' +
@@ -233,7 +244,8 @@ export function setupHandlers(
               await ctx.reply(`Error: ${response.message}`);
             } else {
               const content = JSON.parse(response.content || "{}");
-              await ctx.reply(content.data || "No message from tool.");
+              const data = JSON.stringify(content.data);
+              await ctx.reply(data || "No message from tool.");
             }
           } else {
             console.warn(`Tool not found: ${toolCall.name}`);

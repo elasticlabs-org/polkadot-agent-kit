@@ -2,6 +2,7 @@
 export * from "./api"
 export * from "./defi/swap"
 export * from "./pallets/assets"
+export * from "./pallets/identity"
 export * from "./pallets/nomination-pools"
 export * from "./pallets/xcm"
 export * from "./types"
