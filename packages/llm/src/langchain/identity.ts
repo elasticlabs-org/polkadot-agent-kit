@@ -2,8 +2,7 @@ import { tool } from "@langchain/core/tools"
 import {
   PolkadotApi,
   registerIdentity,
-  submitTxWithPolkadotSigner,
-  checkIdentity
+  submitTxWithPolkadotSigner
 } from "@polkadot-agent-kit/core"
 import { PolkadotSigner } from "polkadot-api"
 import {
