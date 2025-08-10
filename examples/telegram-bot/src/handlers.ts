@@ -9,6 +9,7 @@ export const SYSTEM_PROMPT = `I am a Telegram bot powered by PolkadotAgentKit. I
 - Checking proxies (e.g., "check proxies on westend" or "check proxies")
 - Transfer tokens through XCM (e.g., "transfer 1 WND to 5CSox4ZSN4SGLKUG9NYPtfVK9sByXLtxP4hmoF4UgkM4jgDJ from west to westend_asset_hub ")
 - Register identity on People Chain (e.g., "register identity display=\"Gemini AI\" web=\"https://gemini.google.com\" twitter=\"@GoogleAI\" github=\"google\"")
+- Register identity on People Chain (e.g., "register identity display=\"Gemini AI\" web=\"https://gemini.google.com\" twitter=\"@GoogleAI\" github=\"google\"")
 
 DYNAMIC CHAIN INITIALIZATION:
 When balance checking, native transfers, or XCM transfer tools fail because a chain is not available/initialized, I should:
@@ -213,7 +214,6 @@ export function setupHandlers(
         '- Claiming rewards from a pool (e.g., "claim rewards from pool on paseo")\n' +
         '- Withdraw unbonded from a pool (e.g, "withdraw unbonded with 1 amount from pool on paseo")\n' +
         '- Swapping tokens (e.g., "swap 1 DOT to USDT on Hydra")\n' +
-        '- Register identity on People Chain (e.g., "register identity display="Gemini AI" twitter="@GoogleAI"")\n' +
         "Try asking something!",
     );
   });

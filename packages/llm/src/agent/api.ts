@@ -100,6 +100,11 @@ export interface IPolkadotAgentApi {
    */
   claimRewardsTool(signer: PolkadotSigner): ClaimRewardsTool
 
+  /**
+   * Returns a tool that registers an identity on People Chain
+   * @param signer - The signer to use for transactions
+   * @returns A dynamic structured tool that registers an identity on People Chain
+   */
   registerIdentityTool(signer: PolkadotSigner): RegisterIdentityTool
 }
 

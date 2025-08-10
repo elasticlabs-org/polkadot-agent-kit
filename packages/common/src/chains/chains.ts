@@ -1,20 +1,20 @@
 import {
   hydra,
   paseo,
+  paseo_people,
   polkadot,
   polkadot_asset_hub,
   west,
-  west_asset_hub,
-  paseo_people
+  west_asset_hub
 } from "@polkadot-api/descriptors"
 
 import {
   paseoChain,
+  paseoPeopleChain,
   polkadotAssetHubChain,
   polkadotChain,
   westendAssetHubChain,
-  westendChain,
-  paseoPeopleChain
+  westendChain
 } from "./supported-chains"
 type DescriptorsRelayType = {
   polkadot: typeof polkadot

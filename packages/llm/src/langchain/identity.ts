@@ -1,5 +1,10 @@
 import { tool } from "@langchain/core/tools"
-import { PolkadotApi, registerIdentity, submitTxWithPolkadotSigner } from "@polkadot-agent-kit/core"
+import {
+  PolkadotApi,
+  registerIdentity,
+  submitTxWithPolkadotSigner,
+  checkIdentity
+} from "@polkadot-agent-kit/core"
 import { PolkadotSigner } from "polkadot-api"
 import {
   registerIdentitySchema,
@@ -26,7 +31,7 @@ export const registerIdentityTool = (polkadotApi: PolkadotApi, signer: PolkadotS
     }: z.infer<typeof registerIdentitySchema>) => {
       return executeTool<RegisterIdentityToolResult>(ToolNames.REGISTER_IDENTITY, async () => {
         const api = polkadotApi.getApi("paseo_people") as Api<ChainIdPara>
-        const tx = await registerIdentity(
+        const tx = registerIdentity(
           api,
           display,
           legal,

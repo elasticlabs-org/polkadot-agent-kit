@@ -266,9 +266,16 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
     return this.agentApi.claimRewardsTool(this.getSigner())
   }
 
+  /**
+   * Get Register Identity Tool
+   * Creates a tool for registering an identity on People Chain
+   *
+   * @returns DynamicStructuredTool for registering an identity on People Chain
+   */
   registerIdentityTool(): RegisterIdentityTool {
     return this.agentApi.registerIdentityTool(this.getSigner())
   }
+
   /**
    * Get Address
    *

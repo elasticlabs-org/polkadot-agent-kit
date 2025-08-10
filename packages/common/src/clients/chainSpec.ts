@@ -1,9 +1,9 @@
 import { chainSpec as paseoSpec } from "polkadot-api/chains/paseo"
+import { chainSpec as paseoPeopleSpec } from "polkadot-api/chains/paseo_people"
 import { chainSpec as polkadotSpec } from "polkadot-api/chains/polkadot"
 import { chainSpec as polkadotAssetHubSpec } from "polkadot-api/chains/polkadot_asset_hub"
 import { chainSpec as westSpec } from "polkadot-api/chains/westend2"
 import { chainSpec as westAssetHubSpec } from "polkadot-api/chains/westend2_asset_hub"
-import { chainSpec as paseoPeopleSpec } from "polkadot-api/chains/paseo_people"
 
 import type { ChainId } from "../chains"
 

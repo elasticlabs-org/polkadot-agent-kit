@@ -1,18 +1,8 @@
-import { getAllSupportedChains, getChainById, paseoPeopleChain } from "@polkadot-agent-kit/common"
+import type { Api, ChainIdPara } from "@polkadot-agent-kit/common"
 
-import type {
-  Api,
-  ChainIdAssetHub,
-  ChainIdPara,
-  ChainIdRelay,
-  KnownChainId
-} from "@polkadot-agent-kit/common"
-import type { MultiAddress } from "@polkadot-api/descriptors"
-import { getParaChainClient } from "@polkadot-agent-kit/common"
-import { paseo_people, IdentityData } from "@polkadot-api/descriptors"
 import { getRawOrNone, type Tx } from "../../types"
 
-export const registerIdentity = async (
+export const registerIdentity = (
   api: Api<ChainIdPara>,
   display?: string,
   legal?: string,
@@ -23,11 +13,7 @@ export const registerIdentity = async (
   twitter?: string,
   github?: string,
   discord?: string
-): Promise<Tx> => {
-  // const peopleChainClient = await getParaChainClient(paseoPeopleChain, {})
-
-  // const peopleChainApi = peopleChainClient.getTypedApi(paseo_people);
-
+): Tx => {
   const identityInfo = {
     display: getRawOrNone(display),
     legal: getRawOrNone(legal),
@@ -40,7 +26,7 @@ export const registerIdentity = async (
     discord: getRawOrNone(discord),
     pgp_fingerprint: undefined
   }
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const setIdentityCall = api.tx.Identity.set_identity({
     info: identityInfo as any
   })

@@ -107,7 +107,6 @@ export const getParaChainClient = async (chain: Chain, options: ClientOptions) =
     getChainSpec(paraChainId, chainSpecs)
   ]
 
-
   return createClient(
     await getSmChainProvider(
       smoldot,
