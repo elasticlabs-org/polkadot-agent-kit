@@ -1,19 +1,18 @@
 import { tool } from "@langchain/core/tools"
-import {
-  PolkadotApi,
-  registerIdentity,
-  submitTxWithPolkadotSigner
-} from "@polkadot-agent-kit/core"
-import { PolkadotSigner } from "polkadot-api"
-import {
+import type { Api, ChainIdPara } from "@polkadot-agent-kit/common"
+import type { PolkadotApi} from "@polkadot-agent-kit/core";
+import { registerIdentity, submitTxWithPolkadotSigner } from "@polkadot-agent-kit/core"
+import type { PolkadotSigner } from "polkadot-api"
+import type z from "zod"
+
+import type {
   registerIdentitySchema,
-  RegisterIdentityToolResult,
+  RegisterIdentityToolResult} from "../types";
+import {
   toolConfigRegisterIdentity,
   ToolNames
 } from "../types"
-import { Api, ChainIdPara } from "@polkadot-agent-kit/common"
 import { executeTool } from "../utils"
-import z from "zod"
 
 export const registerIdentityTool = (polkadotApi: PolkadotApi, signer: PolkadotSigner) => {
   return tool(

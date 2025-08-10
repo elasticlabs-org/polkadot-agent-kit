@@ -26,8 +26,9 @@ export const registerIdentity = (
     discord: getRawOrNone(discord),
     pgp_fingerprint: undefined
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const setIdentityCall = api.tx.Identity.set_identity({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any,  @typescript-eslint/no-unsafe-assignment
     info: identityInfo as any
   })
 
