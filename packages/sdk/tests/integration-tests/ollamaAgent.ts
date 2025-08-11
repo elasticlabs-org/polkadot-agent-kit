@@ -9,10 +9,10 @@ import { ChatPromptTemplate } from '@langchain/core/prompts'
 // Wrap PolkadotAgentKit tools as LangChain-compatible tools
 function wrapBalanceTool(agentKit: PolkadotAgentKit) {
   return new DynamicStructuredTool({
-    name: "getNativeBalanceTool",
-    description: "Get native token balance for an address on a specific chain",
+    name: "check_balance",
+    description: "Check native token balance on a specific chain",
     schema: z.object({
-      chain: z.string().describe("The chain to check balance on")
+      chain: z.string().describe("The chain to check balance on (e.g., 'polkadot', 'kusama', 'west', 'westend_asset_hub')")
     }),
     func: async ({ chain }) => {
       const tool = agentKit.getNativeBalanceTool();
@@ -24,16 +24,16 @@ function wrapBalanceTool(agentKit: PolkadotAgentKit) {
 
 function wrapTransferTool(agentKit: PolkadotAgentKit) {
   return new DynamicStructuredTool({
-    name: "transferNativeTool",
+    name: "transfer_native",
     description: "Transfer native tokens to an address on a specific chain",
     schema: z.object({
-      to: z.string(),
-      amount: z.string(),
-      chain: z.string()
+      address: z.string().describe("The recipient's SS58 address"),
+      amount: z.string().describe("The quantity of tokens to transfer"),
+      chain: z.string().describe("The chain name")
     }),
-    func: async ({ to, amount, chain }) => {
+    func: async ({ address, amount, chain }) => {
       const tool = agentKit.transferNativeTool();
-      const result = await tool.call({ to, amount, chain });
+      const result = await tool.call({ to: address, amount, chain });
       return JSON.stringify(result);
     }
   });
@@ -41,17 +41,17 @@ function wrapTransferTool(agentKit: PolkadotAgentKit) {
 
 function wrapXcmTool(agentKit: PolkadotAgentKit) {
   return new DynamicStructuredTool({
-    name: "xcmTransferNativeTool",
+    name: "xcm_transfer_native",
     description: "Transfer native tokens across chains using XCM",
     schema: z.object({
-      to: z.string(),
-      amount: z.string(),
-      sourceChain: z.string(),
-      destChain: z.string()
+      address: z.string().describe("The recipient's SS58 address"),
+      amount: z.string().describe("The quantity of tokens to transfer"),
+      sourceChain: z.string().describe("The source chain name"),
+      destChain: z.string().describe("The destination chain name")
     }),
-    func: async ({ to, amount, sourceChain, destChain }) => {
+    func: async ({ address, amount, sourceChain, destChain }) => {
       const tool = agentKit.xcmTransferNativeTool();
-      const result = await tool.call({ to, amount, sourceChain, destChain });
+      const result = await tool.call({ to: address, amount, sourceChain, destChain });
       return JSON.stringify(result);
     }
   });
@@ -59,7 +59,7 @@ function wrapXcmTool(agentKit: PolkadotAgentKit) {
 
 function wrapInitializeChainApiTool(agentKit: PolkadotAgentKit) {
   return new DynamicStructuredTool({
-    name: "initializeChainApiTool",
+    name: "initilize_chain_api_tool",
     description: "Initialize a chain API when it's not available. Use this when other tools fail due to chain not being initialized.",
     schema: z.object({
       chainId: z.string().describe("The chain ID to initialize (e.g., 'west', 'polkadot', 'hydra')")
@@ -74,7 +74,7 @@ function wrapInitializeChainApiTool(agentKit: PolkadotAgentKit) {
 
 function wrapSwapTokensTool(agentKit: PolkadotAgentKit) {
   return new DynamicStructuredTool({
-    name: "SwapTokensTool",
+    name: "swap_tokens_tool",
     description: "Swap tokens across different chains using the Hydration DEX",
     schema: z.object({
       from: z.string().describe("The source chain ID where the swap originates (e.g., 'Polkadot', 'AssetHubPolkadot', 'Hydra', 'Kusama')"),
@@ -94,7 +94,7 @@ function wrapSwapTokensTool(agentKit: PolkadotAgentKit) {
 
 function wrapJoinPoolTool(agentKit: PolkadotAgentKit) {
   return new DynamicStructuredTool({
-    name: "joinPoolTool",
+    name: "join_pool_tool",
     description: "Join a nomination pool for staking",
     schema: z.object({
       amount: z.string().describe("The amount of tokens to join the pool"),
@@ -114,7 +114,7 @@ function wrapJoinPoolTool(agentKit: PolkadotAgentKit) {
 
 function wrapBondExtraTool(agentKit: PolkadotAgentKit) {
   return new DynamicStructuredTool({
-    name: "bondExtraTool",
+    name: "bond_extra_tool",
     description: "Bond extra tokens to a nomination pool. Use 'FreeBalance' to bond a specific amount from your wallet, or 'Rewards' to re-stake your earned rewards.",
     schema: z.discriminatedUnion("type", [
       z.object({
