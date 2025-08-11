@@ -1,18 +1,18 @@
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { DynamicStructuredTool } from "@langchain/core/tools";
 import { ChatOllama } from "@langchain/ollama";
+import {
+  ASSETS_PROMPT,
+  IDENTITY_PROMPT,
+  NOMINATION_PROMPT,
+  SWAP_PROMPT,
+} from "@polkadot-agent-kit/llm";
 import { PolkadotAgentKit } from "@polkadot-agent-kit/sdk";
 import { AgentExecutor, createToolCallingAgent } from "langchain/agents";
 import { z } from "zod";
 
 import type { AgentMetadata } from "../../types/agent";
 import { logger } from "../../utils/logger";
-import {
-  ASSETS_PROMPT,
-  NOMINATION_PROMPT,
-  SWAP_PROMPT,
-  IDENTITY_PROMPT,
-} from "@polkadot-agent-kit/llm";
 // System prompt for the CLI agent
 const SYSTEM_PROMPT =
   ASSETS_PROMPT + SWAP_PROMPT + NOMINATION_PROMPT + IDENTITY_PROMPT;
