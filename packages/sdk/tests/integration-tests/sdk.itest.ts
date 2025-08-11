@@ -22,7 +22,7 @@ afterAll(async () => {
 /// We are using Westend and Westend Asset Hub for integrations tests 
 describe('PolkadotAgentKit Integration with OllamaAgent', () => {
   it('should get native balance on Westend using Ollama agent', async () => {
-    const result = await ollamaAgent.ask('check balance on Westend');
+    const result = await ollamaAgent.ask('check balance on Polkadot');
     console.log('OllamaAgent Balance Query Result:', result);
     await sleep(20000);
     expect(result.output).toBeDefined();

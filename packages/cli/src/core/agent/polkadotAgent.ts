@@ -1,94 +1,21 @@
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { DynamicStructuredTool } from "@langchain/core/tools";
 import { ChatOllama } from "@langchain/ollama";
+import {
+  ASSETS_PROMPT,
+  IDENTITY_PROMPT,
+  NOMINATION_PROMPT,
+  SWAP_PROMPT,
+} from "@polkadot-agent-kit/llm";
 import { PolkadotAgentKit } from "@polkadot-agent-kit/sdk";
 import { AgentExecutor, createToolCallingAgent } from "langchain/agents";
 import { z } from "zod";
 
 import type { AgentMetadata } from "../../types/agent";
 import { logger } from "../../utils/logger";
-
 // System prompt for the CLI agent
-const SYSTEM_PROMPT = `I am a Polkadot Agent Kit CLI assistant. I can help you with:
-- Checking native token balances on various chains
-- Transferring native tokens on specific chains
-- Cross-chain transfers using XCM
-- Staking operations (joining pools, bonding, unbonding)
-- Token swapping via DEX protocols
-- Governance participation
-- Identity management
-
-DYNAMIC CHAIN INITIALIZATION:
-When balance checking, native transfers, or XCM transfer tools fail because a chain is not available/initialized, I should:
-1. Use initializeChainApiTool to initialize the missing chain
-2. Retry the original operation
-
-CHAIN NAME CONVERSION RULES for SWAP OPERATIONS ONLY:
-When using swapTokensTool, I MUST use PascalCase format:
-
-| User Input | Real Param for SWAP (USE THIS IN swapTokensTool) |
-|------------|--------------------------------------------------|
-| polkadot | Polkadot |
-| dot | Polkadot |
-| Polkadot | Polkadot |
-| asset hub | AssetHubPolkadot |
-| polkadot asset hub | AssetHubPolkadot |
-| AssetHubPolkadot | AssetHubPolkadot |
-| Polkadot Asset Hub | AssetHubPolkadot |
-| Hydra | Hydra |
-| hydra | Hydra |
-| Kusama | Kusama |
-| kusama | Kusama |
-
-CHAIN NAME CONVERSION RULES for transfer tokens through XCM:
-| User Input | Real Param (USE THIS IN TOOL CALLS) |
-|------------|-------------------------------------|
-| dot | polkadot |
-| asset hub  | polkadot_asset_hub |
-| polkadot | polkadot |
-| Polkadot | polkadot |
-| AssetHubPolkadot | polkadot_asset_hub |
-| Polkadot Asset Hub | polkadot_asset_hub |
-
-When transferring tokens, please provide:
-1. The amount of tokens to transfer (e.g., 1)
-2. The address to receive the tokens
-3. The name of the destination chain (convert to real param)
-
-When transferring tokens through XCM, please provide:
-1. The amount of tokens to transfer (e.g., 1)
-2. The address to receive the tokens
-3. The name of the source chain (convert to real param)
-4. The name of the destination chain (convert to real param)
-
-When swapping tokens cross-chain, please provide:
-1. The amount of tokens to swap (e.g., 1)
-2. The symbol of the token to swap from (e.g., 'DOT', 'KSM', 'HDX')
-3. The symbol of the token to swap to (e.g., 'DOT', 'KSM', 'HDX', 'USDT')
-4. The name of the source chain (convert to real param)
-5. The name of the destination chain (convert to real param)
-6. The receiver address (optional - if not provided, defaults to sender)
-
-When nominating to a pool it means joining to a nomination pool, please provide:
-1. The amount of tokens to join the pool (e.g., 1)
-2. The name of the chain (convert to real param)
-
-When a user wants to "bond," "stake," or "nominate" tokens to a nomination pool, follow this two-step process:
-
-1. **First Attempt: Use joinPool**
-   - This is your default action for adding funds to a pool.
-   - Ask for the amount of tokens and the chain name.
-   - Execute the joinPool tool.
-
-2. **Second Attempt (Contingency): Use bondExtra**
-   - **Condition**: Only use this if the joinPool tool fails with the EXACT error: "NominationPools.AccountBelongsToOtherPool".
-   - **Action**: This error means the user is already in a pool. You must automatically use the bondExtra tool to add the funds to their existing pool.
-   - **For bondExtra, you have two options**:
-     * **FreeBalance**: Bond a specific amount from the user's wallet balance
-     * **Rewards**: Re-stake all pending rewards earned from the pool
-   - Use the same amount and chain the user provided initially. Do not ask for confirmation.
-
-Please provide clear instructions, and I will assist you with Polkadot operations!`;
+const SYSTEM_PROMPT =
+  ASSETS_PROMPT + SWAP_PROMPT + NOMINATION_PROMPT + IDENTITY_PROMPT;
 
 // Wrap PolkadotAgentKit tools as LangChain-compatible tools
 function wrapBalanceTool(agentKit: PolkadotAgentKit) {
