@@ -14,19 +14,32 @@ import {
   withdrawUnbondedTool,
   xcmTransferNativeTool
 } from "../langchain"
-import type {
-  BalanceTool,
-  BondExtraTool,
-  ClaimRewardsTool,
-  InitializeChainApiTool,
-  JoinPoolTool,
-  RegisterIdentityTool,
-  SwapTokensTool,
-  TransferTool,
-  UnbondTool,
-  WithdrawUnbondedTool,
-  XcmTransferNativeAssetTool
+import {
+  type Action,
+  type BalanceTool,
+  type BondExtraTool,
+  type ClaimRewardsTool,
+  type InitializeChainApiTool,
+  type JoinPoolTool,
+  type RegisterIdentityTool,
+  type SwapTokensTool,
+  toolConfigBalance,
+  toolConfigBondExtra,
+  toolConfigClaimRewards,
+  toolConfigInitializeChainApi,
+  toolConfigJoinPool,
+  toolConfigRegisterIdentity,
+  toolConfigSwapTokens,
+  toolConfigTransferNative,
+  toolConfigUnbond,
+  toolConfigWithdrawUnbonded,
+  toolConfigXcmTransferNativeAsset,
+  type TransferTool,
+  type UnbondTool,
+  type WithdrawUnbondedTool,
+  type XcmTransferNativeAssetTool
 } from "../types"
+import { createAction } from "../utils/tools"
 /**
  * Interface for Polkadot API implementations
  * Defines the interface that all Polkadot chain types must follow
@@ -106,6 +119,8 @@ export interface IPolkadotAgentApi {
    * @returns A dynamic structured tool that registers an identity on People Chain
    */
   registerIdentityTool(signer: PolkadotSigner): RegisterIdentityTool
+
+  getActions(signer: PolkadotSigner, address: string): Action[]
 }
 
 /**
@@ -164,5 +179,55 @@ export class PolkadotAgentApi implements IPolkadotAgentApi {
 
   registerIdentityTool(signer: PolkadotSigner): RegisterIdentityTool {
     return registerIdentityTool(this.api, signer) as unknown as RegisterIdentityTool
+  }
+
+  getActions(signer: PolkadotSigner, address: string): Action[] {
+    const actions: Action[] = []
+
+    // Balance Tool
+    const balanceTool = this.getNativeBalanceTool(address)
+    actions.push(createAction(balanceTool, toolConfigBalance))
+
+    // Transfer Tool
+    const transferTool = this.transferNativeTool(signer)
+    actions.push(createAction(transferTool, toolConfigTransferNative))
+
+    // XCM Transfer Tool
+    const xcmTransferTool = this.xcmTransferNativeTool(signer, address)
+    actions.push(createAction(xcmTransferTool, toolConfigXcmTransferNativeAsset))
+
+    // Swap Tokens Tool
+    const swapTool = this.swapTokensTool(signer, address)
+    actions.push(createAction(swapTool, toolConfigSwapTokens))
+
+    // Join Pool Tool
+    const joinPoolTool = this.joinPoolTool(signer)
+    actions.push(createAction(joinPoolTool, toolConfigJoinPool))
+
+    // Bond Extra Tool
+    const bondExtraTool = this.bondExtraTool(signer)
+    actions.push(createAction(bondExtraTool, toolConfigBondExtra))
+
+    // Unbond Tool
+    const unbondTool = this.unbondTool(signer, address)
+    actions.push(createAction(unbondTool, toolConfigUnbond))
+
+    // Withdraw Unbonded Tool
+    const withdrawUnbondedTool = this.withdrawUnbondedTool(signer, address)
+    actions.push(createAction(withdrawUnbondedTool, toolConfigWithdrawUnbonded))
+
+    // Claim Rewards Tool
+    const claimRewardsTool = this.claimRewardsTool(signer)
+    actions.push(createAction(claimRewardsTool, toolConfigClaimRewards))
+
+    // Register Identity Tool
+    const registerIdentityTool = this.registerIdentityTool(signer)
+    actions.push(createAction(registerIdentityTool, toolConfigRegisterIdentity))
+
+    // Initialize Chain API Tool
+    const initChainTool = this.getInitializeChainApiTool()
+    actions.push(createAction(initChainTool, toolConfigInitializeChainApi))
+
+    return actions
   }
 }

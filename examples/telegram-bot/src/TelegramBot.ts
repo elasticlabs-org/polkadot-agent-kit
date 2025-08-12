@@ -1,6 +1,6 @@
 import { Telegraf } from "telegraf";
 import { setupHandlers } from "./handlers";
-import { PolkadotAgentKit } from "@polkadot-agent-kit/sdk";
+import { getLangChainTools, PolkadotAgentKit } from "@polkadot-agent-kit/sdk";
 import {
   ChatModelFactory,
   ChatModelOptions,
@@ -52,35 +52,8 @@ export class TelegramBot {
       // Initialize APIs first
       await this.agent.initializeApi();
 
-      // Set up tools
-      // Get balance of agent account
-      const checkBalance = this.agent.getNativeBalanceTool();
-      // Transfer native tokens to a recipient address on a specific chain.
-      const transferNative = this.agent.transferNativeTool();
-      // Transfer native tokens to a recipient address on a specific chain via xcm.
-      // xcm_transfer_native_asset
-      const xcmTransferNativeAsset = this.agent.xcmTransferNativeTool();
-
-      const swapTokens = this.agent.swapTokensTool();
-      const joinPool = this.agent.joinPoolTool();
-      const bondExtra = this.agent.bondExtraTool();
-      const unbond = this.agent.unbondTool();
-      const claimRewards = this.agent.claimRewardsTool();
-      const withdrawUnbonded = this.agent.withdrawUnbondedTool();
-      const registerIdentity = this.agent.registerIdentityTool();
-
-      setupHandlers(this.bot, this.llm, {
-        checkBalance: checkBalance,
-        transferNative: transferNative,
-        xcmTransferNativeAsset: xcmTransferNativeAsset,
-        swapTokens: swapTokens,
-        joinPool: joinPool,
-        bondExtra: bondExtra,
-        unbond: unbond,
-        claimRewards: claimRewards,
-        withdrawUnbonded: withdrawUnbonded,
-        registerIdentity: registerIdentity
-      });
+      const tools = getLangChainTools(this.agent);
+      setupHandlers(this.bot, this.llm, tools);
 
       console.log("Bot initialization complete");
     } catch (error) {

@@ -1,6 +1,6 @@
 import { Telegraf } from "telegraf";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
-import { DynamicStructuredTool } from "@langchain/core/tools";
+import { StructuredTool } from "@langchain/core/tools";
 import { ChatModelWithTools } from "./models";
 
 import { ASSETS_PROMPT, NOMINATION_PROMPT, SWAP_PROMPT, IDENTITY_PROMPT } from "@polkadot-agent-kit/llm";
@@ -9,7 +9,7 @@ export const SYSTEM_PROMPT = ASSETS_PROMPT + SWAP_PROMPT + NOMINATION_PROMPT + I
 export function setupHandlers(
   bot: Telegraf,
   llm: ChatModelWithTools,
-  toolsByName: Record<string, DynamicStructuredTool>,
+  tools: StructuredTool[],
 ): void {
   bot.start((ctx) => {
     ctx.reply(
@@ -36,7 +36,7 @@ export function setupHandlers(
     if (message.startsWith("/")) return;
 
     try {
-      const llmWithTools = llm.bindTools(Object.values(toolsByName));
+      const llmWithTools = llm.bindTools(Object.values(tools));
       const messages = [
         new SystemMessage({ content: SYSTEM_PROMPT }),
         new HumanMessage({ content: message }),
@@ -44,7 +44,8 @@ export function setupHandlers(
       const aiMessage = await llmWithTools.invoke(messages);
       if (aiMessage.tool_calls && aiMessage.tool_calls.length > 0) {
         for (const toolCall of aiMessage.tool_calls) {
-          const selectedTool = toolsByName[toCamelCase(toolCall.name)];
+          
+          const selectedTool = tools.find((tool: StructuredTool) => tool.name === toolCall.name);
           if (selectedTool) {
             const toolMessage = await selectedTool.invoke(toolCall);
             if (!toolMessage || !toolMessage.content) {
