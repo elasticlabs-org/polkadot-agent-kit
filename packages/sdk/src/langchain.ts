@@ -1,7 +1,7 @@
 
 
 /**
- * Main exports for the CDP Langchain package
+ * Main exports for the Polkadot Agent Kit Langchain package
  */
 
 import { z } from "zod";
