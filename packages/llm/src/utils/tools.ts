@@ -1,6 +1,7 @@
 import type { KnownChainId } from "@polkadot-agent-kit/common"
 import { convertAddress, toMultiAddress } from "@polkadot-agent-kit/core"
 import type { MultiAddress } from "@polkadot-api/descriptors"
+import type { ZodType } from "zod"
 
 import type { Action, ToolError, ToolResponse } from "../types"
 import { ChainNotAvailableError, ErrorCodes, InvalidAddressError, isAnyToolError } from "../types"
@@ -178,17 +179,15 @@ export const createAddressErrorResponse = (address: string, toolName: string): T
   return createErrorResponse(error, toolName)
 }
 
-
-export const createAction = <T extends any>(
-  tool: { invoke: (args: T) => Promise<any> },
-  toolConfig: { name: string; description: string; schema: any }
+export const createAction = <T>(
+  tool: { invoke: (args: T) => Promise<unknown> },
+  toolConfig: { name: string; description: string; schema: ZodType }
 ): Action => ({
   name: toolConfig.name,
   description: toolConfig.description,
   schema: toolConfig.schema,
   invoke: async (args: T) => {
     const result = await tool.invoke(args)
-    return typeof result === 'string' ? result : JSON.stringify(result)
+    return typeof result === "string" ? result : JSON.stringify(result)
   }
 })
-

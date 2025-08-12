@@ -1,6 +1,5 @@
 import type { PolkadotApi } from "@polkadot-agent-kit/core"
 import type { PolkadotSigner } from "polkadot-api"
-import { z } from "zod"
 
 import {
   bondExtraTool,
@@ -16,6 +15,14 @@ import {
   xcmTransferNativeTool
 } from "../langchain"
 import {
+  type Action,
+  type BalanceTool,
+  type BondExtraTool,
+  type ClaimRewardsTool,
+  type InitializeChainApiTool,
+  type JoinPoolTool,
+  type RegisterIdentityTool,
+  type SwapTokensTool,
   toolConfigBalance,
   toolConfigBondExtra,
   toolConfigClaimRewards,
@@ -27,14 +34,6 @@ import {
   toolConfigUnbond,
   toolConfigWithdrawUnbonded,
   toolConfigXcmTransferNativeAsset,
-  type Action,
-  type BalanceTool,
-  type BondExtraTool,
-  type ClaimRewardsTool,
-  type InitializeChainApiTool,
-  type JoinPoolTool,
-  type RegisterIdentityTool,
-  type SwapTokensTool,
   type TransferTool,
   type UnbondTool,
   type WithdrawUnbondedTool,
@@ -121,7 +120,6 @@ export interface IPolkadotAgentApi {
    */
   registerIdentityTool(signer: PolkadotSigner): RegisterIdentityTool
 
-
   getActions(signer: PolkadotSigner, address: string): Action[]
 }
 
@@ -190,11 +188,11 @@ export class PolkadotAgentApi implements IPolkadotAgentApi {
     const balanceTool = this.getNativeBalanceTool(address)
     actions.push(createAction(balanceTool, toolConfigBalance))
 
-    // Transfer Tool 
+    // Transfer Tool
     const transferTool = this.transferNativeTool(signer)
     actions.push(createAction(transferTool, toolConfigTransferNative))
 
-    // XCM Transfer Tool 
+    // XCM Transfer Tool
     const xcmTransferTool = this.xcmTransferNativeTool(signer, address)
     actions.push(createAction(xcmTransferTool, toolConfigXcmTransferNativeAsset))
 
@@ -206,19 +204,19 @@ export class PolkadotAgentApi implements IPolkadotAgentApi {
     const joinPoolTool = this.joinPoolTool(signer)
     actions.push(createAction(joinPoolTool, toolConfigJoinPool))
 
-    // Bond Extra Tool 
+    // Bond Extra Tool
     const bondExtraTool = this.bondExtraTool(signer)
     actions.push(createAction(bondExtraTool, toolConfigBondExtra))
 
-    // Unbond Tool 
+    // Unbond Tool
     const unbondTool = this.unbondTool(signer, address)
     actions.push(createAction(unbondTool, toolConfigUnbond))
 
-    // Withdraw Unbonded Tool 
+    // Withdraw Unbonded Tool
     const withdrawUnbondedTool = this.withdrawUnbondedTool(signer, address)
     actions.push(createAction(withdrawUnbondedTool, toolConfigWithdrawUnbonded))
 
-    // Claim Rewards Tool 
+    // Claim Rewards Tool
     const claimRewardsTool = this.claimRewardsTool(signer)
     actions.push(createAction(claimRewardsTool, toolConfigClaimRewards))
 
