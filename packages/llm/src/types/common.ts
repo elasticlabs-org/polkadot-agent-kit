@@ -98,3 +98,12 @@ export async function withTimeoutAndRetry<T>(
 
   throw lastError!
 }
+
+
+export interface Action<TActionSchema extends z.ZodSchema = z.ZodSchema> {
+  name: string;
+  description: string;
+  schema: TActionSchema;
+  invoke: (args: z.infer<TActionSchema>) => Promise<string>;
+}
+

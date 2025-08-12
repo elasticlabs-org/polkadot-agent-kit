@@ -2,7 +2,10 @@ import type { AgentConfig, Api, KnownChainId } from "@polkadot-agent-kit/common"
 import { getAllSupportedChains, getChainById } from "@polkadot-agent-kit/common"
 import type { IPolkadotApi } from "@polkadot-agent-kit/core"
 import { PolkadotApi } from "@polkadot-agent-kit/core"
+import { z } from "zod"
+
 import type {
+  Action,
   BalanceTool,
   IPolkadotAgentApi,
   RegisterIdentityTool,
@@ -276,6 +279,10 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
     return this.agentApi.registerIdentityTool(this.getSigner())
   }
 
+  getActions(): Action[] {
+    return this.agentApi.getActions(this.getSigner(), this.getCurrentAddress())
+  }
+  
   /**
    * Get Address
    *
@@ -342,3 +349,5 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
     }
   }
 }
+
+
