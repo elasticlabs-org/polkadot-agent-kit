@@ -22,72 +22,35 @@ npm install @polkadot-agent-kit/sdk
 
 ```typescript
 import { PolkadotAgentKit } from '@polkadot-agent-kit/sdk'
+import { getLangChainTools } from '@polkadot-agent-kit/sdk/langchain'
+import { ChatOpenAI } from '@langchain/openai'
+import { AgentExecutor, createOpenAIFunctionsAgent } from 'langchain/agents'
 
-// Initialize agent with specific chains
-const agent = new PolkadotAgentKit({
-  chains: ['polkadot', 'west_asset_hub'], // Optional: restrict to specific chains
-  seedPhrase: 'your twelve word seed phrase here'
-})
-
-// Initialize APIs for configured chains
+// Initialize PolkadotAgentKit
+const agent = new PolkadotAgentKit(<private key>, { keyType: 'Sr25519', chains: ['polkadot','west', 'west_asset_hub'] });
 await agent.initializeApi()
 
-// Check balance
-const balance = await agent.getNativeBalance('polkadot', address)
+// Get LangChain tools
+const tools = getLangChainTools(agent)
 
-// Transfer tokens
-const result = await agent.transferNative(
-  'polkadot', 
-  recipient, 
-  amount, 
-  signer
-)
-```
+// Create LangChain agent
+const llm = new ChatOpenAI({ temperature: 0 })
+const prompt = ChatPromptTemplate.fromMessages([
+  ['system', 'You are a helpful Polkadot assistant.'],
+  ['human', '{input}'],
+  new MessagesPlaceholder('agent_scratchpad')
+])
 
-### Dynamic Chain Management
-
-```typescript
-// Check which chains are currently available
-const initTool = agent.getChainStatusTool()
-const status = await initTool.call({}) // Get all chains
-console.log('Available chains:', status)
-
-// Dynamically initialize a new chain
-const initTool = agent.getInitializeChainApiTool()
-const result = await initTool.call({
-  chainId: 'hydra'
+const agentExecutor = AgentExecutor.fromAgentAndTools({
+  agent: await createOpenAIFunctionsAgent({ llm, tools, prompt }),
+  tools,
+  verbose: true
 })
 
-if (result.success) {
-  console.log('Chain initialized successfully!')
-  // Now you can use other tools with this chain
-}
-```
-
-### LangChain Integration
-
-```typescript
-import { PolkadotAgentKit } from '@polkadot-agent-kit/sdk'
-
-const agent = new PolkadotAgentKit({
-  seedPhrase: 'your twelve word seed phrase here'
+// Use the agent
+const result = await agentExecutor.invoke({
+  input: 'Check my balance on Polkadot and transfer 1 DOT to Alice'
 })
-
-// Get LangChain tools for AI agents
-const balanceTool = agent.getNativeBalanceTool(address)
-const transferTool = agent.transferNativeTool(signer)
-const xcmTool = agent.xcmTransferNativeTool(signer, sender)
-
-// Dynamic chain tools
-const initChainTool = agent.getInitializeChainApiTool()
-
-// Use with LangChain
-const tools = [
-  balanceTool,
-  transferTool,
-  xcmTool,
-  initChainTool,
-]
 ```
 
 ## Supported Chains
@@ -97,15 +60,7 @@ const tools = [
 - **Polkadot Asset Hub** (`polkadot_asset_hub`) - Polkadot Asset Hub parachain
 - **Westend Asset Hub** (`west_asset_hub`) - Westend Asset Hub parachain
 - **HydraDX** (`hydra`) - HydraDX parachain
-
-## AI Agent Flow
-
-The dynamic chain functionality enables a seamless experience:
-
-1. **User Request**: "Check balance on Hydra"
-2. **Tool Execution**: `check_balance` tool fails (chain not initialized)
-3. **Automatic Recovery**: Agent calls `initialize_chain_api` tool
-4. **Retry**: `check_balance` tool succeeds with initialized chain
+- **More chains supported**
 
 ## API Reference
 
@@ -113,36 +68,119 @@ The dynamic chain functionality enables a seamless experience:
 
 - `initializeApi()` - Initialize APIs for configured chains
 - `disconnect()` - Disconnect from all chains
-- `getNativeBalance(chain, address)` - Get native token balance
-- `transferNative(chain, to, amount, signer)` - Transfer native tokens
 
-### Dynamic Chain Methods
-
-- `initializeChainApi(chainId)` - Initialize a specific chain API
-- `isChainInitialized(chainId)` - Check if chain is initialized
-- `getInitializedChains()` - Get list of initialized chains
-- `removeChainApi(chainId)` - Remove chain API and free resources
-- `getChainStatus(chainId?)` - Get chain status information
 
 ### LangChain Tools
 
-- `getNativeBalanceTool(address)` - Balance checking tool
-- `transferNativeTool(signer)` - Native transfer tool
-- `xcmTransferNativeTool(signer, sender)` - XCM transfer tool
-- `getInitializeChainApiTool()` - Chain initialization tool
-- `getChainStatusTool()` - Chain status tool
+The `getLangChainTools()` function provides 11 ready-to-use LangChain tools for AI agents:
+
+#### Balance & Transfer Tools
+- **`check_balance`** - Check wallet balance on specific chains
+  ```typescript
+  // Example: "Check my balance on Polkadot"
+  { chain: "polkadot" }
+  ```
+
+- **`transfer_native`** - Transfer native tokens to an address
+  ```typescript
+  // Example: "Transfer 5 DOT to Alice"
+  { 
+    amount: "5", 
+    to: "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY", 
+    chain: "polkadot" 
+  }
+  ```
+
+- **`xcm_transfer_native_asset`** - Cross-chain transfers via XCM
+  ```typescript
+  // Example: "Transfer 10 DOT from Polkadot to Asset Hub"
+  { 
+    amount: "10",
+    to: "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
+    sourceChain: "polkadot",
+    destChain: "polkadot_asset_hub"
+  }
+  ```
+
+#### DeFi Tools
+- **`swap_tokens`** - Token swaps using Hydration DEX
+  ```typescript
+  // Cross-chain swap
+  { 
+    from: "polkadot",
+    to: "hydra",
+    currencyFrom: "DOT",
+    currencyTo: "HDX",
+    amount: "10000000000"
+  }
+  
+  // DEX-specific swap
+  { 
+    currencyFrom: "HDX",
+    currencyTo: "USDT",
+    amount: "5000000000",
+    dex: "HydrationDex"
+  }
+  ```
+
+#### Staking Tools
+- **`join_pool`** - Join a nomination pool for staking
+  ```typescript
+  // Example: "Join a nomination pool with 1.5 DOT"
+  { amount: "1.5", chain: "polkadot" }
+  ```
+
+- **`bond_extra`** - Bond additional tokens to a nomination pool
+  ```typescript
+  // Bond from free balance
+  { type: "FreeBalance", amount: "1.5", chain: "polkadot" }
+  
+  // Re-stake rewards
+  { type: "Rewards", chain: "polkadot" }
+  ```
+
+- **`unbond`** - Unbond tokens from a nomination pool
+  ```typescript
+  // Example: "Unbond 1 DOT from my nomination pool"
+  { amount: "1", chain: "polkadot" }
+  ```
+
+- **`withdraw_unbonded`** - Withdraw unbonded tokens from a nomination pool
+  ```typescript
+  // Example: "Withdraw my unbonded tokens"
+  { slashingSpans: "0", chain: "polkadot" }
+  ```
+
+- **`claim_rewards`** - Claim rewards from a nomination pool
+  ```typescript
+  // Example: "Claim my staking rewards"
+  { chain: "polkadot" }
+  ```
+
+#### Identity Tools
+- **`register_identity`** - Register an identity on People Chain
+  ```typescript
+  // Example: "Register my identity with display name 'Alice'"
+  { 
+    display: "Alice",
+    email: "alice@example.com",
+    twitter: "@alice_crypto"
+  }
+  ```
+
+#### System Tools
+- **`initialize_chain_api`** - Dynamically initialize chain APIs
+  ```typescript
+  // Example: "Initialize Kusama chain API"
+  { chainId: "kusama" }
+  ```
 
 ## Configuration
 
 ```typescript
 interface PolkadotAgentKitConfig {
-  seedPhrase: string
+  privateKey: string
   chains?: KnownChainId[] // Optional: restrict to specific chains
 }
 ```
-## Examples
 
-See the `/examples` directory for complete examples including:
-- Telegram bot integration
-- Dynamic chain usage
-- Cross-chain operations
