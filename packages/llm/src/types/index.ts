@@ -1,4 +1,5 @@
 export * from "./balance"
+export * from "./bifrost"
 export * from "./chain"
 export * from "./common"
 export * from "./constants"

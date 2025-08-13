@@ -30,7 +30,9 @@ export enum ToolNames {
   /** Tool for getting nomination pool information */
   GET_POOL_INFO = "get_pool_info",
   /** Tool for registering an identity on People Chain */
-  REGISTER_IDENTITY = "register_identity"
+  REGISTER_IDENTITY = "register_identity",
+  /** Tool for minting vDOT tokens on Bifrost */
+  MINT_VDOT = "mint_vdot"
 }
 
 /**

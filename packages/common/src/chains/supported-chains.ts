@@ -106,3 +106,17 @@ export const paseoPeopleChain = createChain({
   decimals: 10,
   symbol: "PAS"
 })
+
+export const bifrostPolkadotChain = createChain({
+  id: "bifrost",
+  name: "Bifrost",
+  specName: "bifrost",
+  wsUrls: ["wss://bifrost-polkadot.dotters.network"],
+  relay: "polkadot",
+  type: "para",
+  chainId: null,
+  blockExplorerUrl: "https://bifrost.subscan.io",
+  prefix: 6,
+  decimals: 12,
+  symbol: "BNC"
+})

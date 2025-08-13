@@ -48,6 +48,12 @@
       "metadata": ".papi/metadata/paseo_people.scale",
       "genesis": "0x4545454545454545454545454545454545454545454545454545454545454545",
       "codeHash": "0xacf9e44512ac871585d8a389914acffbc97f5c767eed9ddef2cc0151e6d19a27"
+    },
+    "bifrost_polkadot": {
+      "wsUrl": "wss://bifrost-polkadot.dotters.network",
+      "metadata": ".papi/metadata/bifrost_polkadot.scale",
+      "genesis": "0x262e1b2ad728475fd6fe88e62d34c200abe6fd693931ddad144059b1eb884e5b",
+      "codeHash": "0x178ebbdddbb6a111d43da9396cc44177efc8668d7d4be7ccd37dbb2faab67a08"
     }
   }
 }

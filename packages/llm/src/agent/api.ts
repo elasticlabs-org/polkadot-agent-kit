@@ -14,6 +14,8 @@ import {
   withdrawUnbondedTool,
   xcmTransferNativeTool
 } from "../langchain"
+import { mintVdotTool } from "../langchain/bifrost"
+import type { MintVdotTool } from "../types"
 import {
   type Action,
   type BalanceTool,
@@ -28,6 +30,7 @@ import {
   toolConfigClaimRewards,
   toolConfigInitializeChainApi,
   toolConfigJoinPool,
+  toolConfigMintVdot,
   toolConfigRegisterIdentity,
   toolConfigSwapTokens,
   toolConfigTransferNative,
@@ -120,6 +123,8 @@ export interface IPolkadotAgentApi {
    */
   registerIdentityTool(signer: PolkadotSigner): RegisterIdentityTool
 
+  mintVdotTool(signer: PolkadotSigner): MintVdotTool
+
   getActions(signer: PolkadotSigner, address: string): Action[]
 }
 
@@ -181,6 +186,10 @@ export class PolkadotAgentApi implements IPolkadotAgentApi {
     return registerIdentityTool(this.api, signer) as unknown as RegisterIdentityTool
   }
 
+  mintVdotTool(signer: PolkadotSigner): MintVdotTool {
+    return mintVdotTool(signer) as unknown as MintVdotTool
+  }
+
   getActions(signer: PolkadotSigner, address: string): Action[] {
     const actions: Action[] = []
 
@@ -227,6 +236,10 @@ export class PolkadotAgentApi implements IPolkadotAgentApi {
     // Initialize Chain API Tool
     const initChainTool = this.getInitializeChainApiTool()
     actions.push(createAction(initChainTool, toolConfigInitializeChainApi))
+
+    // Mint VDOT Tool
+    const mintVdotTool = this.mintVdotTool(signer)
+    actions.push(createAction(mintVdotTool, toolConfigMintVdot))
 
     return actions
   }
