@@ -1,4 +1,5 @@
 import {
+  bifrost_polkadot,
   hydra,
   paseo,
   paseo_people,
@@ -9,6 +10,7 @@ import {
 } from "@polkadot-api/descriptors"
 
 import {
+  bifrostPolkadotChain,
   paseoChain,
   paseoPeopleChain,
   polkadotAssetHubChain,
@@ -30,6 +32,7 @@ type DescriptorsAssetHubType = {
 type DescriptorsParaType = {
   hydra: typeof hydra
   paseo_people: typeof paseo_people
+  bifrost_polkadot: typeof bifrost_polkadot
 }
 
 const DESCRIPTORS_RELAY: DescriptorsRelayType = {
@@ -45,7 +48,8 @@ const DESCRIPTORS_ASSET_HUB: DescriptorsAssetHubType = {
 
 const DESCRIPTORS_PARA: DescriptorsParaType = {
   hydra,
-  paseo_people
+  paseo_people,
+  bifrost_polkadot
 }
 
 export const DESCRIPTORS_ALL = {
@@ -116,7 +120,8 @@ const SUPPORTED_CHAINS: Chain[] = [
   westendChain,
   westendAssetHubChain,
   paseoChain,
-  paseoPeopleChain
+  paseoPeopleChain,
+  bifrostPolkadotChain
 ]
 
 export const getAllSupportedChains = (): Chain[] => {

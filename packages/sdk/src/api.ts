@@ -277,6 +277,10 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
     return this.agentApi.registerIdentityTool(this.getSigner())
   }
 
+  mintVdotTool() {
+    return this.agentApi.mintVdotTool(this.getSigner())
+  }
+
   getActions(): Action[] {
     return this.agentApi.getActions(this.getSigner(), this.getCurrentAddress())
   }

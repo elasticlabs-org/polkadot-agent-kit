@@ -3,8 +3,8 @@ import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { StructuredTool } from "@langchain/core/tools";
 import { ChatModelWithTools } from "./models";
 
-import { ASSETS_PROMPT, NOMINATION_PROMPT, SWAP_PROMPT, IDENTITY_PROMPT } from "@polkadot-agent-kit/llm";
-export const SYSTEM_PROMPT = ASSETS_PROMPT + SWAP_PROMPT + NOMINATION_PROMPT + IDENTITY_PROMPT;
+import { ASSETS_PROMPT, NOMINATION_PROMPT, SWAP_PROMPT, IDENTITY_PROMPT, BIFROST_PROMPT } from "@polkadot-agent-kit/llm";
+export const SYSTEM_PROMPT = ASSETS_PROMPT + SWAP_PROMPT + NOMINATION_PROMPT + IDENTITY_PROMPT + BIFROST_PROMPT;
 
 export function setupHandlers(
   bot: Telegraf,
@@ -26,6 +26,7 @@ export function setupHandlers(
         '- Claiming rewards from a pool (e.g., "claim rewards from pool on paseo")\n' +
         '- Withdraw unbonded from a pool (e.g, "withdraw unbonded with 1 amount from pool on paseo")\n' +
         '- Swapping tokens (e.g., "swap 1 DOT to USDT on Hydra")\n' +
+        '- Minting vDOT tokens (e.g., "mint 1 vDOT on Bifrost")\n' +
         "Try asking something!",
     );
   });
