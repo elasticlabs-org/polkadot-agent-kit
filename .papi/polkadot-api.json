@@ -54,6 +54,18 @@
       "metadata": ".papi/metadata/bifrost_polkadot.scale",
       "genesis": "0x262e1b2ad728475fd6fe88e62d34c200abe6fd693931ddad144059b1eb884e5b",
       "codeHash": "0x178ebbdddbb6a111d43da9396cc44177efc8668d7d4be7ccd37dbb2faab67a08"
+    },
+    "kusama": {
+      "chain": "ksmcc3",
+      "metadata": ".papi/metadata/kusama.scale",
+      "genesis": "0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe",
+      "codeHash": "0xf45689276dfdcf05b6defd26da68e3283a96190d789f7a311ff31f64b455b421"
+    },
+    "kusama_asset_hub": {
+      "chain": "ksmcc3_asset_hub",
+      "metadata": ".papi/metadata/kusama_asset_hub.scale",
+      "genesis": "0x48239ef607d7928874027a43a67689209727dfb3d3dc5e5b03a39bdc2eda771a",
+      "codeHash": "0xe47150af4545236c2ec6915ad0dbc56a9aadf59e7a031e4d133d962d38ab0ab4"
     }
   }
 }

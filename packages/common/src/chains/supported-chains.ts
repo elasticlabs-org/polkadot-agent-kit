@@ -120,3 +120,34 @@ export const bifrostPolkadotChain = createChain({
   decimals: 12,
   symbol: "BNC"
 })
+
+
+
+export const kusamaChain = createChain({
+  id: "kusama",
+  name: "Kusama",
+  specName: "kusama",
+  wsUrls: ["wss://kusama-rpc.n.dwellir.com"],
+  relay: "kusama",
+  type: "relay",
+  chainId: 0,
+  blockExplorerUrl: "https://kusama.subscan.io",
+  prefix: 2,
+  decimals: 12,
+  symbol: "KSM"
+})
+
+export const kusamaAssetHubChain = createChain({
+  id: "kusama_asset_hub",
+  name: "AssetHubKusama",
+  specName: "asset-hub-kusama",
+  wsUrls: ["wss://asset-hub-kusama-rpc.n.dwellir.com"],
+  relay: "kusama",
+  type: "system",
+  chainId: 1000,
+  blockExplorerUrl: "https://assethub-kusama.subscan.io",
+  prefix: 2,
+  decimals: 12,
+  symbol: "KSM"
+})
+
