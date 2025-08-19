@@ -14,9 +14,12 @@ const mockUnbondResult = { success: true, transactionHash: '0xMOCKEDUNBONDTXHASH
 const mockWithdrawUnbondedResult = { success: true, transactionHash: '0xMOCKEDWITHDRAWTXHASH' };
 const mockClaimRewardsResult = { success: true, transactionHash: '0xMOCKEDCLAIMREWARDSTXHASH' };
 
+// Bifrost mintVdot mock results
+const mockMintVdotResult = { success: true, transactionHash: '0xMOCKEDMINTVDOTTXHASH' };
+
 vi.mock('../../src/api', () => {
   return {
-    PolkadotAgentKit: vi.fn().mockImplementation((privateKey: string, config?: AgentConfig) => {
+    PolkadotAgentKit: vi.fn().mockImplementation((config: AgentConfig) => {
 
       const instanceConfig = config ? { ...config } : { keyType: 'Sr25519' };
       
@@ -50,6 +53,10 @@ vi.mock('../../src/api', () => {
         })),
         claimRewardsTool: vi.fn(() => ({
           call: vi.fn(async (input: any) => mockClaimRewardsResult)
+        })),
+        // Bifrost mintVdot tool
+        mintVdotTool: vi.fn(() => ({
+          call: vi.fn(async (input: any) => mockMintVdotResult)
         })),
         disconnect: vi.fn().mockResolvedValue(undefined),
         config: instanceConfig,
@@ -239,14 +246,28 @@ const scenarios = [
       expect(result.success).toBe(true);
       expect(result.transactionHash).toBe('0xMOCKEDCLAIMREWARDSTXHASH');
     }
-  }
+  },
+  // Bifrost mintVdot Tests
+  {
+    name: 'mintVdotTool mint 10 DOT to vDOT on Bifrost',
+    arrange: (agent: PolkadotAgentKit) => agent.mintVdotTool(),
+    act: (tool: any) => tool.call({ amount: '10' }),
+    assert: (result: any) => {
+      expect(result).toEqual(mockMintVdotResult);
+      expect(result.success).toBe(true);
+      expect(result.transactionHash).toBe('0xMOCKEDMINTVDOTTXHASH');
+    }
+  },
 ];
 
 describe('PolkadotAgentKit E2E', () => {
   let agent: PolkadotAgentKit;
 
   beforeAll(async () => {
-    agent = new PolkadotAgentKit({privateKey: '0xe5be9a5092b81bca64be81d212e7f2f9eba183bb7a90954f7b76361f6edb5c0a',keyType: 'Sr25519' });
+    agent = new PolkadotAgentKit({
+      privateKey: '0xabc',
+      keyType: 'Sr25519'
+    });
     await agent.initializeApi();
   });
 

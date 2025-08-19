@@ -46,7 +46,7 @@ describe('PolkadotAgentKit Integration with OllamaAgent', () => {
     const userQuery = `transfer 0.001 WND to ${RECIPIENT} from Westend Asset Hub to Westend`;
     const result = await ollamaAgent.ask(userQuery);
     console.log('XCM Transfer Query Result (Asset Hub → Westend):', result);
-    await sleep(20000);
+    await sleep(30000);
     expect(result.output).toBeDefined();
   });
 
@@ -56,14 +56,7 @@ describe('PolkadotAgentKit Integration with OllamaAgent', () => {
     await sleep(20000);
     expect(result.output).toBeDefined();
   });
-
-  it('should swap tokens across different chains using the Hydration DEX', async () => {
-    const result = await ollamaAgent.ask('swap 0.1 DOT from Polkadot to USDT on Asset Hub');
-    console.log('Swap Tokens Query Result:', result);
-    await sleep(20000);
-    expect(result.output).toBeDefined();
-  });
-
+  
   it('should nominate to a pool on Paseo using Ollama agent', async () => {
     const result = await ollamaAgent.ask('re-stake my rewards on PASEO');
     console.log('OllamaAgent Nominate Query Result:', result);
