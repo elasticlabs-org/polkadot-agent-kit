@@ -13,7 +13,7 @@ import type {
 } from "@polkadot-agent-kit/llm"
 import { PolkadotAgentApi } from "@polkadot-agent-kit/llm"
 import { ed25519CreateDerive, sr25519CreateDerive } from "@polkadot-labs/hdkd"
-import { entropyToMiniSecret, Hex, mnemonicToEntropy } from "@polkadot-labs/hdkd-helpers"
+import { entropyToMiniSecret, mnemonicToEntropy } from "@polkadot-labs/hdkd-helpers"
 import * as ss58 from "@subsquid/ss58"
 import { getPolkadotSigner, type PolkadotSigner } from "polkadot-api/signer"
 
@@ -309,7 +309,6 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
     return ss58.codec(chain.prefix).encode(value)
   }
 
-
   private getKeypair() {
     if (this.config.keyType === "Sr25519") {
       const derive = sr25519CreateDerive(this.miniSecret)
@@ -325,18 +324,15 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
       const entropy = mnemonicToEntropy(this.config.mnemonic)
       return entropyToMiniSecret(entropy)
     } else if (this.config.privateKey) {
-      const privateKeyHex = this.config.privateKey.startsWith('0x')
+      const privateKeyHex = this.config.privateKey.startsWith("0x")
         ? this.config.privateKey.slice(2)
         : this.config.privateKey
 
-      return new Uint8Array(
-        privateKeyHex.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16))
-      )
+      return new Uint8Array(privateKeyHex.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16)))
     } else {
       throw new Error("No valid wallet source found")
     }
   }
-
 
   private getSigner(): PolkadotSigner {
     if (this.config.keyType === "Sr25519") {
@@ -378,5 +374,4 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
       ...config
     }
   }
-
 }

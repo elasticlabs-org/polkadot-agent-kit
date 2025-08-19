@@ -7,7 +7,8 @@ async function runServer() {
   try {
     const config = createDefaultConfig();
 
-    const polkadotAgent = new PolkadotAgentKit(config.privateKey, {
+    const polkadotAgent = new PolkadotAgentKit({
+      privateKey: config.privateKey,
       keyType: "Sr25519",
       chains: ["polkadot"],
     });
