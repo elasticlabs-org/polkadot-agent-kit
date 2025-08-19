@@ -265,7 +265,7 @@ describe('PolkadotAgentKit E2E', () => {
 
   beforeAll(async () => {
     agent = new PolkadotAgentKit({
-      privateKey: '0xe5be9a5092b81bca64be81d212e7f2f9eba183bb7a90954f7b76361f6edb5c0a',
+      privateKey: '0xabc',
       keyType: 'Sr25519'
     });
     await agent.initializeApi();
