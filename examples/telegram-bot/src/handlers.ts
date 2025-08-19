@@ -43,6 +43,7 @@ export function setupHandlers(
         new HumanMessage({ content: message }),
       ];
       const aiMessage = await llmWithTools.invoke(messages);
+      console.log("AI message:", aiMessage);
       if (aiMessage.tool_calls && aiMessage.tool_calls.length > 0) {
         for (const toolCall of aiMessage.tool_calls) {
           

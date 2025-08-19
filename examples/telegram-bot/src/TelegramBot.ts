@@ -11,6 +11,7 @@ interface BotConfig {
   botToken: string;
   openAiApiKey?: string;
   privateKey?: string;
+  mnemonic?: string;
 }
 
 export class TelegramBot {
@@ -37,9 +38,10 @@ export class TelegramBot {
 
     this.bot = new Telegraf(botToken);
 
-    this.agent = new PolkadotAgentKit(privateKey as string, {
+    this.agent = new PolkadotAgentKit({
+      privateKey: privateKey as string,
       keyType: "Sr25519",
-      chains: ["paseo","paseo_people"]
+      // chains: ["polkadot_asset_hub"]
     });
 
     this.llm = this.initializeLLM(openAiApiKey);
