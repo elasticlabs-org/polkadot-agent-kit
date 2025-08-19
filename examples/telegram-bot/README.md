@@ -16,10 +16,18 @@ This example demonstrates how to build a Telegram bot using the Polkadot Agent K
      ```
      TELEGRAM_BOT_TOKEN=your_bot_token_here
      ```
-   - Add Agent Private Key: 
+   - **Choose ONE of the following wallet options:**
+     
+     **Option A: Using Private Key**
      ```
-     PRIVATE_KEY=xxx
+     PRIVATE_KEY=your private ket
      ```
+     
+     **Option B: Using Mnemonic Phrase (Recommended)**
+     ```
+     MNEMONIC_PHRASE="your mnemonic"
+     ```
+
    - Add OpenAI Key: 
      ```
      OPENAI_API_KEY=xxx
