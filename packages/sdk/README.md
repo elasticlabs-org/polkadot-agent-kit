@@ -21,44 +21,30 @@ npm install @polkadot-agent-kit/sdk
 ### Basic Usage
 
 ```typescript
-import { PolkadotAgentKit } from '@polkadot-agent-kit/sdk'
-import { getLangChainTools } from '@polkadot-agent-kit/sdk/langchain'
-import { ChatOpenAI } from '@langchain/openai'
-import { AgentExecutor, createOpenAIFunctionsAgent } from 'langchain/agents'
+import { PolkadotAgentKit, getLangChainTools } from '@polkadot-agent-kit/sdk'
+import { getLangChainTools } from '@polkadot-agent-kit/sdk'
 
 // Initialize PolkadotAgentKit
-const agent = new PolkadotAgentKit(<private key>, { keyType: 'Sr25519', chains: ['polkadot','west', 'west_asset_hub'] });
+const agent = new PolkadotAgentKit({privateKey:'your private key', keyType: 'Sr25519', chains: ['polkadot','west', 'west_asset_hub'] });
 await agent.initializeApi()
 
 // Get LangChain tools
 const tools = getLangChainTools(agent)
 
-// Create LangChain agent
-const llm = new ChatOpenAI({ temperature: 0 })
-const prompt = ChatPromptTemplate.fromMessages([
-  ['system', 'You are a helpful Polkadot assistant.'],
-  ['human', '{input}'],
-  new MessagesPlaceholder('agent_scratchpad')
-])
+// Create LangChain agent - OpenAI, Ollama, ...
 
-const agentExecutor = AgentExecutor.fromAgentAndTools({
-  agent: await createOpenAIFunctionsAgent({ llm, tools, prompt }),
-  tools,
-  verbose: true
-})
-
-// Use the agent
-const result = await agentExecutor.invoke({
-  input: 'Check my balance on Polkadot and transfer 1 DOT to Alice'
-})
 ```
 
 ## Supported Chains
 
 - **Polkadot** (`polkadot`) - Polkadot relay chain
-- **Westend** (`west`) - Westend testnet relay chain  
+- **Westend** (`west`) - Westend testnet relay chain 
+- **Kusama** (`kusama`) - Kusama relay chain 
+- **Paseo** (`paseo`) - Paseo testnet relay chain 
 - **Polkadot Asset Hub** (`polkadot_asset_hub`) - Polkadot Asset Hub parachain
 - **Westend Asset Hub** (`west_asset_hub`) - Westend Asset Hub parachain
+- **Kusama Asset Hub** (`kusama_asset_hub`) - Kusama Asset Hub parachain
+- **Paseo Asset Hub** (`paseo_asset_hub`) - Paseo Asset Hub parachain
 - **HydraDX** (`hydra`) - HydraDX parachain
 - **More chains supported**
 
@@ -179,7 +165,7 @@ The `getLangChainTools()` function provides 11 ready-to-use LangChain tools for 
 
 ```typescript
 interface PolkadotAgentKitConfig {
-  privateKey: string
+  privateKey?: string
   chains?: KnownChainId[] // Optional: restrict to specific chains
 }
 ```

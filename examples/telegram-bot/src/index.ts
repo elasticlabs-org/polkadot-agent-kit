@@ -7,6 +7,7 @@ async function runBot() {
   const bot = new TelegramBot({
     botToken: process.env.TELEGRAM_BOT_TOKEN!,
     openAiApiKey: process.env.OPENAI_API_KEY!,
+    mnemonic: process.env.MNEMONIC_PHRASE!,
     privateKey: process.env.PRIVATE_KEY!,
   });
 

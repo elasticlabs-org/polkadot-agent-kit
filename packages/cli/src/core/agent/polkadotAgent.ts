@@ -275,7 +275,8 @@ export class PolkadotCLIAgent {
       if (!privateKey) {
         logger.error("Private key is not set in the agent configuration");
       }
-      this.agentKit = new PolkadotAgentKit(privateKey, {
+      this.agentKit = new PolkadotAgentKit({
+        privateKey: privateKey,
         keyType: "Sr25519",
         chains: ["polkadot", "west", "polkadot_asset_hub", "west_asset_hub"],
       });

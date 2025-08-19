@@ -7,7 +7,7 @@ let agentKit: PolkadotAgentKit;
 let ollamaAgent: OllamaAgent;
 
 beforeAll(async () => {
-  agentKit = new PolkadotAgentKit(AGENT_PRIVATE_KEY, { keyType: 'Sr25519', chains: ['polkadot','west', 'west_asset_hub'] });
+  agentKit = new PolkadotAgentKit( { privateKey: AGENT_PRIVATE_KEY,  keyType: 'Sr25519', chains: ['polkadot','west', 'west_asset_hub'] });
   await agentKit.initializeApi();
   ollamaAgent = new OllamaAgent(agentKit);
   await ollamaAgent.init();

@@ -13,6 +13,7 @@ import type {
 } from "@polkadot-agent-kit/llm"
 import { PolkadotAgentApi } from "@polkadot-agent-kit/llm"
 import { ed25519CreateDerive, sr25519CreateDerive } from "@polkadot-labs/hdkd"
+import { entropyToMiniSecret, mnemonicToEntropy } from "@polkadot-labs/hdkd-helpers"
 import * as ss58 from "@subsquid/ss58"
 import { getPolkadotSigner, type PolkadotSigner } from "polkadot-api/signer"
 
@@ -20,14 +21,14 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
   private polkadotApi: PolkadotApi
   private agentApi: PolkadotAgentApi
 
-  public wallet: string
   public config: AgentConfig
+  private miniSecret: Uint8Array
 
-  constructor(wallet: string, config: AgentConfig) {
+  constructor(config: AgentConfig) {
     this.polkadotApi = new PolkadotApi(config.chains)
     this.agentApi = new PolkadotAgentApi(this.polkadotApi)
-    this.wallet = wallet
-    this.config = config
+    this.config = this.validateAndNormalizeConfig(config)
+    this.miniSecret = this.generateMiniSecret()
   }
 
   setApi(chainId: KnownChainId, api?: Api<KnownChainId>) {
@@ -308,27 +309,28 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
     return ss58.codec(chain.prefix).encode(value)
   }
 
-  /**
-   * Get main account public key
-   *
-   * @returns The public key as Uint8Array
-   * @throws Error if no main private key is available
-   *
-   * @example
-   * ```typescript
-   * // Get the main account public key
-   * const publicKey = agent.getPublicKey();
-   * ```
-   */
   private getKeypair() {
     if (this.config.keyType === "Sr25519") {
-      // For Sr25519, use the derive function to get the public key
-      const derive = sr25519CreateDerive(this.wallet)
+      const derive = sr25519CreateDerive(this.miniSecret)
       return derive(this.config.derivationPath || "")
     } else {
-      // For Ed25519, use the ed25519 lib
-      const derive = ed25519CreateDerive(this.wallet)
+      const derive = ed25519CreateDerive(this.miniSecret)
       return derive(this.config.derivationPath || "")
+    }
+  }
+
+  private generateMiniSecret(): Uint8Array {
+    if (this.config.mnemonic) {
+      const entropy = mnemonicToEntropy(this.config.mnemonic)
+      return entropyToMiniSecret(entropy)
+    } else if (this.config.privateKey) {
+      const privateKeyHex = this.config.privateKey.startsWith("0x")
+        ? this.config.privateKey.slice(2)
+        : this.config.privateKey
+
+      return new Uint8Array(privateKeyHex.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16)))
+    } else {
+      throw new Error("No valid wallet source found")
     }
   }
 
@@ -348,6 +350,28 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
         input => this.getKeypair().sign(input)
       )
       return signer
+    }
+  }
+
+  /**
+   * Validates and normalizes the configuration
+   */
+  private validateAndNormalizeConfig(config: AgentConfig): AgentConfig {
+    const hasMnemonic = config.mnemonic && config.mnemonic.trim().length > 0
+    const hasPrivateKey = config.privateKey && config.privateKey.trim().length > 0
+
+    if (!hasMnemonic && !hasPrivateKey) {
+      throw new Error("Either 'mnemonic' or 'privateKey' must be provided")
+    }
+
+    if (hasMnemonic && hasPrivateKey) {
+      throw new Error("Cannot provide both 'mnemonic' and 'privateKey'")
+    }
+
+    return {
+      keyType: config.keyType || "Sr25519",
+      derivationPath: config.derivationPath || "",
+      ...config
     }
   }
 }

@@ -357,7 +357,8 @@ async function executeBalanceCheckCommand(
 ): Promise<any> {
   try {
     // Initialize PolkadotAgentKit with the agent's configuration
-    const agentKit = new PolkadotAgentKit(agent.polkadotConfig.privateKey, {
+    const agentKit = new PolkadotAgentKit({
+      privateKey: agent.polkadotConfig.privateKey,
       keyType: agent.polkadotConfig.keyType,
       chains: agent.polkadotConfig.chains as any,
     });
@@ -408,7 +409,8 @@ async function executeTransferCommand(
 ): Promise<any> {
   try {
     // Initialize PolkadotAgentKit with the agent's configuration
-    const agentKit = new PolkadotAgentKit(agent.polkadotConfig.privateKey, {
+    const agentKit = new PolkadotAgentKit({
+      privateKey: agent.polkadotConfig.privateKey,
       keyType: agent.polkadotConfig.keyType,
       chains: agent.polkadotConfig.chains as any,
     });
@@ -464,7 +466,8 @@ async function executeXcmTransferCommand(
 ): Promise<any> {
   try {
     // Initialize PolkadotAgentKit with the agent's configuration
-    const agentKit = new PolkadotAgentKit(agent.polkadotConfig.privateKey, {
+    const agentKit = new PolkadotAgentKit({
+      privateKey: agent.polkadotConfig.privateKey,
       keyType: agent.polkadotConfig.keyType,
       chains: agent.polkadotConfig.chains as any,
     });
@@ -529,7 +532,8 @@ async function executeSwapCommand(
 ): Promise<any> {
   try {
     // Initialize PolkadotAgentKit with the agent's configuration
-    const agentKit = new PolkadotAgentKit(agent.polkadotConfig.privateKey, {
+    const agentKit = new PolkadotAgentKit({
+      privateKey: agent.polkadotConfig.privateKey,
       keyType: agent.polkadotConfig.keyType,
       chains: agent.polkadotConfig.chains as any,
     });
