@@ -1,27 +1,27 @@
 import {
   bifrost_polkadot,
   hydra,
+  kusama,
+  kusama_asset_hub,
   paseo,
+  paseo_asset_hub,
   paseo_people,
   polkadot,
   polkadot_asset_hub,
   west,
-  west_asset_hub,
-  kusama,
-  kusama_asset_hub
-} from "@polkadot-api/descriptors"
+  west_asset_hub} from "@polkadot-api/descriptors"
 
 import {
   bifrostPolkadotChain,
-  kusamaChain,
   kusamaAssetHubChain,
+  kusamaChain,
+  paseoAssetHubChain,
   paseoChain,
   paseoPeopleChain,
   polkadotAssetHubChain,
   polkadotChain,
   westendAssetHubChain,
-  westendChain
-} from "./supported-chains"
+  westendChain} from "./supported-chains"
 type DescriptorsRelayType = {
   polkadot: typeof polkadot
   west: typeof west
@@ -33,6 +33,7 @@ type DescriptorsAssetHubType = {
   polkadot_asset_hub: typeof polkadot_asset_hub
   west_asset_hub: typeof west_asset_hub
   kusama_asset_hub: typeof kusama_asset_hub
+  paseo_asset_hub: typeof paseo_asset_hub
 }
 
 type DescriptorsParaType = {
@@ -46,13 +47,13 @@ const DESCRIPTORS_RELAY: DescriptorsRelayType = {
   west,
   paseo,
   kusama
-
 }
 
 const DESCRIPTORS_ASSET_HUB: DescriptorsAssetHubType = {
   polkadot_asset_hub,
   west_asset_hub,
-  kusama_asset_hub
+  kusama_asset_hub,
+  paseo_asset_hub
 }
 
 const DESCRIPTORS_PARA: DescriptorsParaType = {
@@ -132,7 +133,8 @@ const SUPPORTED_CHAINS: Chain[] = [
   paseoPeopleChain,
   bifrostPolkadotChain,
   kusamaChain,
-  kusamaAssetHubChain
+  kusamaAssetHubChain,
+  paseoAssetHubChain
 ]
 
 export const getAllSupportedChains = (): Chain[] => {

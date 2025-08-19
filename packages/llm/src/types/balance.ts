@@ -1,25 +1,26 @@
 import type { DynamicStructuredTool } from "@langchain/core/tools"
+import { getAllSupportedChains, isSupportedChain } from "@polkadot-agent-kit/common"
 import { z } from "zod"
 
 import type { ToolConfig } from "./common"
 import { ToolNames } from "./common"
 
+// Get supported chains dynamically
+const supportedChains = getAllSupportedChains()
+const supportedChainIds = supportedChains.map(chain => chain.id)
+
 /**
  * Schema for the balance check tool input.
- * Defines the structure and validation rules for balance check requests.
- *
- * @example
- * ```typescript
- * {
- *   chain: "polkadot"  // Chain to check balance on
- * }
- * ```
+ * Validates against all dynamically loaded supported chains.
  */
 export const balanceToolSchema = z.object({
   chain: z
     .string()
+    .refine(chainId => isSupportedChain(chainId), {
+      message: `Invalid chain. Must use exact chain ID from: ${supportedChainIds.join(", ")}`
+    })
     .describe(
-      "The chain name to check balance on (e.g., 'polkadot', 'kusama', 'west', 'westend_asset_hub')"
+      `The exact chain ID to check balance on. MUST be one of: ${supportedChainIds.join(", ")}`
     )
 })
 

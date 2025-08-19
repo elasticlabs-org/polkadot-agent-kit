@@ -19,6 +19,19 @@ When checking native token balance, you must ask for and provide:
 -   **User:** "check balance on polkadot"
 -   **Tool Call:** \`check_balance({{ chain: "polkadot" }})\`
 
+**CHAIN NAME CONVERSION TABLE (for CHECK BALANCE):**
+**YOU MUST ALWAYS CONVERT USER INPUT TO THE EXACT "Real Param" VALUE SHOWN BELOW:**
+| User Input         | Real Param (USE IN TOOL CALLS) |
+|--------------------|--------------------------------|
+| dot                | polkadot                       |
+| asset hub          | polkadot_asset_hub             |
+| polkadot           | polkadot                       |
+| Polkadot           | polkadot                       |
+| AssetHubPolkadot   | polkadot_asset_hub             |
+| Polkadot Asset Hub | polkadot_asset_hub             |
+| Bifrost            | bifrost_polkadot               |
+| bifrost            | bifrost_polkadot               |
+| Hydra              | hydra                          |
 
 --- NATIVE TRANSFER RULES ---
 When transferring native tokens on a single chain, you must ask for and provide:

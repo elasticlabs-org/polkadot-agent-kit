@@ -104,7 +104,10 @@ export class PolkadotApi implements IPolkadotApi {
           west_asset_hub: "",
           hydra: "",
           paseo: "",
-          paseo_people: ""
+          paseo_people: "",
+          kusama: "",
+          kusama_asset_hub: "",
+          paseo_asset_hub: ""
         }
 
         for (const chain of supportedChains) {
@@ -113,12 +116,21 @@ export class PolkadotApi implements IPolkadotApi {
 
         const apiInitPromises = supportedChains.map(async chain => {
           try {
-            const api = await getApi(chain.id as KnownChainId, [chain], true, {
-              enable: true,
-              smoldot: this.smoldotClient,
-              chainSpecs
-            })
-            return { chain, api }
+            if (this.getChainSpec(chain.id as KnownChainId) == "") {
+              const api = await getApi(chain.id as KnownChainId, [chain], true, {
+                enable: false,
+                smoldot: this.smoldotClient,
+                chainSpecs: {}
+              })
+              return { chain, api }
+            } else {
+              const api = await getApi(chain.id as KnownChainId, [chain], true, {
+                enable: true,
+                smoldot: this.smoldotClient,
+                chainSpecs
+              })
+              return { chain, api }
+            }
           } catch (error) {
             throw new Error(
               `Failed to initialize API for ${chain.id}: ${error instanceof Error ? error.message : String(error)}`
