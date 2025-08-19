@@ -1,3 +1,5 @@
+import { chainSpec as kusamaSpec } from "polkadot-api/chains/ksmcc3"
+import { chainSpec as kusamaAssetHubSpec } from "polkadot-api/chains/ksmcc3_asset_hub"
 import { chainSpec as paseoSpec } from "polkadot-api/chains/paseo"
 import { chainSpec as paseoPeopleSpec } from "polkadot-api/chains/paseo_people"
 import { chainSpec as polkadotSpec } from "polkadot-api/chains/polkadot"
@@ -35,10 +37,12 @@ export function getChainSpec(
   if (cachedSpec) {
     return cachedSpec
   }
+
   // Get spec from registry
-  const chainSpec = specRegistry[chainId]
+  let chainSpec = specRegistry[chainId]
+
   if (!chainSpec) {
-    throw new Error(`Unknown chain: ${chainId} is not registered in the specification registry`)
+    chainSpec = ""
   }
 
   // Cache and return the result
@@ -75,6 +79,8 @@ export function specRegistry(): Partial<Record<ChainId, string>> {
     polkadot_asset_hub: polkadotAssetHubSpec,
     west_asset_hub: westAssetHubSpec,
     paseo: paseoSpec,
-    paseo_people: paseoPeopleSpec
+    paseo_people: paseoPeopleSpec,
+    kusama: kusamaSpec,
+    kusama_asset_hub: kusamaAssetHubSpec
   }
 }

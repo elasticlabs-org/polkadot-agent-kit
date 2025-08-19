@@ -93,6 +93,20 @@ export const paseoChain = createChain({
   symbol: "PAS"
 })
 
+export const paseoAssetHubChain = createChain({
+  id: "paseo_asset_hub",
+  name: "AssetHubPaseo",
+  specName: "asset-hub-paseo",
+  wsUrls: ["wss://asset-hub-paseo-rpc.n.dwellir.com"],
+  relay: "paseo",
+  type: "system",
+  chainId: 1000,
+  blockExplorerUrl: "https://assethub-paseo.subscan.io/",
+  prefix: 0,
+  decimals: 10,
+  symbol: "PAS"
+})
+
 export const paseoPeopleChain = createChain({
   id: "paseo_people",
   name: "PeoplePaseo",
@@ -108,8 +122,8 @@ export const paseoPeopleChain = createChain({
 })
 
 export const bifrostPolkadotChain = createChain({
-  id: "bifrost",
-  name: "Bifrost",
+  id: "bifrost_polkadot",
+  name: "BifrostPolkadot",
   specName: "bifrost",
   wsUrls: ["wss://bifrost-polkadot.dotters.network"],
   relay: "polkadot",
@@ -119,4 +133,32 @@ export const bifrostPolkadotChain = createChain({
   prefix: 6,
   decimals: 12,
   symbol: "BNC"
+})
+
+export const kusamaChain = createChain({
+  id: "kusama",
+  name: "Kusama",
+  specName: "kusama",
+  wsUrls: ["wss://kusama-rpc.n.dwellir.com"],
+  relay: "kusama",
+  type: "relay",
+  chainId: 0,
+  blockExplorerUrl: "https://kusama.subscan.io",
+  prefix: 2,
+  decimals: 12,
+  symbol: "KSM"
+})
+
+export const kusamaAssetHubChain = createChain({
+  id: "kusama_asset_hub",
+  name: "AssetHubKusama",
+  specName: "asset-hub-kusama",
+  wsUrls: ["wss://asset-hub-kusama-rpc.n.dwellir.com"],
+  relay: "kusama",
+  type: "system",
+  chainId: 1000,
+  blockExplorerUrl: "https://assethub-kusama.subscan.io",
+  prefix: 2,
+  decimals: 12,
+  symbol: "KSM"
 })

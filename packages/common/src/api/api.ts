@@ -65,11 +65,10 @@ export const getApiInner = async <Id extends ChainId>(
 
     // Create the actual Promise
     const readyPromise = new Promise<void>((resolve, reject) => {
-      // Set default timeout (30 seconds)
       const timeoutId = setTimeout(() => {
         if (subscription) subscription.unsubscribe()
-        reject(new Error("Connection timeout after 45000ms"))
-      }, 45000)
+        reject(new Error("Connection timeout after 90000ms"))
+      }, 90000)
 
       // Set up subscription with cleanup
       subscription = client.bestBlocks$.subscribe({
