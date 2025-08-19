@@ -1,5 +1,17 @@
 # @polkadot-agent-kit/common
 
+## 1.1.3
+
+### Patch Changes
+
+- Fix Release package
+
+## 1.1.2
+
+### Patch Changes
+
+- add polkadot testnet support and mnemonic phrase
+
 ## 1.1.1
 
 ### Patch Changes

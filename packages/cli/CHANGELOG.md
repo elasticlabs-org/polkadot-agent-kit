@@ -1,5 +1,27 @@
 # @polkadot-agent-kit/cli
 
+## 1.1.3
+
+### Patch Changes
+
+- Fix Release package
+- Updated dependencies
+  - @polkadot-agent-kit/common@1.1.3
+  - @polkadot-agent-kit/core@1.1.3
+  - @polkadot-agent-kit/llm@1.1.3
+  - @polkadot-agent-kit/sdk@1.1.3
+
+## 1.1.2
+
+### Patch Changes
+
+- add polkadot testnet support and mnemonic phrase
+- Updated dependencies
+  - @polkadot-agent-kit/common@1.1.2
+  - @polkadot-agent-kit/core@1.1.2
+  - @polkadot-agent-kit/llm@1.1.2
+  - @polkadot-agent-kit/sdk@1.1.2
+
 ## 1.1.1
 
 ### Patch Changes
