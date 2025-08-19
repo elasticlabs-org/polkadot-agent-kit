@@ -9,7 +9,8 @@ import {
   polkadot,
   polkadot_asset_hub,
   west,
-  west_asset_hub} from "@polkadot-api/descriptors"
+  west_asset_hub
+} from "@polkadot-api/descriptors"
 
 import {
   bifrostPolkadotChain,
@@ -21,7 +22,8 @@ import {
   polkadotAssetHubChain,
   polkadotChain,
   westendAssetHubChain,
-  westendChain} from "./supported-chains"
+  westendChain
+} from "./supported-chains"
 type DescriptorsRelayType = {
   polkadot: typeof polkadot
   west: typeof west
