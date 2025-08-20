@@ -1,6 +1,5 @@
 import typescript from '@rollup/plugin-typescript';
 import json from '@rollup/plugin-json';
-import dts from 'rollup-plugin-dts';
 
 const config = [
   // ES Module build
@@ -21,11 +20,8 @@ const config = [
     ],
     external: [
       '@modelcontextprotocol/sdk',
-      '@polkadot-agent-kit/common',
-      '@polkadot-agent-kit/core',
       '@polkadot-agent-kit/llm',
       '@polkadot-agent-kit/sdk',
-      'polkadot-api',
       'zod',
     ],
   },
@@ -47,10 +43,7 @@ const config = [
     ],
     external: [
       '@modelcontextprotocol/sdk',
-      '@polkadot-agent-kit/common',
-      '@polkadot-agent-kit/core',
       '@polkadot-agent-kit/llm', 
-      'polkadot-api',
       'zod',
     ],
   }
