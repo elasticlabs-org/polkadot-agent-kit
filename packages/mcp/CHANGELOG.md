@@ -1,5 +1,11 @@
 # @polkadot-agent-kit/mcp
 
+## 1.1.5
+
+### Patch Changes
+
+- update rollup build for mcp package
+
 ## 1.1.4
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@polkadot-agent-kit/mcp",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "Model Context Protocol server for Polkadot Agent Kit",
   "repository": {
     "type": "git",
@@ -9,6 +9,9 @@
   },
   "license": "MIT",
   "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -42,6 +45,7 @@
   "devDependencies": {
     "@rollup/plugin-typescript": "^12.1.2",
     "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-babel": "^6.0.4",
     "rollup": "^4.37.0",
     "rollup-plugin-dts": "^6.2.1"
   }
