@@ -1,5 +1,11 @@
 # @polkadot-agent-kit/mcp
 
+## 1.1.4
+
+### Patch Changes
+
+- Refactor mcp -> convert polkadot agent kit tool to mcp tools
+
 ## 1.1.3
 
 ### Patch Changes
