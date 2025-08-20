@@ -29,16 +29,14 @@
     "lint:check": "eslint src",
     "lint": "eslint --fix src",
     "format:check": "prettier --check src",
-    "format:write": "prettier --write src",
-    "start": "node dist/index.mjs"
+    "format:write": "prettier --write src"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.6.1",
     "zod": "^3.22.4",
     "zod-to-json-schema": "^3.24.3",
     "@polkadot-agent-kit/llm": "workspace:*",
-    "@polkadot-agent-kit/sdk": "workspace:*",
-    "polkadot-api": "^1.9.13"
+    "@polkadot-agent-kit/sdk": "workspace:*"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^12.1.2",
