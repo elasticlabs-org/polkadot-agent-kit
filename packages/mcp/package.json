@@ -36,7 +36,8 @@
     "zod": "^3.22.4",
     "zod-to-json-schema": "^3.24.3",
     "@polkadot-agent-kit/llm": "workspace:*",
-    "@polkadot-agent-kit/sdk": "workspace:*"
+    "@polkadot-agent-kit/sdk": "workspace:*",
+    "dotenv": "^16.5.0"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^12.1.2",
