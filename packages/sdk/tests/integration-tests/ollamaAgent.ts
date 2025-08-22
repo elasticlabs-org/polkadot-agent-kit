@@ -39,6 +39,7 @@ export class OllamaAgent {
       agent: agentPrompt,
       tools: tools as any,
       verbose: true,
+      returnIntermediateSteps: true,
     });
 
     await sleep(2000);
