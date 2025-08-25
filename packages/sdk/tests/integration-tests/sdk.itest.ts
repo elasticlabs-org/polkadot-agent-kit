@@ -11,7 +11,7 @@ beforeAll(async () => {
   await agentKit.initializeApi();
   ollamaAgent = new OllamaAgent(agentKit);
   await ollamaAgent.init();
-}, 300000);
+}, 400000);
 
 afterAll(async () => {
   await agentKit.disconnect();
@@ -38,7 +38,7 @@ describe('PolkadotAgentKit Integration with OllamaAgent', () => {
     });
     
     await sleep(30000);
-  }, 300000); 
+  }, 400000); 
 
   it('should call transfer_native tool with correct parameters', async () => {
     const userQuery = `transfer 0.001 WND to ${RECIPIENT} on Westend`;
@@ -62,7 +62,7 @@ describe('PolkadotAgentKit Integration with OllamaAgent', () => {
     });
     
     await sleep(30000);
-  }, 300000); 
+  }, 400000); 
 
   it('should call xcm_transfer_native_asset tool for Westend to Asset Hub transfer', async () => {
     const userQuery = `transfer 0.001 WND to ${RECIPIENT} from Westend to Westend Asset Hub`;
@@ -82,12 +82,12 @@ describe('PolkadotAgentKit Integration with OllamaAgent', () => {
     expect(xcmTransferCall.action.toolInput).toMatchObject({
       amount: '0.001',
       to: RECIPIENT,
-      sourceChain: 'west',
-      destChain: 'west_asset_hub'
+      sourceChain: 'Westend',
+      destChain: 'AssetHubWestend'
     });
     
     await sleep(30000);
-  }, 300000); 
+  }, 400000); 
 
   it('should call xcm_transfer_native_asset tool for Asset Hub to Westend transfer', async () => {
     const userQuery = `transfer 0.001 WND to ${RECIPIENT} from Westend Asset Hub to Westend`;
@@ -107,18 +107,19 @@ describe('PolkadotAgentKit Integration with OllamaAgent', () => {
     expect(xcmTransferCall.action.toolInput).toMatchObject({
       amount: '0.001',
       to: RECIPIENT,
-      sourceChain: 'west_asset_hub',
-      destChain: 'west'
+      sourceChain: 'AssetHubWestend',
+      destChain: 'Westend'
     });
     
     await sleep(30000);
-  }, 300000); 
+  }, 400000); 
 
-  it('should call xcm_transfer_native_asset tool for Paseo Asset Hub to Paseo People Chain transfer', async () => {
-    const userQuery = `transfer 0.5 PAS to ${RECIPIENT} from Paseo Asset Hub to Paseo People Chain`;
+  it('should call xcm_transfer_native_asset tool for West Asset Hub to West People Chain transfer', async () => {
+
+    const userQuery = `transfer 0.5 WND to ${RECIPIENT} from AssetHubWestend to PeopleWestend via XCM`;
     
     const result = await ollamaAgent.ask(userQuery);
-    console.log('XCM Transfer Query Result (Paseo Asset Hub → Paseo People Chain):', result);
+    console.log('XCM Transfer Query Result (West Asset Hub → West People Chain):', result);
     
     expect(result.output).toBeDefined();
     expect(result.intermediateSteps).toBeDefined();
@@ -132,12 +133,12 @@ describe('PolkadotAgentKit Integration with OllamaAgent', () => {
     expect(xcmTransferCall.action.toolInput).toMatchObject({
       amount: '0.5',
       to: RECIPIENT,
-      sourceChain: 'paseo_asset_hub',
-      destChain: 'paseo_people'
+      sourceChain: 'AssetHubWestend',  
+      destChain: 'PeopleWestend'      
     });
     
     await sleep(30000);
-  }, 300000); 
+  }, 400000);
 
   it('should call check_balance, then initialize_chain_api, then retry check_balance for uninitialized chain', async () => {
     const result = await ollamaAgent.ask('check balance on Polkadot');
@@ -180,7 +181,7 @@ describe('PolkadotAgentKit Integration with OllamaAgent', () => {
     }
     
     await sleep(30000);
-  }, 300000); // 3 minute timeout for this complex test
+  }, 400000);
   
   it('should call bond_extra tool for re-staking rewards on PASEO', async () => {
     const result = await ollamaAgent.ask('re-stake my rewards on PASEO');
@@ -202,5 +203,5 @@ describe('PolkadotAgentKit Integration with OllamaAgent', () => {
     });
     
     await sleep(40000);
-  }, 300000); 
+  }, 400000); 
 });

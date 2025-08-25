@@ -1,8 +1,7 @@
+import { getNativeAssets } from "@paraspell/assets"
 import type { TDestination, TNodeDotKsmWithRelayChains, TPapiTransaction } from "@paraspell/sdk"
 import { Builder } from "@paraspell/sdk"
-import type { KnownChainId } from "@polkadot-agent-kit/common"
-import { getAllSupportedChains, getChainById } from "@polkadot-agent-kit/common"
-
+import { parseUnits } from "@polkadot-agent-kit/common"
 /**
  * Builds an XCM transaction to transfer a native asset from one chain to another.
  *
@@ -29,21 +28,21 @@ import { getAllSupportedChains, getChainById } from "@polkadot-agent-kit/common"
  */
 
 export const xcmTransferNativeAsset = async (
-  srcChain: KnownChainId,
-  destChain: KnownChainId,
+  srcChain: string,
+  destChain: string,
   from: string,
   to: string,
-  amount: bigint
+  amount: string
 ): Promise<TPapiTransaction> => {
-  const sourceChain = getChainById(srcChain, getAllSupportedChains())
-  const destinationChain = getChainById(destChain, getAllSupportedChains())
-  const url = sourceChain.wsUrls
+  const nativeSymbol = getNativeAssets(srcChain as TNodeDotKsmWithRelayChains)
+  const decimals = nativeSymbol[0].decimals || 10
+  const parsedAmount = parseUnits(amount, decimals)
   // XCM transfer native tokken
-  const tx = await Builder(url)
-    .from(sourceChain.name as TNodeDotKsmWithRelayChains)
+  const tx = await Builder()
+    .from(srcChain as TNodeDotKsmWithRelayChains)
     .senderAddress(from)
-    .to(destinationChain.name as TDestination)
-    .currency({ symbol: sourceChain.symbol, amount: amount })
+    .to(destChain as TDestination)
+    .currency({ symbol: nativeSymbol[0].symbol, amount: parsedAmount })
     .address(to)
     .build()
 
