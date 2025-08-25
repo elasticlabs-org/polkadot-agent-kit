@@ -7,8 +7,16 @@ import { ToolNames } from "./common"
 export const xcmTransferNativeAssetSchema = z.object({
   amount: z.string().describe("The amount of tokens to transfer"),
   to: z.string().describe("The address to transfer the tokens to"),
-  sourceChain: z.string().describe("The source chain to transfer the tokens from"),
-  destChain: z.string().describe("The destination chain to transfer the tokens to")
+  sourceChain: z
+    .string()
+    .describe(
+      "The source chain in ParaSpell format (e.g., 'AssetHubWestend', 'PeopleWestend', 'Polkadot')"
+    ),
+  destChain: z
+    .string()
+    .describe(
+      "The destination chain in ParaSpell format (e.g., 'AssetHubWestend', 'PeopleWestend', 'Polkadot')"
+    )
 })
 
 /**
@@ -17,7 +25,7 @@ export const xcmTransferNativeAssetSchema = z.object({
  * @example
  * ```typescript
  * const xcmTransferNativeAssetTool: XcmTransferNativeAssetTool = xcmTransferNativeAssetTool(apis);
- * const result = await xcmTransferNativeAssetTool.invoke({ amount: "1.5", to: "address", sourceChain: "polkadot", destChain: "AssetHub" });
+ * const result = await xcmTransferNativeAssetTool.invoke({ amount: "1.5", to: "address", sourceChain: "Polkadot", destChain: "AssetHubPolkadot" });
  * ```
  */
 export type XcmTransferNativeAssetTool = DynamicStructuredTool<typeof xcmTransferNativeAssetSchema>

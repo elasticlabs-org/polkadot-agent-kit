@@ -83,8 +83,8 @@ The `getLangChainTools()` function provides 11 ready-to-use LangChain tools for 
   { 
     amount: "10",
     to: "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
-    sourceChain: "polkadot",
-    destChain: "polkadot_asset_hub"
+    sourceChain: "Polkadot",
+    destChain: "AssetHubPolkadot"
   }
   ```
 

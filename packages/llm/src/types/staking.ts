@@ -43,11 +43,14 @@ export const joinPoolToolSchema = z.object({
 export const bondExtraToolSchema = z
   .object({
     type: z.enum(["FreeBalance", "Rewards"]).describe("Type of bonding operation"),
-    amount: z.string().optional().describe("Amount to bond (required for FreeBalance)"),
+    amount: z
+      .string()
+      .optional()
+      .describe("Amount to bond (only needed for FreeBalance type, not for Rewards)"),
     chain: z.string().describe("Chain name")
   })
   .describe(
-    "Bonds extra funds to a nomination pool. Use 'FreeBalance' to bond a specific amount from your wallet, or 'Rewards' to re-stake your earned rewards."
+    "Bonds extra funds to a nomination pool. Use 'FreeBalance' to bond a specific amount from your wallet, or 'Rewards' to re-stake ALL earned rewards (no amount needed)."
   )
 
 /**

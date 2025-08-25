@@ -18,7 +18,7 @@ export function setupHandlers(
         '- Transferring native tokens  (e.g., "transfer 1 token to westend_asset_hub to 5CSox4ZSN4SGLKUG9NYPtfVK9sByXLtxP4hmoF4UgkM4jgDJ")\n' +
         '- Checking balance (e.g., "check balance on west/polkadot/kusama")\n' +
         '- Checking proxies (e.g., "check proxies on westend" or "check proxies")\n' +
-        '- Transfer tokens through XCM (e.g., "transfer 1 WND to 5CSox4ZSN4SGLKUG9NYPtfVK9sByXLtxP4hmoF4UgkM4jgDJ from west to westend_asset_hub ")\n' +
+        '- Transfer tokens through XCM (e.g., "transfer 1 WND to 5CSox4ZSN4SGLKUG9NYPtfVK9sByXLtxP4hmoF4UgkM4jgDJ from Westend to AssetHubWestend ")\n' +
         '- Register identity on People Chain (e.g., "register identity display=\"Gemini AI\" web=\"https://gemini.google.com\" twitter=\"@GoogleAI\" github=\"google\"")' +
         '- Bonding to a pool (e.g., "bond 100 DOT on Polkadot")\n' +
         '- Re-staking rewards (e.g., "re-stake my rewards on Paseo")\n' +
