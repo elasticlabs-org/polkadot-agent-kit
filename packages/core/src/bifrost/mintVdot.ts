@@ -1,5 +1,4 @@
 import { bifrostPolkadotChain, getParaChainClient } from "@polkadot-agent-kit/common"
-import { bifrost_polkadot } from "@polkadot-api/descriptors"
 import { Binary } from "polkadot-api"
 
 import type { Tx } from "../types"
@@ -17,7 +16,7 @@ import type { Tx } from "../types"
 
 export const mintVDot = async (amount: bigint): Promise<Tx> => {
   const client = await getParaChainClient(bifrostPolkadotChain, {})
-  const api = client.getTypedApi(bifrost_polkadot)
+  const api = client.getUnsafeApi()
 
   return api.tx.VtokenMinting.mint({
     currency_id: { type: "Token2", value: 0 },

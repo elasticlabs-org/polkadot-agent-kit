@@ -27,22 +27,35 @@ export const getPoolInfo = async (
   poolId: number
 ): Promise<PoolInfo | null> => {
   try {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const poolInfo = await api.query.NominationPools.BondedPools.getValue(poolId)
 
     if (!poolInfo) {
       return null
     }
 
+    const typedPoolInfo = poolInfo as {
+      state: { type: string }
+      points: bigint
+      member_counter: number
+      roles: {
+        depositor: string
+        root?: string
+        nominator?: string
+        bouncer?: string
+      }
+    }
+
     return {
       id: poolId,
-      state: poolInfo.state.type,
-      points: poolInfo.points,
-      memberCounter: poolInfo.member_counter,
+      state: typedPoolInfo.state.type,
+      points: typedPoolInfo.points,
+      memberCounter: typedPoolInfo.member_counter,
       roles: {
-        depositor: poolInfo.roles.depositor,
-        root: poolInfo.roles.root,
-        nominator: poolInfo.roles.nominator,
-        bouncer: poolInfo.roles.bouncer
+        depositor: typedPoolInfo.roles.depositor,
+        root: typedPoolInfo.roles.root,
+        nominator: typedPoolInfo.roles.nominator,
+        bouncer: typedPoolInfo.roles.bouncer
       }
     }
   } catch (error) {
