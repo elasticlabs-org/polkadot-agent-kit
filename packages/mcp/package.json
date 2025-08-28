@@ -1,6 +1,6 @@
 {
   "name": "@polkadot-agent-kit/mcp",
-  "version": "1.1.5",
+  "version": "2.0.0",
   "description": "Model Context Protocol server for Polkadot Agent Kit",
   "repository": {
     "type": "git",

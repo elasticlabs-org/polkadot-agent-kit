@@ -1,5 +1,38 @@
 # @polkadot-agent-kit/core
 
+## 2.0.0
+
+### Major Changes
+
+- - Remove PAPI dependency and migrate to unsafe type API
+  - Update chain configurations to use unsafe type API
+  - Simplify CLI agent implementation by removing custom tool definitions
+  - Remove PAPI CI workflow and related dependencies
+  - Improve build performance and reduce bundle size
+
+### Patch Changes
+
+- Updated dependencies
+  - @polkadot-agent-kit/common@2.0.0
+
+## 1.2.0
+
+### Breaking Changes
+
+- Remove PAPI dependency and migrate to unsafe type API
+- Update chain configurations to use unsafe type API
+
+### Features
+
+- Improved performance with unsafe type API
+- Better flexibility in API interactions
+- Updated nomination pool operations
+
+### Patch Changes
+
+- Updated dependencies
+  - @polkadot-agent-kit/common@1.2.0
+
 ## 1.1.3
 
 ### Patch Changes
