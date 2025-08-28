@@ -29,9 +29,6 @@ jobs:
       - name: Install dependencies
         run: |
           pnpm install
-      - name: Generate Polkadot API descriptors
-        run: |
-          pnpm papi
       - name: Build
         run: |
           pnpm build

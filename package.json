@@ -56,8 +56,7 @@
     "build:sdk": "pnpm --filter \"./packages/sdk\" build",
     "build:llm": "pnpm --filter \"./packages/llm\" build",
     "version-packages": "changeset version",
-    "publish-packages": "turbo run build && changeset publish",
-    "papi": "papi generate"
+    "publish-packages": "turbo run build && changeset publish"
   },
   "packageManager": "pnpm@10.6.5",
   "dependencies": {
