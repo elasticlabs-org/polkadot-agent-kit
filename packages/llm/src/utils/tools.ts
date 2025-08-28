@@ -1,6 +1,5 @@
 import type { KnownChainId } from "@polkadot-agent-kit/common"
-import { convertAddress, toMultiAddress } from "@polkadot-agent-kit/core"
-import type { MultiAddress } from "@polkadot-api/descriptors"
+import { convertAddress } from "@polkadot-agent-kit/core"
 import type { ZodType } from "zod"
 
 import type { Action, ToolError, ToolResponse } from "../types"
@@ -19,14 +18,6 @@ export const validateAndFormatAddress = (address: string, chain: KnownChainId): 
     throw new InvalidAddressError(address)
   }
   return formattedAddress
-}
-
-export const validateAndFormatMultiAddress = (
-  address: string,
-  chain: KnownChainId
-): MultiAddress => {
-  const formattedAddress = validateAndFormatAddress(address, chain)
-  return toMultiAddress(formattedAddress)
 }
 
 /**

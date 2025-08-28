@@ -1,19 +1,6 @@
 import {
-  bifrost_polkadot,
-  hydra,
-  kusama,
-  kusama_asset_hub,
-  paseo,
-  paseo_asset_hub,
-  paseo_people,
-  polkadot,
-  polkadot_asset_hub,
-  west,
-  west_asset_hub
-} from "@polkadot-api/descriptors"
-
-import {
   bifrostPolkadotChain,
+  hydraChain,
   kusamaAssetHubChain,
   kusamaChain,
   paseoAssetHubChain,
@@ -24,76 +11,49 @@ import {
   westendAssetHubChain,
   westendChain
 } from "./supported-chains"
-type DescriptorsRelayType = {
-  polkadot: typeof polkadot
-  west: typeof west
-  paseo: typeof paseo
-  kusama: typeof kusama
-}
 
-type DescriptorsAssetHubType = {
-  polkadot_asset_hub: typeof polkadot_asset_hub
-  west_asset_hub: typeof west_asset_hub
-  kusama_asset_hub: typeof kusama_asset_hub
-  paseo_asset_hub: typeof paseo_asset_hub
-}
-
-type DescriptorsParaType = {
-  hydra: typeof hydra
-  paseo_people: typeof paseo_people
-  bifrost_polkadot: typeof bifrost_polkadot
-}
-
-const DESCRIPTORS_RELAY: DescriptorsRelayType = {
-  polkadot,
-  west,
-  paseo,
-  kusama
-}
-
-const DESCRIPTORS_ASSET_HUB: DescriptorsAssetHubType = {
-  polkadot_asset_hub,
-  west_asset_hub,
-  kusama_asset_hub,
-  paseo_asset_hub
-}
-
-const DESCRIPTORS_PARA: DescriptorsParaType = {
-  hydra,
-  paseo_people,
-  bifrost_polkadot
-}
-
-export const DESCRIPTORS_ALL = {
-  ...DESCRIPTORS_RELAY,
-  ...DESCRIPTORS_ASSET_HUB,
-  ...DESCRIPTORS_PARA
-}
-
-type DescriptorsAssetHub = typeof DESCRIPTORS_ASSET_HUB
-type DescriptorsRelay = typeof DESCRIPTORS_RELAY
-type DescriptorsPara = typeof DESCRIPTORS_PARA
-export type DescriptorsAll = DescriptorsRelay & DescriptorsAssetHub & DescriptorsPara
-
-export type ChainIdAssetHub = keyof DescriptorsAssetHub
-export type ChainIdRelay = keyof DescriptorsRelay
-export type ChainIdPara = keyof DescriptorsParaType
+export type ChainIdRelay = "polkadot" | "west" | "paseo" | "kusama"
+export type ChainIdAssetHub =
+  | "polkadot_asset_hub"
+  | "west_asset_hub"
+  | "kusama_asset_hub"
+  | "paseo_asset_hub"
+export type ChainIdPara = "hydra" | "paseo_people" | "bifrost_polkadot"
 export type KnownChainId = ChainIdRelay | ChainIdAssetHub | ChainIdPara
 type UnKnownChainId = string & {}
 export type ChainId = KnownChainId | UnKnownChainId
 
-export const isChainIdAssetHub = (id: unknown): id is ChainIdAssetHub =>
-  typeof id === "string" && !!DESCRIPTORS_ASSET_HUB[id as ChainIdAssetHub]
-export const isChainIdRelay = (id: unknown): id is ChainIdRelay =>
-  typeof id === "string" && !!DESCRIPTORS_RELAY[id as ChainIdRelay]
+const KNOWN_CHAINS: Record<string, true> = {
+  polkadot: true,
+  west: true,
+  paseo: true,
+  kusama: true,
+  polkadot_asset_hub: true,
+  west_asset_hub: true,
+  kusama_asset_hub: true,
+  paseo_asset_hub: true,
+  hydra: true,
+  paseo_people: true,
+  bifrost_polkadot: true
+}
 
-export type Descriptors<Id extends KnownChainId> = DescriptorsAll[Id]
+export const isKnownChainId = (id: string): id is KnownChainId => {
+  return id in KNOWN_CHAINS
+}
 
-export const getDescriptors = (id: ChainId): Descriptors<KnownChainId> | undefined => {
-  if (DESCRIPTORS_ALL[id as KnownChainId]) {
-    return DESCRIPTORS_ALL[id as KnownChainId]
-  }
-  return undefined
+export const isChainIdAssetHub = (id: unknown): id is ChainIdAssetHub => {
+  const assetHubChains: ChainIdAssetHub[] = [
+    "polkadot_asset_hub",
+    "west_asset_hub",
+    "kusama_asset_hub",
+    "paseo_asset_hub"
+  ]
+  return typeof id === "string" && assetHubChains.includes(id as ChainIdAssetHub)
+}
+
+export const isChainIdRelay = (id: unknown): id is ChainIdRelay => {
+  const relayChains: ChainIdRelay[] = ["polkadot", "west", "paseo", "kusama"]
+  return typeof id === "string" && relayChains.includes(id as ChainIdRelay)
 }
 
 export type Chain = {
@@ -134,6 +94,7 @@ const SUPPORTED_CHAINS: Chain[] = [
   paseoChain,
   paseoPeopleChain,
   bifrostPolkadotChain,
+  hydraChain,
   kusamaChain,
   kusamaAssetHubChain,
   paseoAssetHubChain

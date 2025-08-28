@@ -24,17 +24,28 @@ export const getPoolMembers = async (
   try {
     const poolMemberEntries = await api.query.NominationPools.PoolMembers.getEntries()
 
-    return poolMemberEntries
+    type PoolMemberEntry = {
+      keyArgs: unknown[]
+      value: {
+        pool_id: number
+        points: bigint
+        last_recorded_reward_counter: bigint
+        unbonding_eras: Array<[number, bigint]>
+      } | null
+    }
+
+    return (poolMemberEntries as PoolMemberEntry[])
       .filter(({ value }) => value && value.pool_id === poolId)
       .map(({ keyArgs, value }) => {
         const account = keyArgs[0] as string
+        const typedValue = value!
 
         return {
           account,
-          poolId: value.pool_id,
-          points: value.points,
-          lastRecordedRewardCounter: value.last_recorded_reward_counter,
-          unbondingEras: value.unbonding_eras.map(([era, value]) => ({
+          poolId: typedValue.pool_id,
+          points: typedValue.points,
+          lastRecordedRewardCounter: typedValue.last_recorded_reward_counter,
+          unbondingEras: typedValue.unbonding_eras.map(([era, value]: [number, bigint]) => ({
             era,
             value
           }))

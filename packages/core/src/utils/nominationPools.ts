@@ -23,7 +23,23 @@ const getAllPoolsInfo = async (api: Api<ChainIdRelay>): Promise<PoolInfo[]> => {
     if (!allPoolEntries) {
       return []
     }
-    return allPoolEntries.map(entry => {
+
+    type PoolEntry = {
+      keyArgs: [number]
+      value: {
+        state: { type: string }
+        points: bigint
+        member_counter: number
+        roles: {
+          depositor: string
+          root?: string
+          nominator?: string
+          bouncer?: string
+        }
+      }
+    }
+
+    return (allPoolEntries as PoolEntry[]).map(entry => {
       const poolId = entry.keyArgs[0]
       const poolInfo = entry.value
       return {

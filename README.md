@@ -43,19 +43,16 @@ cd polkadot-agent-kit
 # 2. Install all dependencies
 pnpm install
 
-# 3. Generate Polkadot API types (required before building)
-pnpm papi
-
-# 4. Build all packages
+# 3. Build all packages
 pnpm run build
 
-# 5. Run unit tests across all packages
+# 4. Run unit tests across all packages
 pnpm run test
 
-# 6. Run end-to-end tests
+# 5. Run end-to-end tests
 pnpm run test:e2e
 
-# 7. Run integration tests (requires Ollama)
+# 6. Run integration tests (requires Ollama)
 pnpm run test:integration
 ```
 

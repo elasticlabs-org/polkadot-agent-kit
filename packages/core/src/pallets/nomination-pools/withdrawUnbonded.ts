@@ -1,5 +1,4 @@
 import type { Api, ChainIdRelay } from "@polkadot-agent-kit/common"
-import type { MultiAddress } from "@polkadot-api/descriptors"
 
 import type { Tx } from "../../types"
 
@@ -12,7 +11,7 @@ import type { Tx } from "../../types"
  */
 export const withdrawUnbondedTx = (
   api: Api<ChainIdRelay>,
-  memberAccount: MultiAddress,
+  memberAccount: string,
   numSlashingSpans: number
 ): Tx => {
   return api.tx.NominationPools.withdraw_unbonded({

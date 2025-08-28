@@ -9,7 +9,7 @@ import type { z } from "zod"
 import type { TransferToolResult, transferToolSchema } from "../types"
 import { ToolNames } from "../types/common"
 import { toolConfigTransferNative } from "../types/transfer"
-import { executeTool, validateAndFormatMultiAddress } from "../utils"
+import { executeTool, validateAndFormatAddress } from "../utils"
 
 /**
  * Returns a tool that transfers native tokens to a specific address
@@ -22,7 +22,7 @@ export const transferNativeTool = (polkadotApi: PolkadotApi, signer: PolkadotSig
       ToolNames.TRANSFER_NATIVE,
       async () => {
         const api = polkadotApi.getApi(chain as KnownChainId)
-        const formattedAddress = validateAndFormatMultiAddress(to, chain as KnownChainId)
+        const formattedAddress = validateAndFormatAddress(to, chain as KnownChainId)
         const parsedAmount = parseUnits(amount, getDecimalsByChainId(chain))
         const tx = await submitTxWithPolkadotSigner(
           transferNativeCall(api, formattedAddress, parsedAmount),

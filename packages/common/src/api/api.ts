@@ -1,14 +1,11 @@
-import { polkadot } from "@polkadot-api/descriptors"
-import type { ChainDefinition, TypedApi } from "polkadot-api"
+import type { RuntimeToken, UnsafeApi } from "polkadot-api"
 
 import {
   type Chain,
   type ChainId,
   type ChainIdAssetHub,
   type ChainIdRelay,
-  type Descriptors,
   getChainById,
-  getDescriptors,
   isChainIdAssetHub,
   isChainIdRelay,
   type KnownChainId
@@ -17,15 +14,13 @@ import { type ClientOptions, getClient } from "../clients/client"
 
 export type LightClients = ClientOptions["lightClients"]
 
-type ApiBase<Id extends ChainId> = Id extends KnownChainId
-  ? // @ts-ignore
-    TypedApi<Descriptors<Id>>
-  : TypedApi<ChainDefinition>
+type ApiBase<Id extends ChainId> = UnsafeApi<Id>
 
 export type Api<Id extends ChainId> = ApiBase<Id> & {
   chainId: Id
   chain: Chain
   waitReady: Promise<void>
+  runtimeToken: Promise<RuntimeToken>
   client?: {
     bestBlocks$?: { complete: () => void }
     disconnect?: () => Promise<void>
@@ -48,12 +43,10 @@ export const getApiInner = async <Id extends ChainId>(
 ): Promise<Api<Id>> => {
   const chain = getChainById(chainId, chains)
 
-  const descriptors = getDescriptors(chain.id)
   const client = await getClient(chainId, chains, { lightClients })
   if (!client) throw new Error(`Could not create client for chain ${chainId}`)
 
-  // @ts-ignore
-  const api = client.getTypedApi(descriptors ?? polkadot) as Api<Id>
+  const api = client.getUnsafeApi() as Api<Id>
 
   api.chainId = chainId as Id
   api.chain = chain
