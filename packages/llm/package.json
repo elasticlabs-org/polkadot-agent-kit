@@ -1,6 +1,6 @@
 {
   "name": "@polkadot-agent-kit/llm",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "SDK LLM for Polkadot Agent Kit",
   "repository": {
     "type": "git",
@@ -9,6 +9,9 @@
   },
   "license": "MIT",
   "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",

@@ -1,5 +1,26 @@
 # @polkadot-agent-kit/cli
 
+## 2.0.3
+
+### Patch Changes
+
+- fix package
+- fix bug cli
+- Updated dependencies
+  - @polkadot-agent-kit/common@2.0.2
+  - @polkadot-agent-kit/llm@2.0.2
+  - @polkadot-agent-kit/sdk@2.0.2
+
+## 2.0.1
+
+### Patch Changes
+
+- Fix dependency conflicts and resolve CLI startup issues
+- Remove unused @polkadot-agent-kit/core dependency from CLI package
+- Add @galacticcouncil/api-augment dependency for XCM router compatibility
+- Update rollup configuration to remove core package from externals
+- Resolve "Cannot find module '@galacticcouncil/api-augment/hydradx'" error
+
 ## 2.0.0
 
 ### Major Changes

@@ -1,36 +1,11 @@
 import typescript from '@rollup/plugin-typescript';
 import json from '@rollup/plugin-json';
 import { babel } from '@rollup/plugin-babel';
-import dts from 'rollup-plugin-dts';
+import * as fs from 'node:fs'
 
-const external = [
-  '@polkadot-agent-kit/sdk',
-  '@polkadot-agent-kit/llm',
-  '@polkadot-agent-kit/core',
-  '@polkadot-agent-kit/common',
-  'commander',
-  'inquirer',
-  'chalk',
-  'ora',
-  'zod',
-  'open',
-  'fs-extra',
-  'lodash',
-  'table',
-  'boxen',
-  'conf',
-  'readline',
-  'path',
-  'os',
-  'fs',
-  'util',
-  'crypto',
-  'events',
-  'stream',
-  'url',
-  'buffer',
-  'process'
-];
+const pkg = JSON.parse(fs.readFileSync('./package.json', 'utf-8'))
+const external = Object.keys(pkg.dependencies ?? {}).concat(['fs/promises'])
+
 
 export default [
   // ES Module build
@@ -38,8 +13,7 @@ export default [
     input: 'src/index.ts',
     output: {
       file: 'dist/index.mjs',
-      format: 'es',
-      sourcemap: true,
+      format: 'esm',
     },
     external,
     plugins: [
@@ -65,8 +39,6 @@ export default [
     output: {
       file: 'dist/index.cjs',
       format: 'cjs',
-      sourcemap: true,
-      exports: 'named',
     },
     external,
     plugins: [
@@ -85,15 +57,5 @@ export default [
         ],
       }),
     ],
-  },
-  // Type definitions
-  {
-    input: 'src/index.ts',
-    output: {
-      file: 'dist/index.d.ts',
-      format: 'es',
-    },
-    external,
-    plugins: [dts()],
   },
 ];

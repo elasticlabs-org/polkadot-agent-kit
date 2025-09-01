@@ -81,7 +81,7 @@ export type CLIConfig = z.infer<typeof CLIConfigSchema>;
 
 // Default configuration
 export const DEFAULT_CONFIG: CLIConfig = {
-  version: "1.0.0",
+  version: "2.0.3",
   llm: {
     defaultProvider: "ollama",
     ollama: {

@@ -159,3 +159,5 @@ package-lock.json
 
 .turbo/
 .changeset/
+
+.rollup.cache

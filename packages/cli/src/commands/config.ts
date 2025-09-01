@@ -266,8 +266,6 @@ function displayConfigTable(config: Record<string, any>): void {
 async function interactiveConfigEdit(
   scope: "global" | "project",
 ): Promise<void> {
-  const config = configManager.getConfig();
-
   const { section } = await inquirer.prompt([
     {
       type: "list",
