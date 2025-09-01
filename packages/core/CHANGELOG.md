@@ -1,5 +1,21 @@
 # @polkadot-agent-kit/core
 
+## 2.0.2
+
+### Patch Changes
+
+- fix package
+- Updated dependencies
+  - @polkadot-agent-kit/common@2.0.2
+
+## 2.0.1
+
+### Patch Changes
+
+- Fix dependency conflicts and remove unused @galacticcouncil/api-augment
+- Clean up package.json dependencies structure
+- Resolve CLI dependency issues
+
 ## 2.0.0
 
 ### Major Changes
@@ -13,7 +29,7 @@
 ### Patch Changes
 
 - Updated dependencies
-  - @polkadot-agent-kit/common@2.0.0
+  - @polkadot-agent-kit/common@2.0.1
 
 ## 1.2.0
 

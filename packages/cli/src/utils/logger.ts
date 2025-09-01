@@ -55,7 +55,6 @@ export class Logger {
     colorFn: any,
     ...args: any[]
   ): void {
-    const timestamp = new Date().toISOString();
     const prefix = this.colors ? colorFn(`[${level}]`) : `[${level}]`;
     const formattedMessage = this.colors ? message : message;
 

@@ -2,6 +2,7 @@
 
 import { Command } from "commander";
 
+import { version } from "../package.json";
 import { agentCommands } from "./commands/agent/index";
 import { configCommand } from "./commands/config";
 import { docsCommand } from "./commands/docs";
@@ -21,7 +22,7 @@ async function main() {
     program
       .name("pak")
       .description("Polkadot Agent Kit CLI - AI Agent Management for Polkadot")
-      .version("1.0.0")
+      .version(version)
       .option("-v, --verbose", "Enable verbose logging")
       .option("--no-color", "Disable colored output")
       .hook("preAction", (thisCommand) => {
@@ -96,12 +97,4 @@ process.on("SIGTERM", () => {
   process.exit(0);
 });
 
-// Start the CLI
-if (
-  import.meta.url === `file://${process.argv[1]}` ||
-  process.argv[1]?.includes("pak.js")
-) {
-  main().catch(handleError);
-}
-
-export { program };
+export { main };

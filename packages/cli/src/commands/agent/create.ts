@@ -10,7 +10,6 @@ import type { AgentMetadata } from "../../types/agent.js";
 import {
   AVAILABLE_TOOLS,
   DEFAULT_SYSTEM_PROMPT,
-  PolkadotAgentConfig,
   TOOL_DESCRIPTIONS,
 } from "../../types/agent.js";
 import type { AgentCreateOptions } from "../../types/commands";

@@ -1,14 +1,26 @@
 # @polkadot-agent-kit/common
 
+## 2.0.2
+
+### Patch Changes
+
+- fix package
+
+## 2.0.1
+
+### Patch Changes
+
+- Fix dependency conflicts and resolve CLI issues
+
 ## 2.0.0
 
 ### Major Changes
 
-  - Remove PAPI dependency and migrate to unsafe type API
-  - Update chain configurations to use unsafe type API
-  - Simplify CLI agent implementation by removing custom tool definitions
-  - Remove PAPI CI workflow and related dependencies
-  - Improve build performance and reduce bundle size
+- Remove PAPI dependency and migrate to unsafe type API
+- Update chain configurations to use unsafe type API
+- Simplify CLI agent implementation by removing custom tool definitions
+- Remove PAPI CI workflow and related dependencies
+- Improve build performance and reduce bundle size
 
 ## 1.2.0
 
