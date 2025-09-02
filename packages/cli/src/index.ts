@@ -98,3 +98,8 @@ process.on("SIGTERM", () => {
 });
 
 export { main };
+
+main().catch((error) => {
+  handleError(error);
+  process.exit(1);
+});

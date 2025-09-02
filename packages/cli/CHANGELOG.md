@@ -1,5 +1,11 @@
 # @polkadot-agent-kit/cli
 
+## 2.0.4
+
+### Patch Changes
+
+- fix: missing call main directly
+
 ## 2.0.3
 
 ### Patch Changes
