@@ -1,16 +1,25 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { PolkadotAgentKit } from '../../src/api';
-import { RECIPIENT, AGENT_PRIVATE_KEY, sleep } from './utils';
+import { RECIPIENT, sleep, getBalance, estimateTransactionFee } from './utils';
 import { OllamaAgent } from './ollamaAgent';
-
+import { transferNativeCall } from '@polkadot-agent-kit/core';
+import { parseUnits, getDecimalsByChainId } from '@polkadot-agent-kit/common';
+import dotenv from 'dotenv';
+dotenv.config({ path: '../../.env' });
 let agentKit: PolkadotAgentKit;
 let ollamaAgent: OllamaAgent;
 
 beforeAll(async () => {
-  agentKit = new PolkadotAgentKit( { privateKey: AGENT_PRIVATE_KEY,  keyType: 'Sr25519', chains: ['paseo','west', 'west_asset_hub'] });
-  await agentKit.initializeApi();
-  ollamaAgent = new OllamaAgent(agentKit);
-  await ollamaAgent.init();
+
+  // Make sure private key 
+  if (process.env.AGENT_PRIVATE_KEY) {
+  agentKit = new PolkadotAgentKit( { privateKey: process.env.AGENT_PRIVATE_KEY,  keyType: 'Sr25519', chains: ['paseo','west', 'west_asset_hub'] });
+    await agentKit.initializeApi();
+    ollamaAgent = new OllamaAgent(agentKit);
+    await ollamaAgent.init();
+  } else {
+    throw new Error('AGENT_PRIVATE_KEY is not set');
+  }
 }, 400000);
 
 afterAll(async () => {
@@ -42,10 +51,15 @@ describe('PolkadotAgentKit Integration with OllamaAgent', () => {
 
   it('should call transfer_native tool with correct parameters', async () => {
     const userQuery = `transfer 0.001 WND to ${RECIPIENT} on Westend`;
-    
+    const balanceRecipientBefore = await getBalance(agentKit.getApi('west'), RECIPIENT);
+    const balanceAgentBefore = await getBalance(agentKit.getApi('west'), agentKit.getCurrentAddress());
     const result = await ollamaAgent.ask(userQuery);
     console.log('Transfer Query Result:', result);
-    
+
+
+    const amount = parseUnits("0.001", getDecimalsByChainId('west'));
+
+    const feeTx = await estimateTransactionFee(await transferNativeCall(agentKit.getApi('west'), RECIPIENT, amount), RECIPIENT);
     expect(result.output).toBeDefined();
     expect(result.intermediateSteps).toBeDefined();
     expect(result.intermediateSteps.length).toBeGreaterThan(0);
@@ -62,11 +76,24 @@ describe('PolkadotAgentKit Integration with OllamaAgent', () => {
     });
     
     await sleep(30000);
+
+    const balanceRecipientAfter = await getBalance(agentKit.getApi('west'), RECIPIENT);
+    expect(balanceRecipientAfter.data.free).toEqual(balanceRecipientBefore.data.free + amount);
+
+    const balanceAgentAfter = await getBalance(agentKit.getApi('west'), agentKit.getCurrentAddress());
+    expect(balanceAgentAfter.data.free).toEqual(balanceAgentBefore.data.free - amount - feeTx);
+
   }, 400000); 
 
   it('should call xcm_transfer_native_asset tool for Westend to Asset Hub transfer', async () => {
-    const userQuery = `transfer 0.001 WND to ${RECIPIENT} from Westend to Westend Asset Hub`;
-    
+    const userQuery = `transfer 0.1 WND to ${RECIPIENT} from Westend to Westend Asset Hub`;
+
+    const balanceAgentBefore = await getBalance(agentKit.getApi('west'), agentKit.getCurrentAddress());
+    // Get balance Recipient Before on Westend Asset Hub
+    const balanceRecipientBefore = await getBalance(agentKit.getApi('west_asset_hub'), RECIPIENT);
+
+    const amount = parseUnits("0.1", getDecimalsByChainId('west'));
+
     const result = await ollamaAgent.ask(userQuery);
     console.log('XCM Transfer Query Result (Westend → Asset Hub):', result);
     
@@ -80,13 +107,18 @@ describe('PolkadotAgentKit Integration with OllamaAgent', () => {
     
     expect(xcmTransferCall).toBeDefined();
     expect(xcmTransferCall.action.toolInput).toMatchObject({
-      amount: '0.001',
+      amount: '0.1',
       to: RECIPIENT,
       sourceChain: 'Westend',
       destChain: 'AssetHubWestend'
     });
-    
+
     await sleep(30000);
+    const balanceRecipientAfter = await getBalance(agentKit.getApi('west_asset_hub'), RECIPIENT);
+    expect(balanceRecipientAfter.data.free).toEqual(balanceRecipientBefore.data.free + amount);
+    const balanceAgentAfter = await getBalance(agentKit.getApi('west'), agentKit.getCurrentAddress());
+    expect(balanceAgentBefore.data.free).toBeLessThan(balanceAgentAfter.data.free - amount);
+
   }, 400000); 
 
   it('should call xcm_transfer_native_asset tool for Asset Hub to Westend transfer', async () => {

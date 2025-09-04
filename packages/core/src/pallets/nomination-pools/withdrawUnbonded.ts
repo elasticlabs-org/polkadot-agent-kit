@@ -1,6 +1,7 @@
 import type { Api, ChainIdRelay } from "@polkadot-agent-kit/common"
 
-import type { Tx } from "../../types"
+
+import { UnsafeTransactionType } from "@polkadot-agent-kit/common"
 
 /**
  * Creates a withdraw unbonded transaction call
@@ -13,7 +14,7 @@ export const withdrawUnbondedTx = (
   api: Api<ChainIdRelay>,
   memberAccount: string,
   numSlashingSpans: number
-): Tx => {
+): UnsafeTransactionType => {
   return api.tx.NominationPools.withdraw_unbonded({
     member_account: memberAccount,
     num_slashing_spans: numSlashingSpans

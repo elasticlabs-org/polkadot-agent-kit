@@ -1,9 +1,6 @@
-import type { PolkadotSigner, TxEvent } from "polkadot-api"
-import type { Observable } from "rxjs"
+import type { PolkadotSigner } from "polkadot-api"
+import { UnsafeTransactionType } from "@polkadot-agent-kit/common"
 
-export interface Tx {
-  signSubmitAndWatch(signer: PolkadotSigner): Observable<TxEvent>
-}
 
 export interface TxResult {
   success: boolean
@@ -22,7 +19,7 @@ export function hasTypeProperty(val: unknown): val is { type: string } {
 }
 
 export interface SubmitAndWatchOptionsPolkadot {
-  transaction: Tx
+  transaction: UnsafeTransactionType
   signer: PolkadotSigner
 }
 
