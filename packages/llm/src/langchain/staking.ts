@@ -1,5 +1,5 @@
 import { tool } from "@langchain/core/tools"
-import type { Api, ChainIdRelay, UnsafeTransactionType} from "@polkadot-agent-kit/common"
+import type { Api, ChainIdRelay, UnsafeTransactionType } from "@polkadot-agent-kit/common"
 import { getAllSupportedChains, getChainById } from "@polkadot-agent-kit/common"
 import type { PolkadotApi } from "@polkadot-agent-kit/core"
 import {

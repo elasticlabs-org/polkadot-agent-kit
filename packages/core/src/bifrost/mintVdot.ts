@@ -1,7 +1,6 @@
+import type { UnsafeTransactionType } from "@polkadot-agent-kit/common"
 import { bifrostPolkadotChain, getParaChainClient } from "@polkadot-agent-kit/common"
 import { Binary } from "polkadot-api"
-
-import { UnsafeTransactionType } from "@polkadot-agent-kit/common"
 
 /**
  * Creates a transaction to mint vDOT tokens by staking DOT on Bifrost

@@ -5,7 +5,7 @@ import {ASSETS_PROMPT, SWAP_PROMPT, NOMINATION_PROMPT, IDENTITY_PROMPT, BIFROST_
 import { UnsafeTransactionType } from "@polkadot-agent-kit/common"
 export const RECIPIENT = '5D7jcv6aYbhbYGVY8k65oemM6FVNoyBfoVkuJ5cbFvbefftr';
 
-export const SYSTEM_PROMPT = ASSETS_PROMPT + SWAP_PROMPT + NOMINATION_PROMPT + IDENTITY_PROMPT + BIFROST_PROMPT;
+export const SYSTEM_PROMPT = ASSETS_PROMPT + SWAP_PROMPT + NOMINATION_PROMPT + IDENTITY_PROMPT + BIFROST_PROMPT + DYNAMIC_CHAIN_INITIALIZATION_PROMPT;
 
 export function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -26,3 +26,4 @@ export async function getBalance(
 ) {
   return await api.query.System.Account.getValue(address);
 }
+

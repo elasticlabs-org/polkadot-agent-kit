@@ -1,7 +1,5 @@
 import type { Api, ChainIdRelay } from "@polkadot-agent-kit/common"
-
-
-import { UnsafeTransactionType } from "@polkadot-agent-kit/common"
+import type { UnsafeTransactionType } from "@polkadot-agent-kit/common"
 
 /**
  * Creates a claim rewards transaction call

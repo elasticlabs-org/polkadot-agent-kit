@@ -1,7 +1,5 @@
 import type { Api, ChainIdRelay } from "@polkadot-agent-kit/common"
-
-
-import { UnsafeTransactionType } from "@polkadot-agent-kit/common"
+import type { UnsafeTransactionType } from "@polkadot-agent-kit/common"
 /**
  * Creates a bond extra transaction call
  * @param api - The API instance to use for the transaction

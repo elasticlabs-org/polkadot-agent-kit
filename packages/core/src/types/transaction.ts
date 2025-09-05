@@ -1,6 +1,5 @@
+import type { UnsafeTransactionType } from "@polkadot-agent-kit/common"
 import type { PolkadotSigner } from "polkadot-api"
-import { UnsafeTransactionType } from "@polkadot-agent-kit/common"
-
 
 export interface TxResult {
   success: boolean

@@ -1,5 +1,5 @@
 export * from "./account"
 export * from "./agent"
 export * from "./smoldot"
-export * from "./xcm"
 export * from "./transaction"
+export * from "./xcm"

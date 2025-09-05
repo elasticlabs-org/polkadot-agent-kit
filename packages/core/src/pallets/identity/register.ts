@@ -1,7 +1,7 @@
 import type { Api, ChainIdPara } from "@polkadot-agent-kit/common"
+import type { UnsafeTransactionType } from "@polkadot-agent-kit/common"
 
 import { getRawOrNone } from "../../types"
-import { UnsafeTransactionType } from "@polkadot-agent-kit/common"
 
 export const registerIdentity = (
   api: Api<ChainIdPara>,

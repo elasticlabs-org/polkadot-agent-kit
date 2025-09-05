@@ -1,29 +1,28 @@
+import type { UnsafeTransactionType } from "@polkadot-agent-kit/common"
 import type { PolkadotSigner, TxEvent } from "polkadot-api"
 
 import type { TxResult } from "../types"
 import type { SubmitAndWatchOptions } from "../types/transaction"
 import { hasTypeProperty, isTxWithPolkadotSigner } from "../types/transaction"
 
-
-import { UnsafeTransactionType } from "@polkadot-agent-kit/common"
-
-
 interface DispatchErrorValue {
   type: string
   value?: { type?: string }
 }
 
-async function submitAndWatchTx(options: SubmitAndWatchOptions, onSign?: () => void,): Promise<TxResult> {
+async function submitAndWatchTx(
+  options: SubmitAndWatchOptions,
+  onSign?: () => void
+): Promise<TxResult> {
   return new Promise((resolve, reject) => {
     try {
       // Handle Tx with PolkadotSigner using signSubmitAndWatch
       if (isTxWithPolkadotSigner(options)) {
         try {
-
           options.transaction.signSubmitAndWatch(options.signer).subscribe({
             next: (event: TxEvent) => {
-              if (event.type === 'signed') {
-                onSign?.();
+              if (event.type === "signed") {
+                onSign?.()
               }
 
               if (event.type === "finalized") {
