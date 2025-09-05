@@ -13,7 +13,9 @@
       "test:watch": {
         "cache": false
       },
-      "test:integration": {},
+      "test:integration": {
+        "cache": false
+      },
       "test:e2e": {},
       "build": {
         "cache": false,
@@ -23,6 +25,7 @@
       "clean": {
         "cache": false
       }
+      
     }
   }
 

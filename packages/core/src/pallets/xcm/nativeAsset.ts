@@ -37,14 +37,27 @@ export const xcmTransferNativeAsset = async (
   const nativeSymbol = getNativeAssets(srcChain as TNodeDotKsmWithRelayChains)
   const decimals = nativeSymbol[0].decimals || 10
   const parsedAmount = parseUnits(amount, decimals)
-  // XCM transfer native tokken
-  const tx = await Builder()
+
+  // Dry run the XCM transfer native token
+  const dryRunTx = await Builder()
     .from(srcChain as TNodeDotKsmWithRelayChains)
     .senderAddress(from)
     .to(destChain as TDestination)
     .currency({ symbol: nativeSymbol[0].symbol, amount: parsedAmount })
     .address(to)
-    .build()
+    .dryRun()
+  if (dryRunTx.origin?.success && dryRunTx.destination?.success) {
+    // XCM transfer native tokken
+    const tx = await Builder()
+      .from(srcChain as TNodeDotKsmWithRelayChains)
+      .senderAddress(from)
+      .to(destChain as TDestination)
+      .currency({ symbol: nativeSymbol[0].symbol, amount: parsedAmount })
+      .address(to)
+      .build()
 
-  return tx
+    return tx
+  } else {
+    throw Error("XCM dry run failed")
+  }
 }

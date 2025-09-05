@@ -1,6 +1,7 @@
 import type { Api, ChainIdPara } from "@polkadot-agent-kit/common"
+import type { UnsafeTransactionType } from "@polkadot-agent-kit/common"
 
-import { getRawOrNone, type Tx } from "../../types"
+import { getRawOrNone } from "../../types"
 
 export const registerIdentity = (
   api: Api<ChainIdPara>,
@@ -13,7 +14,7 @@ export const registerIdentity = (
   twitter?: string,
   github?: string,
   discord?: string
-): Tx => {
+): UnsafeTransactionType => {
   const identityInfo = {
     display: getRawOrNone(display),
     legal: getRawOrNone(legal),

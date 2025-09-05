@@ -22,12 +22,14 @@ export const transferNativeTool = (polkadotApi: PolkadotApi, signer: PolkadotSig
       ToolNames.TRANSFER_NATIVE,
       async () => {
         const api = polkadotApi.getApi(chain as KnownChainId)
+
         const formattedAddress = validateAndFormatAddress(to, chain as KnownChainId)
         const parsedAmount = parseUnits(amount, getDecimalsByChainId(chain))
         const tx = await submitTxWithPolkadotSigner(
           transferNativeCall(api, formattedAddress, parsedAmount),
           signer
         )
+
         if (tx.success) {
           return {
             success: tx.success,

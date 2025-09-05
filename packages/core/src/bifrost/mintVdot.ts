@@ -1,7 +1,6 @@
+import type { UnsafeTransactionType } from "@polkadot-agent-kit/common"
 import { bifrostPolkadotChain, getParaChainClient } from "@polkadot-agent-kit/common"
 import { Binary } from "polkadot-api"
-
-import type { Tx } from "../types"
 
 /**
  * Creates a transaction to mint vDOT tokens by staking DOT on Bifrost
@@ -14,7 +13,7 @@ import type { Tx } from "../types"
  * @returns A transaction object that can be signed and submitted to mint vDOT
  */
 
-export const mintVDot = async (amount: bigint): Promise<Tx> => {
+export const mintVDot = async (amount: bigint): Promise<UnsafeTransactionType> => {
   const client = await getParaChainClient(bifrostPolkadotChain, {})
   const api = client.getUnsafeApi()
 
