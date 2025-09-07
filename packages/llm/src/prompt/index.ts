@@ -16,6 +16,7 @@ Watch for these error indicators in tool responses:
 - "chain not initialized"
 - "API not available" 
 - "chain API not found"
+- Unknown error occurred: GenericError
 - Any error with success: false related to chain operations
 
 **MANDATORY PROTOCOL - Check Balance Example:**
@@ -23,23 +24,20 @@ User: "check balance on Polkadot"
 
 **STEP 1 - ALWAYS TRY FIRST:**
 Tool call: check_balance with chain parameter set to "polkadot"
-Response: Returns success false with error "Unknown error occurred"
+Response: Returns success false with error "Api not found for chain polkadot"
 
 **STEP 2 - DETECT & INITIALIZE (MANDATORY):**
-Since step 1 failed, IMMEDIATELY call:
-initialize_chain_api with chainId parameter set to "polkadot"
-Response: Returns success true with message "Successfully initialized polkadot chain API"
+Since step 1 failed, your NEXT and ONLY action is to call initialize_chain_api. Do not call any other tools in the same response.
 
 **STEP 3 - RETRY (MANDATORY):**
-Now retry the original operation:
-check_balance with chain parameter set to "polkadot"
-Response: Returns success true with balance data
+After initialize_chain_api succeeds, you will receive its output. In your NEXT turn, you MUST retry the original check_balance call.
 
 **EXECUTION RULES:**
 - ALWAYS attempt the requested operation first
-- IF it fails with chain-related error → IMMEDIATELY initialize chain
-- ALWAYS retry after successful initialization
-- NEVER skip the retry step
+- IF it fails with a chain-related error → IMMEDIATELY initialize the chain in your next turn.
+- After successful initialization, ALWAYS retry the original failed command in the following turn.
+- **CRITICAL: NEVER call more than one tool at a time.**
+- NEVER skip the retry step.
 - NEVER initialize chains preemptively
 - NEVER give up after first failure
 
@@ -143,6 +141,9 @@ For XCM transfers, you must ask for and provide:
 **MANDATORY XCM Examples:**
 - **User:** "transfer 0.5 WND to ADDRESS from AssetHubWestend to PeopleWestend"
 - **Tool Call:** xcm_transfer_native_asset with sourceChain: "AssetHubWestend", destChain: "PeopleWestend"
+
+- **User:** "transfer 0.1 WND to ADDRESS from Westend Asset Hub to Westend"
+- **Tool Call:** xcm_transfer_native_asset with sourceChain: "AssetHubWestend", destChain: "Westend"
 
 - **User:** "transfer tokens from Westend Asset Hub to Westend People"  
 - **Tool Call:** xcm_transfer_native_asset with sourceChain: "AssetHubWestend", destChain: "PeopleWestend"

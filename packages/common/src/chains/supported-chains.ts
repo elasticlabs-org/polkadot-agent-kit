@@ -55,11 +55,25 @@ export const westendAssetHubChain = createChain({
   id: "west_asset_hub",
   name: "AssetHubWestend",
   specName: "asset-hub-westend",
-  wsUrls: ["wss://westend-asset-hub-rpc.polkadot.io"],
+  wsUrls: ["wss://westend-asset-hub-rpc.polkadot.io", "wss://asset-hub-westend-rpc.n.dwellir.com"],
   relay: "west",
   type: "system",
   chainId: 1000,
   blockExplorerUrl: "https://assethub-westend.subscan.io",
+  prefix: 42, // default
+  decimals: 12,
+  symbol: "WND"
+})
+
+export const westendPeopleChain = createChain({
+  id: "west_people",
+  name: "PeopleWestend",
+  specName: "people-westend",
+  wsUrls: ["wss://westend-people-rpc.polkadot.io"],
+  relay: "west",
+  type: "system",
+  chainId: 1004,
+  blockExplorerUrl: "https://people-westend.subscan.io",
   prefix: 42, // default
   decimals: 12,
   symbol: "WND"

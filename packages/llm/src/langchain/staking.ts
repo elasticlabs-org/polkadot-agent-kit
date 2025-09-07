@@ -1,7 +1,7 @@
 import { tool } from "@langchain/core/tools"
-import type { Api, ChainIdRelay } from "@polkadot-agent-kit/common"
+import type { Api, ChainIdRelay, UnsafeTransactionType } from "@polkadot-agent-kit/common"
 import { getAllSupportedChains, getChainById } from "@polkadot-agent-kit/common"
-import type { PolkadotApi, Tx } from "@polkadot-agent-kit/core"
+import type { PolkadotApi } from "@polkadot-agent-kit/core"
 import {
   bondExtraTx,
   claimRewardsTx,
@@ -87,7 +87,7 @@ export const bondExtraTool = (polkadotApi: PolkadotApi, signer: PolkadotSigner) 
       async () => {
         const api = polkadotApi.getApi(chain as ChainIdRelay) as Api<ChainIdRelay>
         const chainInfo = getChainById(chain as ChainIdRelay, getAllSupportedChains())
-        let tx: Tx
+        let tx: UnsafeTransactionType
         if (type === "FreeBalance") {
           const amountBigInt = BigInt(amount!) * BigInt(10 ** chainInfo.decimals)
           tx = bondExtraTx(api, "FreeBalance", amountBigInt)

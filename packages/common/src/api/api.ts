@@ -1,4 +1,4 @@
-import type { RuntimeToken, UnsafeApi } from "polkadot-api"
+import type { RuntimeToken } from "polkadot-api"
 
 import {
   type Chain,
@@ -11,10 +11,15 @@ import {
   type KnownChainId
 } from "../chains"
 import { type ClientOptions, getClient } from "../clients/client"
+import type { UnsafeApiType } from "../types"
 
 export type LightClients = ClientOptions["lightClients"]
 
-type ApiBase<Id extends ChainId> = UnsafeApi<Id>
+/**
+ * Base API type using our standardized UnsafeApiType
+ * This ensures consistency across the codebase and maintains backward compatibility
+ */
+type ApiBase<Id extends ChainId> = UnsafeApiType<Id>
 
 export type Api<Id extends ChainId> = ApiBase<Id> & {
   chainId: Id

@@ -1,17 +1,30 @@
-
-
+import type { Api, KnownChainId } from "@polkadot-agent-kit/common"
 import {ASSETS_PROMPT, SWAP_PROMPT, NOMINATION_PROMPT, IDENTITY_PROMPT, BIFROST_PROMPT, DYNAMIC_CHAIN_INITIALIZATION_PROMPT} from "@polkadot-agent-kit/llm"
-export const RECIPIENT = '5D7jcv6aYbhbYGVY8k65oemM6FVNoyBfoVkuJ5cbFvbefftr';
-// Test purpose only - DOnt use in production
-export const AGENT_PRIVATE_KEY = '0xe5be9a5092b81bca64be81d212e7f2f9eba183bb7a90954f7b76361f6edb5c0a';
 
+import { UnsafeTransactionType } from "@polkadot-agent-kit/common"
+export const RECIPIENT= '5CcqKCNDxrYYkPNWys8yrjHJVTzd69i66VTgtewrSbJiVqoR';
+export const RECIPIENT2 = '5D7jcv6aYbhbYGVY8k65oemM6FVNoyBfoVkuJ5cbFvbefftr';
+export const RECIPIENT3 = '5FdxcDTshU5yhHrC91NneaJ64XCE2jwxnMCv8bfxQbwhkWMG';
+export const RECIPIENT4 = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY';
 export const SYSTEM_PROMPT = ASSETS_PROMPT + SWAP_PROMPT + NOMINATION_PROMPT + IDENTITY_PROMPT + BIFROST_PROMPT + DYNAMIC_CHAIN_INITIALIZATION_PROMPT;
-
 
 export function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 
+export async function estimateTransactionFee(
+  transaction: UnsafeTransactionType,
+  fromAddress: string
+): Promise<bigint> {
+  return await transaction.getEstimatedFees(fromAddress);
+}
 
+
+export async function getBalance(
+  api: Api<KnownChainId>,
+  address: string
+) {
+  return await api.query.System.Account.getValue(address);
+}
 
