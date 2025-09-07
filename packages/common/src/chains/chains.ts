@@ -9,7 +9,8 @@ import {
   polkadotAssetHubChain,
   polkadotChain,
   westendAssetHubChain,
-  westendChain
+  westendChain,
+  westendPeopleChain
 } from "./supported-chains"
 
 export type ChainIdRelay = "polkadot" | "west" | "paseo" | "kusama"
@@ -18,7 +19,7 @@ export type ChainIdAssetHub =
   | "west_asset_hub"
   | "kusama_asset_hub"
   | "paseo_asset_hub"
-export type ChainIdPara = "hydra" | "paseo_people" | "bifrost_polkadot"
+export type ChainIdPara = "hydra" | "paseo_people" | "bifrost_polkadot" | "west_people"
 export type KnownChainId = ChainIdRelay | ChainIdAssetHub | ChainIdPara
 type UnKnownChainId = string & {}
 export type ChainId = KnownChainId | UnKnownChainId
@@ -34,7 +35,8 @@ const KNOWN_CHAINS: Record<string, true> = {
   paseo_asset_hub: true,
   hydra: true,
   paseo_people: true,
-  bifrost_polkadot: true
+  bifrost_polkadot: true,
+  west_people: true
 }
 
 export const isKnownChainId = (id: string): id is KnownChainId => {
@@ -97,7 +99,8 @@ const SUPPORTED_CHAINS: Chain[] = [
   hydraChain,
   kusamaChain,
   kusamaAssetHubChain,
-  paseoAssetHubChain
+  paseoAssetHubChain,
+  westendPeopleChain
 ]
 
 export const getAllSupportedChains = (): Chain[] => {

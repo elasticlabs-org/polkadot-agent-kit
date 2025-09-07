@@ -65,6 +65,20 @@ export const westendAssetHubChain = createChain({
   symbol: "WND"
 })
 
+export const westendPeopleChain = createChain({
+  id: "west_people",
+  name: "PeopleWestend",
+  specName: "people-westend",
+  wsUrls: ["wss://westend-people-rpc.polkadot.io"],
+  relay: "west",
+  type: "system",
+  chainId: 1004,
+  blockExplorerUrl: "https://people-westend.subscan.io",
+  prefix: 42, // default
+  decimals: 12,
+  symbol: "WND"
+})
+
 export const hydraChain = createChain({
   id: "hydra",
   name: "Hydration",

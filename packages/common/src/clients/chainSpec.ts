@@ -6,6 +6,7 @@ import { chainSpec as polkadotSpec } from "polkadot-api/chains/polkadot"
 import { chainSpec as polkadotAssetHubSpec } from "polkadot-api/chains/polkadot_asset_hub"
 import { chainSpec as westSpec } from "polkadot-api/chains/westend2"
 import { chainSpec as westAssetHubSpec } from "polkadot-api/chains/westend2_asset_hub"
+import { chainSpec as westPeopleSpec } from "polkadot-api/chains/westend2_people"
 
 import type { ChainId } from "../chains"
 
@@ -81,6 +82,7 @@ export function specRegistry(): Partial<Record<ChainId, string>> {
     paseo: paseoSpec,
     paseo_people: paseoPeopleSpec,
     kusama: kusamaSpec,
-    kusama_asset_hub: kusamaAssetHubSpec
+    kusama_asset_hub: kusamaAssetHubSpec,
+    west_people: westPeopleSpec
   }
 }
