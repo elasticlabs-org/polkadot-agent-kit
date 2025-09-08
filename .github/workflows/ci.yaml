@@ -71,6 +71,14 @@ jobs:
       - name: Build
         run: |
           pnpm build
+      - name: Start Ollama and pull model
+        uses: ai-action/ollama-action@v1
+        with:
+          model: qwen3
+      - name: Set Ollama ENV
+        run: |
+          echo "OLLAMA_HOST=0.0.0.0" >> $GITHUB_ENV
+          echo "OLLAMA_ORIGINS=*" >> $GITHUB_ENV
       - name: Integration Test
         run: |
           pnpm test:integration
