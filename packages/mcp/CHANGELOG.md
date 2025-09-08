@@ -4,6 +4,15 @@
 
 ### Patch Changes
 
+- add missing @babel/plugin-syntax-import-attributes (#92)
+- Updated dependencies
+  - @polkadot-agent-kit/llm@2.0.2
+  - @polkadot-agent-kit/sdk@2.0.2
+
+## 2.0.2
+
+### Patch Changes
+
 - fix package
 - Updated dependencies
   - @polkadot-agent-kit/llm@2.0.2

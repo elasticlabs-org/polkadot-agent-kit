@@ -1,6 +1,6 @@
 {
   "name": "@polkadot-agent-kit/common",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "SDK common code for Polkadot Agent Kit for developers",
   "repository": {
     "type": "git",
