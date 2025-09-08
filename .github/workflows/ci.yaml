@@ -47,4 +47,30 @@ jobs:
       - name: e2e Test
         run: |
           pnpm test:e2e
-
+  integration-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set alternate npm integrity keys
+        run: |
+          echo COREPACK_INTEGRITY_KEYS="$(curl https://registry.npmjs.org/-/npm/v1/keys | jq -c '{npm: .keys}')" >> $GITHUB_ENV
+      - run: corepack enable
+      - name: Install pnpm
+        run: corepack prepare pnpm@10.6.5 --activate
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+      - name: Create .env file
+        run: |
+          touch .env
+          echo AGENT_PRIVATE_KEY="${{ secrets.AGENT_PRIVATE_KEY }}" >> .env
+      - name: Install dependencies
+        run: |
+          pnpm install
+      - name: Build
+        run: |
+          pnpm build
+      - name: Integration Test
+        run: |
+          pnpm test:integration

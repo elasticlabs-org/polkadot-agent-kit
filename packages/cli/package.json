@@ -48,7 +48,7 @@
     "@langchain/core": "^0.3.40",
     "@langchain/ollama": "^0.2.2",
     "langchain": "^0.1.21",
-    "@galacticcouncil/api-augment": "^0.3.0"
+    "@galacticcouncil/api-augment": "^0.6.0"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.26.9",
