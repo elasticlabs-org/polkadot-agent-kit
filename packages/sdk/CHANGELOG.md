@@ -4,6 +4,19 @@
 
 ### Patch Changes
 
+- Extend timeout -> make sure the integration tests  work
+- Remove hardcode private key -> change to .env 
+- Enhanced integration tests 
+
+- Updated dependencies
+  - @polkadot-agent-kit/common@2.0.2
+  - @polkadot-agent-kit/core@2.0.2
+  - @polkadot-agent-kit/llm@2.0.2
+
+## 2.0.2
+
+### Patch Changes
+
 - fix package
 - Updated dependencies
   - @polkadot-agent-kit/core@2.0.2

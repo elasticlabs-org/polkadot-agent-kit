@@ -4,6 +4,14 @@
 
 ### Patch Changes
 
+- Add Westend People chain 
+- Add UnsafeTransaction and UnsafeApi
+
+
+## 2.0.2
+
+### Patch Changes
+
 - fix package
 
 ## 2.0.1

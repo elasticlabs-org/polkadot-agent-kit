@@ -1,5 +1,15 @@
 # @polkadot-agent-kit/cli
 
+## 2.0.5
+
+### Patch Changes
+
+- Fix unsafe api and fix tests
+- Updated dependencies
+  - @polkadot-agent-kit/common@2.0.2
+  - @polkadot-agent-kit/llm@2.0.2
+  - @polkadot-agent-kit/sdk@2.0.2
+
 ## 2.0.4
 
 ### Patch Changes

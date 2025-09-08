@@ -4,6 +4,15 @@
 
 ### Patch Changes
 
+- Use UnsafeTransaction and UnsafeType
+- Add estimateXCM Fee 
+- Updated dependencies
+  - @polkadot-agent-kit/common@2.0.2
+
+## 2.0.2
+
+### Patch Changes
+
 - fix package
 - Updated dependencies
   - @polkadot-agent-kit/common@2.0.2
