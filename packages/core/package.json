@@ -42,7 +42,6 @@
     "@polkadot-agent-kit/common": "workspace:*",
     "@subsquid/ss58": "^2.0.2",
     "polkadot-api": "^1.9.13",
-    "rxjs": "^7.8.2",
     "@paraspell/xcm-router": "^10.10.3",
     "@paraspell/assets": "^10.10.3"
   },

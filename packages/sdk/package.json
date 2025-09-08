@@ -41,8 +41,6 @@
   },
   "dependencies": {
     "@langchain/core": "^0.3.40",
-    "@noble/curves": "^1.6.0",
-    "@paraspell/sdk": "^10.10.7",
     "@polkadot-agent-kit/common": "workspace:*",
     "@polkadot-agent-kit/core": "workspace:*",
     "@polkadot-agent-kit/llm": "workspace:*",
@@ -65,7 +63,6 @@
     "rollup": "^4.37.0",
     "rollup-plugin-dts": "^6.2.1",
     "@langchain/ollama": "^0.2.2",
-    "langchain": "^0.1.21",
-    "@agentic/langchain": "^7.6.9"
+    "langchain": "^0.1.21"
   }
 }
