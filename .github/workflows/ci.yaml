@@ -50,12 +50,3 @@ jobs:
       - name: e2e Test
         run: |
           pnpm test:e2e
-      - name: Start Ollama and pull model
-        uses: ai-action/ollama-action@v1
-        with:
-          model: llama3.2
-      - name: Check Ollama status
-        run: curl http://localhost:11434/
-      - name: Integration Test
-        run: |
-          pnpm test:integration

@@ -10,8 +10,7 @@ export class OllamaAgent {
 
   constructor(
     private agentKit: PolkadotAgentKit,
-    // private model: string = "qwen3:latest"
-    private model: string = "llama3.2"
+    private model: string = "qwen3:latest"
   ) {}
 
   async init() {
