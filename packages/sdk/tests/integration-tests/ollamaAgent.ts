@@ -11,7 +11,7 @@ export class OllamaAgent {
   constructor(
     private agentKit: PolkadotAgentKit,
     // private model: string = "qwen3:latest"
-    private model: string = "llama3.2"
+    private model: string = "tinyllama"
   ) {}
 
   async init() {
@@ -19,7 +19,6 @@ export class OllamaAgent {
     const llm = new ChatOllama({
       model: this.model,
       temperature: 0,
-      baseUrl:"http://ollama:11434"
 
     });
 
