@@ -53,7 +53,7 @@ jobs:
       - name: Start Ollama and pull model
         uses: ai-action/ollama-action@v1
         with:
-          model: qwen3
+          model: qwen3:latest
       - name: Set Ollama ENV
         run: |
           echo "OLLAMA_HOST=0.0.0.0" >> $GITHUB_ENV
