@@ -18,6 +18,7 @@ export class OllamaAgent {
     const llm = new ChatOllama({
       model: this.model,
       temperature: 0,
+
     });
 
 

@@ -37,6 +37,13 @@
   "engines": {
     "node": ">=22"
   },
+  "resolutions": {
+    "@polkadot/types-codec": "16.4.6",
+    "@polkadot/api": "16.4.6",
+    "@polkadot/types": "16.4.6",
+    "react-is": "19.0.0",
+    "@crypto-dex-sdk/chain": "0.1.2"
+  },
   "scripts": {
     "compile": "turbo run compile",
     "format:check": "turbo run format:check",
@@ -58,8 +65,5 @@
     "version-packages": "changeset version",
     "publish-packages": "turbo run build && changeset publish"
   },
-  "packageManager": "pnpm@10.6.5",
-  "dependencies": {
-    "polkadot-api": "^1.10.0"
-  }
+  "packageManager": "pnpm@10.6.5"
 }

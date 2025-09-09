@@ -11,6 +11,7 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - name: Set alternate npm integrity keys
@@ -23,9 +24,11 @@ jobs:
         with:
           node-version: 22
           cache: "pnpm"
-      - run: |
+      - name: Create .env file
+        run: |
           touch .env
           echo GH_COMMIT_SHA="${{ github.event.pull_request.head.sha }}" >> .env
+          echo AGENT_PRIVATE_KEY="${{ secrets.AGENT_PRIVATE_KEY }}" >> .env
       - name: Install dependencies
         run: |
           pnpm install
@@ -47,4 +50,3 @@ jobs:
       - name: e2e Test
         run: |
           pnpm test:e2e
-
