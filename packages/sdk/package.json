@@ -1,6 +1,6 @@
 {
   "name": "@polkadot-agent-kit/sdk",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "SDK for Polkadot Agent Kit",
   "repository": {
     "type": "git",
@@ -47,7 +47,7 @@
     "@polkadot-labs/hdkd": "^0.0.13",
     "@polkadot-labs/hdkd-helpers": "^0.0.13",
     "@subsquid/ss58": "^2.0.2",
-      "polkadot-api": "^1.14.1",
+    "polkadot-api": "^1.14.1",
     "zod": "^3.24.3"
   },
   "devDependencies": {

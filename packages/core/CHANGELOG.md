@@ -1,11 +1,22 @@
 # @polkadot-agent-kit/core
 
+## 2.1.0
+
+### Minor Changes
+
+- Enhanced integration tests
+
+### Patch Changes
+
+- Updated dependencies
+  - @polkadot-agent-kit/common@2.1.0
+
 ## 2.0.2
 
 ### Patch Changes
 
 - Use UnsafeTransaction and UnsafeType
-- Add estimateXCM Fee 
+- Add estimateXCM Fee
 - Updated dependencies
   - @polkadot-agent-kit/common@2.0.2
 

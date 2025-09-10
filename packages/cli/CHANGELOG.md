@@ -1,5 +1,18 @@
 # @polkadot-agent-kit/cli
 
+## 2.1.0
+
+### Minor Changes
+
+- Replace vulner package
+
+### Patch Changes
+
+- Updated dependencies
+  - @polkadot-agent-kit/common@2.1.0
+  - @polkadot-agent-kit/llm@2.1.0
+  - @polkadot-agent-kit/sdk@2.1.0
+
 ## 2.0.5
 
 ### Patch Changes

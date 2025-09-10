@@ -1,12 +1,25 @@
 # @polkadot-agent-kit/sdk
 
+## 2.1.0
+
+### Minor Changes
+
+- Enhanced integration tests sdk 
+
+### Patch Changes
+
+- Updated dependencies
+  - @polkadot-agent-kit/common@2.1.0
+  - @polkadot-agent-kit/core@2.1.0
+  - @polkadot-agent-kit/llm@2.1.0
+
 ## 2.0.2
 
 ### Patch Changes
 
-- Extend timeout -> make sure the integration tests  work
-- Remove hardcode private key -> change to .env 
-- Enhanced integration tests 
+- Extend timeout -> make sure the integration tests work
+- Remove hardcode private key -> change to .env
+- Enhanced integration tests
 
 - Updated dependencies
   - @polkadot-agent-kit/common@2.0.2
