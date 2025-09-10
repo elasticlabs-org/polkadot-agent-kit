@@ -1,5 +1,18 @@
 # @polkadot-agent-kit/mcp
 
+## 2.1.0
+
+### Minor Changes
+
+- Enhanced integration tests
+- Remove unused packages
+
+### Patch Changes
+
+- Updated dependencies
+  - @polkadot-agent-kit/llm@2.1.0
+  - @polkadot-agent-kit/sdk@2.1.0
+
 ## 2.0.2
 
 ### Patch Changes

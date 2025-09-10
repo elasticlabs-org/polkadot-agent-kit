@@ -1,12 +1,17 @@
 # @polkadot-agent-kit/common
 
+## 2.1.0
+
+### Minor Changes
+
+- Add Westend People
+
 ## 2.0.2
 
 ### Patch Changes
 
-- Add Westend People chain 
+- Add Westend People chain
 - Add UnsafeTransaction and UnsafeApi
-
 
 ## 2.0.2
 
