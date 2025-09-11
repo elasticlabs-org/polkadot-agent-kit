@@ -1,5 +1,5 @@
 import type { AgentConfig, Api, KnownChainId } from "@polkadot-agent-kit/common"
-import { getAllSupportedChains, getChainById } from "@polkadot-agent-kit/common"
+import { deriveAndConvertAddress, generateMiniSecret, getAllSupportedChains, getChainById, getKeypair, getSigner } from "@polkadot-agent-kit/common"
 import type { IPolkadotApi } from "@polkadot-agent-kit/core"
 import { PolkadotApi } from "@polkadot-agent-kit/core"
 import type {
@@ -28,7 +28,7 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
     this.polkadotApi = new PolkadotApi(config.chains)
     this.agentApi = new PolkadotAgentApi(this.polkadotApi)
     this.config = this.validateAndNormalizeConfig(config)
-    this.miniSecret = this.generateMiniSecret()
+    this.miniSecret = generateMiniSecret(this.config)
   }
 
   setApi(chainId: KnownChainId, api?: Api<KnownChainId>) {
@@ -292,65 +292,13 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
    * @returns The address as string
    * @throws Error if no main private key is available
    *
-   * @example
-   * ```typescript
-   * // Get the main account address
-   * const address = agent.getCurrentAddress('polkadot');
-   * ```
    */
   public getCurrentAddress(): string {
-    // get chain default address polkadot
-    const chain = getChainById("polkadot", getAllSupportedChains())
-    const keypair = this.getKeypair()
-    const value = keypair.publicKey
-    if (!value) {
-      return ""
-    }
-    return ss58.codec(chain.prefix).encode(value)
-  }
-
-  private getKeypair() {
-    if (this.config.keyType === "Sr25519") {
-      const derive = sr25519CreateDerive(this.miniSecret)
-      return derive(this.config.derivationPath || "")
-    } else {
-      const derive = ed25519CreateDerive(this.miniSecret)
-      return derive(this.config.derivationPath || "")
-    }
-  }
-
-  private generateMiniSecret(): Uint8Array {
-    if (this.config.mnemonic) {
-      const entropy = mnemonicToEntropy(this.config.mnemonic)
-      return entropyToMiniSecret(entropy)
-    } else if (this.config.privateKey) {
-      const privateKeyHex = this.config.privateKey.startsWith("0x")
-        ? this.config.privateKey.slice(2)
-        : this.config.privateKey
-
-      return new Uint8Array(privateKeyHex.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16)))
-    } else {
-      throw new Error("No valid wallet source found")
-    }
+    return deriveAndConvertAddress(this.miniSecret, this.config.keyType || "Sr25519", this.config.derivationPath || "")
   }
 
   private getSigner(): PolkadotSigner {
-    if (this.config.keyType === "Sr25519") {
-      const signer = getPolkadotSigner(
-        this.getKeypair().publicKey,
-        this.config.keyType as "Sr25519" | "Ed25519" | "Ecdsa",
-        input => this.getKeypair().sign(input)
-      )
-
-      return signer
-    } else {
-      const signer = getPolkadotSigner(
-        this.getKeypair().publicKey,
-        this.config.keyType as "Sr25519" | "Ed25519" | "Ecdsa",
-        input => this.getKeypair().sign(input)
-      )
-      return signer
-    }
+    return getSigner(this.miniSecret, this.config.keyType || "Sr25519", this.config.derivationPath || "")
   }
 
   /**
