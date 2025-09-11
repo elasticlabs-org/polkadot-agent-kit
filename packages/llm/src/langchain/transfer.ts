@@ -25,8 +25,16 @@ export const transferNativeTool = (polkadotApi: PolkadotApi, signer: PolkadotSig
 
         const formattedAddress = validateAndFormatAddress(to, chain as KnownChainId)
         const parsedAmount = parseUnits(amount, getDecimalsByChainId(chain))
+        const transferTx = await transferNativeCall(api, "5CwaVNAmJ6hWvu9tgxAPgxLD27SK36Vk4hgDcSZGK7z2eYiE", formattedAddress, parsedAmount)
+        if (!transferTx.success) {
+          return {
+            success: false,
+            error: transferTx.error
+          }
+        }
+
         const tx = await submitTxWithPolkadotSigner(
-          transferNativeCall(api, formattedAddress, parsedAmount),
+          transferTx.transaction!,
           signer
         )
 

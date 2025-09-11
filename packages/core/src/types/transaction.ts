@@ -36,3 +36,11 @@ export function isTxWithPolkadotSigner(
     typeof options.signer.signBytes === "function"
   )
 }
+
+
+export interface TxResult {
+  success: boolean
+  transaction?: UnsafeTransactionType
+  error?: string
+  
+}
