@@ -462,15 +462,6 @@ importers:
       '@polkadot-agent-kit/llm':
         specifier: workspace:*
         version: link:../llm
-      '@polkadot-labs/hdkd':
-        specifier: ^0.0.13
-        version: 0.0.13
-      '@polkadot-labs/hdkd-helpers':
-        specifier: ^0.0.13
-        version: 0.0.13
-      '@subsquid/ss58':
-        specifier: ^2.0.2
-        version: 2.0.2
       polkadot-api:
         specifier: ^1.14.1
         version: 1.14.1(bufferutil@4.0.9)(jiti@2.4.2)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.3)(utf-8-validate@5.0.10)(yaml@2.8.0)
