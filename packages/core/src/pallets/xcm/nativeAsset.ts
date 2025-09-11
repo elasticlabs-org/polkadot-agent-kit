@@ -1,7 +1,9 @@
 import { getNativeAssets } from "@paraspell/assets"
-import type { TDestination, TNodeDotKsmWithRelayChains, TPapiTransaction } from "@paraspell/sdk"
+import type { TDestination, TNodeDotKsmWithRelayChains } from "@paraspell/sdk"
 import { Builder } from "@paraspell/sdk"
 import { parseUnits } from "@polkadot-agent-kit/common"
+
+import type { XcmTransferResult } from "../../types/xcm"
 /**
  * Builds an XCM transaction to transfer a native asset from one chain to another.
  *
@@ -14,17 +16,7 @@ import { parseUnits } from "@polkadot-agent-kit/common"
  * @param from - The sender's address on the source chain
  * @param to - The recipient's address on the destination chain
  * @param amount - The amount of the native asset to transfer (as bigint, in base units)
- * @returns A Promise resolving to a TPapiTransaction object representing the unsigned XCM transaction
- *
- * @example
- * const tx = await xcmTransferNativeAsset(
- *   'polkadot',
- *   'hydra',
- *   'senderAddress',
- *   'recipientAddress',
- *   10000000000n
- * )
- * // tx can then be signed and submitted using the appropriate transaction handler
+ * @returns Promise resolving to XcmTransferResult with detailed success/failure information
  */
 
 export const xcmTransferNativeAsset = async (
@@ -33,31 +25,69 @@ export const xcmTransferNativeAsset = async (
   from: string,
   to: string,
   amount: string
-): Promise<TPapiTransaction> => {
-  const nativeSymbol = getNativeAssets(srcChain as TNodeDotKsmWithRelayChains)
-  const decimals = nativeSymbol[0].decimals || 10
-  const parsedAmount = parseUnits(amount, decimals)
+): Promise<XcmTransferResult> => {
+  try {
+    const nativeSymbol = getNativeAssets(srcChain as TNodeDotKsmWithRelayChains)
 
-  // Dry run the XCM transfer native token
-  const dryRunTx = await Builder()
-    .from(srcChain as TNodeDotKsmWithRelayChains)
-    .senderAddress(from)
-    .to(destChain as TDestination)
-    .currency({ symbol: nativeSymbol[0].symbol, amount: parsedAmount })
-    .address(to)
-    .dryRun()
-  if (dryRunTx.origin?.success && dryRunTx.destination?.success) {
-    // XCM transfer native tokken
-    const tx = await Builder()
+    const decimals = nativeSymbol[0].decimals || 10
+    const parsedAmount = parseUnits(amount, decimals)
+
+    // Dry run the XCM transfer native token
+    const dryRunTx = await Builder()
       .from(srcChain as TNodeDotKsmWithRelayChains)
       .senderAddress(from)
       .to(destChain as TDestination)
       .currency({ symbol: nativeSymbol[0].symbol, amount: parsedAmount })
       .address(to)
-      .build()
+      .dryRun()
 
-    return tx
-  } else {
-    throw Error("XCM dry run failed")
+    const dryRunDetails = {
+      originSuccess: dryRunTx.origin?.success || false,
+      destinationSuccess: dryRunTx.destination?.success || false,
+      originError: dryRunTx.origin?.success ? undefined : dryRunTx.origin?.failureReason,
+      destinationError: dryRunTx.destination?.success
+        ? undefined
+        : dryRunTx.destination?.failureReason
+    }
+
+    if (dryRunTx.origin?.success && dryRunTx.destination?.success) {
+      // Build the actual XCM transaction
+      const tx = await Builder()
+        .from(srcChain as TNodeDotKsmWithRelayChains)
+        .senderAddress(from)
+        .to(destChain as TDestination)
+        .currency({ symbol: nativeSymbol[0].symbol, amount: parsedAmount })
+        .address(to)
+        .build()
+
+      return {
+        success: true,
+        transaction: tx,
+        dryRunDetails
+      }
+    } else {
+      const errorDetails = []
+      if (!dryRunTx.origin?.success) {
+        errorDetails.push(
+          `Origin chain error: ${dryRunTx.origin?.failureReason || "Unknown error"}`
+        )
+      }
+      if (!dryRunTx.destination?.success) {
+        errorDetails.push(
+          `Destination chain error: ${dryRunTx.destination?.failureReason || "Unknown error"}`
+        )
+      }
+
+      return {
+        success: false,
+        error: `XCM dry run failed: ${errorDetails.join("; ")}`,
+        dryRunDetails
+      }
+    }
+  } catch (error) {
+    return {
+      success: false,
+      error: `XCM transaction dry run failed: ${error instanceof Error ? error.message : String(error)}`
+    }
   }
 }

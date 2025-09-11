@@ -1,6 +1,6 @@
 import { tool } from "@langchain/core/tools"
 import type { KnownChainId } from "@polkadot-agent-kit/common"
-import { getDecimalsByChainId, parseUnits } from "@polkadot-agent-kit/common"
+import { getDecimalsByChainId, parseUnits, publicKeyToAddress } from "@polkadot-agent-kit/common"
 import type { PolkadotApi } from "@polkadot-agent-kit/core"
 import { submitTxWithPolkadotSigner, transferNativeCall } from "@polkadot-agent-kit/core"
 import type { PolkadotSigner } from "polkadot-api/signer"
@@ -25,10 +25,20 @@ export const transferNativeTool = (polkadotApi: PolkadotApi, signer: PolkadotSig
 
         const formattedAddress = validateAndFormatAddress(to, chain as KnownChainId)
         const parsedAmount = parseUnits(amount, getDecimalsByChainId(chain))
-        const tx = await submitTxWithPolkadotSigner(
-          transferNativeCall(api, formattedAddress, parsedAmount),
-          signer
+        const transferTx = await transferNativeCall(
+          api,
+          publicKeyToAddress(signer.publicKey, chain),
+          formattedAddress,
+          parsedAmount
         )
+        if (!transferTx.success) {
+          return {
+            success: false,
+            error: transferTx.error
+          }
+        }
+
+        const tx = await submitTxWithPolkadotSigner(transferTx.transaction!, signer)
 
         if (tx.success) {
           return {

@@ -59,7 +59,9 @@ describe('PolkadotAgentKit Integration with OllamaAgent', () => {
 
     const amount = parseUnits("0.001", getDecimalsByChainId('west'));
 
-    const feeTx = await estimateTransactionFee(transferNativeCall(agentKit.getApi('west'), RECIPIENT, amount), RECIPIENT);
+   const tx =  await transferNativeCall(agentKit.getApi('west'), agentKit.getCurrentAddress(), RECIPIENT, amount);
+
+    const feeTx = await estimateTransactionFee(tx.transaction!, RECIPIENT);
     expect(result.output).toBeDefined();
     expect(result.intermediateSteps).toBeDefined();
     expect(result.intermediateSteps.length).toBeGreaterThan(0);
