@@ -3,11 +3,15 @@ import { type Api, type KnownChainId } from "@polkadot-agent-kit/common"
 import { dryRunCall } from "../../utils/dryRun"
 import { TxResult } from "../../types/transaction"
 /**
- * Creates a transfer call for native assets
- * @param api - The API instance to use for the transfer
- * @param to - The recipient address
- * @param amount - The amount to transfer
- * @returns The transfer call
+ * Creates a transfer call for native assets with comprehensive dry run validation
+ * 
+ * @param api - The API instance for the source chain
+ * @param from - The sender's address (SS58 format)
+ * @param to - The recipient's address (SS58 format)
+ * @param amount - The amount to transfer (in base units as BigInt)
+ * @returns Promise resolving to TxResult with success/failure information
+ * 
+ * @throws {Error} If the dry run indicates the transaction would fail
  */
 export const transferNativeCall = async (
   api: Api<KnownChainId>,
@@ -16,7 +20,7 @@ export const transferNativeCall = async (
   amount: BigInt
 ): Promise<TxResult> => {
 
-  // Dry Run check 
+
   const tx = api.tx.Balances.transfer_keep_alive({
     dest: {
       type: "Id",

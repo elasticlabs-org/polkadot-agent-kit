@@ -57,7 +57,6 @@ export const xcmTransferNativeAsset = async (
         .address(to)
         .build()
 
-      console.log("Transaction built successfully");
 
       return {
         success: true,

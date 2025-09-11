@@ -3,7 +3,7 @@ import { entropyToMiniSecret, mnemonicToEntropy } from "@polkadot-labs/hdkd-help
 import * as ss58 from "@subsquid/ss58"
 import { getAllSupportedChains, getChainById } from "../chains/chains"
 import type { AgentConfig } from "../types"
-import { getPolkadotSigner, type PolkadotSigner } from "polkadot-api/signer"
+import { getPolkadotSigner} from "polkadot-api/signer"
 
 /**
  * Convert a public key (Uint8Array) to a Substrate address
@@ -17,12 +17,14 @@ export function publicKeyToAddress(publicKey: Uint8Array, chainId: string = "pol
 }
 
 /**
- * Derive and convert address from mnemonic
- * @param mnemonic - The mnemonic phrase
- * @param keyType - The key type (Sr25519 or Ed25519)
- * @param derivationPath - The derivation path
- * @param chainId - The chain ID
- * @returns The derived address
+ * Derive and convert address from mini secret
+ * 
+ * @param miniSecret - The mini secret as Uint8Array (32 bytes)
+ * @param keyType - The cryptographic key type ("Sr25519" or "Ed25519")
+ * @param derivationPath - The BIP44 derivation path (e.g., "//0", "//hard/soft")
+ * @param chainId - The target chain ID for address encoding (default: "polkadot")
+ * @returns The SS58-encoded address string for the specified chain
+ * 
  */
 export function deriveAndConvertAddress(
   miniSecret: Uint8Array,
