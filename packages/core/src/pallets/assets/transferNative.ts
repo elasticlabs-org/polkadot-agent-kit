@@ -1,26 +1,25 @@
-import type { UnsafeTransactionType } from "@polkadot-agent-kit/common"
 import { type Api, type KnownChainId } from "@polkadot-agent-kit/common"
-import { dryRunCall } from "../../utils/dryRun"
-import { TxResult } from "../../types/transaction"
+
+import type { TxResult } from "../../types/transaction"
+import { dryRunCall, type DryRunResult } from "../../utils/dryRun"
 /**
  * Creates a transfer call for native assets with comprehensive dry run validation
- * 
+ *
  * @param api - The API instance for the source chain
  * @param from - The sender's address (SS58 format)
  * @param to - The recipient's address (SS58 format)
  * @param amount - The amount to transfer (in base units as BigInt)
  * @returns Promise resolving to TxResult with success/failure information
- * 
- * @throws {Error} If the dry run indicates the transaction would fail
+ *
+ * @throws Error If the dry run indicates the transaction would fail
  */
+
 export const transferNativeCall = async (
   api: Api<KnownChainId>,
   from: string,
   to: string,
-  amount: BigInt
+  amount: bigint
 ): Promise<TxResult> => {
-
-
   const tx = api.tx.Balances.transfer_keep_alive({
     dest: {
       type: "Id",
@@ -28,18 +27,18 @@ export const transferNativeCall = async (
     },
     value: amount
   })
-  const dryRunResult = await dryRunCall(api, from, tx)
-  if (dryRunResult.value.execution_result.success) {
+  const dryRunResult: DryRunResult = await dryRunCall(api, from, tx)
+
+  if (dryRunResult.value?.execution_result?.success) {
     return {
       success: true,
       transaction: tx
     }
-  }
-  else {
+  } else {
     const executionError = dryRunResult.value?.execution_result?.value
 
     if (executionError?.error) {
-      const {error} = executionError
+      const { error } = executionError
 
       return {
         success: false,
@@ -47,10 +46,9 @@ export const transferNativeCall = async (
       }
     }
 
-  return {
-    success: false,
-    error: "Unknown error"
-  }
-
+    return {
+      success: false,
+      error: "Unknown error"
+    }
   }
 }

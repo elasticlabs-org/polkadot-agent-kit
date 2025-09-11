@@ -19,5 +19,3 @@ export async function estimateXcmFee(
 
   return fee
 }
-
-

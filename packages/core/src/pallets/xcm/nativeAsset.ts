@@ -1,7 +1,8 @@
 import { getNativeAssets } from "@paraspell/assets"
-import type { TDestination, TNodeDotKsmWithRelayChains, TPapiTransaction } from "@paraspell/sdk"
+import type { TDestination, TNodeDotKsmWithRelayChains } from "@paraspell/sdk"
 import { Builder } from "@paraspell/sdk"
 import { parseUnits } from "@polkadot-agent-kit/common"
+
 import type { XcmTransferResult } from "../../types/xcm"
 /**
  * Builds an XCM transaction to transfer a native asset from one chain to another.
@@ -39,12 +40,14 @@ export const xcmTransferNativeAsset = async (
       .currency({ symbol: nativeSymbol[0].symbol, amount: parsedAmount })
       .address(to)
       .dryRun()
- 
+
     const dryRunDetails = {
       originSuccess: dryRunTx.origin?.success || false,
       destinationSuccess: dryRunTx.destination?.success || false,
       originError: dryRunTx.origin?.success ? undefined : dryRunTx.origin?.failureReason,
-      destinationError: dryRunTx.destination?.success ? undefined : dryRunTx.destination?.failureReason
+      destinationError: dryRunTx.destination?.success
+        ? undefined
+        : dryRunTx.destination?.failureReason
     }
 
     if (dryRunTx.origin?.success && dryRunTx.destination?.success) {
@@ -57,7 +60,6 @@ export const xcmTransferNativeAsset = async (
         .address(to)
         .build()
 
-
       return {
         success: true,
         transaction: tx,
@@ -66,10 +68,14 @@ export const xcmTransferNativeAsset = async (
     } else {
       const errorDetails = []
       if (!dryRunTx.origin?.success) {
-        errorDetails.push(`Origin chain error: ${dryRunTx.origin?.failureReason || "Unknown error"}`)
+        errorDetails.push(
+          `Origin chain error: ${dryRunTx.origin?.failureReason || "Unknown error"}`
+        )
       }
       if (!dryRunTx.destination?.success) {
-        errorDetails.push(`Destination chain error: ${dryRunTx.destination?.failureReason || "Unknown error"}`)
+        errorDetails.push(
+          `Destination chain error: ${dryRunTx.destination?.failureReason || "Unknown error"}`
+        )
       }
 
       return {

@@ -37,10 +37,8 @@ export function isTxWithPolkadotSigner(
   )
 }
 
-
 export interface TxResult {
   success: boolean
   transaction?: UnsafeTransactionType
   error?: string
-  
 }

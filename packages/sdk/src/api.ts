@@ -291,11 +291,19 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
    *
    */
   public getCurrentAddress(): string {
-    return deriveAndConvertAddress(this.miniSecret, this.config.keyType || "Sr25519", this.config.derivationPath || "")
+    return deriveAndConvertAddress(
+      this.miniSecret,
+      this.config.keyType || "Sr25519",
+      this.config.derivationPath || ""
+    )
   }
 
   private getSigner(): PolkadotSigner {
-    return getSigner(this.miniSecret, this.config.keyType || "Sr25519", this.config.derivationPath || "")
+    return getSigner(
+      this.miniSecret,
+      this.config.keyType || "Sr25519",
+      this.config.derivationPath || ""
+    )
   }
 
   /**

@@ -25,11 +25,11 @@ export const xcmTransferNativeTool = (signer: PolkadotSigner, sender: string) =>
         ToolNames.XCM_TRANSFER_NATIVE_ASSET,
         async () => {
           const xcmTx = await xcmTransferNativeAsset(sourceChain, destChain, sender, to, amount)
-          
+
           if (!xcmTx.success) {
             return {
               success: false,
-              error: xcmTx.error,
+              error: xcmTx.error
             }
           }
 
