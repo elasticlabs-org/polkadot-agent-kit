@@ -1,5 +1,5 @@
 import type { AgentConfig, Api, KnownChainId } from "@polkadot-agent-kit/common"
-import { deriveAndConvertAddress, generateMiniSecret, getAllSupportedChains, getChainById, getKeypair, getSigner } from "@polkadot-agent-kit/common"
+import { deriveAndConvertAddress, generateMiniSecret, getSigner } from "@polkadot-agent-kit/common"
 import type { IPolkadotApi } from "@polkadot-agent-kit/core"
 import { PolkadotApi } from "@polkadot-agent-kit/core"
 import type {
@@ -12,10 +12,7 @@ import type {
   XcmTransferNativeAssetTool
 } from "@polkadot-agent-kit/llm"
 import { PolkadotAgentApi } from "@polkadot-agent-kit/llm"
-import { ed25519CreateDerive, sr25519CreateDerive } from "@polkadot-labs/hdkd"
-import { entropyToMiniSecret, mnemonicToEntropy } from "@polkadot-labs/hdkd-helpers"
-import * as ss58 from "@subsquid/ss58"
-import { getPolkadotSigner, type PolkadotSigner } from "polkadot-api/signer"
+import { type PolkadotSigner } from "polkadot-api/signer"
 
 export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
   private polkadotApi: PolkadotApi
