@@ -4,8 +4,9 @@
 
 import type { CallToolResult, Tool } from "@modelcontextprotocol/sdk/types.js"
 import type { Action } from "@polkadot-agent-kit/llm"
-import type { PolkadotAgentKit } from "./api"
 import { zodToJsonSchema } from "zod-to-json-schema"
+
+import type { PolkadotAgentKit } from "./api"
 
 /**
  * Interface for AgentKit MCP tools and handlers.
@@ -64,6 +65,7 @@ function createToolHandler(actions: Action[]) {
 
     try {
       // Validate and parse arguments using the action's schema
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const parsedArgs = action.schema.parse(args)
 
       // Execute the action
@@ -111,7 +113,7 @@ function createToolHandler(actions: Action[]) {
  * @returns Promise resolving to MCP tools and handler
  *
  */
-export async function getMcpTools(polkadotAgentKit: PolkadotAgentKit): Promise<AgentKitMcpTools> {
+export function getMcpTools(polkadotAgentKit: PolkadotAgentKit): AgentKitMcpTools {
   const actions: Action[] = polkadotAgentKit.getActions()
 
   return {
