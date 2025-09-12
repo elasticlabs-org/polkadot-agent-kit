@@ -11,7 +11,7 @@ import {
   westendAssetHubChain,
   westendChain,
   westendPeopleChain
-} from "./supported-chains"
+} from "./supportedChains"
 
 export type ChainIdRelay = "polkadot" | "west" | "paseo" | "kusama"
 export type ChainIdAssetHub =
