@@ -2,10 +2,11 @@
  * Main exports for the Polkadot Agent Kit Model Context Protocol (MCP) package
  */
 
-import type { CallToolResult, Tool } from "@modelcontextprotocol/sdk/types.js";
-import type { Action } from "@polkadot-agent-kit/llm";
-import type { PolkadotAgentKit } from "@polkadot-agent-kit/sdk";
-import { zodToJsonSchema } from "zod-to-json-schema";
+import type { CallToolResult, Tool } from "@modelcontextprotocol/sdk/types.js"
+import type { Action } from "@polkadot-agent-kit/llm"
+import { zodToJsonSchema } from "zod-to-json-schema"
+
+import type { PolkadotAgentKit } from "./api"
 
 /**
  * Interface for AgentKit MCP tools and handlers.
@@ -15,9 +16,9 @@ import { zodToJsonSchema } from "zod-to-json-schema";
  */
 export interface AgentKitMcpTools {
   /** Array of MCP tools available for the agent */
-  tools: Tool[];
+  tools: Tool[]
   /** Handler function for executing tool calls */
-  toolHandler: (name: string, args: unknown) => Promise<CallToolResult>;
+  toolHandler: (name: string, args: unknown) => Promise<CallToolResult>
 }
 
 /**
@@ -25,8 +26,8 @@ export interface AgentKitMcpTools {
  */
 export class ToolNotFoundError extends Error {
   constructor(toolName: string) {
-    super(`Tool '${toolName}' not found`);
-    this.name = "ToolNotFoundError";
+    super(`Tool '${toolName}' not found`)
+    this.name = "ToolNotFoundError"
   }
 }
 
@@ -37,15 +38,15 @@ export class ToolNotFoundError extends Error {
  * @returns Array of MCP Tool objects
  */
 function convertActionsToMcpTools(actions: Action[]): Tool[] {
-  return actions.map((action) => {
-    const schema = zodToJsonSchema(action.schema);
+  return actions.map(action => {
+    const schema = zodToJsonSchema(action.schema)
 
     return {
       name: action.name,
       description: action.description,
-      inputSchema: schema,
-    } as Tool;
-  });
+      inputSchema: schema
+    } as Tool
+  })
 }
 
 /**
@@ -56,31 +57,31 @@ function convertActionsToMcpTools(actions: Action[]): Tool[] {
  */
 function createToolHandler(actions: Action[]) {
   return async (name: string, args: unknown): Promise<CallToolResult> => {
-    const action = actions.find((action) => action.name === name);
+    const action = actions.find(action => action.name === name)
 
     if (!action) {
-      throw new ToolNotFoundError(name);
+      throw new ToolNotFoundError(name)
     }
 
     try {
       // Validate and parse arguments using the action's schema
-      const parsedArgs = action.schema.parse(args);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const parsedArgs = action.schema.parse(args)
 
       // Execute the action
-      const result = await action.invoke(parsedArgs);
+      const result = await action.invoke(parsedArgs)
 
       return {
         content: [
           {
             type: "text",
-            text: JSON.stringify(result, null, 2),
-          },
-        ],
-      };
+            text: JSON.stringify(result, null, 2)
+          }
+        ]
+      }
     } catch (error) {
       // Handle validation and execution errors
-      const errorMessage =
-        error instanceof Error ? error.message : "Unknown error occurred";
+      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred"
 
       return {
         content: [
@@ -89,17 +90,17 @@ function createToolHandler(actions: Action[]) {
             text: JSON.stringify(
               {
                 success: false,
-                error: errorMessage,
+                error: errorMessage
               },
               null,
-              2,
-            ),
-          },
+              2
+            )
+          }
         ],
-        isError: true,
-      };
+        isError: true
+      }
     }
-  };
+  }
 }
 
 /**
@@ -112,13 +113,11 @@ function createToolHandler(actions: Action[]) {
  * @returns Promise resolving to MCP tools and handler
  *
  */
-export async function getMcpTools(
-  polkadotAgentKit: PolkadotAgentKit,
-): Promise<AgentKitMcpTools> {
-  const actions: Action[] = polkadotAgentKit.getActions();
+export function getMcpTools(polkadotAgentKit: PolkadotAgentKit): AgentKitMcpTools {
+  const actions: Action[] = polkadotAgentKit.getActions()
 
   return {
     tools: convertActionsToMcpTools(actions),
-    toolHandler: createToolHandler(actions),
-  };
+    toolHandler: createToolHandler(actions)
+  }
 }
