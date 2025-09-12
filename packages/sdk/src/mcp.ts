@@ -4,7 +4,7 @@
 
 import type { CallToolResult, Tool } from "@modelcontextprotocol/sdk/types.js";
 import type { Action } from "@polkadot-agent-kit/llm";
-import type { PolkadotAgentKit } from "@polkadot-agent-kit/sdk";
+import type { PolkadotAgentKit } from "./api";
 import { zodToJsonSchema } from "zod-to-json-schema";
 
 /**
