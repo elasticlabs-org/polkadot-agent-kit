@@ -1,7 +1,7 @@
 import type { DynamicStructuredTool } from "@langchain/core/tools"
 import { z } from "zod"
 
-import type { ToolConfig } from "./common"
+import type { BaseToolCallResult, ToolConfig } from "./common"
 import { ToolNames } from "./common"
 
 /**
@@ -121,32 +121,7 @@ export type WithdrawUnbondedTool = DynamicStructuredTool<typeof withdrawUnbonded
  */
 export type ClaimRewardsTool = DynamicStructuredTool<typeof claimRewardsToolSchema>
 
-/**
- * The result of a staking tool operation.
- */
-export interface StakingToolResult {
-  /**
-   * Indicates whether the operation was successful.
-   */
-  success: boolean
-
-  /**
-   * The transaction hash if the operation was submitted successfully.
-   * This may be undefined if the operation failed.
-   */
-  transactionHash?: string
-
-  /**
-   * An error message if the operation failed.
-   * This will be undefined if the operation was successful.
-   */
-  error?: string
-
-  /**
-   * Additional data returned by the operation.
-   */
-  data?: unknown
-}
+export type StakingToolResult = BaseToolCallResult
 
 /**
  * Configuration object for the join pool tool.

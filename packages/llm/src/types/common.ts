@@ -107,3 +107,13 @@ export interface Action<TActionSchema extends z.ZodSchema = z.ZodSchema> {
   schema: TActionSchema
   invoke: (args: z.infer<TActionSchema>) => Promise<string>
 }
+
+/**
+ * Base interface for transaction-based tool results.
+ * Provides common structure for tools that perform blockchain transactions.
+ */
+export interface BaseToolCallResult {
+  success: boolean
+  transactionHash?: string
+  error?: string
+}

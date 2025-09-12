@@ -6,28 +6,10 @@ import type { z } from "zod"
 import { ToolNames } from "../../types/common"
 import { withTimeoutAndRetry } from "../../types/common"
 import { DEFAULT_DEX, UNKNOWN_ERROR_MESSAGE } from "../../types/constants"
+import type { SwapContext, TransactionResult } from "../../types/defi"
 import type { SwapTokensToolResult, swapTokensToolSchema } from "../../types/defi/swap"
 import { toolConfigSwapTokens } from "../../types/defi/swap"
 import { executeTool } from "../../utils"
-
-// Types for internal use
-interface SwapContext {
-  from: string
-  to: string
-  currencyFrom: string
-  currencyTo: string
-  amount: string
-  sender: string
-  receiver: string
-  dex: string
-  isCrossChainSwap: boolean
-}
-
-interface TransactionResult {
-  success: boolean
-  transactionHash?: string
-  error?: string
-}
 
 /**
  * Returns a tool that swaps tokens either across different chains or within a specific DEX
