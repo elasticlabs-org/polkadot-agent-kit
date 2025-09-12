@@ -1,0 +1,14 @@
+{
+    "mcpServers": {
+      "agentkit": {
+        "command": "node",
+        "args": [
+          "/Users/YOUR-USERNAME/polkadot-agent-kit/examples/mcp-server/dist/index.js"
+        ],
+        "env": {
+          "PRIVATE_KEY": "YOUR PRIVATE_KEY"
+
+        }
+      }
+    }
+  }
