@@ -1,7 +1,7 @@
 import type { DynamicStructuredTool } from "@langchain/core/tools"
 import { z } from "zod"
 
-import type { ToolConfig } from "./common"
+import type { BaseToolCallResult, ToolConfig } from "./common"
 import { ToolNames } from "./common"
 
 export const xcmTransferNativeAssetSchema = z.object({
@@ -30,27 +30,7 @@ export const xcmTransferNativeAssetSchema = z.object({
  */
 export type XcmTransferNativeAssetTool = DynamicStructuredTool<typeof xcmTransferNativeAssetSchema>
 
-/**
- * The result of a transfer tool operation.
- */
-export interface XcmTransferNativeAssetToolResult {
-  /**
-   * Indicates whether the transfer was successful.
-   */
-  success: boolean
-
-  /**
-   * The transaction hash if the transfer was submitted successfully.
-   * This may be undefined if the transfer failed.
-   */
-  transactionHash?: string
-
-  /**
-   * An error message if the transfer failed.
-   * This will be undefined if the transfer was successful.
-   */
-  error?: string
-}
+export type XcmTransferNativeAssetToolResult = BaseToolCallResult
 
 /**
  * Configuration object for the native token transfer tool via xcm
