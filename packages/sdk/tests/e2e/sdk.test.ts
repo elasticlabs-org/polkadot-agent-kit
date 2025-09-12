@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import { PolkadotAgentKit } from '../../src/api';
+import { getVercelAITools } from '../../src/vercel';
 import type { AgentConfig } from '@polkadot-agent-kit/common';
 
 const mockBalanceResult = { balance: '100.00', symbol: 'WND', chain: 'westend' };
@@ -58,6 +59,20 @@ vi.mock('../../src/api', () => {
         mintVdotTool: vi.fn(() => ({
           call: vi.fn(async (input: any) => mockMintVdotResult)
         })),
+        getActions: vi.fn(() => [
+          {
+            name: 'check_balance',
+            description: 'Check balance of the wallet address on a specific chain',
+            schema: {} as any,
+            invoke: vi.fn(async (args: any) => JSON.stringify(mockBalanceResult))
+          },
+          {
+            name: 'transfer_native',
+            description: 'Transfer native tokens to an address',
+            schema: {} as any,
+            invoke: vi.fn(async (args: any) => JSON.stringify(mockTransferResult))
+          }
+        ]),
         disconnect: vi.fn().mockResolvedValue(undefined),
         config: instanceConfig,
       };
@@ -280,6 +295,28 @@ describe('PolkadotAgentKit E2E', () => {
       const tool = arrange(agent);
       const result = await act(tool);
       assert(result);
+    });
+  });
+
+  describe('getVercelAITools', () => {
+    it('should return a toolset with correct structure', () => {
+      const toolSet = getVercelAITools(agent);
+
+      expect(toolSet).toBeDefined();
+      expect(typeof toolSet).toBe('object');
+      expect(toolSet.check_balance).toBeDefined();
+      expect(toolSet.transfer_native).toBeDefined();
+
+      // Check that the tools have the expected structure
+      expect(typeof toolSet.check_balance.execute).toBe('function');
+      expect(typeof toolSet.transfer_native.execute).toBe('function');
+    });
+
+    it('should have tools with correct descriptions', () => {
+      const toolSet = getVercelAITools(agent);
+
+      expect(toolSet.check_balance.description).toBe('Check balance of the wallet address on a specific chain');
+      expect(toolSet.transfer_native.description).toBe('Transfer native tokens to an address');
     });
   });
 });
