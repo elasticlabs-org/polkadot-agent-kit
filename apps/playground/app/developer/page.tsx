@@ -46,12 +46,24 @@ export default function DeveloperPage() {
     { value: "identity", label: "Identity Registry", description: "On-chain identity management" },
   ]
 
-  // Load config from localStorage on mount
+  // Load config from localStorage on mount and react to updates
   useEffect(() => {
-    const savedConfig = localStorage.getItem("polkadot-agent-config")
-    if (savedConfig) {
-      setAgentConfig(JSON.parse(savedConfig))
+    const sync = () => {
+      const savedConfig = localStorage.getItem("polkadot-agent-config")
+      if (savedConfig) {
+        setAgentConfig(JSON.parse(savedConfig))
+      } else {
+        setAgentConfig(null)
+      }
     }
+    sync()
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === "polkadot-agent-config") {
+        sync()
+      }
+    }
+    window.addEventListener("storage", onStorage)
+    return () => window.removeEventListener("storage", onStorage)
   }, [])
 
   const handleRunTool = async () => {

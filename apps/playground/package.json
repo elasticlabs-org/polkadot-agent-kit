@@ -10,6 +10,11 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
+    "@langchain/core": "^0.3.40",
+    "@polkadot-agent-kit/common": "workspace:*",
+    "@polkadot-agent-kit/core": "workspace:*",
+    "@polkadot-agent-kit/llm": "workspace:*",
+    "@polkadot-agent-kit/sdk": "workspace:*",
     "@radix-ui/react-accordion": "1.2.2",
     "@radix-ui/react-alert-dialog": "1.1.4",
     "@radix-ui/react-aspect-ratio": "1.1.1",
@@ -59,7 +64,8 @@
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.9",
-    "zod": "3.25.67"
+    "zod": "3.25.67",
+    "zod-to-json-schema": "^3.24.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.9",
