@@ -7,7 +7,8 @@
 [![NPM Package](https://img.shields.io/npm/v/@polkadot-agent-kit/sdk)](https://www.npmjs.com/package/@polkadot-agent-kit/sdk)
 <br/>
 <br/>
-**Polkadot AI Agent Kit** is an open-source library designed to build AI Agents that interact with the Polkadot ecosystem. The library provides tools for wallet management, cross-chain transactions, NFT interactions, DeFi integrations, and interactions with Asset Hub and parachains such as People Chain and Kusama Chain. The project will be archived under the **[OpenGuild](https://github.com/openguild-labs)** organization upon completion.
+
+Polkadot AI Agent Kit is an open-source library for building autonomous AI agents capable of executing complex operations within the Polkadot ecosystem. It provides a modular framework and high-level APIs to abstract the complexity of on-chain interactions.
 
 ## 📦 Monorepo Structure
 
