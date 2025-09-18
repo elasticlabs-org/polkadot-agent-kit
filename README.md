@@ -19,25 +19,26 @@ This project is organized as a monorepo with the following packages:
 | **[`packages/core/`](packages/core/)** | **Core Polkadot API functionality** | • PolkadotApi implementation with multi-chain support<br/>• Balance checking and native token transfers<br/>• Cross-chain (XCM) transaction handling<br/>• Dynamic chain initialization and management<br/>• Transaction utilities and signing logic |
 | **[`packages/llm/`](packages/llm/)** | **LangChain integration for AI agents** | • LangChain-compatible tools for blockchain operations<br/>• AI agent interfaces and abstractions<br/>• Tool definitions for balance checking, transfers, and XCM<br/>• Dynamic chain initialization tools for AI agents |
 | **[`packages/sdk/`](packages/sdk/)** | **Main SDK interface** | • PolkadotAgentKit - the primary class for developers<br/>• High-level API that combines core and LLM functionality<br/>• Comprehensive examples and documentation<br/>• Integration tests and usage patterns |
-| **[`packages/mcp/`](packages/mcp/)** | **Model Context Protocol server** | • MCP server for AI assistant integration<br/>• Direct tool access for Claude Desktop, Cursor, and custom clients<br/>• Complete Polkadot ecosystem toolset (balance, transfer, staking, DeFi)<br/>• Cross-chain operations and XCM transfers<br/>• Nomination pool management and token swaps |
+
 
 ## 🔗 Examples
 
 Explore real-world implementations:
 
 - **[Telegram Bot Example](examples/telegram-bot/)**
+- **[Polkadot Agent Kit MCP Server Example](examples/mcp-server/)**
 
 ## 🚀 How to Run the Monorepo
 
 ### Prerequisites
-- Node.js 18+
+- Node.js 22+
 - pnpm (recommended package manager)
 
 ### Setup and Development Commands
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/openguild-labs/polkadot-agent-kit.git
+git clone https://github.com/elasticlabs-org/polkadot-agent-kit
 cd polkadot-agent-kit
 
 # 2. Install all dependencies
@@ -52,8 +53,12 @@ pnpm run test
 # 5. Run end-to-end tests
 pnpm run test:e2e
 
-# 6. Run integration tests (requires Ollama)
-pnpm run test:integration
+# 6. Run integration tests for testnet agent (requires Ollama)
+pnpm run test:integration:testnet
+
+# 7. Run integration tests for mainnet agent (requires Ollama)
+pnpm run test:integration:mainnet
+
 ```
 
 ## 🤝 Contributing
