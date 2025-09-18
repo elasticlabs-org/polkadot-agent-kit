@@ -16,8 +16,8 @@ import { ToolNames } from "../common"
  * Cross-chain swap (one-click):
  * ```typescript
  * {
- *   from: "polkadot",
- *   to: "hydra",
+ *   from: "Polkadot",
+ *   to: "Hydration",
  *   currencyFrom: "DOT",
  *   currencyTo: "HDX",
  *   amount: "10000000000",
@@ -78,8 +78,8 @@ export const swapTokensToolSchema = z.object({
  * ```typescript
  * const swapTool: SwapTokensTool = swapTokensTool(apis, signer);
  * const result = await swapTool.invoke({
- *   from: "polkadot",
- *   to: "hydra",
+ *   from: "Polkadot",
+ *   to: "Hydration",
  *   currencyFrom: "DOT",
  *   currencyTo: "HDX",
  *   amount: "10000000000"
