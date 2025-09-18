@@ -13,7 +13,10 @@
       "test:watch": {
         "cache": false
       },
-      "test:integration": {
+      "test:integration:testnet": {
+        "cache": false
+      },
+      "test:integration:mainnet": {
         "cache": false
       },
       "test:e2e": {},

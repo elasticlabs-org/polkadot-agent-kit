@@ -177,13 +177,13 @@ describe('PolkadotAgentKit Integration with OllamaAgent', () => {
 
   it('should call xcm_transfer_native_asset tool for West Asset Hub to West People Chain transfer', async () => {
 
-    const userQuery = `transfer 0.5 WND to ${RECIPIENT4} from AssetHubWestend to PeopleWestend via XCM`;
+    const userQuery = `transfer 0.2 WND to ${RECIPIENT4} from AssetHubWestend to PeopleWestend via XCM`;
     
     // Get balances before transfer
     const balanceAgentBefore = await getBalance(agentKit.getApi('west_asset_hub'), agentKit.getCurrentAddress());
     const balanceRecipientBefore = await getBalance(agentKit.getApi('west_people'), RECIPIENT4);
     
-    const amount = parseUnits("0.5", getDecimalsByChainId('west_asset_hub'));
+    const amount = parseUnits("0.2", getDecimalsByChainId('west_asset_hub'));
     
     const result = await ollamaAgent.ask(userQuery);
     console.log('XCM Transfer Query Result (West Asset Hub → West People Chain):', result);
@@ -198,7 +198,7 @@ describe('PolkadotAgentKit Integration with OllamaAgent', () => {
     
     expect(xcmTransferCall).toBeDefined();
     expect(xcmTransferCall.action.toolInput).toMatchObject({
-      amount: '0.5',
+      amount: '0.2',
       to: RECIPIENT4,
       sourceChain: 'AssetHubWestend',  
       destChain: 'PeopleWestend'      
@@ -220,4 +220,6 @@ describe('PolkadotAgentKit Integration with OllamaAgent', () => {
     expect(balanceAgentAfter.data.free).toBeLessThan(balanceAgentBefore.data.free - amount - feeXCM.fee);
     
   }, 1500000);
+
+
 });

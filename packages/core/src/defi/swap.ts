@@ -165,7 +165,6 @@ function getCrossChainMultilocations(args: SwapTokenArgs) {
  */
 function formatCrossChainAmount(args: SwapTokenArgs): string {
   const decimals = getAssetDecimals(args.from as TNodeDotKsmWithRelayChains, args.currencyFrom)
-
   if (!decimals) {
     throw new Error(`Failed to get decimals for ${args.currencyFrom} on ${args.from}`)
   }
@@ -242,6 +241,31 @@ async function validateSwapFees({
   swapType: "cross-chain" | "DEX-specific"
 }): Promise<void> {
   const fees = await builder.getXcmFees()
+
+  // Check origin balance sufficiency
+  if (!fees.origin.sufficient) {
+    throw new Error(`Unable to swap due to insufficient balance`)
+  }
+
+  // Check destination balance sufficiency
+  if (!fees.destination.sufficient) {
+    throw new Error(`Unable to swap due to insufficient destination balance`)
+  }
+
+  // Check each hop for sufficiency and errors
+  if (fees.hops && fees.hops.length > 0) {
+    for (const hop of fees.hops) {
+      if (!hop.result.sufficient) {
+        throw new Error(
+          `Insufficient balance for hop on ${hop.chain}: ${hop.result.dryRunError || "Unknown error"}`
+        )
+      }
+
+      if (hop.result.dryRunError) {
+        throw new Error(`Dry run error on ${hop.chain}: ${hop.result.dryRunError}`)
+      }
+    }
+  }
 
   if (fees.failureChain || fees.failureReason) {
     throw new Error(

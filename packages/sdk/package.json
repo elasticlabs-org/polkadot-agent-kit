@@ -37,7 +37,8 @@
     "test:cov": "vitest run --coverage",
     "test:watch": "vitest",
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts --sequence.concurrent",
-    "test:integration": "vitest run --config ./vitest.config.integration.ts --sequence.concurrent"
+    "test:integration:testnet": "vitest run --config ./vitest.config.testnet.ts --sequence.concurrent",
+    "test:integration:mainnet": "vitest run --config ./vitest.config.mainnet.ts --sequence.concurrent"
   },
   "dependencies": {
     "@langchain/core": "^0.3.40",
