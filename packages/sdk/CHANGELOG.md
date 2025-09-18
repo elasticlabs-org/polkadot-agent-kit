@@ -1,10 +1,24 @@
 # @polkadot-agent-kit/sdk
 
+## 2.1.1
+
+### Patch Changes
+
+- Add Vercel AI SDK 
+- Add mcp server 
+- Remove key management 
+- Add integration mainnet 
+
+- Updated dependencies
+  - @polkadot-agent-kit/common@2.1.1
+  - @polkadot-agent-kit/core@2.1.1
+  - @polkadot-agent-kit/llm@2.1.1
+
 ## 2.1.0
 
 ### Minor Changes
 
-- Enhanced integration tests sdk 
+- Enhanced integration tests sdk
 
 ### Patch Changes
 

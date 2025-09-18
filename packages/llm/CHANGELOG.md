@@ -1,5 +1,16 @@
 # @polkadot-agent-kit/llm
 
+## 2.1.1
+
+### Patch Changes
+
+- Update readme 
+- Update swapToolSchema 
+- Refactor tool call result 
+- Updated dependencies
+  - @polkadot-agent-kit/common@2.1.1
+  - @polkadot-agent-kit/core@2.1.1
+
 ## 2.1.0
 
 ### Minor Changes
