@@ -241,7 +241,7 @@ async function validateSwapFees({
   swapType: "cross-chain" | "DEX-specific"
 }): Promise<void> {
   const fees = await builder.getXcmFees()
-  
+
   // Check origin balance sufficiency
   if (!fees.origin.sufficient) {
     throw new Error(`Unable to swap due to insufficient balance`)
@@ -257,14 +257,12 @@ async function validateSwapFees({
     for (const hop of fees.hops) {
       if (!hop.result.sufficient) {
         throw new Error(
-          `Insufficient balance for hop on ${hop.chain}: ${hop.result.dryRunError || 'Unknown error'}`
+          `Insufficient balance for hop on ${hop.chain}: ${hop.result.dryRunError || "Unknown error"}`
         )
       }
-      
+
       if (hop.result.dryRunError) {
-        throw new Error(
-          `Dry run error on ${hop.chain}: ${hop.result.dryRunError}`
-        )
+        throw new Error(`Dry run error on ${hop.chain}: ${hop.result.dryRunError}`)
       }
     }
   }
