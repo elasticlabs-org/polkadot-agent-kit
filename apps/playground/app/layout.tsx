@@ -1,19 +1,8 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Work_Sans, Open_Sans } from "next/font/google"
+import { GeistSans } from "geist/font/sans"
+import { GeistMono } from "geist/font/mono"
 import "./globals.css"
-
-const workSans = Work_Sans({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-work-sans",
-})
-
-const openSans = Open_Sans({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-open-sans",
-})
 
 export const metadata: Metadata = {
   title: "Polkadot Agent Playground",
@@ -27,7 +16,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${workSans.variable} ${openSans.variable} dark`}>
+    <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable} dark`}>
       <body className="antialiased">{children}</body>
     </html>
   )
