@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { Settings, Key, Cpu } from "lucide-react"
 import Sidebar from "@/components/sidebar"
+import type { KnownChainId, KeyType } from "@polkadot-agent-kit/common"
 
 interface AgentConfig {
   llmProvider: string
@@ -31,15 +32,24 @@ export default function ConfigPage() {
     chains: ["paseo", "paseo_people"],
     isConfigured: false,
   })
+  const [isConnecting, setIsConnecting] = useState(false)
+  const [llmConnected, setLlmConnected] = useState<"idle" | "ok" | "error">("idle")
 
   const llmProviders = [
-    { value: "openai", label: "OpenAI", models: ["gpt-4", "gpt-4-turbo", "gpt-3.5-turbo"] },
-    { value: "ollama", label: "Ollama", models: ["llama2", "codellama", "mistral", "neural-chat"] },
-    { value: "anthropic", label: "Anthropic", models: ["claude-3-opus", "claude-3-sonnet", "claude-3-haiku"] },
+    { value: "openai", label: "OpenAI", models: ["gpt-4o-mini"] },
+    { value: "ollama", label: "Ollama", models: ["qwen3:latest"] },
   ]
 
-  const keyTypes = ["Sr25519", "Ed25519", "Ecdsa"]
-  const availableChains = ["polkadot", "kusama", "paseo", "paseo_people", "westend", "rococo"]
+  const keyTypes: KeyType[] = ["Sr25519", "Ed25519"]
+  // Use KnownChainId values only; keep a focused subset commonly used in tests/examples
+  const availableChains: KnownChainId[] = [
+    "paseo",
+    "paseo_people",
+    "west",
+    "west_asset_hub",
+    "polkadot",
+    "kusama",
+  ]
 
   // Load config from localStorage on mount
   useEffect(() => {
@@ -49,29 +59,83 @@ export default function ConfigPage() {
     }
   }, [])
 
-  const handleConfigureAgent = () => {
-    if (!agentConfig.llmProvider || !agentConfig.apiKey || !agentConfig.privateKey) {
-      alert("Please fill in all required fields")
+  const handleConfigureAgent = async () => {
+    const needsApiKey = agentConfig.llmProvider === "openai"
+    if (!agentConfig.llmProvider) {
+      alert("Please select an LLM provider")
+      return
+    }
+    if (needsApiKey && !agentConfig.apiKey) {
+      alert("API key is required for OpenAI")
+      return
+    }
+    if (!agentConfig.privateKey) {
+      alert("Private key is required")
+      return
+    }
+    if (!agentConfig.keyType) {
+      alert("Please select a key type")
+      return
+    }
+    if (!agentConfig.chains || agentConfig.chains.length === 0) {
+      alert("Please select at least one chain")
       return
     }
 
-    // Initialize PolkadotAgentKit (simulated)
-    console.log("[v0] Initializing PolkadotAgentKit with config:", {
-      privateKey: agentConfig.privateKey.substring(0, 10) + "...",
-      keyType: agentConfig.keyType,
-      chains: agentConfig.chains,
-      llmProvider: agentConfig.llmProvider,
-      llmModel: agentConfig.llmModel,
-    })
+    setIsConnecting(true)
+    setLlmConnected("idle")
 
-    const updatedConfig = { ...agentConfig, isConfigured: true }
-    setAgentConfig(updatedConfig)
+    try {
+      // Save API key temporarily in localStorage (client-side only)
+      if (needsApiKey) {
+        localStorage.setItem("llm_api_key", agentConfig.apiKey)
+      } else {
+        localStorage.removeItem("llm_api_key")
+      }
 
-    // Save to localStorage
-    localStorage.setItem("polkadot-agent-config", JSON.stringify(updatedConfig))
+      // Initialize PolkadotAgentKit for selected chains
+      const { PolkadotAgentKit } = await import("@polkadot-agent-kit/sdk")
+      const kit = new PolkadotAgentKit({
+        privateKey: agentConfig.privateKey,
+        keyType: agentConfig.keyType as KeyType,
+        chains: agentConfig.chains as unknown as KnownChainId[],
+      })
+      await kit.initializeApi()
 
-    // Redirect to chat
-    router.push("/chat")
+      // Check LLM connectivity
+      if (agentConfig.llmProvider === "ollama") {
+        // Try ping local Ollama
+        const controller = new AbortController()
+        const timeout = setTimeout(() => controller.abort(), 2500)
+        try {
+          const res = await fetch("http://127.0.0.1:11434/api/tags", { signal: controller.signal })
+          setLlmConnected(res.ok ? "ok" : "error")
+        } catch (_) {
+          setLlmConnected("error")
+        } finally {
+          clearTimeout(timeout)
+        }
+      } else if (agentConfig.llmProvider === "openai") {
+        // We avoid calling OpenAI from browser due to CORS/security; assume ok if key provided
+        setLlmConnected("ok")
+      }
+
+      const updatedConfig = { ...agentConfig, isConfigured: true }
+      setAgentConfig(updatedConfig)
+      localStorage.setItem("polkadot-agent-config", JSON.stringify(updatedConfig))
+
+      router.push("/chat")
+    } catch (err) {
+      console.error("Failed to connect agent:", err)
+      alert(
+        `Failed to connect agent: ${err instanceof Error ? err.message : "Unknown error"}. ` +
+          (agentConfig.llmProvider === "ollama" && llmConnected === "error"
+            ? "Ollama seems unreachable at 127.0.0.1:11434. Ensure Ollama is running and the model is pulled."
+            : "")
+      )
+    } finally {
+      setIsConnecting(false)
+    }
   }
 
   return (
@@ -162,7 +226,11 @@ export default function ConfigPage() {
                     value={agentConfig.apiKey}
                     onChange={(e) => setAgentConfig((prev) => ({ ...prev, apiKey: e.target.value }))}
                     className="h-12 modern-input font-mono"
+                    disabled={agentConfig.llmProvider === "ollama"}
                   />
+                  {agentConfig.llmProvider === "ollama" && (
+                    <p className="text-xs modern-text-secondary mt-2">API key not required for Ollama.</p>
+                  )}
                 </div>
               </Card>
 
@@ -236,11 +304,17 @@ export default function ConfigPage() {
 
                 <Button
                   onClick={handleConfigureAgent}
-                  disabled={!agentConfig.llmProvider || !agentConfig.apiKey || !agentConfig.privateKey}
+                  disabled={
+                    isConnecting ||
+                    !agentConfig.llmProvider ||
+                    !agentConfig.privateKey ||
+                    agentConfig.chains.length === 0 ||
+                    (agentConfig.llmProvider === "openai" && !agentConfig.apiKey)
+                  }
                   className="mt-8 px-8 h-12 text-base font-medium modern-button-primary"
                 >
                   <Settings className="w-5 h-5 mr-2" />
-                  Configure Agent
+                  {isConnecting ? "Connecting..." : "Connect Agent"}
                 </Button>
               </Card>
             </div>

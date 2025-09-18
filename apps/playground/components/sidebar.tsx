@@ -20,11 +20,24 @@ export default function Sidebar({ currentPage }: SidebarProps) {
 
   // Load config from localStorage on mount
   useEffect(() => {
-    const savedConfig = localStorage.getItem("polkadot-agent-config")
-    if (savedConfig) {
-      const config = JSON.parse(savedConfig)
-      setAgentConfig({ isConfigured: config.isConfigured || false })
+    const sync = () => {
+      const savedConfig = localStorage.getItem("polkadot-agent-config")
+      if (savedConfig) {
+        const config = JSON.parse(savedConfig)
+        setAgentConfig({ isConfigured: config.isConfigured || false })
+      } else {
+        setAgentConfig({ isConfigured: false })
+      }
     }
+    sync()
+    // Listen for changes from other tabs/pages
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === "polkadot-agent-config") {
+        sync()
+      }
+    }
+    window.addEventListener("storage", onStorage)
+    return () => window.removeEventListener("storage", onStorage)
   }, [])
 
   const navigateTo = (page: string) => {
