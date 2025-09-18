@@ -42,13 +42,13 @@ export const swapTokensToolSchema = z.object({
     .string()
     .optional()
     .describe(
-      "The source chain ID where the swap originates (e.g., 'polkadot', 'kusama', 'hydra'). Required for cross-chain swaps."
+      "The source chain ID where the swap originates (e.g., 'Polkadot', 'Kusama', 'Hydra', 'AssetHubPolkadot'). Required for cross-chain swaps."
     ),
   to: z
     .string()
     .optional()
     .describe(
-      "The destination chain ID where the swap completes (e.g., 'polkadot', 'kusama', 'hydra'). Required for cross-chain swaps."
+      "The destination chain ID where the swap completes (e.g., 'Polkadot', 'Kusama', 'Hydra', 'AssetHubPolkadot'). Required for cross-chain swaps."
     ),
   currencyFrom: z
     .string()

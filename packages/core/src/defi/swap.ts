@@ -165,7 +165,6 @@ function getCrossChainMultilocations(args: SwapTokenArgs) {
  */
 function formatCrossChainAmount(args: SwapTokenArgs): string {
   const decimals = getAssetDecimals(args.from as TNodeDotKsmWithRelayChains, args.currencyFrom)
-
   if (!decimals) {
     throw new Error(`Failed to get decimals for ${args.currencyFrom} on ${args.from}`)
   }
@@ -242,6 +241,9 @@ async function validateSwapFees({
   swapType: "cross-chain" | "DEX-specific"
 }): Promise<void> {
   const fees = await builder.getXcmFees()
+  if (!fees.origin.sufficient) {
+    throw new Error(`Unable to swap due to insufficient balance`)
+  }
 
   if (fees.failureChain || fees.failureReason) {
     throw new Error(
