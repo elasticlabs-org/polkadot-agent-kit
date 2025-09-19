@@ -41,12 +41,25 @@ export default function DeveloperPage() {
   const [toolCalls, setToolCalls] = useState<ToolCall[]>([])
   const [isExecuting, setIsExecuting] = useState(false)
 
+  // Load config from localStorage on mount and react to updates
   useEffect(() => {
-    const init = async () => {
-      try {
-        const raw = localStorage.getItem("polkadot-agent-config")
-        if (!raw) return
-        const cfg = JSON.parse(raw) as AgentConfigLocal
+    const sync = () => {
+      const savedConfig = localStorage.getItem("polkadot-agent-config")
+      if (savedConfig) {
+        setAgentConfig(JSON.parse(savedConfig))
+      } else {
+        setAgentConfig(null)
+      }
+    }
+    sync()
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === "polkadot-agent-config") {
+        sync()
+      }
+    }
+    window.addEventListener("storage", onStorage)
+    return () => window.removeEventListener("storage", onStorage)
+  }, [])
 
         const [{ PolkadotAgentKit }, { default: zodToJsonSchema }] = await Promise.all([
           import("@polkadot-agent-kit/sdk"),

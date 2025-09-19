@@ -74,7 +74,7 @@ importers:
         version: 0.3.61(openai@5.6.0(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(zod@3.25.67))
       '@langchain/ollama':
         specifier: ^0.2.2
-        version: 0.2.3(@langchain/core@0.3.61(openai@5.6.0(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(zod@3.25.67)))
+        version: 0.2.3(@langchain/core@0.3.61(openai@5.6.0(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(zod@3.25.67))
       '@polkadot-agent-kit/common':
         specifier: workspace:*
         version: link:../../packages/common
