@@ -39,27 +39,13 @@ export default function DeveloperPage() {
   const [selectedMethod, setSelectedMethod] = useState("")
   const [toolParams, setToolParams] = useState("{}")
   const [toolCalls, setToolCalls] = useState<ToolCall[]>([])
-  const [isExecuting, setIsExecuting] = useState(false)
 
-  // Load config from localStorage on mount and react to updates
   useEffect(() => {
-    const sync = () => {
-      const savedConfig = localStorage.getItem("polkadot-agent-config")
-      if (savedConfig) {
-        setAgentConfig(JSON.parse(savedConfig))
-      } else {
-        setAgentConfig(null)
-      }
-    }
-    sync()
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === "polkadot-agent-config") {
-        sync()
-      }
-    }
-    window.addEventListener("storage", onStorage)
-    return () => window.removeEventListener("storage", onStorage)
-  }, [])
+    const init = async () => {
+      try {
+        const raw = localStorage.getItem("polkadot-agent-config")
+        if (!raw) return
+        const cfg = JSON.parse(raw) as AgentConfigLocal
 
         const [{ PolkadotAgentKit }, { default: zodToJsonSchema }] = await Promise.all([
           import("@polkadot-agent-kit/sdk"),
@@ -100,7 +86,7 @@ export default function DeveloperPage() {
             if (anyTool?.schema) {
               try {
                 const fullSchema = zodToJsonSchema(anyTool.schema, name) as any
-                // Extract the actual definition from $ref structure
+
                 if (fullSchema?.$ref && fullSchema?.definitions) {
                   const refName = fullSchema.$ref.replace('#/definitions/', '')
                   anyTool.schemaJson = fullSchema.definitions[refName] || fullSchema
@@ -160,12 +146,9 @@ export default function DeveloperPage() {
   }, [selectedTool])
 
   const runTool = async () => {
-    if (!selectedTool || isExecuting) return
-    
-    setIsExecuting(true)
+    if (!selectedTool) return
     const id = String(Date.now())
     setToolCalls(prev => [...prev, { id, tool: selectedEndpoint || "", method: selectedMethod, params: toolParams, status: "pending" }])
-    
     try {
       const parsed = toolParams ? JSON.parse(toolParams) : {}
       console.log("[Developer] Executing:", { endpoint: selectedEndpoint, method: selectedMethod, params: parsed })
@@ -174,8 +157,6 @@ export default function DeveloperPage() {
       setToolCalls(prev => prev.map(c => c.id === id ? { ...c, status: "success", response: JSON.stringify(res, null, 2) } : c))
     } catch (err: any) {
       setToolCalls(prev => prev.map(c => c.id === id ? { ...c, status: "error", response: String(err?.message || err) } : c))
-    } finally {
-      setIsExecuting(false)
     }
   }
 
@@ -211,7 +192,7 @@ export default function DeveloperPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   <div className="col-span-1">
                     <label className="text-sm font-semibold mb-3 block modern-text-primary">Select API Endpoint</label>
-                    <Select value={selectedEndpoint} onValueChange={(v) => { setSelectedEndpoint(v as EndpointKey); setSelectedMethod(""); setToolParams("{}"); }}>
+                    <Select value={selectedEndpoint} onValueChange={(v) => { setSelectedEndpoint(v as EndpointKey); setSelectedMethod(""); }}>
                       <SelectTrigger className="h-12 modern-select">
                         <SelectValue placeholder="Choose endpoint..." />
                       </SelectTrigger>
@@ -270,11 +251,11 @@ export default function DeveloperPage() {
 
                 <Button
                   onClick={runTool}
-                  disabled={!agentReady || !selectedEndpoint || !selectedMethod || isExecuting}
+                  disabled={!agentReady || !selectedEndpoint || !selectedMethod}
                   className="mt-6 px-8 h-12 text-base font-medium modern-button-primary"
                 >
                   <Play className="w-5 h-5 mr-2" />
-                  {isExecuting ? "Executing..." : "Execute API Call"}
+                  Execute API Call
                 </Button>
               </Card>
 
