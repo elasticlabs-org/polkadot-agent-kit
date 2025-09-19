@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Send, Bot } from "lucide-react"
 import Sidebar from "@/components/sidebar"
+// Remove the static import of AgentService
 
 interface ChatMessage {
   id: string
@@ -74,24 +75,30 @@ export default function ChatPage() {
     setChatInput("")
     setIsLoading(true)
 
-    // Simulate AI response
-    setTimeout(() => {
-      const responses = [
-        "Great question about Polkadot! XCM (Cross-Consensus Messaging) enables seamless communication between parachains, allowing them to share functionality and assets while maintaining their specialized purposes.",
-        "Substrate is a powerful blockchain framework that provides modular components for building custom blockchains. It handles the complex networking, consensus, and runtime logic so you can focus on your chain's unique features.",
-        "Polkadot's shared security model means all parachains benefit from the same level of security as the relay chain, without needing to bootstrap their own validator sets. This is a game-changer for blockchain interoperability.",
-        "Building a parachain involves using Substrate to create your runtime logic, then bidding for a parachain slot through the auction system. The process has become much more accessible with tools like Zombienet for testing.",
-      ]
-
+    try {
+      // Dynamic import to avoid SSR issues
+      const { AgentService } = await import("@/services/agent")
+      const agent = AgentService.getInstance()
+      const result = await agent.ask(userMessage.content)
+      const outputText = typeof result.output === "string" ? result.output : JSON.stringify(result.output, null, 2)
       const aiMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: "ai",
-        content: responses[Math.floor(Math.random() * responses.length)],
+        content: outputText,
         timestamp: new Date(),
       }
       setChatMessages((prev) => [...prev, aiMessage])
+    } catch (err: any) {
+      const aiMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        type: "ai",
+        content: `Error: ${err?.message || "Unknown error"}`,
+        timestamp: new Date(),
+      }
+      setChatMessages((prev) => [...prev, aiMessage])
+    } finally {
       setIsLoading(false)
-    }, 1500)
+    }
   }
 
   return (
@@ -185,11 +192,15 @@ export default function ChatPage() {
                     className="flex-1 min-h-[70px] resize-none modern-input text-base"
                     disabled={!agentConfig?.isConfigured}
                     onKeyDown={(e) => {
+                      const ne = (e as any).nativeEvent
+                      if (ne?.isComposing || e.keyCode === 229) return
                       if (e.key === "Enter" && !e.shiftKey) {
                         e.preventDefault()
                         handleSendMessage()
                       }
                     }}
+                    onCompositionStart={() => {/* optional: set state if you want */}}
+                    onCompositionEnd={() => {/* optional: clear state */}}
                   />
                   <Button
                     onClick={handleSendMessage}
