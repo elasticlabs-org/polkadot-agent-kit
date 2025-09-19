@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Send, Bot } from "lucide-react"
 import Sidebar from "@/components/sidebar"
-// Remove the static import of AgentService
+
 
 interface ChatMessage {
   id: string
@@ -30,19 +30,15 @@ export default function ChatPage() {
   const [chatInput, setChatInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [agentConfig, setAgentConfig] = useState<AgentConfig | null>(null)
+  const [isClient, setIsClient] = useState(false)
 
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
-    {
-      id: "welcome",
-      type: "ai",
-      content:
-        'Welcome to the Polkadot Agent Playground!\n\nI\'m your AI assistant for exploring the Polkadot ecosystem. Ready to dive into the world of interoperable blockchains?\n\n**What I can help you with:**\n• Polkadot governance and democracy\n• Cross-chain interoperability with XCM\n• Substrate development guidance\n• Parachain ecosystem insights\n\n**Try asking:**\n- "How does XCM work for cross-chain messaging?"\n- "What are the benefits of Substrate framework?"\n- "Explain Polkadot\'s shared security model"\n- "How do I build a parachain?"',
-      timestamp: new Date(),
-    },
-  ])
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
 
-  // Load config from localStorage on mount
+  // Initialize client-side state and load config
   useEffect(() => {
+    setIsClient(true)
+    
+
     const sync = () => {
       const savedConfig = localStorage.getItem("polkadot-agent-config")
       if (savedConfig) {
@@ -65,7 +61,7 @@ export default function ChatPage() {
     if (!chatInput.trim() || !agentConfig?.isConfigured) return
 
     const userMessage: ChatMessage = {
-      id: Date.now().toString(),
+      id: `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       type: "user",
       content: chatInput,
       timestamp: new Date(),
@@ -99,6 +95,23 @@ export default function ChatPage() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  // Prevent hydration mismatch by not rendering until client-side
+  if (!isClient) {
+    return (
+      <div className="modern-container">
+        <div className="flex h-screen">
+          <Sidebar currentPage="chat" />
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-center">
+              <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+              <p className="modern-text-secondary">Loading chat...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (

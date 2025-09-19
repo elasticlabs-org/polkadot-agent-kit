@@ -10,7 +10,6 @@ import { Badge } from "@/components/ui/badge"
 import { Settings, Key, Cpu } from "lucide-react"
 import Sidebar from "@/components/sidebar"
 import type { KnownChainId, KeyType } from "@polkadot-agent-kit/common"
-
 interface AgentConfig {
   llmProvider: string
   llmModel: string

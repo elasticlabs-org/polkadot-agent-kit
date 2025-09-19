@@ -59,8 +59,8 @@ export default function Sidebar({ currentPage }: SidebarProps) {
               <Terminal className="w-5 h-5" />
             </div>
             <div>
-              <h1 className="font-bold text-xl modern-gradient-text">Polkadot Agent</h1>
-              <p className="text-xs modern-text-secondary">Playground v2.0</p>
+              <h1 className="font-bold text-xl modern-gradient-text">Polkadot Agent Kit</h1>
+              <p className="text-xs modern-text-secondary">Playground v0.1.0</p>
             </div>
           </div>
         )}
