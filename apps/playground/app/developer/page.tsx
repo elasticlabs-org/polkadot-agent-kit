@@ -203,7 +203,7 @@ export default function DeveloperPage() {
                         <SelectItem value="staking">Staking</SelectItem>
                       </SelectContent>
                     </Select>
-                  </div>
+                            </div>
 
                   <div className="col-span-1">
                     <label className="text-sm font-semibold mb-3 block modern-text-primary">Method</label>
@@ -232,11 +232,11 @@ export default function DeveloperPage() {
 
                 <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <div>
-                    <label className="text-sm font-semibold mb-3 block modern-text-primary">Parameters (JSON)</label>
-                    <Textarea
+                  <label className="text-sm font-semibold mb-3 block modern-text-primary">Parameters (JSON)</label>
+                  <Textarea
                       className="font-mono text-sm modern-input min-h-[160px]"
-                      value={toolParams}
-                      onChange={(e) => setToolParams(e.target.value)}
+                    value={toolParams}
+                    onChange={(e) => setToolParams(e.target.value)}
                       placeholder="{}"
                       rows={8}
                     />

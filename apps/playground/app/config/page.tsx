@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { Settings, Key, Cpu } from "lucide-react"
 import Sidebar from "@/components/sidebar"
+import { ChainSelector } from "@/components/chain-selector"
 import type { KnownChainId, KeyType } from "@polkadot-agent-kit/common"
 interface AgentConfig {
   llmProvider: string
@@ -18,6 +19,16 @@ interface AgentConfig {
   keyType: string
   chains: string[]
   isConfigured: boolean
+}
+
+interface Chain {
+  id: string
+  name: string
+  specName: string
+  type: "system" | "relay" | "para"
+  symbol: string
+  relay: string | null
+  chainId: number | null
 }
 
 export default function ConfigPage() {
@@ -33,6 +44,7 @@ export default function ConfigPage() {
   })
   const [isConnecting, setIsConnecting] = useState(false)
   const [llmConnected, setLlmConnected] = useState<"idle" | "ok" | "error">("idle")
+  const [availableChains, setAvailableChains] = useState<Chain[]>([])
 
   const llmProviders = [
     { value: "openai", label: "OpenAI", models: ["gpt-4o-mini"] },
@@ -40,15 +52,33 @@ export default function ConfigPage() {
   ]
 
   const keyTypes: KeyType[] = ["Sr25519", "Ed25519"]
-  // Use KnownChainId values only; keep a focused subset commonly used in tests/examples
-  const availableChains: KnownChainId[] = [
-    "paseo",
-    "paseo_people",
-    "west",
-    "west_asset_hub",
-    "polkadot",
-    "kusama",
-  ]
+
+  // Load available chains from common package
+  useEffect(() => {
+    const loadChains = async () => {
+      try {
+        const { getAllSupportedChains } = await import("@polkadot-agent-kit/common")
+        const chains = getAllSupportedChains()
+        setAvailableChains(chains.map(chain => ({
+          id: chain.id,
+          name: chain.name,
+          specName: chain.specName,
+          type: chain.type,
+          symbol: chain.symbol,
+          relay: chain.relay,
+          chainId: chain.chainId,
+        })))
+      } catch (error) {
+        console.error("Failed to load chains:", error)
+        // Fallback to basic chains if import fails
+        setAvailableChains([
+          { id: "paseo", name: "Paseo", specName: "paseo", type: "relay", symbol: "DOT", relay: "paseo", chainId: 0 },
+          { id: "paseo_people", name: "Paseo People", specName: "paseo-people", type: "system", symbol: "DOT", relay: "paseo", chainId: 1004 },
+        ])
+      }
+    }
+    loadChains()
+  }, [])
 
   // Load config from localStorage on mount
   useEffect(() => {
@@ -276,27 +306,17 @@ export default function ConfigPage() {
                     </div>
 
                     <div>
-                      <label className="text-sm font-semibold mb-3 block modern-text-primary">Chains</label>
-                      <div className="flex flex-wrap gap-2">
-                        {availableChains.map((chain) => (
-                          <Button
-                            key={chain}
-                            variant="ghost"
-                            size="sm"
-                            className={`text-xs ${agentConfig.chains.includes(chain) ? "modern-button-primary" : "modern-nav-item"}`}
-                            onClick={() => {
-                              setAgentConfig((prev) => ({
-                                ...prev,
-                                chains: prev.chains.includes(chain)
-                                  ? prev.chains.filter((c) => c !== chain)
-                                  : [...prev.chains, chain],
-                              }))
-                            }}
-                          >
-                            {chain}
-                          </Button>
-                        ))}
-                      </div>
+                      <ChainSelector
+                        selectedChains={agentConfig.chains}
+                        onChainsChange={(chains) => {
+                          setAgentConfig((prev) => ({
+                            ...prev,
+                            chains,
+                          }))
+                        }}
+                        availableChains={availableChains}
+                        disabled={isConnecting}
+                      />
                     </div>
                   </div>
                 </div>
