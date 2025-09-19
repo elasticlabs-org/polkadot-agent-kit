@@ -16,6 +16,14 @@ const nextConfig = {
       asyncWebAssembly: true,
       layers: true,
     }
+    // Declare async function support to satisfy asyncWebAssembly
+    config.output = {
+      ...(config.output || {}),
+      environment: {
+        ...(config.output?.environment || {}),
+        asyncFunction: true,
+      },
+    }
     return config
   },
 }
