@@ -342,17 +342,6 @@ export default function DeveloperPage() {
                             </Badge>
                           </div>
 
-                          {call.params && (
-                            <div className="mb-2 sm:mb-3">
-                              <div className="text-xs font-semibold mb-1 modern-text-primary">Parameters:</div>
-                              <div className="bg-black/40 rounded border border-white/20 overflow-hidden">
-                                <pre className="text-xs font-mono p-2 overflow-x-auto whitespace-pre-wrap break-words leading-relaxed text-white">
-                                {call.params}
-                              </pre>
-                              </div>
-                            </div>
-                          )}
-
                           {call.response && (
                             <div>
                               <div className="text-xs font-semibold mb-1 modern-text-primary">Response:</div>
