@@ -16,6 +16,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 import { ChevronDown } from "lucide-react"
+import { useAgentStore } from "@/stores/agent-store"
 
 type ToolLike = { name?: string; description?: string; schema?: any; schemaJson?: any; call: (args: any) => Promise<any> }
 type EndpointKey = "assets" | "swap" | "bifrost" | "staking"
@@ -38,7 +39,7 @@ interface ToolCall {
 }
 
 export default function DeveloperPage() {
-  const [agentReady, setAgentReady] = useState(false)
+  const { agentKit, isInitialized, config } = useAgentStore()
   const [toolsMap, setToolsMap] = useState<ToolsMap | null>(null)
 
   const [selectedEndpoint, setSelectedEndpoint] = useState<EndpointKey | "">("")
@@ -48,52 +49,36 @@ export default function DeveloperPage() {
   const [formData, setFormData] = useState<Record<string, any>>({})
   const [parsedSchema, setParsedSchema] = useState<any>(null)
 
-  // Initialize agent and load tools dynamically
+  // Initialize tools when agentKit is available
   useEffect(() => {
-    const initializeAgent = async () => {
+    const initializeTools = async () => {
+      if (!agentKit || !isInitialized) {
+        setToolsMap(null)
+        return
+      }
+
       try {
-        const raw = localStorage.getItem("polkadot-agent-config")
-        if (!raw) {
-          setAgentReady(false)
-          return
-        }
-        
-        const cfg = JSON.parse(raw) as AgentConfigLocal
-        if (!cfg.isConfigured) {
-          setAgentReady(false)
-          return
-        }
-
-        const [{ PolkadotAgentKit }, { default: zodToJsonSchema }] = await Promise.all([
-          import("@polkadot-agent-kit/sdk"),
-          import("zod-to-json-schema"),
-        ])
-
-        const kit = new PolkadotAgentKit({
-          privateKey: cfg.privateKey,
-          keyType: cfg.keyType,
-          chains: cfg.chains as any,
-        })
+        const { default: zodToJsonSchema } = await import("zod-to-json-schema")
 
         // Dynamically create tools map from SDK methods
         const ep: ToolsMap = {
           assets: {
-            getNativeBalanceTool: kit.getNativeBalanceTool(),
-            transferNativeTool: kit.transferNativeTool(),
-            xcmTransferNativeTool: kit.xcmTransferNativeTool(),
+            getNativeBalanceTool: agentKit.getNativeBalanceTool(),
+            transferNativeTool: agentKit.transferNativeTool(),
+            xcmTransferNativeTool: agentKit.xcmTransferNativeTool(),
           },
           swap: {
-            swapTokensTool: kit.swapTokensTool(),
+            swapTokensTool: agentKit.swapTokensTool(),
           },
           bifrost: {
-            mintVdotTool: kit.mintVdotTool(),
+            mintVdotTool: agentKit.mintVdotTool(),
           },
           staking: {
-            joinPoolTool: kit.joinPoolTool(),
-            bondExtraTool: kit.bondExtraTool(),
-            unbondTool: kit.unbondTool(),
-            withdrawUnbondedTool: kit.withdrawUnbondedTool(),
-            claimRewardsTool: kit.claimRewardsTool(),
+            joinPoolTool: agentKit.joinPoolTool(),
+            bondExtraTool: agentKit.bondExtraTool(),
+            unbondTool: agentKit.unbondTool(),
+            withdrawUnbondedTool: agentKit.withdrawUnbondedTool(),
+            claimRewardsTool: agentKit.claimRewardsTool(),
           },
         }
 
@@ -122,15 +107,14 @@ export default function DeveloperPage() {
         }
 
         setToolsMap(ep)
-        setAgentReady(true)
       } catch (error) {
-        console.error("Failed to initialize agent:", error)
-        setAgentReady(false)
+        console.error("Failed to initialize tools:", error)
+        setToolsMap(null)
       }
     }
 
-    initializeAgent()
-  }, [])
+    initializeTools()
+  }, [agentKit, isInitialized])
 
   const selectedTool = useMemo(() => {
     if (!selectedEndpoint || !selectedMethod || !toolsMap) return null
@@ -235,9 +219,9 @@ export default function DeveloperPage() {
                 <Badge className="modern-badge font-medium px-3 py-1">Tools</Badge>
               </div>
               <div className="flex items-center gap-3">
-                <Badge className={`px-3 py-1 ${agentReady ? "modern-badge" : "bg-red-900/30 text-red-400 border-red-700"}`}>
-                  <div className={`w-2 h-2 rounded-full mr-2 ${agentReady ? "bg-green-400 animate-pulse" : "bg-red-400"}`} />
-                  {agentReady ? "Agent Ready" : "Configuration Required"}
+                <Badge className={`px-3 py-1 ${isInitialized ? "modern-badge" : "bg-red-900/30 text-red-400 border-red-700"}`}>
+                  <div className={`w-2 h-2 rounded-full mr-2 ${isInitialized ? "bg-green-400 animate-pulse" : "bg-red-400"}`} />
+                  {isInitialized ? "Agent Ready" : "Configuration Required"}
                 </Badge>
               </div>
             </div>
@@ -311,7 +295,7 @@ export default function DeveloperPage() {
                   <div className="pt-4 border-t border-white/10">
                     <Button
                       onClick={() => runTool(formData)}
-                      disabled={!agentReady || !selectedEndpoint || !selectedMethod}
+                      disabled={!isInitialized || !selectedEndpoint || !selectedMethod}
                       className="w-full modern-button-primary"
                     >
                       <Play className="w-4 h-4 mr-2" />

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { MessageCircle, Code2, Terminal, ChevronLeft, ChevronRight, Settings } from "lucide-react"
+import { useAgentStore } from "@/stores/agent-store"
 
 interface SidebarProps {
   currentPage: "config" | "chat" | "developer"
@@ -15,37 +16,15 @@ interface AgentConfig {
 
 export default function Sidebar({ currentPage }: SidebarProps) {
   const router = useRouter()
+  const { isInitialized } = useAgentStore()
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
-  const [agentConfig, setAgentConfig] = useState<AgentConfig>({ isConfigured: false })
-
-  // Load config from localStorage on mount
-  useEffect(() => {
-    const sync = () => {
-      const savedConfig = localStorage.getItem("polkadot-agent-config")
-      if (savedConfig) {
-        const config = JSON.parse(savedConfig)
-        setAgentConfig({ isConfigured: config.isConfigured || false })
-      } else {
-        setAgentConfig({ isConfigured: false })
-      }
-    }
-    sync()
-    // Listen for changes from other tabs/pages
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === "polkadot-agent-config") {
-        sync()
-      }
-    }
-    window.addEventListener("storage", onStorage)
-    return () => window.removeEventListener("storage", onStorage)
-  }, [])
 
   const navigateTo = (page: string) => {
     if (page === "config") {
       router.push("/config")
-    } else if (page === "chat" && agentConfig.isConfigured) {
+    } else if (page === "chat" && isInitialized) {
       router.push("/chat")
-    } else if (page === "developer" && agentConfig.isConfigured) {
+    } else if (page === "developer" && isInitialized) {
       router.push("/developer")
     }
   }
@@ -81,9 +60,9 @@ export default function Sidebar({ currentPage }: SidebarProps) {
 
         <Button
           variant="ghost"
-          className={`w-full justify-start gap-3 h-12 modern-nav-item ${currentPage === "chat" ? "active" : ""} ${!agentConfig.isConfigured ? "opacity-50 cursor-not-allowed" : ""}`}
+          className={`w-full justify-start gap-3 h-12 modern-nav-item ${currentPage === "chat" ? "active" : ""} ${!isInitialized ? "opacity-50 cursor-not-allowed" : ""}`}
           onClick={() => navigateTo("chat")}
-          disabled={!agentConfig.isConfigured}
+          disabled={!isInitialized}
         >
           <MessageCircle className="w-5 h-5" />
           {!sidebarCollapsed && <span className="font-medium">AI Chat</span>}
@@ -91,9 +70,9 @@ export default function Sidebar({ currentPage }: SidebarProps) {
 
         <Button
           variant="ghost"
-          className={`w-full justify-start gap-3 h-12 modern-nav-item ${currentPage === "developer" ? "active" : ""} ${!agentConfig.isConfigured ? "opacity-50 cursor-not-allowed" : ""}`}
+          className={`w-full justify-start gap-3 h-12 modern-nav-item ${currentPage === "developer" ? "active" : ""} ${!isInitialized ? "opacity-50 cursor-not-allowed" : ""}`}
           onClick={() => navigateTo("developer")}
-          disabled={!agentConfig.isConfigured}
+          disabled={!isInitialized}
         >
           <Code2 className="w-5 h-5" />
           {!sidebarCollapsed && <span className="font-medium">Developer Portal</span>}
@@ -104,9 +83,9 @@ export default function Sidebar({ currentPage }: SidebarProps) {
         <div className="p-4 mt-auto">
           <div className="modern-form-section">
             <div className="flex items-center gap-2 text-xs">
-              <div className={`w-2 h-2 rounded-full ${agentConfig.isConfigured ? "bg-green-400" : "bg-red-400"}`} />
+              <div className={`w-2 h-2 rounded-full ${isInitialized ? "bg-green-400" : "bg-red-400"}`} />
               <span className="modern-text-secondary">
-                {agentConfig.isConfigured ? "Agent Configured" : "Configuration Required"}
+                {isInitialized ? "Agent Configured" : "Configuration Required"}
               </span>
             </div>
           </div>

@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Send, Bot } from "lucide-react"
 import Sidebar from "@/components/sidebar"
+import { useAgentStore } from "@/stores/agent-store"
 
 
 interface ChatMessage {
@@ -27,38 +28,20 @@ interface AgentConfig {
 }
 
 export default function ChatPage() {
+  const { agentKit, isInitialized, config } = useAgentStore()
   const [chatInput, setChatInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  const [agentConfig, setAgentConfig] = useState<AgentConfig | null>(null)
   const [isClient, setIsClient] = useState(false)
 
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
 
-  // Initialize client-side state and load config
+  // Initialize client-side state
   useEffect(() => {
     setIsClient(true)
-    
-
-    const sync = () => {
-      const savedConfig = localStorage.getItem("polkadot-agent-config")
-      if (savedConfig) {
-        setAgentConfig(JSON.parse(savedConfig))
-      } else {
-        setAgentConfig(null)
-      }
-    }
-    sync()
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === "polkadot-agent-config") {
-        sync()
-      }
-    }
-    window.addEventListener("storage", onStorage)
-    return () => window.removeEventListener("storage", onStorage)
   }, [])
 
   const handleSendMessage = async () => {
-    if (!chatInput.trim() || !agentConfig?.isConfigured) return
+    if (!chatInput.trim() || !isInitialized || !agentKit) return
 
     const userMessage: ChatMessage = {
       id: `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -72,10 +55,46 @@ export default function ChatPage() {
     setIsLoading(true)
 
     try {
-      // Dynamic import to avoid SSR issues
-      const { AgentService } = await import("@/services/agent")
-      const agent = AgentService.getInstance()
-      const result = await agent.ask(userMessage.content)
+      // Use the shared agentKit from Zustand store to create LangChain agent
+      const { getLangChainTools } = await import("@polkadot-agent-kit/sdk")
+      const { AgentExecutor, createToolCallingAgent } = await import("langchain/agents")
+      const { ChatPromptTemplate } = await import("@langchain/core/prompts")
+      const { ChatOllama } = await import("@langchain/ollama")
+      
+      // Get LLM config from localStorage
+      const llmConfig = localStorage.getItem("llm_config")
+      if (!llmConfig) throw new Error("LLM configuration not found")
+      
+      const { provider, model } = JSON.parse(llmConfig)
+      if (provider !== "ollama") {
+        throw new Error("Only Ollama is supported in the browser")
+      }
+
+      const llm = new ChatOllama({
+        model: model || "qwen3:latest",
+        temperature: 0,
+      })
+
+      const tools = getLangChainTools(agentKit)
+      const agentPrompt = createToolCallingAgent({
+        llm: llm as any,
+        tools: tools as any,
+        prompt: ChatPromptTemplate.fromMessages([
+          ["system", "You are a helpful Polkadot assistant. Use the available tools to help users with blockchain operations."],
+          ["placeholder", "{chat_history}"],
+          ["human", "{input}"],
+          ["placeholder", "{agent_scratchpad}"],
+        ]) as any,
+      })
+
+      const agentExecutor = new AgentExecutor({
+        agent: agentPrompt,
+        tools: tools as any,
+        verbose: true,
+        returnIntermediateSteps: true,
+      })
+
+      const result = await agentExecutor.invoke({ input: userMessage.content })
       const outputText = typeof result.output === "string" ? result.output : JSON.stringify(result.output, null, 2)
       const aiMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
@@ -128,12 +147,12 @@ export default function ChatPage() {
               </div>
               <div className="flex items-center gap-3">
                 <Badge
-                  className={`px-3 py-1 ${agentConfig?.isConfigured ? "modern-badge" : "bg-red-900/30 text-red-400 border-red-700"}`}
+                  className={`px-3 py-1 ${isInitialized ? "modern-badge" : "bg-red-900/30 text-red-400 border-red-700"}`}
                 >
                   <div
-                    className={`w-2 h-2 rounded-full mr-2 ${agentConfig?.isConfigured ? "bg-green-400 animate-pulse" : "bg-red-400"}`}
+                    className={`w-2 h-2 rounded-full mr-2 ${isInitialized ? "bg-green-400 animate-pulse" : "bg-red-400"}`}
                   />
-                  {agentConfig?.isConfigured ? "Agent Ready" : "Configuration Required"}
+                  {isInitialized ? "Agent Ready" : "Configuration Required"}
                 </Badge>
               </div>
             </div>
@@ -196,14 +215,14 @@ export default function ChatPage() {
                 <div className="flex gap-4">
                   <Textarea
                     placeholder={
-                      agentConfig?.isConfigured
+                      isInitialized
                         ? "Ask me about Polkadot, XCM, Substrate, or any Web3 topic..."
                         : "Please configure the agent first..."
                     }
                     value={chatInput}
                     onChange={(e) => setChatInput(e.target.value)}
                     className="flex-1 min-h-[70px] resize-none modern-input text-base"
-                    disabled={!agentConfig?.isConfigured}
+                    disabled={!isInitialized}
                     onKeyDown={(e) => {
                       const ne = (e as any).nativeEvent
                       if (ne?.isComposing || e.keyCode === 229) return
@@ -217,7 +236,7 @@ export default function ChatPage() {
                   />
                   <Button
                     onClick={handleSendMessage}
-                    disabled={!chatInput.trim() || isLoading || !agentConfig?.isConfigured}
+                    disabled={!chatInput.trim() || isLoading || !isInitialized}
                     className="px-8 h-[70px] modern-button-primary text-base font-medium"
                   >
                     <Send className="w-5 h-5" />

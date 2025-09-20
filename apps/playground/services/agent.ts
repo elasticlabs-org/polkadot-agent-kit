@@ -3,14 +3,7 @@
 import type { AgentExecutor } from "langchain/agents"
 import type { KeyType, KnownChainId } from "@polkadot-agent-kit/common"
 import {ASSETS_PROMPT, SWAP_PROMPT, NOMINATION_PROMPT, IDENTITY_PROMPT, BIFROST_PROMPT} from "@polkadot-agent-kit/llm"
-type AgentConfigLocal = {
-  llmProvider: string
-  llmModel: string
-  apiKey?: string
-  privateKey: string
-  keyType: KeyType
-  chains: KnownChainId[]
-}
+import { useAgentStore } from "@/stores/agent-store"
 
 const SYSTEM_PROMPT = ASSETS_PROMPT + SWAP_PROMPT + NOMINATION_PROMPT + BIFROST_PROMPT;
 

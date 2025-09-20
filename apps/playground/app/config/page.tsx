@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Settings, Key, Cpu } from "lucide-react"
 import Sidebar from "@/components/sidebar"
 import { ChainSelector } from "@/components/chain-selector"
+import { useAgentStore } from "@/stores/agent-store"
 import type { KnownChainId, KeyType } from "@polkadot-agent-kit/common"
 interface AgentConfig {
   llmProvider: string
@@ -33,6 +34,16 @@ interface Chain {
 
 export default function ConfigPage() {
   const router = useRouter()
+  const { 
+    config, 
+    isConfigured, 
+    isInitialized, 
+    isInitializing, 
+    setConfig, 
+    initializeAgent, 
+    setInitializing 
+  } = useAgentStore()
+  
   const [agentConfig, setAgentConfig] = useState<AgentConfig>({
     llmProvider: "",
     llmModel: "",
@@ -42,7 +53,6 @@ export default function ConfigPage() {
     chains: ["paseo", "paseo_people"],
     isConfigured: false,
   })
-  const [isConnecting, setIsConnecting] = useState(false)
   const [llmConnected, setLlmConnected] = useState<"idle" | "ok" | "error">("idle")
   const [availableChains, setAvailableChains] = useState<Chain[]>([])
 
@@ -111,7 +121,7 @@ export default function ConfigPage() {
       return
     }
 
-    setIsConnecting(true)
+    setInitializing(true)
     setLlmConnected("idle")
 
     try {
@@ -122,14 +132,26 @@ export default function ConfigPage() {
         localStorage.removeItem("llm_api_key")
       }
 
-      // Initialize PolkadotAgentKit for selected chains
-      const { PolkadotAgentKit } = await import("@polkadot-agent-kit/sdk")
-      const kit = new PolkadotAgentKit({
+      // Save LLM config to localStorage
+      localStorage.setItem("llm_config", JSON.stringify({
+        provider: agentConfig.llmProvider,
+        model: agentConfig.llmModel,
+        apiKey: agentConfig.apiKey
+      }))
+
+      // Create config for Zustand store
+      const storeConfig = {
         privateKey: agentConfig.privateKey,
-        keyType: agentConfig.keyType as KeyType,
-        chains: agentConfig.chains as unknown as KnownChainId[],
-      })
-      await kit.initializeApi()
+        keyType: agentConfig.keyType as "Sr25519" | "Ed25519",
+        chains: agentConfig.chains,
+        isConfigured: true
+      }
+
+      // Set config in Zustand store
+      setConfig(storeConfig)
+
+      // Initialize agent using Zustand store
+      await initializeAgent()
 
       // Check LLM connectivity
       if (agentConfig.llmProvider === "ollama") {
@@ -151,7 +173,6 @@ export default function ConfigPage() {
 
       const updatedConfig = { ...agentConfig, isConfigured: true }
       setAgentConfig(updatedConfig)
-      localStorage.setItem("polkadot-agent-config", JSON.stringify(updatedConfig))
 
       router.push("/chat")
     } catch (err) {
@@ -163,7 +184,7 @@ export default function ConfigPage() {
             : "")
       )
     } finally {
-      setIsConnecting(false)
+      setInitializing(false)
     }
   }
 
@@ -181,12 +202,12 @@ export default function ConfigPage() {
               </div>
               <div className="flex items-center gap-3">
                 <Badge
-                  className={`px-3 py-1 ${agentConfig.isConfigured ? "modern-badge" : "bg-red-900/30 text-red-400 border-red-700"}`}
+                  className={`px-3 py-1 ${isInitialized ? "modern-badge" : "bg-red-900/30 text-red-400 border-red-700"}`}
                 >
                   <div
-                    className={`w-2 h-2 rounded-full mr-2 ${agentConfig.isConfigured ? "bg-green-400 animate-pulse" : "bg-red-400"}`}
+                    className={`w-2 h-2 rounded-full mr-2 ${isInitialized ? "bg-green-400 animate-pulse" : "bg-red-400"}`}
                   />
-                  {agentConfig.isConfigured ? "Agent Ready" : "Configuration Required"}
+                  {isInitialized ? "Agent Ready" : "Configuration Required"}
                 </Badge>
               </div>
             </div>
@@ -315,7 +336,7 @@ export default function ConfigPage() {
                           }))
                         }}
                         availableChains={availableChains}
-                        disabled={isConnecting}
+                        disabled={isInitializing}
                       />
                     </div>
                   </div>
@@ -324,7 +345,7 @@ export default function ConfigPage() {
                 <Button
                   onClick={handleConfigureAgent}
                   disabled={
-                    isConnecting ||
+                    isInitializing ||
                     !agentConfig.llmProvider ||
                     !agentConfig.privateKey ||
                     agentConfig.chains.length === 0 ||
@@ -333,7 +354,7 @@ export default function ConfigPage() {
                   className="mt-8 px-8 h-12 text-base font-medium modern-button-primary"
                 >
                   <Settings className="w-5 h-5 mr-2" />
-                  {isConnecting ? "Connecting..." : "Connect Agent"}
+                  {isInitializing ? "Connecting..." : "Connect Agent"}
                 </Button>
               </Card>
             </div>
