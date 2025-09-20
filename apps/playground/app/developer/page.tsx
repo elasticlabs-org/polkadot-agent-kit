@@ -10,6 +10,12 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Play, Zap, Terminal } from "lucide-react"
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible"
+import { ChevronDown } from "lucide-react"
 
 type ToolLike = { name?: string; description?: string; schema?: any; schemaJson?: any; call: (args: any) => Promise<any> }
 type EndpointKey = "assets" | "swap" | "bifrost" | "staking"
@@ -39,74 +45,46 @@ export default function DeveloperPage() {
   const [selectedMethod, setSelectedMethod] = useState("")
   const [toolParams, setToolParams] = useState("{}")
   const [toolCalls, setToolCalls] = useState<ToolCall[]>([])
+  const [formData, setFormData] = useState<Record<string, any>>({})
+  const [parsedSchema, setParsedSchema] = useState<any>(null)
 
+  const selectedTool = useMemo(() => {
+    if (!selectedEndpoint || !selectedMethod || !toolsMap) return null
+    return toolsMap[selectedEndpoint][selectedMethod]
+  }, [selectedEndpoint, selectedMethod, toolsMap])
+
+  const selectedSchemaJson = useMemo(() => {
+    const sj = (selectedTool as any)?.schemaJson
+    return sj ? JSON.stringify(sj, null, 2) : ""
+  }, [selectedTool])
+
+  // This useEffect handles parsing the schema and initializing the form data
+  // when a tool is selected.
   useEffect(() => {
-    const init = async () => {
+    const schemaString = (selectedTool as any)?.schemaJson
+    if (schemaString && schemaString !== "// Select a method to view schema") {
       try {
-        const raw = localStorage.getItem("polkadot-agent-config")
-        if (!raw) return
-        const cfg = JSON.parse(raw) as AgentConfigLocal
+        const schema = JSON.parse(schemaString)
+        setParsedSchema(schema)
 
-        const [{ PolkadotAgentKit }, { default: zodToJsonSchema }] = await Promise.all([
-          import("@polkadot-agent-kit/sdk"),
-          import("zod-to-json-schema"),
-        ])
-
-        const kit = new PolkadotAgentKit({
-          privateKey: cfg.privateKey,
-          keyType: cfg.keyType,
-          chains: cfg.chains as any,
-        })
-        await kit.initializeApi()
-
-        const ep: ToolsMap = {
-          assets: {
-            getNativeBalanceTool: kit.getNativeBalanceTool(),
-            transferNativeTool: kit.transferNativeTool(),
-            xcmTransferNativeTool: kit.xcmTransferNativeTool(),
-          },
-          swap: {
-            swapTokensTool: kit.swapTokensTool(),
-          },
-          bifrost: {
-            mintVdotTool: kit.mintVdotTool(),
-          },
-          staking: {
-            joinPoolTool: kit.joinPoolTool(),
-            bondExtraTool: kit.bondExtraTool(),
-            unbondTool: kit.unbondTool(),
-            withdrawUnbondedTool: kit.withdrawUnbondedTool(),
-            claimRewardsTool: kit.claimRewardsTool(),
-          },
-        }
-
-        for (const group of Object.values(ep)) {
-          for (const [name, tool] of Object.entries(group)) {
-            const anyTool = tool as any
-            if (anyTool?.schema) {
-              try {
-                const fullSchema = zodToJsonSchema(anyTool.schema, name) as any
-
-                if (fullSchema?.$ref && fullSchema?.definitions) {
-                  const refName = fullSchema.$ref.replace('#/definitions/', '')
-                  anyTool.schemaJson = fullSchema.definitions[refName] || fullSchema
-                } else {
-                  anyTool.schemaJson = fullSchema
-                }
-              } catch {}
-            }
+        // Initialize form data with default values from the new schema
+        const initialFormData: Record<string, any> = {}
+        if (schema.properties) {
+          for (const [key, prop] of Object.entries(schema.properties as Record<string, any>)) {
+            initialFormData[key] = prop.default ?? ""
           }
         }
-
-        setToolsMap(ep)
-        setAgentReady(true)
+        setFormData(initialFormData)
       } catch (e) {
-        console.error("Developer init failed:", e)
-        setAgentReady(false)
+        console.error("Failed to parse schema:", e)
+        setParsedSchema(null)
+        setFormData({})
       }
+    } else {
+      setParsedSchema(null)
+      setFormData({})
     }
-    init()
-  }, [])
+  }, [selectedTool])
 
   const staticMethods: Record<EndpointKey, string[]> = {
     assets: [
@@ -135,24 +113,46 @@ export default function DeveloperPage() {
     return dynamic.length ? dynamic : staticMethods[selectedEndpoint]
   }, [selectedEndpoint, toolsMap])
 
-  const selectedTool = useMemo(() => {
-    if (!selectedEndpoint || !selectedMethod || !toolsMap) return null
-    return toolsMap[selectedEndpoint][selectedMethod]
-  }, [selectedEndpoint, selectedMethod, toolsMap])
+  // This function will render the correct input field based on the schema property type.
+  const renderParameterInput = (key: string, prop: any) => {
+    const handleInputChange = (value: any) => {
+      setFormData(prev => ({ ...prev, [key]: value }))
+    }
 
-  const selectedSchemaJson = useMemo(() => {
-    const sj = (selectedTool as any)?.schemaJson
-    return sj ? JSON.stringify(sj, null, 2) : ""
-  }, [selectedTool])
+    // If the property is an enum, render a dropdown select.
+    if (prop.enum) {
+      return (
+        <Select onValueChange={handleInputChange} value={formData[key]}>
+          <SelectTrigger className="modern-select">
+            <SelectValue placeholder={`Select ${prop.description || key}...`} />
+          </SelectTrigger>
+          <SelectContent>
+            {prop.enum.map((option: string) => (
+              <SelectItem key={option} value={option}>{option}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )
+    }
 
-  const runTool = async () => {
+    // Render a standard text input for other types.
+    return (
+      <Input
+        placeholder={prop.description || key}
+        value={formData[key] || ""}
+        onChange={e => handleInputChange(e.target.value)}
+        className="modern-input"
+      />
+    )
+  }
+
+  const runTool = async (params: Record<string, any>) => {
     if (!selectedTool) return
     const id = String(Date.now())
-    setToolCalls(prev => [...prev, { id, tool: selectedEndpoint || "", method: selectedMethod, params: toolParams, status: "pending" }])
+    setToolCalls(prev => [...prev, { id, tool: selectedEndpoint || "", method: selectedMethod, params: JSON.stringify(params, null, 2), status: "pending" }])
     try {
-      const parsed = toolParams ? JSON.parse(toolParams) : {}
-      console.log("[Developer] Executing:", { endpoint: selectedEndpoint, method: selectedMethod, params: parsed })
-      const res = await (selectedTool as any).call(parsed)
+      console.log("[Developer] Executing:", { endpoint: selectedEndpoint, method: selectedMethod, params: params })
+      const res = await (selectedTool as any).call(params)
       console.log("[Developer] Response:", res)
       setToolCalls(prev => prev.map(c => c.id === id ? { ...c, status: "success", response: JSON.stringify(res, null, 2) } : c))
     } catch (err: any) {
@@ -189,10 +189,11 @@ export default function DeveloperPage() {
                   Polkadot API Tools
                 </h3>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4">
-                  <div className="col-span-1">
-                    <label className="text-sm font-semibold mb-3 block modern-text-primary">Select API Endpoint</label>
-                    <Select value={selectedEndpoint} onValueChange={(v) => { setSelectedEndpoint(v as EndpointKey); setSelectedMethod(""); }}>
+                <div className="space-y-4">
+                  {/* Step 1: Select API Endpoint */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold block modern-text-primary">Select API Endpoint</label>
+                    <Select value={selectedEndpoint} onValueChange={(v) => { setSelectedEndpoint(v as EndpointKey); setSelectedMethod(""); setParsedSchema(null); setFormData({}); }}>
                       <SelectTrigger className="h-12 modern-select">
                         <SelectValue placeholder="Choose endpoint..." />
                       </SelectTrigger>
@@ -203,60 +204,58 @@ export default function DeveloperPage() {
                         <SelectItem value="staking">Staking</SelectItem>
                       </SelectContent>
                     </Select>
-                            </div>
-
-                  <div className="col-span-1">
-                    <label className="text-sm font-semibold mb-3 block modern-text-primary">Method</label>
-                    <Select value={selectedMethod} onValueChange={setSelectedMethod} disabled={!selectedEndpoint}>
-                      <SelectTrigger className="h-12 modern-select">
-                        <SelectValue placeholder="Choose method..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {methodOptions.map(m => (
-                          <SelectItem key={m} value={m}>{m}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
                   </div>
 
-                  <div className="col-span-1">
-                    <label className="text-sm font-semibold mb-3 block modern-text-primary">Quick Params</label>
-                    <Input
-                      className="h-12 modern-input"
-                      placeholder='e.g. {"chain":"paseo"}'
-                      onChange={(e) => setToolParams(e.target.value)}
-                      value={toolParams}
-                    />
+                  {/* Step 2: Select Method (appears after endpoint is selected) */}
+                  {selectedEndpoint && (
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold block modern-text-primary">Method</label>
+                      <Select value={selectedMethod} onValueChange={setSelectedMethod} disabled={!selectedEndpoint}>
+                        <SelectTrigger className="h-12 modern-select">
+                          <SelectValue placeholder="Choose method..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {methodOptions.map(m => (
+                            <SelectItem key={m} value={m}>{m}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+
+                  {/* Step 3: Parameters (appears after method is selected and schema is parsed) */}
+                  {selectedMethod && parsedSchema?.properties && (
+                    <div className="space-y-4 pt-4 border-t border-white/10">
+                      {Object.entries(parsedSchema.properties).map(([key, prop]: [string, any]) => (
+                        <Collapsible key={key} defaultOpen>
+                          <CollapsibleTrigger className="flex justify-between items-center w-full text-left">
+                            <h4 className="text-md font-semibold flex items-center gap-2">
+                              {key}
+                              <span className="text-xs font-mono text-gray-400">({prop.type})</span>
+                            </h4>
+                            <ChevronDown className="h-4 w-4 transition-transform [&[data-state=open]]:rotate-180" />
+                          </CollapsibleTrigger>
+                          <CollapsibleContent className="pt-2">
+                            <p className="text-xs text-gray-400 mb-2">{prop.description}</p>
+                            {renderParameterInput(key, prop)}
+                          </CollapsibleContent>
+                        </Collapsible>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Execute Button */}
+                  <div className="pt-4 border-t border-white/10">
+                    <Button
+                      onClick={() => runTool(formData)}
+                      disabled={!agentReady || !selectedEndpoint || !selectedMethod || !parsedSchema}
+                      className="w-full modern-button-primary"
+                    >
+                      <Play className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                      Execute API Call
+                    </Button>
                   </div>
                 </div>
-
-                <div className="mt-3 sm:mt-4 grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
-                  <div>
-                    <label className="text-sm font-semibold mb-2 sm:mb-3 block modern-text-primary">Parameters (JSON)</label>
-                    <Textarea
-                      className="font-mono text-xs sm:text-sm modern-input min-h-[100px] sm:min-h-[120px]"
-                      value={toolParams}
-                      onChange={(e) => setToolParams(e.target.value)}
-                      placeholder="{}"
-                      rows={4}
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-semibold mb-2 sm:mb-3 block modern-text-primary">Schema (readonly)</label>
-                    <pre className="text-xs bg-black/30 p-2 sm:p-3 rounded-lg font-mono overflow-x-auto border border-white/10 min-h-[100px] sm:min-h-[120px] text-white leading-relaxed">
-                      {selectedSchemaJson || "// Select a method to view schema"}
-                    </pre>
-                  </div>
-                </div>
-
-                <Button
-                  onClick={runTool}
-                  disabled={!agentReady || !selectedEndpoint || !selectedMethod}
-                  className="mt-4 sm:mt-6 px-6 sm:px-8 h-10 sm:h-12 text-sm sm:text-base font-medium modern-button-primary w-full sm:w-auto"
-                >
-                  <Play className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                  Execute API Call
-                </Button>
               </Card>
 
               <Card className="p-3 sm:p-4 lg:p-6 modern-card">
