@@ -161,15 +161,15 @@ export default function DeveloperPage() {
   }
 
   return (
-    <div className="modern-container">
-      <div className="flex h-screen">
+    <div className="modern-container min-h-screen">
+      <div className="flex min-h-screen">
         <Sidebar currentPage="developer" />
 
-        <div className="flex-1 flex flex-col">
-          <div className="border-b border-white/10 modern-card border-l-0 border-r-0 border-t-0 rounded-none">
-            <div className="flex items-center justify-between p-6">
+        <div className="flex-1 flex flex-col min-h-screen">
+          <div className="border-b border-white/10 modern-card border-l-0 border-r-0 border-t-0 rounded-none flex-shrink-0">
+            <div className="flex items-center justify-between p-4 sm:p-6">
               <div className="flex items-center gap-4">
-                <h2 className="text-2xl font-bold modern-text-primary">Developer Portal</h2>
+                <h2 className="text-xl sm:text-2xl font-bold modern-text-primary">Developer Portal</h2>
                 <Badge className="modern-badge font-medium px-3 py-1">Tools</Badge>
               </div>
               <div className="flex items-center gap-3">
@@ -181,15 +181,15 @@ export default function DeveloperPage() {
             </div>
           </div>
 
-          <div className="flex-1 p-6">
-            <div className="max-w-5xl mx-auto space-y-8">
-              <Card className="p-8 modern-card">
-                <h3 className="text-xl font-bold mb-6 flex items-center gap-3 modern-text-primary">
-                  <Terminal className="w-6 h-6" />
+          <div className="flex-1 p-4 sm:p-6 overflow-y-auto">
+            <div className="max-w-5xl mx-auto space-y-6 sm:space-y-8 pb-8">
+              <Card className="p-4 sm:p-6 modern-card">
+                <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 flex items-center gap-3 modern-text-primary">
+                  <Terminal className="w-5 h-5 sm:w-6 sm:h-6" />
                   Polkadot API Tools
                 </h3>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4">
                   <div className="col-span-1">
                     <label className="text-sm font-semibold mb-3 block modern-text-primary">Select API Endpoint</label>
                     <Select value={selectedEndpoint} onValueChange={(v) => { setSelectedEndpoint(v as EndpointKey); setSelectedMethod(""); }}>
@@ -230,20 +230,20 @@ export default function DeveloperPage() {
                   </div>
                 </div>
 
-                <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="mt-3 sm:mt-4 grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
                   <div>
-                  <label className="text-sm font-semibold mb-3 block modern-text-primary">Parameters (JSON)</label>
-                  <Textarea
-                      className="font-mono text-sm modern-input min-h-[160px]"
-                    value={toolParams}
-                    onChange={(e) => setToolParams(e.target.value)}
+                    <label className="text-sm font-semibold mb-2 sm:mb-3 block modern-text-primary">Parameters (JSON)</label>
+                    <Textarea
+                      className="font-mono text-xs sm:text-sm modern-input min-h-[100px] sm:min-h-[120px]"
+                      value={toolParams}
+                      onChange={(e) => setToolParams(e.target.value)}
                       placeholder="{}"
-                      rows={8}
+                      rows={4}
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-semibold mb-3 block modern-text-primary">Schema (readonly)</label>
-                    <pre className="text-xs bg-black/30 p-3 rounded-lg font-mono overflow-x-auto border border-white/10 min-h-[160px] text-white">
+                    <label className="text-sm font-semibold mb-2 sm:mb-3 block modern-text-primary">Schema (readonly)</label>
+                    <pre className="text-xs bg-black/30 p-2 sm:p-3 rounded-lg font-mono overflow-x-auto border border-white/10 min-h-[100px] sm:min-h-[120px] text-white leading-relaxed">
                       {selectedSchemaJson || "// Select a method to view schema"}
                     </pre>
                   </div>
@@ -252,44 +252,44 @@ export default function DeveloperPage() {
                 <Button
                   onClick={runTool}
                   disabled={!agentReady || !selectedEndpoint || !selectedMethod}
-                  className="mt-6 px-8 h-12 text-base font-medium modern-button-primary"
+                  className="mt-4 sm:mt-6 px-6 sm:px-8 h-10 sm:h-12 text-sm sm:text-base font-medium modern-button-primary w-full sm:w-auto"
                 >
-                  <Play className="w-5 h-5 mr-2" />
+                  <Play className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                   Execute API Call
                 </Button>
               </Card>
 
-              <Card className="p-8 modern-card">
-                <h3 className="text-xl font-bold mb-6 flex items-center gap-3 modern-text-primary">
-                  <Zap className="w-6 h-6" />
+              <Card className="p-3 sm:p-4 lg:p-6 modern-card">
+                <h3 className="text-base sm:text-lg font-bold mb-3 sm:mb-4 flex items-center gap-2 modern-text-primary">
+                  <Zap className="w-4 h-4 sm:w-5 sm:h-5" />
                   API Response
                 </h3>
 
-                <ScrollArea className="h-[500px]">
-                  <div className="space-y-6">
+                <div className="h-[100px] sm:h-[125px] lg:h-[150px] overflow-y-auto border border-white/10 rounded-lg bg-black/20">
+                  <div className="p-2 sm:p-3 lg:p-4 space-y-2 sm:space-y-3">
                     {toolCalls.length === 0 ? (
-                      <div className="text-center modern-text-secondary py-12">
-                        <Terminal className="w-16 h-16 mx-auto mb-6 opacity-30" />
-                        <p className="text-lg mb-2">No API calls executed yet</p>
-                        <p className="text-sm">Select a method, fill params, and execute.</p>
+                      <div className="flex flex-col items-center justify-center h-full min-h-[80px] text-center modern-text-secondary">
+                        <Terminal className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 mb-2 sm:mb-3 opacity-30" />
+                        <p className="text-xs sm:text-sm lg:text-base mb-1">No API calls executed yet</p>
+                        <p className="text-xs opacity-70">Select a method, fill params, and execute.</p>
                       </div>
                     ) : (
                       toolCalls.map((call) => (
-                        <div key={call.id} className="modern-form-section">
-                          <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-3">
-                              <Badge className="modern-badge font-medium">{call.tool}</Badge>
-                              <span className="text-sm font-mono bg-white/10 px-2 py-1 rounded text-white">
+                        <div key={call.id} className="bg-white/5 rounded-lg p-2 sm:p-3 border border-white/10">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 sm:mb-3 gap-2">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <Badge className="modern-badge font-medium text-xs">{call.tool}</Badge>
+                              <span className="text-xs font-mono bg-white/10 px-2 py-1 rounded-lg text-white">
                                 {call.method}
                               </span>
                             </div>
                             <Badge
                               className={
                                 call.status === "success"
-                                  ? "bg-green-900/30 text-green-400 border-green-700"
+                                  ? "bg-green-900/30 text-green-400 border-green-700 text-xs"
                                   : call.status === "error"
-                                    ? "bg-red-900/30 text-red-400 border-red-700"
-                                    : "bg-white/10 text-white border-white/20"
+                                    ? "bg-red-900/30 text-red-400 border-red-700 text-xs"
+                                    : "bg-white/10 text-white border-white/20 text-xs"
                               }
                             >
                               {call.status}
@@ -297,26 +297,30 @@ export default function DeveloperPage() {
                           </div>
 
                           {call.params && (
-                            <div className="mb-4">
-                              <div className="text-xs font-semibold mb-2 modern-text-primary">Parameters:</div>
-                              <pre className="text-xs bg-black/30 p-3 rounded-lg font-mono overflow-x-auto border border-white/10">
-                                {call.params}
-                              </pre>
+                            <div className="mb-2 sm:mb-3">
+                              <div className="text-xs font-semibold mb-1 modern-text-primary">Parameters:</div>
+                              <div className="bg-black/40 rounded border border-white/20 overflow-hidden">
+                                <pre className="text-xs font-mono p-2 overflow-x-auto whitespace-pre-wrap break-words leading-relaxed text-white">
+                                  {call.params}
+                                </pre>
+                              </div>
                             </div>
                           )}
 
                           {call.response && (
                             <div>
-                              <div className="text-xs font-semibold mb-2 modern-text-primary">Response:</div>
-                              <pre className="text-xs bg-black/30 p-3 rounded-lg font-mono overflow-x-auto border border-white/10 max-h-64 text-white">
-                                {call.response}
-                              </pre>
+                              <div className="text-xs font-semibold mb-1 modern-text-primary">Response:</div>
+                              <div className="bg-black/40 rounded border border-white/20 overflow-hidden">
+                                <pre className="text-xs font-mono p-2 overflow-x-auto whitespace-pre-wrap break-words text-white leading-relaxed max-h-32 overflow-y-auto">
+                                  {call.response}
+                                </pre>
+                              </div>
                             </div>
                           )}
 
                           {call.status === "pending" && (
-                            <div className="flex items-center gap-3 text-sm modern-text-secondary">
-                              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                            <div className="flex items-center gap-2 text-sm modern-text-secondary">
+                              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                               Executing API call...
                             </div>
                           )}
@@ -324,7 +328,7 @@ export default function DeveloperPage() {
                       ))
                     )}
                   </div>
-                </ScrollArea>
+                </div>
               </Card>
             </div>
           </div>
