@@ -48,6 +48,90 @@ export default function DeveloperPage() {
   const [formData, setFormData] = useState<Record<string, any>>({})
   const [parsedSchema, setParsedSchema] = useState<any>(null)
 
+  // Initialize agent and load tools dynamically
+  useEffect(() => {
+    const initializeAgent = async () => {
+      try {
+        const raw = localStorage.getItem("polkadot-agent-config")
+        if (!raw) {
+          setAgentReady(false)
+          return
+        }
+        
+        const cfg = JSON.parse(raw) as AgentConfigLocal
+        if (!cfg.isConfigured) {
+          setAgentReady(false)
+          return
+        }
+
+        const [{ PolkadotAgentKit }, { default: zodToJsonSchema }] = await Promise.all([
+          import("@polkadot-agent-kit/sdk"),
+          import("zod-to-json-schema"),
+        ])
+
+        const kit = new PolkadotAgentKit({
+          privateKey: cfg.privateKey,
+          keyType: cfg.keyType,
+          chains: cfg.chains as any,
+        })
+
+        // Dynamically create tools map from SDK methods
+        const ep: ToolsMap = {
+          assets: {
+            getNativeBalanceTool: kit.getNativeBalanceTool(),
+            transferNativeTool: kit.transferNativeTool(),
+            xcmTransferNativeTool: kit.xcmTransferNativeTool(),
+          },
+          swap: {
+            swapTokensTool: kit.swapTokensTool(),
+          },
+          bifrost: {
+            mintVdotTool: kit.mintVdotTool(),
+          },
+          staking: {
+            joinPoolTool: kit.joinPoolTool(),
+            bondExtraTool: kit.bondExtraTool(),
+            unbondTool: kit.unbondTool(),
+            withdrawUnbondedTool: kit.withdrawUnbondedTool(),
+            claimRewardsTool: kit.claimRewardsTool(),
+          },
+        }
+
+        // Process each tool to add schema information
+        for (const [endpoint, tools] of Object.entries(ep)) {
+          for (const [methodName, tool] of Object.entries(tools)) {
+            try {
+              const fullSchema = zodToJsonSchema(tool.schema, methodName) as any
+              let schemaJson
+              
+              if (fullSchema?.$ref && fullSchema?.definitions) {
+                const refName = fullSchema.$ref.replace('#/definitions/', '')
+                schemaJson = fullSchema.definitions[refName] || fullSchema
+              } else {
+                schemaJson = fullSchema
+              }
+
+              // Add schema information to the tool
+              ;(tool as any).schemaJson = schemaJson
+              ;(tool as any).name = methodName
+              ;(tool as any).description = tool.description || `${methodName} tool`
+            } catch (error) {
+              console.warn(`Failed to process schema for ${methodName}:`, error)
+            }
+          }
+        }
+
+        setToolsMap(ep)
+        setAgentReady(true)
+      } catch (error) {
+        console.error("Failed to initialize agent:", error)
+        setAgentReady(false)
+      }
+    }
+
+    initializeAgent()
+  }, [])
+
   const selectedTool = useMemo(() => {
     if (!selectedEndpoint || !selectedMethod || !toolsMap) return null
     return toolsMap[selectedEndpoint][selectedMethod]
@@ -61,22 +145,22 @@ export default function DeveloperPage() {
   // This useEffect handles parsing the schema and initializing the form data
   // when a tool is selected.
   useEffect(() => {
-    const schemaString = (selectedTool as any)?.schemaJson
-    if (schemaString && schemaString !== "// Select a method to view schema") {
+    const schemaObj = (selectedTool as any)?.schemaJson
+    if (schemaObj && typeof schemaObj === 'object') {
       try {
-        const schema = JSON.parse(schemaString)
-        setParsedSchema(schema)
+        console.log("Schema Object:", schemaObj)
+        setParsedSchema(schemaObj)
 
         // Initialize form data with default values from the new schema
         const initialFormData: Record<string, any> = {}
-        if (schema.properties) {
-          for (const [key, prop] of Object.entries(schema.properties as Record<string, any>)) {
+        if (schemaObj.properties) {
+          for (const [key, prop] of Object.entries(schemaObj.properties as Record<string, any>)) {
             initialFormData[key] = prop.default ?? ""
           }
         }
         setFormData(initialFormData)
       } catch (e) {
-        console.error("Failed to parse schema:", e)
+        console.error("Failed to process schema:", e)
         setParsedSchema(null)
         setFormData({})
       }
@@ -86,31 +170,9 @@ export default function DeveloperPage() {
     }
   }, [selectedTool])
 
-  const staticMethods: Record<EndpointKey, string[]> = {
-    assets: [
-      "getNativeBalanceTool",
-      "transferNativeTool",
-      "xcmTransferNativeTool",
-    ],
-    swap: [
-      "swapTokensTool",
-    ],
-    bifrost: [
-      "mintVdotTool",
-    ],
-    staking: [
-      "joinPoolTool",
-      "bondExtraTool",
-      "unbondTool",
-      "withdrawUnbondedTool",
-      "claimRewardsTool",
-    ],
-  }
-
   const methodOptions = useMemo(() => {
-    if (!selectedEndpoint) return []
-    const dynamic = toolsMap ? Object.keys(toolsMap[selectedEndpoint] || {}) : []
-    return dynamic.length ? dynamic : staticMethods[selectedEndpoint]
+    if (!selectedEndpoint || !toolsMap) return []
+    return Object.keys(toolsMap[selectedEndpoint] || {})
   }, [selectedEndpoint, toolsMap])
 
   // This function will render the correct input field based on the schema property type.
@@ -223,20 +285,21 @@ export default function DeveloperPage() {
                     </div>
                   )}
 
-                  {/* Step 3: Parameters (appears after method is selected and schema is parsed) */}
+                  {/* Step 3: Dynamically Generated Parameters */}
                   {selectedMethod && parsedSchema?.properties && (
                     <div className="space-y-4 pt-4 border-t border-white/10">
+                      <h3 className="text-md font-semibold">Parameters</h3>
                       {Object.entries(parsedSchema.properties).map(([key, prop]: [string, any]) => (
-                        <Collapsible key={key} defaultOpen>
+                        <Collapsible key={key} defaultOpen className="space-y-2">
                           <CollapsibleTrigger className="flex justify-between items-center w-full text-left">
-                            <h4 className="text-md font-semibold flex items-center gap-2">
+                            <label className="text-sm font-semibold flex items-center gap-2">
                               {key}
                               <span className="text-xs font-mono text-gray-400">({prop.type})</span>
-                            </h4>
+                            </label>
                             <ChevronDown className="h-4 w-4 transition-transform [&[data-state=open]]:rotate-180" />
                           </CollapsibleTrigger>
-                          <CollapsibleContent className="pt-2">
-                            <p className="text-xs text-gray-400 mb-2">{prop.description}</p>
+                          <CollapsibleContent className="space-y-2">
+                            {prop.description && <p className="text-xs text-gray-400">{prop.description}</p>}
                             {renderParameterInput(key, prop)}
                           </CollapsibleContent>
                         </Collapsible>
@@ -248,10 +311,10 @@ export default function DeveloperPage() {
                   <div className="pt-4 border-t border-white/10">
                     <Button
                       onClick={() => runTool(formData)}
-                      disabled={!agentReady || !selectedEndpoint || !selectedMethod || !parsedSchema}
+                      disabled={!agentReady || !selectedEndpoint || !selectedMethod}
                       className="w-full modern-button-primary"
                     >
-                      <Play className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                      <Play className="w-4 h-4 mr-2" />
                       Execute API Call
                     </Button>
                   </div>
@@ -300,8 +363,8 @@ export default function DeveloperPage() {
                               <div className="text-xs font-semibold mb-1 modern-text-primary">Parameters:</div>
                               <div className="bg-black/40 rounded border border-white/20 overflow-hidden">
                                 <pre className="text-xs font-mono p-2 overflow-x-auto whitespace-pre-wrap break-words leading-relaxed text-white">
-                                  {call.params}
-                                </pre>
+                                {call.params}
+                              </pre>
                               </div>
                             </div>
                           )}
@@ -311,8 +374,8 @@ export default function DeveloperPage() {
                               <div className="text-xs font-semibold mb-1 modern-text-primary">Response:</div>
                               <div className="bg-black/40 rounded border border-white/20 overflow-hidden">
                                 <pre className="text-xs font-mono p-2 overflow-x-auto whitespace-pre-wrap break-words text-white leading-relaxed max-h-32 overflow-y-auto">
-                                  {call.response}
-                                </pre>
+                                {call.response}
+                              </pre>
                               </div>
                             </div>
                           )}
