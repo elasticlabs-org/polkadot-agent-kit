@@ -305,66 +305,67 @@ export default function DeveloperPage() {
                 </div>
               </Card>
 
-              <Card className="p-3 sm:p-4 lg:p-6 modern-card">
-                <h3 className="text-base sm:text-lg font-bold mb-3 sm:mb-4 flex items-center gap-2 modern-text-primary">
-                  <Zap className="w-4 h-4 sm:w-5 sm:h-5" />
-                  API Response
-                </h3>
-
-                <div className="h-[100px] sm:h-[125px] lg:h-[150px] overflow-y-auto border border-white/10 rounded-lg bg-black/20">
-                  <div className="p-2 sm:p-3 lg:p-4 space-y-2 sm:space-y-3">
-                    {toolCalls.length === 0 ? (
-                      <div className="flex flex-col items-center justify-center h-full min-h-[80px] text-center modern-text-secondary">
-                        <Terminal className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 mb-2 sm:mb-3 opacity-30" />
-                        <p className="text-xs sm:text-sm lg:text-base mb-1">No API calls executed yet</p>
-                        <p className="text-xs opacity-70">Select a method, fill params, and execute.</p>
-                      </div>
-                    ) : (
-                      toolCalls.map((call) => (
-                        <div key={call.id} className="bg-white/5 rounded-lg p-2 sm:p-3 border border-white/10">
-                          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 sm:mb-3 gap-2">
-                            <div className="flex flex-wrap items-center gap-2">
-                              <Badge className="modern-badge font-medium text-xs">{call.tool}</Badge>
-                              <span className="text-xs font-mono bg-white/10 px-2 py-1 rounded-lg text-white">
-                                {call.method}
-                              </span>
-                            </div>
-                            <Badge
-                              className={
-                                call.status === "success"
-                                  ? "bg-green-900/30 text-green-400 border-green-700 text-xs"
-                                  : call.status === "error"
-                                    ? "bg-red-900/30 text-red-400 border-red-700 text-xs"
-                                    : "bg-white/10 text-white border-white/20 text-xs"
-                              }
-                            >
-                              {call.status}
-                            </Badge>
-                          </div>
-
-                          {call.response && (
-                            <div>
-                              <div className="text-xs font-semibold mb-1 modern-text-primary">Response:</div>
-                              <div className="bg-black/40 rounded border border-white/20 overflow-hidden">
-                                <pre className="text-xs font-mono p-2 overflow-x-auto whitespace-pre-wrap break-words text-white leading-relaxed max-h-32 overflow-y-auto">
-                                {call.response}
-                              </pre>
-                              </div>
-                            </div>
-                          )}
-
-                          {call.status === "pending" && (
-                            <div className="flex items-center gap-2 text-sm modern-text-secondary">
-                              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                              Executing API call...
-                            </div>
-                          )}
-                        </div>
-                      ))
-                    )}
+              {toolCalls.length === 0 ? (
+                <Card className="p-3 sm:p-4 lg:p-6 modern-card">
+                  <h3 className="text-base sm:text-lg font-bold mb-3 sm:mb-4 flex items-center gap-2 modern-text-primary">
+                    <Zap className="w-4 h-4 sm:w-5 sm:h-5" />
+                    API Response
+                  </h3>
+                  <div className="flex flex-col items-center justify-center h-[100px] sm:h-[125px] lg:h-[150px] text-center modern-text-secondary">
+                    <Terminal className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 mb-2 sm:mb-3 opacity-30" />
+                    <p className="text-xs sm:text-sm lg:text-base mb-1">No API calls executed yet</p>
+                    <p className="text-xs opacity-70">Select a method, fill params, and execute.</p>
                   </div>
-                </div>
-              </Card>
+                </Card>
+              ) : (
+                toolCalls.map((call) => (
+                  <Card key={call.id} className="p-3 sm:p-4 lg:p-6 modern-card">
+                    <div className="flex items-center justify-between mb-3 sm:mb-4">
+                      <h3 className="text-base sm:text-lg font-bold flex items-center gap-2 modern-text-primary">
+                        <Zap className="w-4 h-4 sm:w-5 sm:h-5" />
+                        API Response
+                      </h3>
+                      <div className="flex items-center gap-2">
+                        <Badge className="modern-badge font-medium text-xs">{call.tool}</Badge>
+                        <span className="text-xs font-mono bg-white/10 px-2 py-1 rounded-lg text-white">
+                          {call.method}
+                        </span>
+                        <Badge
+                          className={
+                            call.status === "success"
+                              ? "bg-green-900/30 text-green-400 border-green-700 text-xs"
+                              : call.status === "error"
+                                ? "bg-red-900/30 text-red-400 border-red-700 text-xs"
+                                : "bg-white/10 text-white border-white/20 text-xs"
+                          }
+                        >
+                          {call.status}
+                        </Badge>
+                      </div>
+                    </div>
+
+                    {call.response && (
+                      <div className="h-[100px] sm:h-[125px] lg:h-[150px] overflow-y-auto border border-white/10 rounded-lg bg-black/20">
+                        <div className="p-2 sm:p-3 lg:p-4">
+                          <div className="text-xs font-semibold mb-2 modern-text-primary">Response:</div>
+                          <div className="bg-black/40 rounded border border-white/20 overflow-hidden">
+                            <pre className="text-xs font-mono p-2 overflow-x-auto whitespace-pre-wrap break-words text-white leading-relaxed">
+                              {call.response}
+                            </pre>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {call.status === "pending" && (
+                      <div className="flex items-center justify-center h-[100px] sm:h-[125px] lg:h-[150px] gap-2 text-sm modern-text-secondary">
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Executing API call...
+                      </div>
+                    )}
+                  </Card>
+                ))
+              )}
             </div>
           </div>
         </div>
