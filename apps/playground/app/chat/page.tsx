@@ -138,7 +138,7 @@ export default function ChatPage() {
       <div className="flex h-screen">
         <Sidebar currentPage="chat" />
 
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col min-h-0">
           <div className="border-b border-white/10 modern-card border-l-0 border-r-0 border-t-0 rounded-none">
             <div className="flex items-center justify-between p-6">
               <div className="flex items-center gap-4">
@@ -158,14 +158,16 @@ export default function ChatPage() {
             </div>
           </div>
 
-          <div className="flex-1 flex flex-col">
-            <ScrollArea className="flex-1 p-6">
+          <div className="flex-1 flex flex-col min-h-0">
+            <div className="flex-1 overflow-y-auto p-6">
               <div className="space-y-6 max-w-4xl mx-auto">
                 {chatMessages.map((message) => (
                   <div key={message.id} className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}>
                     <div
                       className={`max-w-[85%] rounded-2xl p-5 ${
-                        message.type === "user" ? "modern-button-primary ml-12" : "modern-card mr-12"
+                        message.type === "user" 
+                          ? "bg-blue-600/20 border border-blue-500/30 ml-12" 
+                          : "modern-card mr-12"
                       }`}
                     >
                       <div className="flex items-start gap-4">
@@ -208,7 +210,7 @@ export default function ChatPage() {
                   </div>
                 )}
               </div>
-            </ScrollArea>
+            </div>
 
             <div className="border-t border-white/10 modern-card border-l-0 border-r-0 border-b-0 rounded-none p-6">
               <div className="max-w-4xl mx-auto">
@@ -216,7 +218,7 @@ export default function ChatPage() {
                   <Textarea
                     placeholder={
                       isInitialized
-                        ? "Ask me about Polkadot, XCM, Substrate, or any Web3 topic..."
+                        ? "Ask me"
                         : "Please configure the agent first..."
                     }
                     value={chatInput}
