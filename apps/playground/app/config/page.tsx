@@ -131,106 +131,152 @@ export default function ConfigPage() {
     loadChains()
   }, [])
 
+  // Prefill from persisted store config (Polkadot) when available
+  useEffect(() => {
+    if (config) {
+      setAgentConfig((prev) => ({
+        ...prev,
+        privateKey: config.privateKey || prev.privateKey,
+        keyType: (config.keyType as string) || prev.keyType,
+        chains: (config.chains as string[]) || prev.chains,
+      }))
+    }
+  }, [config])
+
+  // Prefill LLM config from localStorage when available
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("llm_config")
+      if (saved) {
+        const { provider, model, apiKey } = JSON.parse(saved)
+        setAgentConfig((prev) => ({
+          ...prev,
+          llmProvider: provider || prev.llmProvider,
+          llmModel: model || prev.llmModel,
+          apiKey: apiKey || prev.apiKey,
+        }))
+      }
+    } catch (e) {
+      // ignore
+    }
+  }, [])
+
   const handleConfigureAgent = async () => {
     const needsApiKey = agentConfig.llmProvider === "openai"
-    if (!agentConfig.llmProvider) {
-      alert("Please select an LLM provider")
-      return
+
+    // Determine what changed vs persisted values
+    const prevLlmRaw = typeof window !== 'undefined' ? localStorage.getItem("llm_config") : null
+    const prevLlm = prevLlmRaw ? JSON.parse(prevLlmRaw) : null
+    const prevAgent = config
+
+    const llmChanged = (() => {
+      const prevProvider = prevLlm?.provider || ""
+      const prevModel = prevLlm?.model || ""
+      const prevApiKey = prevLlm?.apiKey || ""
+      return (
+        prevProvider !== agentConfig.llmProvider ||
+        prevModel !== agentConfig.llmModel ||
+        (needsApiKey && (prevApiKey || "") !== (agentConfig.apiKey || ""))
+      )
+    })()
+
+    const chainsEqual = (a: string[] = [], b: string[] = []) => {
+      if (a.length !== b.length) return false
+      for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false
+      return true
     }
-    
-    // For OpenAI, check if API key is provided or use environment variable
-    if (needsApiKey) {
-      const apiKey = agentConfig.apiKey || process.env.NEXT_PUBLIC_OPENAI_KEY
-      if (!apiKey) {
-        alert("API key is required for OpenAI. Please provide it in the input field or set NEXT_PUBLIC_OPENAI_KEY environment variable.")
+    const polkadotChanged = (() => {
+      if (!prevAgent) return true
+      return (
+        prevAgent.privateKey !== agentConfig.privateKey ||
+        prevAgent.keyType !== (agentConfig.keyType as any) ||
+        !chainsEqual(prevAgent.chains as any, agentConfig.chains)
+      )
+    })()
+
+    // Validate only the parts that changed
+    if (llmChanged) {
+      if (!agentConfig.llmProvider) {
+        alert("Please select an LLM provider")
         return
       }
-      // Update the config with the API key (either from input or env)
-      agentConfig.apiKey = apiKey
+      if (needsApiKey) {
+        const apiKey = agentConfig.apiKey || process.env.NEXT_PUBLIC_OPENAI_KEY
+        if (!apiKey) {
+          alert("API key is required for OpenAI. Provide it or set NEXT_PUBLIC_OPENAI_KEY.")
+          return
+        }
+        agentConfig.apiKey = apiKey
+      }
     }
-    if (!agentConfig.privateKey) {
-      alert("Private key is required")
-      return
-    }
-    if (!agentConfig.keyType) {
-      alert("Please select a key type")
-      return
-    }
-    if (!agentConfig.chains || agentConfig.chains.length === 0) {
-      alert("Please select at least one chain")
-      return
+
+    if (polkadotChanged) {
+      if (!agentConfig.privateKey) {
+        alert("Private key is required")
+        return
+      }
+      if (!agentConfig.keyType) {
+        alert("Please select a key type")
+        return
+      }
+      if (!agentConfig.chains || agentConfig.chains.length === 0) {
+        alert("Please select at least one chain")
+        return
+      }
     }
 
     setInitializing(true)
     setLlmConnected("idle")
 
     try {
-      // Save API key temporarily in localStorage (client-side only)
-      if (needsApiKey) {
-        localStorage.setItem("llm_api_key", agentConfig.apiKey)
-      } else {
-        localStorage.removeItem("llm_api_key")
-      }
+      // If LLM changed, persist LLM config and (optionally) validate
+      if (llmChanged) {
+        localStorage.setItem("llm_config", JSON.stringify({
+          provider: agentConfig.llmProvider,
+          model: agentConfig.llmModel,
+          apiKey: agentConfig.llmProvider === "openai" ? agentConfig.apiKey : null
+        }))
 
-      // Save LLM config to localStorage
-      localStorage.setItem("llm_config", JSON.stringify({
-        provider: agentConfig.llmProvider,
-        model: agentConfig.llmModel,
-        apiKey: agentConfig.apiKey
-      }))
-
-      // Create config for Zustand store
-      const storeConfig = {
-        privateKey: agentConfig.privateKey,
-        keyType: agentConfig.keyType as "Sr25519" | "Ed25519",
-        chains: agentConfig.chains,
-        isConfigured: true
-      }
-
-      
-      try {
-        setConfig(storeConfig)
-        
-        // Check store state after setConfig
-        setTimeout(() => {
-          console.log('[ConfigPage] Store state after setConfig:', { config, isConfigured })
-        }, 100)
-      } catch (error) {
-        console.error('[ConfigPage] Error calling setConfig:', error)
-      }
-
-      // Initialize agent using Zustand store
-      await initializeAgent()
-
-      // Check LLM connectivity
-      if (agentConfig.llmProvider === "ollama") {
-        // Try ping local Ollama
-        const controller = new AbortController()
-        const timeout = setTimeout(() => controller.abort(), 2500)
-        try {
-          const res = await fetch("http://127.0.0.1:11434/api/tags", { signal: controller.signal })
-          setLlmConnected(res.ok ? "ok" : "error")
-        } catch (_) {
-          setLlmConnected("error")
-        } finally {
-          clearTimeout(timeout)
-        }
-      } else if (agentConfig.llmProvider === "openai") {
-        // Validate OpenAI API key and check gpt-4o-mini availability
-        // Note: OpenAI may block browser requests (CORS). Treat failures as non-fatal
-        // for agent initialization so the Polkadot Agent can still be used.
-        try {
-          const validation = await validateOpenAIKey(agentConfig.apiKey)
-          setLlmConnected(validation.isValid ? "ok" : "error")
-          if (!validation.isValid) {
-            console.warn("OpenAI validation failed:", validation.error)
-            alert(`OpenAI validation failed: ${validation.error}`)
+        if (agentConfig.llmProvider === "ollama") {
+          const controller = new AbortController()
+          const timeout = setTimeout(() => controller.abort(), 2500)
+          try {
+            const res = await fetch("http://127.0.0.1:11434/api/tags", { signal: controller.signal })
+            setLlmConnected(res.ok ? "ok" : "error")
+          } catch (_) {
+            setLlmConnected("error")
+          } finally {
+            clearTimeout(timeout)
           }
-        } catch (e: any) {
-          console.warn("OpenAI validation error:", e?.message || e)
-          setLlmConnected("error")
-          // continue without throwing to keep agent initialized
+        } else if (agentConfig.llmProvider === "openai") {
+          try {
+            const validation = await validateOpenAIKey(agentConfig.apiKey)
+            setLlmConnected(validation.isValid ? "ok" : "error")
+            if (!validation.isValid) {
+              console.warn("OpenAI validation failed:", validation.error)
+              alert(`OpenAI validation failed: ${validation.error}`)
+            }
+          } catch (e: any) {
+            console.warn("OpenAI validation error:", e?.message || e)
+            setLlmConnected("error")
+          }
         }
+      }
+
+      // If Polkadot config changed, update store and (re)initialize agent
+      if (polkadotChanged) {
+        const storeConfig = {
+          privateKey: agentConfig.privateKey,
+          keyType: agentConfig.keyType as "Sr25519" | "Ed25519",
+          chains: agentConfig.chains,
+          isConfigured: true
+        }
+        try {
+          setConfig(storeConfig)
+        } catch (error) {
+          console.error('[ConfigPage] Error calling setConfig:', error)
+        }
+        await initializeAgent()
       }
 
       const updatedConfig = { ...agentConfig, isConfigured: true }
@@ -420,11 +466,7 @@ export default function ConfigPage() {
                 <Button
                   onClick={handleConfigureAgent}
                   disabled={
-                    isInitializing ||
-                    !agentConfig.llmProvider ||
-                    !agentConfig.privateKey ||
-                    agentConfig.chains.length === 0 ||
-                    (agentConfig.llmProvider === "openai" && !agentConfig.apiKey && !process.env.NEXT_PUBLIC_OPENAI_KEY)
+                    isInitializing
                   }
                   className="mt-6 sm:mt-8 px-6 sm:px-8 h-10 sm:h-12 text-sm sm:text-base font-medium modern-button-primary w-full sm:w-auto"
                 >
