@@ -142,46 +142,47 @@ export default function ChatPage() {
         <Sidebar currentPage="chat" />
 
         <div className="flex-1 flex flex-col min-h-0">
-          <div className="border-b border-white/10 modern-card border-l-0 border-r-0 border-t-0 rounded-none">
-            <div className="flex items-center justify-between p-6">
-              <div className="flex items-center gap-4">
-                <h2 className="text-2xl font-bold modern-text-primary">AI Chat Interface</h2>
-                <Badge className="modern-badge font-medium px-3 py-1">Interactive</Badge>
+          <div className="border-b border-white/10 modern-card border-l-0 border-r-0 border-t-0 rounded-none flex-shrink-0">
+            <div className="flex items-center justify-between p-4 sm:p-6">
+              <div className="flex items-center gap-2 sm:gap-4">
+                <h2 className="text-xl sm:text-2xl font-bold modern-text-primary">AI Chat Interface</h2>
+                <Badge className="modern-badge font-medium px-2 py-1 text-xs sm:px-3 sm:py-1 sm:text-sm">Interactive</Badge>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 sm:gap-3">
                 <Badge
-                  className={`px-3 py-1 ${isInitialized ? "modern-badge" : "bg-red-900/30 text-red-400 border-red-700"}`}
+                  className={`px-2 py-1 text-xs sm:px-3 sm:py-1 sm:text-sm ${isInitialized ? "modern-badge" : "bg-red-900/30 text-red-400 border-red-700"}`}
                 >
                   <div
-                    className={`w-2 h-2 rounded-full mr-2 ${isInitialized ? "bg-green-400 animate-pulse" : "bg-red-400"}`}
+                    className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full mr-1 sm:mr-2 ${isInitialized ? "bg-green-400 animate-pulse" : "bg-red-400"}`}
                   />
-                  {isInitialized ? "Agent Ready" : "Configuration Required"}
+                  <span className="hidden sm:inline">{isInitialized ? "Agent Ready" : "Configuration Required"}</span>
+                  <span className="sm:hidden">{isInitialized ? "Ready" : "Required"}</span>
                 </Badge>
               </div>
             </div>
           </div>
 
           <div className="flex-1 flex flex-col min-h-0">
-            <div className="flex-1 overflow-y-auto p-6">
-              <div className="space-y-6 max-w-4xl mx-auto">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6">
+              <div className="space-y-4 sm:space-y-6 max-w-4xl mx-auto">
                 {chatMessages.map((message) => (
                   <div key={message.id} className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}>
                     <div
-                      className={`max-w-[85%] rounded-2xl p-5 ${
+                      className={`max-w-[90%] sm:max-w-[85%] rounded-xl sm:rounded-2xl p-3 sm:p-5 ${
                         message.type === "user" 
-                          ? "bg-blue-600/20 border border-blue-500/30 ml-12" 
-                          : "modern-card mr-12"
+                          ? "bg-blue-600/20 border border-blue-500/30 ml-4 sm:ml-12" 
+                          : "modern-card mr-4 sm:mr-12"
                       }`}
                     >
-                      <div className="flex items-start gap-4">
+                      <div className="flex items-start gap-2 sm:gap-4">
                         {message.type === "ai" && (
-                          <div className="w-8 h-8 rounded-lg modern-logo flex items-center justify-center flex-shrink-0 mt-1">
-                            <Bot className="w-4 h-4" />
+                          <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg modern-logo flex items-center justify-center flex-shrink-0 mt-0.5 sm:mt-1">
+                            <Bot className="w-3 h-3 sm:w-4 sm:h-4" />
                           </div>
                         )}
-                        <div className="flex-1">
-                          <div className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</div>
-                          <div className="text-xs opacity-60 mt-3 font-mono">
+                        <div className="flex-1 min-w-0">
+                          <div className="whitespace-pre-wrap text-xs sm:text-sm leading-relaxed break-words">{message.content}</div>
+                          <div className="text-xs opacity-60 mt-2 sm:mt-3 font-mono">
                             {message.timestamp.toLocaleTimeString()}
                           </div>
                         </div>
@@ -215,36 +216,52 @@ export default function ChatPage() {
               </div>
             </div>
 
-            <div className="border-t border-white/10 modern-card border-l-0 border-r-0 border-b-0 rounded-none p-6">
+            <div className="border-t border-white/10 modern-card border-l-0 border-r-0 border-b-0 rounded-none p-4 sm:p-6">
               <div className="max-w-4xl mx-auto">
-                <div className="flex gap-4">
-                  <Textarea
-                    placeholder={
-                      isInitialized
-                        ? "Ask me"
-                        : "Please configure the agent first..."
-                    }
-                    value={chatInput}
-                    onChange={(e) => setChatInput(e.target.value)}
-                    className="flex-1 min-h-[70px] resize-none modern-input text-base"
-                    disabled={!isInitialized}
-                    onKeyDown={(e) => {
-                      const ne = (e as any).nativeEvent
-                      if (ne?.isComposing || e.keyCode === 229) return
-                      if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault()
-                        handleSendMessage()
+                <div className="flex gap-3 sm:gap-4">
+                  <div className="flex-1 relative">
+                    <Textarea
+                      placeholder={
+                        isInitialized
+                          ? "Ask me anything about Polkadot..."
+                          : "Please configure the agent first..."
                       }
-                    }}
-                    onCompositionStart={() => {/* optional: set state if you want */}}
-                    onCompositionEnd={() => {/* optional: clear state */}}
-                  />
+                      value={chatInput}
+                      onChange={(e) => setChatInput(e.target.value)}
+                      className="flex-1 min-h-[60px] sm:min-h-[70px] resize-none modern-input text-sm sm:text-base pr-12 sm:pr-14"
+                      disabled={!isInitialized}
+                      onKeyDown={(e) => {
+                        const ne = (e as any).nativeEvent
+                        if (ne?.isComposing || e.keyCode === 229) return
+                        if (e.key === "Enter" && !e.shiftKey) {
+                          e.preventDefault()
+                          handleSendMessage()
+                        }
+                      }}
+                      onCompositionStart={() => {/* optional: set state if you want */}}
+                      onCompositionEnd={() => {/* optional: clear state */}}
+                    />
+                    <div className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 hidden sm:block">
+                      {isInitialized ? "Enter to send, Shift+Enter for new line" : ""}
+                    </div>
+                  </div>
                   <Button
                     onClick={handleSendMessage}
                     disabled={!chatInput.trim() || isLoading || !isInitialized}
-                    className="px-8 h-[70px] modern-button-primary text-base font-medium"
+                    className="px-4 sm:px-6 h-[60px] sm:h-[70px] modern-button-primary text-sm sm:text-base font-medium rounded-xl hover:scale-105 transition-transform duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                    size="lg"
                   >
-                    <Send className="w-5 h-5" />
+                    {isLoading ? (
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        <span className="hidden sm:inline">Sending...</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <Send className="w-4 h-4 sm:w-5 sm:h-5" />
+                        <span className="hidden sm:inline">Send</span>
+                      </div>
+                    )}
                   </Button>
                 </div>
               </div>
