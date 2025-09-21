@@ -50,7 +50,7 @@ export default function ConfigPage() {
     apiKey: "",
     privateKey: "",
     keyType: "Sr25519",
-    chains: ["paseo", "paseo_people"],
+    chains: ["paseo"],
     isConfigured: false,
   })
   const [llmConnected, setLlmConnected] = useState<"idle" | "ok" | "error">("idle")
@@ -125,7 +125,6 @@ export default function ConfigPage() {
         // Fallback to basic chains if import fails
         setAvailableChains([
           { id: "paseo", name: "Paseo", specName: "paseo", type: "relay", symbol: "DOT", relay: "paseo", chainId: 0 },
-          { id: "paseo_people", name: "Paseo People", specName: "paseo-people", type: "system", symbol: "DOT", relay: "paseo", chainId: 1004 },
         ])
       }
     }

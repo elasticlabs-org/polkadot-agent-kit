@@ -7,7 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Bot } from "lucide-react"
 import Sidebar from "@/components/sidebar"
 import { useAgentStore, useAgentRestore } from "@/stores/agent-store"
-
+import { ChatOpenAI} from "@langchain/openai"
 
 interface ChatMessage {
   id: string
@@ -67,15 +67,27 @@ export default function ChatPage() {
       const llmConfig = localStorage.getItem("llm_config")
       if (!llmConfig) throw new Error("LLM configuration not found")
       
-      const { provider, model } = JSON.parse(llmConfig)
-      if (provider !== "ollama") {
-        throw new Error("Only Ollama is supported in the browser")
-      }
+      const { provider, model, apiKey: storedApiKey } = JSON.parse(llmConfig)
 
-      const llm = new ChatOllama({
-        model: model || "qwen3:latest",
-        temperature: 0,
-      })
+      let llm: any
+      if (provider === "ollama") {
+        llm = new ChatOllama({
+          model: model || "qwen3:latest",
+          temperature: 0,
+        })
+      } else if (provider === "openai") {
+        // Dynamically load OpenAI client for browser use
+        const { ChatOpenAI } = await import("@langchain/openai")
+        const apiKey = storedApiKey || process.env.NEXT_PUBLIC_OPENAI_KEY
+        if (!apiKey) throw new Error("OpenAI API key not found. Provide it or set NEXT_PUBLIC_OPENAI_KEY.")
+        llm = new ChatOpenAI({
+          model: model || "gpt-4o-mini",
+          temperature: 0,
+          apiKey,
+        })
+      } else {
+        throw new Error(`Unsupported LLM provider: ${provider}`)
+      }
 
       const tools = getLangChainTools(agentKit)
       const agentPrompt = createToolCallingAgent({
