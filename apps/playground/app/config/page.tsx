@@ -190,39 +190,40 @@ export default function ConfigPage() {
 
   return (
     <div className="modern-container">
-      <div className="flex h-screen">
+      <div className="flex min-h-screen">
         <Sidebar currentPage="config" />
 
-        <div className="flex-1 flex flex-col">
-          <div className="border-b border-white/10 modern-card border-l-0 border-r-0 border-t-0 rounded-none">
-            <div className="flex items-center justify-between p-6">
-              <div className="flex items-center gap-4">
-                <h2 className="text-2xl font-bold modern-text-primary">Agent Configuration</h2>
-                <Badge className="modern-badge font-medium px-3 py-1">Setup</Badge>
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <div className="border-b border-white/10 modern-card border-l-0 border-r-0 border-t-0 rounded-none flex-shrink-0">
+            <div className="flex items-center justify-between p-4 sm:p-6">
+              <div className="flex items-center gap-2 sm:gap-4">
+                <h2 className="text-xl sm:text-2xl font-bold modern-text-primary">Agent Configuration</h2>
+                <Badge className="modern-badge font-medium px-2 py-1 text-xs sm:px-3 sm:py-1 sm:text-sm">Setup</Badge>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 sm:gap-3">
                 <Badge
-                  className={`px-3 py-1 ${isInitialized ? "modern-badge" : "bg-red-900/30 text-red-400 border-red-700"}`}
+                  className={`px-2 py-1 text-xs sm:px-3 sm:py-1 sm:text-sm ${isInitialized ? "modern-badge" : "bg-red-900/30 text-red-400 border-red-700"}`}
                 >
                   <div
-                    className={`w-2 h-2 rounded-full mr-2 ${isInitialized ? "bg-green-400 animate-pulse" : "bg-red-400"}`}
+                    className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full mr-1 sm:mr-2 ${isInitialized ? "bg-green-400 animate-pulse" : "bg-red-400"}`}
                   />
-                  {isInitialized ? "Agent Ready" : "Configuration Required"}
+                  <span className="hidden sm:inline">{isInitialized ? "Agent Ready" : "Configuration Required"}</span>
+                  <span className="sm:hidden">{isInitialized ? "Ready" : "Required"}</span>
                 </Badge>
               </div>
             </div>
           </div>
 
-          <div className="flex-1 p-6">
-            <div className="max-w-4xl mx-auto space-y-8">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6">
+            <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8">
               {/* LLM Configuration */}
-              <Card className="p-8 modern-card">
-                <h3 className="text-xl font-bold mb-6 flex items-center gap-3 modern-text-primary">
-                  <Cpu className="w-6 h-6" />
+              <Card className="p-4 sm:p-6 lg:p-8 modern-card">
+                <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3 modern-text-primary">
+                  <Cpu className="w-5 h-5 sm:w-6 sm:h-6" />
                   LLM Configuration
                 </h3>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                   <div>
                     <label className="text-sm font-semibold mb-3 block modern-text-primary">LLM Provider</label>
                     <Select
@@ -231,7 +232,7 @@ export default function ConfigPage() {
                         setAgentConfig((prev) => ({ ...prev, llmProvider: value, llmModel: "" }))
                       }
                     >
-                      <SelectTrigger className="h-12 modern-select">
+                      <SelectTrigger className="h-10 sm:h-12 modern-select">
                         <SelectValue placeholder="Select LLM Provider..." />
                       </SelectTrigger>
                       <SelectContent>
@@ -251,7 +252,7 @@ export default function ConfigPage() {
                       onValueChange={(value) => setAgentConfig((prev) => ({ ...prev, llmModel: value }))}
                       disabled={!agentConfig.llmProvider}
                     >
-                      <SelectTrigger className="h-12 modern-select">
+                      <SelectTrigger className="h-10 sm:h-12 modern-select">
                         <SelectValue placeholder="Select Model..." />
                       </SelectTrigger>
                       <SelectContent>
@@ -275,7 +276,7 @@ export default function ConfigPage() {
                     placeholder="Enter your API key..."
                     value={agentConfig.apiKey}
                     onChange={(e) => setAgentConfig((prev) => ({ ...prev, apiKey: e.target.value }))}
-                    className="h-12 modern-input font-mono"
+                    className="h-10 sm:h-12 modern-input font-mono"
                     disabled={agentConfig.llmProvider === "ollama"}
                   />
                   {agentConfig.llmProvider === "ollama" && (
@@ -285,13 +286,13 @@ export default function ConfigPage() {
               </Card>
 
               {/* Agent Configuration */}
-              <Card className="p-8 modern-card">
-                <h3 className="text-xl font-bold mb-6 flex items-center gap-3 modern-text-primary">
-                  <Key className="w-6 h-6" />
+              <Card className="p-4 sm:p-6 lg:p-8 modern-card">
+                <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3 modern-text-primary">
+                  <Key className="w-5 h-5 sm:w-6 sm:h-6" />
                   Polkadot Agent Configuration
                 </h3>
 
-                <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6">
                   <div>
                     <label className="text-sm font-semibold mb-3 block modern-text-primary">Private Key</label>
                     <Input
@@ -299,7 +300,7 @@ export default function ConfigPage() {
                       placeholder="Enter your private key..."
                       value={agentConfig.privateKey}
                       onChange={(e) => setAgentConfig((prev) => ({ ...prev, privateKey: e.target.value }))}
-                      className="h-12 modern-input font-mono"
+                      className="h-10 sm:h-12 modern-input font-mono"
                     />
                     <p className="text-xs modern-text-secondary mt-2">
                       Your private key is used to sign transactions and interact with the Polkadot network
@@ -313,7 +314,7 @@ export default function ConfigPage() {
                         value={agentConfig.keyType}
                         onValueChange={(value) => setAgentConfig((prev) => ({ ...prev, keyType: value }))}
                       >
-                        <SelectTrigger className="h-12 modern-select">
+                        <SelectTrigger className="h-10 sm:h-12 modern-select">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -351,7 +352,7 @@ export default function ConfigPage() {
                     agentConfig.chains.length === 0 ||
                     (agentConfig.llmProvider === "openai" && !agentConfig.apiKey)
                   }
-                  className="mt-8 px-8 h-12 text-base font-medium modern-button-primary"
+                  className="mt-6 sm:mt-8 px-6 sm:px-8 h-10 sm:h-12 text-sm sm:text-base font-medium modern-button-primary w-full sm:w-auto"
                 >
                   <Settings className="w-5 h-5 mr-2" />
                   {isInitializing ? "Connecting..." : "Connect Agent"}
