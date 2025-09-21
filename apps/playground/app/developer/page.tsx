@@ -118,7 +118,7 @@ export default function DeveloperPage() {
     }
 
     initializeTools()
-  }, [agentKit, isInitialized])
+  }, [agentKit])
 
   const selectedTool = useMemo(() => {
     if (!selectedEndpoint || !selectedMethod || !toolsMap) return null

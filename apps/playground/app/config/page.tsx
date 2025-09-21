@@ -54,6 +54,48 @@ export default function ConfigPage() {
     isConfigured: false,
   })
   const [llmConnected, setLlmConnected] = useState<"idle" | "ok" | "error">("idle")
+
+  // Function to validate OpenAI API key and check for gpt-4o-mini availability
+  const validateOpenAIKey = async (apiKey: string): Promise<{ isValid: boolean; error?: string }> => {
+    try {
+      // First, check if API key is valid by listing models
+      const response = await fetch("https://api.openai.com/v1/models", {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+      })
+
+      if (!response.ok) {
+        return { 
+          isValid: false, 
+          error: `API key validation failed: ${response.status} ${response.statusText}` 
+        }
+      }
+
+      const data = await response.json()
+      const models = data.data || []
+      
+      // Check if gpt-4o-mini is available
+      const hasGpt4oMini = models.some((model: any) => model.id === "gpt-4o-mini")
+      
+      if (!hasGpt4oMini) {
+        return { 
+          isValid: false, 
+          error: "gpt-4o-mini model is not available with this API key" 
+        }
+      }
+
+      return { isValid: true }
+    } catch (error) {
+      console.error("OpenAI API validation error:", error)
+      return { 
+        isValid: false, 
+        error: `Network error: ${error instanceof Error ? error.message : 'Unknown error'}` 
+      }
+    }
+  }
   const [availableChains, setAvailableChains] = useState<Chain[]>([])
 
   const llmProviders = [
@@ -104,9 +146,16 @@ export default function ConfigPage() {
       alert("Please select an LLM provider")
       return
     }
-    if (needsApiKey && !agentConfig.apiKey) {
-      alert("API key is required for OpenAI")
-      return
+    
+    // For OpenAI, check if API key is provided or use environment variable
+    if (needsApiKey) {
+      const apiKey = agentConfig.apiKey || process.env.NEXT_PUBLIC_OPENAI_KEY
+      if (!apiKey) {
+        alert("API key is required for OpenAI. Please provide it in the input field or set NEXT_PUBLIC_OPENAI_KEY environment variable.")
+        return
+      }
+      // Update the config with the API key (either from input or env)
+      agentConfig.apiKey = apiKey
     }
     if (!agentConfig.privateKey) {
       alert("Private key is required")
@@ -167,8 +216,21 @@ export default function ConfigPage() {
           clearTimeout(timeout)
         }
       } else if (agentConfig.llmProvider === "openai") {
-        // We avoid calling OpenAI from browser due to CORS/security; assume ok if key provided
-        setLlmConnected("ok")
+        // Validate OpenAI API key and check gpt-4o-mini availability
+        // Note: OpenAI may block browser requests (CORS). Treat failures as non-fatal
+        // for agent initialization so the Polkadot Agent can still be used.
+        try {
+          const validation = await validateOpenAIKey(agentConfig.apiKey)
+          setLlmConnected(validation.isValid ? "ok" : "error")
+          if (!validation.isValid) {
+            console.warn("OpenAI validation failed:", validation.error)
+            alert(`OpenAI validation failed: ${validation.error}`)
+          }
+        } catch (e: any) {
+          console.warn("OpenAI validation error:", e?.message || e)
+          setLlmConnected("error")
+          // continue without throwing to keep agent initialized
+        }
       }
 
       const updatedConfig = { ...agentConfig, isConfigured: true }
@@ -273,14 +335,26 @@ export default function ConfigPage() {
                   <label className="text-sm font-semibold mb-3 block modern-text-primary">API Key</label>
                   <Input
                     type="password"
-                    placeholder="Enter your API key..."
+                    placeholder="Enter your API key or leave empty to use NEXT_PUBLIC_OPENAI_KEY..."
                     value={agentConfig.apiKey}
                     onChange={(e) => setAgentConfig((prev) => ({ ...prev, apiKey: e.target.value }))}
                     className="h-10 sm:h-12 modern-input font-mono"
                     disabled={agentConfig.llmProvider === "ollama"}
                   />
-                  {agentConfig.llmProvider === "ollama" && (
+                  {agentConfig.llmProvider === "ollama" ? (
                     <p className="text-xs modern-text-secondary mt-2">API key not required for Ollama.</p>
+                  ) : (
+                    <div className="mt-2">
+                      <p className="text-xs modern-text-secondary">
+                        Leave empty to use NEXT_PUBLIC_OPENAI_KEY environment variable, or enter your API key directly.
+                      </p>
+                      {!agentConfig.apiKey && process.env.NEXT_PUBLIC_OPENAI_KEY && (
+                        <p className="text-xs text-green-400 mt-1 flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 bg-green-400 rounded-full"></span>
+                          Using environment variable: NEXT_PUBLIC_OPENAI_KEY
+                        </p>
+                      )}
+                    </div>
                   )}
                 </div>
               </Card>
@@ -350,7 +424,7 @@ export default function ConfigPage() {
                     !agentConfig.llmProvider ||
                     !agentConfig.privateKey ||
                     agentConfig.chains.length === 0 ||
-                    (agentConfig.llmProvider === "openai" && !agentConfig.apiKey)
+                    (agentConfig.llmProvider === "openai" && !agentConfig.apiKey && !process.env.NEXT_PUBLIC_OPENAI_KEY)
                   }
                   className="mt-6 sm:mt-8 px-6 sm:px-8 h-10 sm:h-12 text-sm sm:text-base font-medium modern-button-primary w-full sm:w-auto"
                 >
