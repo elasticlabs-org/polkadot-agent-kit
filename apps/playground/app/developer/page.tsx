@@ -63,31 +63,27 @@ export default function DeveloperPage() {
       try {
         const { default: zodToJsonSchema } = await import("zod-to-json-schema")
 
-        // Get all available actions from the agentKit
-        const actions = agentKit.getActions()
-        
-        // Group actions by endpoint based on their names
         const ep: ToolsMap = {
-          assets: {},
-          swap: {},
-          bifrost: {},
-          staking: {}
-        }
+          assets: {
+            getNativeBalanceTool: agentKit.getNativeBalanceTool(),
+            transferNativeTool: agentKit.transferNativeTool(),
+            xcmTransferNativeTool: agentKit.xcmTransferNativeTool(),
+          },
+          swap: {
+            swapTokensTool: agentKit.swapTokensTool(),
+          },
+          bifrost: {
+            mintVdotTool: agentKit.mintVdotTool(),
+          },
+          staking: {
+            joinPoolTool: agentKit.joinPoolTool(),
+            bondExtraTool: agentKit.bondExtraTool(),
+            unbondTool: agentKit.unbondTool(),
+            withdrawUnbondedTool: agentKit.withdrawUnbondedTool(),
+            claimRewardsTool: agentKit.claimRewardsTool(),
+          },
 
-        // Process each action and add to appropriate endpoint
-        for (const action of actions) {
-          // Determine endpoint based on action name
-          let endpoint = 'assets' // default
-          if (action.name.includes('swap') || action.name.includes('Swap')) {
-            endpoint = 'swap'
-          } else if (action.name.includes('bifrost') || action.name.includes('Bifrost') || action.name.includes('vdot')) {
-            endpoint = 'bifrost'
-          } else if (action.name.includes('staking') || action.name.includes('Staking') || action.name.includes('bond') || action.name.includes('unbond') || action.name.includes('pool')) {
-            endpoint = 'staking'
-          }
 
-          // Add to the appropriate endpoint
-          ep[endpoint][action.name] = action
         }
 
         // Process each tool to add schema information
@@ -96,7 +92,7 @@ export default function DeveloperPage() {
             try {
               const fullSchema = zodToJsonSchema(tool.schema, methodName) as any
               let schemaJson
-              
+
               if (fullSchema?.$ref && fullSchema?.definitions) {
                 const refName = fullSchema.$ref.replace('#/definitions/', '')
                 schemaJson = fullSchema.definitions[refName] || fullSchema

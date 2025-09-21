@@ -98,7 +98,10 @@ export default function ChatPage() {
       })
 
       const result = await agentExecutor.invoke({ input: userMessage.content })
-      const outputText = typeof result.output === "string" ? result.output : JSON.stringify(result.output, null, 2)
+      let outputText = typeof result.output === "string" ? result.output : JSON.stringify(result.output, null, 2)
+      
+      outputText = outputText.replace(/<think>[\s\S]*?<\/think>/g, '').trim()
+      
       const aiMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: "ai",
@@ -223,7 +226,7 @@ export default function ChatPage() {
                     <Textarea
                       placeholder={
                         isInitialized
-                          ? "Ask me anything about Polkadot..."
+                          ? ""
                           : "Please configure the agent first..."
                       }
                       value={chatInput}
