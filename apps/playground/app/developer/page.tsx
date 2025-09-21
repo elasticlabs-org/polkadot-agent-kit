@@ -16,7 +16,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 import { ChevronDown } from "lucide-react"
-import { useAgentStore } from "@/stores/agent-store"
+import { useAgentStore, useAgentRestore } from "@/stores/agent-store"
 
 type ToolLike = { name?: string; description?: string; schema?: any; schemaJson?: any; call: (args: any) => Promise<any> }
 type EndpointKey = "assets" | "swap" | "bifrost" | "staking"
@@ -48,6 +48,9 @@ export default function DeveloperPage() {
   const [toolCalls, setToolCalls] = useState<ToolCall[]>([])
   const [formData, setFormData] = useState<Record<string, any>>({})
   const [parsedSchema, setParsedSchema] = useState<any>(null)
+
+  // Restore agent session on page load
+  useAgentRestore()
 
   // Initialize tools when agentKit is available
   useEffect(() => {

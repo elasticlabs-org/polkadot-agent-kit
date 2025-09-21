@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Send, Bot } from "lucide-react"
 import Sidebar from "@/components/sidebar"
-import { useAgentStore } from "@/stores/agent-store"
+import { useAgentStore, useAgentRestore } from "@/stores/agent-store"
 
 
 interface ChatMessage {
@@ -34,6 +34,9 @@ export default function ChatPage() {
   const [isClient, setIsClient] = useState(false)
 
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
+
+  // Restore agent session on page load
+  useAgentRestore()
 
   // Initialize client-side state
   useEffect(() => {
