@@ -31,7 +31,7 @@ export default function Sidebar({ currentPage }: SidebarProps) {
 
   return (
     <div className={`${sidebarCollapsed ? "w-16" : "w-80"} transition-all duration-300 modern-sidebar`}>
-      <div className="flex items-center justify-between p-4 border-b border-white/10">
+      <div className={`flex items-center ${sidebarCollapsed ? "justify-center" : "justify-between"} p-4 border-b border-white/10`}>
         {!sidebarCollapsed && (
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 modern-logo flex items-center justify-center">
@@ -51,7 +51,7 @@ export default function Sidebar({ currentPage }: SidebarProps) {
       <div className="p-4 space-y-2">
         <Button
           variant="ghost"
-          className={`w-full justify-start gap-3 h-12 modern-nav-item ${currentPage === "config" ? "active" : ""}`}
+          className={`w-full ${sidebarCollapsed ? "justify-center" : "justify-start gap-3"} h-12 modern-nav-item ${currentPage === "config" ? "active" : ""}`}
           onClick={() => navigateTo("config")}
         >
           <Settings className="w-5 h-5" />
@@ -60,7 +60,7 @@ export default function Sidebar({ currentPage }: SidebarProps) {
 
         <Button
           variant="ghost"
-          className={`w-full justify-start gap-3 h-12 modern-nav-item ${currentPage === "chat" ? "active" : ""} ${!isInitialized ? "opacity-50 cursor-not-allowed" : ""}`}
+          className={`w-full ${sidebarCollapsed ? "justify-center" : "justify-start gap-3"} h-12 modern-nav-item ${currentPage === "chat" ? "active" : ""} ${!isInitialized ? "opacity-50 cursor-not-allowed" : ""}`}
           onClick={() => navigateTo("chat")}
           disabled={!isInitialized}
         >
@@ -70,7 +70,7 @@ export default function Sidebar({ currentPage }: SidebarProps) {
 
         <Button
           variant="ghost"
-          className={`w-full justify-start gap-3 h-12 modern-nav-item ${currentPage === "developer" ? "active" : ""} ${!isInitialized ? "opacity-50 cursor-not-allowed" : ""}`}
+          className={`w-full ${sidebarCollapsed ? "justify-center" : "justify-start gap-3"} h-12 modern-nav-item ${currentPage === "developer" ? "active" : ""} ${!isInitialized ? "opacity-50 cursor-not-allowed" : ""}`}
           onClick={() => navigateTo("developer")}
           disabled={!isInitialized}
         >
@@ -79,8 +79,12 @@ export default function Sidebar({ currentPage }: SidebarProps) {
         </Button>
       </div>
 
-      {!sidebarCollapsed && (
-        <div className="p-4 mt-auto">
+      <div className="p-4 mt-auto">
+        {sidebarCollapsed ? (
+          <div className="flex justify-center">
+            <div className={`w-3 h-3 rounded-full ${isInitialized ? "bg-green-400" : "bg-red-400"}`} />
+          </div>
+        ) : (
           <div className="modern-form-section">
             <div className="flex items-center gap-2 text-xs">
               <div className={`w-2 h-2 rounded-full ${isInitialized ? "bg-green-400" : "bg-red-400"}`} />
@@ -89,8 +93,8 @@ export default function Sidebar({ currentPage }: SidebarProps) {
               </span>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }
