@@ -1,11 +1,10 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Send, Bot } from "lucide-react"
+import { Bot } from "lucide-react"
 import Sidebar from "@/components/sidebar"
 import { useAgentStore, useAgentRestore } from "@/stores/agent-store"
 
@@ -221,51 +220,33 @@ export default function ChatPage() {
 
             <div className="border-t border-white/10 modern-card border-l-0 border-r-0 border-b-0 rounded-none p-4 sm:p-6">
               <div className="max-w-4xl mx-auto">
-                <div className="flex gap-3 sm:gap-4">
-                  <div className="flex-1 relative">
-                    <Textarea
-                      placeholder={
-                        isInitialized
-                          ? ""
-                          : "Please configure the agent first..."
+                <div className="relative">
+                  <Textarea
+                    placeholder={
+                      isInitialized
+                        ? "Press Enter to send, Shift+Enter for new line)"
+                        : "Please configure the agent first..."
+                    }
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    className="w-full min-h-[60px] sm:min-h-[70px] resize-none modern-input text-sm sm:text-base pr-4"
+                    disabled={!isInitialized}
+                    onKeyDown={(e) => {
+                      const ne = (e as any).nativeEvent
+                      if (ne?.isComposing || e.keyCode === 229) return
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault()
+                        handleSendMessage()
                       }
-                      value={chatInput}
-                      onChange={(e) => setChatInput(e.target.value)}
-                      className="flex-1 min-h-[60px] sm:min-h-[70px] resize-none modern-input text-sm sm:text-base pr-12 sm:pr-14"
-                      disabled={!isInitialized}
-                      onKeyDown={(e) => {
-                        const ne = (e as any).nativeEvent
-                        if (ne?.isComposing || e.keyCode === 229) return
-                        if (e.key === "Enter" && !e.shiftKey) {
-                          e.preventDefault()
-                          handleSendMessage()
-                        }
-                      }}
-                      onCompositionStart={() => {/* optional: set state if you want */}}
-                      onCompositionEnd={() => {/* optional: clear state */}}
-                    />
-                    <div className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 hidden sm:block">
-                      {isInitialized ? "Enter to send, Shift+Enter for new line" : ""}
+                    }}
+                    onCompositionStart={() => {/* optional: set state if you want */}}
+                    onCompositionEnd={() => {/* optional: clear state */}}
+                  />
+                  {isLoading && (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     </div>
-                  </div>
-                  <Button
-                    onClick={handleSendMessage}
-                    disabled={!chatInput.trim() || isLoading || !isInitialized}
-                    className="px-4 sm:px-6 h-[60px] sm:h-[70px] modern-button-primary text-sm sm:text-base font-medium rounded-xl hover:scale-105 transition-transform duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-                    size="lg"
-                  >
-                    {isLoading ? (
-                      <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        <span className="hidden sm:inline">Sending...</span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <Send className="w-4 h-4 sm:w-5 sm:h-5" />
-                        <span className="hidden sm:inline">Send</span>
-                      </div>
-                    )}
-                  </Button>
+                  )}
                 </div>
               </div>
             </div>
