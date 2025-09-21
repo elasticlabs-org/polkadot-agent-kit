@@ -1,5 +1,5 @@
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { create, StoreApi } from 'zustand'
+import { persist, createJSONStorage } from 'zustand/middleware'
 import React from 'react'
 
 interface AgentConfig {
@@ -33,7 +33,7 @@ interface AgentState {
 
 export const useAgentStore = create<AgentState>()(
   persist(
-    (set: any, get: any) => {
+    (set: StoreApi<AgentState>['setState'], get: StoreApi<AgentState>['getState']) => {
       // Check session on store initialization
       const checkAndRestoreSession = () => {
         const { sessionExpiry, isInitialized, config } = get()
@@ -66,10 +66,12 @@ export const useAgentStore = create<AgentState>()(
 
       // Actions
       setConfig: (config: AgentConfig) => {
+
         set({ 
           config,
           isConfigured: config.isConfigured || false
         })
+
       },
 
       setInitializing: (isInitializing: boolean) => {
@@ -127,7 +129,6 @@ export const useAgentStore = create<AgentState>()(
             isInitializing: false
           })
 
-          console.log('[AgentStore] Agent restored successfully')
         } catch (error) {
           console.error('[AgentStore] Failed to restore agent:', error)
           set({ 
@@ -140,6 +141,7 @@ export const useAgentStore = create<AgentState>()(
       initializeAgent: async () => {
         const { config } = get()
         if (!config || !config.isConfigured) {
+          console.log('[AgentStore] Agent not configured, config:', config)
           throw new Error('Agent not configured')
         }
 
@@ -166,7 +168,6 @@ export const useAgentStore = create<AgentState>()(
             sessionExpiry
           })
 
-          console.log('[AgentStore] Agent initialized successfully')
         } catch (error) {
           console.error('[AgentStore] Failed to initialize agent:', error)
           set({ 
@@ -191,12 +192,14 @@ export const useAgentStore = create<AgentState>()(
     }),
     {
       name: 'polkadot-agent-store',
-      partialize: (state: any) => ({
+      partialize: (state: AgentState) => ({
         config: state.config,
         isConfigured: state.isConfigured,
         isInitialized: state.isInitialized,
         sessionExpiry: state.sessionExpiry
-      })
+      }),
+      // Use JSON storage helper to keep the { state, version } shape correct
+      storage: createJSONStorage(() => localStorage)
     }
   )
 

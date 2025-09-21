@@ -7,7 +7,6 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Bot } from "lucide-react"
 import Sidebar from "@/components/sidebar"
 import { useAgentStore, useAgentRestore } from "@/stores/agent-store"
-import { ChatOpenAI} from "@langchain/openai"
 
 interface ChatMessage {
   id: string

@@ -131,14 +131,6 @@ export default function ConfigPage() {
     loadChains()
   }, [])
 
-  // Load config from localStorage on mount
-  useEffect(() => {
-    const savedConfig = localStorage.getItem("polkadot-agent-config")
-    if (savedConfig) {
-      setAgentConfig(JSON.parse(savedConfig))
-    }
-  }, [])
-
   const handleConfigureAgent = async () => {
     const needsApiKey = agentConfig.llmProvider === "openai"
     if (!agentConfig.llmProvider) {
@@ -195,8 +187,17 @@ export default function ConfigPage() {
         isConfigured: true
       }
 
-      // Set config in Zustand store
-      setConfig(storeConfig)
+      
+      try {
+        setConfig(storeConfig)
+        
+        // Check store state after setConfig
+        setTimeout(() => {
+          console.log('[ConfigPage] Store state after setConfig:', { config, isConfigured })
+        }, 100)
+      } catch (error) {
+        console.error('[ConfigPage] Error calling setConfig:', error)
+      }
 
       // Initialize agent using Zustand store
       await initializeAgent()

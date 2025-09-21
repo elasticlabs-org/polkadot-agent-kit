@@ -136,7 +136,6 @@ export default function DeveloperPage() {
     const schemaObj = (selectedTool as any)?.schemaJson
     if (schemaObj && typeof schemaObj === 'object') {
       try {
-        console.log("Schema Object:", schemaObj)
         setParsedSchema(schemaObj)
 
         // Initialize form data with default values from the new schema
