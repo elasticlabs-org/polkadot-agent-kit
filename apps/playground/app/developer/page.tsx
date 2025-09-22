@@ -62,7 +62,6 @@ export default function DeveloperPage() {
 
       try {
         const { default: zodToJsonSchema } = await import("zod-to-json-schema")
-
         const ep: ToolsMap = {
           assets: {
             getNativeBalanceTool: agentKit.getNativeBalanceTool(),
