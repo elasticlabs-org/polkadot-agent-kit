@@ -88,7 +88,7 @@ describe('PolkadotAgentKit Integration with OllamaAgent', () => {
   }, 1500000); 
 
   it('should call xcm_transfer_native_asset tool for Westend to Asset Hub transfer', async () => {
-    const userQuery = `transfer 0.1 WND to ${RECIPIENT2} from Westend to Westend Asset Hub`;
+    const userQuery = `transfer 0.1 WND to ${RECIPIENT2} from Westend to Asset Hub`;
 
     const balanceAgentBefore = await getBalance(agentKit.getApi('west'), agentKit.getCurrentAddress());
     // Get balance Recipient Before on Westend Asset Hub
