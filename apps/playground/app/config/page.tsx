@@ -101,6 +101,7 @@ export default function ConfigPage() {
   const llmProviders = [
     { value: "openai", label: "OpenAI", models: ["gpt-4o-mini"] },
     { value: "ollama", label: "Ollama", models: ["qwen3:latest"] },
+    { value: "gemini", label: "Gemini", models: ["gemini-2.0-flash"] },
   ]
 
   const keyTypes: KeyType[] = ["Sr25519", "Ed25519"]
@@ -162,7 +163,7 @@ export default function ConfigPage() {
   }, [])
 
   const handleConfigureAgent = async () => {
-    const needsApiKey = agentConfig.llmProvider === "openai"
+    const needsApiKey = agentConfig.llmProvider === "openai" || agentConfig.llmProvider === "gemini"
 
     // Determine what changed vs persisted values
     const prevLlmRaw = typeof window !== 'undefined' ? localStorage.getItem("llm_config") : null
@@ -201,15 +202,17 @@ export default function ConfigPage() {
         return
       }
       if (needsApiKey) {
-        const apiKey = agentConfig.apiKey || process.env.NEXT_PUBLIC_OPENAI_KEY
+        const apiKey = agentConfig.apiKey || 
+          (agentConfig.llmProvider === "openai" ? process.env.NEXT_PUBLIC_OPENAI_KEY : process.env.NEXT_PUBLIC_GOOGLE_API_KEY)
         if (!apiKey) {
-          alert("API key is required for OpenAI. Provide it or set NEXT_PUBLIC_OPENAI_KEY.")
+          const envVar = agentConfig.llmProvider === "openai" ? "NEXT_PUBLIC_OPENAI_KEY" : "NEXT_PUBLIC_GOOGLE_API_KEY"
+          alert(`API key is required for ${agentConfig.llmProvider}. Provide it or set ${envVar}.`)
           return
         }
         agentConfig.apiKey = apiKey
       }
     }
-
+ 
     if (polkadotChanged) {
       if (!agentConfig.privateKey) {
         alert("Private key is required")
@@ -231,10 +234,16 @@ export default function ConfigPage() {
     try {
       // If LLM changed, persist LLM config and (optionally) validate
       if (llmChanged) {
+        const envApiKey = agentConfig.llmProvider === "openai"
+          ? process.env.NEXT_PUBLIC_OPENAI_KEY
+          : agentConfig.llmProvider === "gemini"
+            ? process.env.NEXT_PUBLIC_GOOGLE_API_KEY
+            : null
+        const apiKeyToPersist = agentConfig.llmProvider === "ollama" ? null : (agentConfig.apiKey || envApiKey || null)
         localStorage.setItem("llm_config", JSON.stringify({
           provider: agentConfig.llmProvider,
           model: agentConfig.llmModel,
-          apiKey: agentConfig.llmProvider === "openai" ? agentConfig.apiKey : null
+          apiKey: apiKeyToPersist
         }))
 
         if (agentConfig.llmProvider === "ollama") {
@@ -260,6 +269,9 @@ export default function ConfigPage() {
             console.warn("OpenAI validation error:", e?.message || e)
             setLlmConnected("error")
           }
+        } else if (agentConfig.llmProvider === "gemini") {
+          // For Gemini, just trust the key presence since CORS may block validation.
+          setLlmConnected(agentConfig.apiKey ? "ok" : "error")
         }
       }
 
@@ -381,7 +393,13 @@ export default function ConfigPage() {
                   <label className="text-sm font-semibold mb-3 block modern-text-primary">API Key</label>
                   <Input
                     type="password"
-                    placeholder="Enter your API key or leave empty to use NEXT_PUBLIC_OPENAI_KEY..."
+                    placeholder={
+                      agentConfig.llmProvider === "openai"
+                        ? "Enter your API key or leave empty to use NEXT_PUBLIC_OPENAI_KEY..."
+                        : agentConfig.llmProvider === "gemini"
+                          ? "Enter your API key or leave empty to use NEXT_PUBLIC_GOOGLE_API_KEY..."
+                          : "API key not required for Ollama"
+                    }
                     value={agentConfig.apiKey}
                     onChange={(e) => setAgentConfig((prev) => ({ ...prev, apiKey: e.target.value }))}
                     className="h-10 sm:h-12 modern-input font-mono"
@@ -392,12 +410,20 @@ export default function ConfigPage() {
                   ) : (
                     <div className="mt-2">
                       <p className="text-xs modern-text-secondary">
-                        Leave empty to use NEXT_PUBLIC_OPENAI_KEY environment variable, or enter your API key directly.
+                        {agentConfig.llmProvider === "openai"
+                          ? "Leave empty to use NEXT_PUBLIC_OPENAI_KEY environment variable, or enter your API key directly."
+                          : "Leave empty to use NEXT_PUBLIC_GOOGLE_API_KEY environment variable, or enter your API key directly."}
                       </p>
-                      {!agentConfig.apiKey && process.env.NEXT_PUBLIC_OPENAI_KEY && (
+                      {!agentConfig.apiKey && agentConfig.llmProvider === "openai" && process.env.NEXT_PUBLIC_OPENAI_KEY && (
                         <p className="text-xs text-green-400 mt-1 flex items-center gap-1">
                           <span className="w-1.5 h-1.5 bg-green-400 rounded-full"></span>
                           Using environment variable: NEXT_PUBLIC_OPENAI_KEY
+                        </p>
+                      )}
+                      {!agentConfig.apiKey && agentConfig.llmProvider === "gemini" && process.env.NEXT_PUBLIC_GOOGLE_API_KEY && (
+                        <p className="text-xs text-green-400 mt-1 flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 bg-green-400 rounded-full"></span>
+                          Using environment variable: NEXT_PUBLIC_GOOGLE_API_KEY
                         </p>
                       )}
                     </div>

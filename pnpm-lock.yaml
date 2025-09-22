@@ -72,6 +72,9 @@ importers:
       '@langchain/core':
         specifier: ^0.3.40
         version: 0.3.61(openai@4.104.0(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(zod@3.25.67))
+      '@langchain/google-genai':
+        specifier: ^0.1.6
+        version: 0.1.12(@langchain/core@0.3.61(openai@4.104.0(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(zod@3.25.67)))(zod@3.25.67)
       '@langchain/ollama':
         specifier: ^0.2.2
         version: 0.2.3(@langchain/core@0.3.61(openai@4.104.0(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(zod@3.25.67)))
@@ -1974,6 +1977,10 @@ packages:
       '@polkadot/util-crypto': ^13.5.1
       viem: ^2.23.7
 
+  '@google/generative-ai@0.24.1':
+    resolution: {integrity: sha512-MqO+MLfM6kjxcKoy0p1wRzG3b4ZZXtPI+z2IE26UogS2Cm/XHO+7gGRBh6gcJsOiIVoH93UwKvW4HdgiOZCy9Q==, tarball: https://registry.npmjs.org/@google/generative-ai/-/generative-ai-0.24.1.tgz}
+    engines: {node: '>=18.0.0'}
+
   '@headlessui/react@2.2.0':
     resolution: {integrity: sha512-RzCEg+LXsuI7mHiSomsu/gBJSjpupm6A1qIZ5sWjd7JhARNlMiSA4kKfJpCKwU9tE+zMRterhhrP74PvfJrpXQ==, tarball: https://registry.npmjs.org/@headlessui/react/-/react-2.2.0.tgz}
     engines: {node: '>=10'}
@@ -2525,6 +2532,12 @@ packages:
   '@langchain/core@0.3.61':
     resolution: {integrity: sha512-4O7fw5SXNSE+uBnathLQrhm3t+7dZGagt/5kt37A+pXw0AkudxEBvveg73sSnpBd9SIz3/Vc7F4k8rCKXGbEDA==, tarball: https://registry.npmjs.org/@langchain/core/-/core-0.3.61.tgz}
     engines: {node: '>=18'}
+
+  '@langchain/google-genai@0.1.12':
+    resolution: {integrity: sha512-0Ea0E2g63ejCuormVxbuoyJQ5BYN53i2/fb6WP8bMKzyh+y43R13V8JqOtr3e/GmgNyv3ou/VeaZjx7KAvu/0g==, tarball: https://registry.npmjs.org/@langchain/google-genai/-/google-genai-0.1.12.tgz}
+    engines: {node: '>=18'}
+    peerDependencies:
+      '@langchain/core': '>=0.3.17 <0.4.0'
 
   '@langchain/ollama@0.2.3':
     resolution: {integrity: sha512-1Obe45jgQspqLMBVlayQbGdywFmri8DgmGRdzNu0li56cG5RReYlRCFVDZBRMMvF9JhsP5eXRyfyivtKfITHWQ==, tarball: https://registry.npmjs.org/@langchain/ollama/-/ollama-0.2.3.tgz}
@@ -11019,6 +11032,8 @@ snapshots:
       lodash.clonedeep: 4.5.0
       viem: 2.31.7(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.67)
 
+  '@google/generative-ai@0.24.1': {}
+
   '@headlessui/react@2.2.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1)':
     dependencies:
       '@floating-ui/react': 0.26.28(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -11473,6 +11488,14 @@ snapshots:
       zod-to-json-schema: 3.24.5(zod@3.25.67)
     transitivePeerDependencies:
       - openai
+
+  '@langchain/google-genai@0.1.12(@langchain/core@0.3.61(openai@4.104.0(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(zod@3.25.67)))(zod@3.25.67)':
+    dependencies:
+      '@google/generative-ai': 0.24.1
+      '@langchain/core': 0.3.61(openai@4.104.0(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(zod@3.25.67))
+      zod-to-json-schema: 3.24.5(zod@3.25.67)
+    transitivePeerDependencies:
+      - zod
 
   '@langchain/ollama@0.2.3(@langchain/core@0.3.61(openai@4.104.0(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(zod@3.25.67)))':
     dependencies:

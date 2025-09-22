@@ -84,6 +84,15 @@ export default function ChatPage() {
           temperature: 0,
           apiKey,
         })
+      } else if (provider === "gemini") {
+        const { ChatGoogleGenerativeAI } = await import("@langchain/google-genai")
+        const apiKey = storedApiKey || process.env.NEXT_PUBLIC_GOOGLE_API_KEY
+        if (!apiKey) throw new Error("Google Generative AI API key not found. Set it in config or NEXT_PUBLIC_GOOGLE_API_KEY.")
+        llm = new ChatGoogleGenerativeAI({
+          model: model || "gemini-2.0-flash",
+          temperature: 0,
+          apiKey,
+        })
       } else {
         throw new Error(`Unsupported LLM provider: ${provider}`)
       }

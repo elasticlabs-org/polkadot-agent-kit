@@ -69,7 +69,8 @@
     "zod": "3.25.67",
     "zod-to-json-schema": "^3.24.3",
     "zustand": "^5.0.8",
-    "@langchain/openai":"^0.5.12"
+    "@langchain/openai":"^0.5.12",
+    "@langchain/google-genai":"^0.1.6"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.9",
