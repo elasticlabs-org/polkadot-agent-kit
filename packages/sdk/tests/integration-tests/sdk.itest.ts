@@ -155,7 +155,7 @@ describe('PolkadotAgentKit Integration with OllamaAgent for XCM Transfer', () =>
       agentKit = new PolkadotAgentKit({ 
         privateKey: process.env.AGENT_PRIVATE_KEY, 
         keyType: 'Sr25519', 
-        chains: ['west', 'west_asset_hub', 'paseo', 'paseo_asset_hub']
+        chains: ['west', 'west_people', 'paseo', 'paseo_asset_hub', 'west_asset_hub' ]
       });
       await agentKit.initializeApi();
 
@@ -309,20 +309,20 @@ describe('PolkadotAgentKit Integration with OllamaAgent for XCM Transfer', () =>
     });
   });
 
-  // describe('3. Parachain to Parachain Transfers', () => {
-  //   it('should call xcm_transfer_native_asset tool for "West Asset Hub to West People Chain"', async () => {
-  //     await testXcmTransfer(
-  //       'West Asset Hub to West People Chain',
-  //       `transfer 0.2 WND to ${RECIPIENT6} from AssetHubWestend to PeopleWestend via XCM`,
-  //       RECIPIENT6,
-  //       'west_asset_hub',
-  //       'west_people',
-  //       'AssetHubWestend',
-  //       'PeopleWestend',
-  //       '0.2'
-  //     );
-  //   }, 3500000);
-  // });
+  describe('3. Parachain to Parachain Transfers', () => {
+    it('should call xcm_transfer_native_asset tool for "West Asset Hub to West People Chain"', async () => {
+      await testXcmTransfer(
+        'West Asset Hub to West People Chain',
+        `transfer 0.2 WND to ${RECIPIENT6} from AssetHubWestend to PeopleWestend via XCM`,
+        RECIPIENT6,
+        'west_asset_hub',
+        'west_people',
+        'AssetHubWestend',
+        'PeopleWestend',
+        '0.2'
+      );
+    }, 3500000);
+  });
 
 })
 
