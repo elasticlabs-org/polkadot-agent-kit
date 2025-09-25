@@ -1,6 +1,6 @@
 import { ChatOllama } from "@langchain/ollama";
 import { AgentExecutor, createToolCallingAgent } from "langchain/agents";
-import { SYSTEM_PROMPT, sleep } from "./utils";
+import { ASSETS_SYSTEM_PROMPT, sleep } from "./utils";
 import { PolkadotAgentKit } from "../../src/api";
 import { getLangChainTools } from "../../src/langchain";
 import { ChatPromptTemplate } from '@langchain/core/prompts'
@@ -10,7 +10,8 @@ export class OllamaAgent {
 
   constructor(
     private agentKit: PolkadotAgentKit,
-    private model: string = "qwen3:latest"
+    private model: string = "qwen3:latest",
+    private systemPrompt: string = ASSETS_SYSTEM_PROMPT
   ) {}
 
   async init() {
@@ -24,12 +25,12 @@ export class OllamaAgent {
 
     const tools = getLangChainTools(this.agentKit);
 
-    // Use SYSTEM_PROMPT as the system message
+    // Use the provided system prompt
     const agentPrompt = createToolCallingAgent({
       llm: llm as any,
       tools: tools as any,
       prompt: ChatPromptTemplate.fromMessages([
-        ['system', SYSTEM_PROMPT],
+        ['system', this.systemPrompt],
         ['placeholder', '{chat_history}'],
         ['human', '{input}'],
         ['placeholder', '{agent_scratchpad}']
