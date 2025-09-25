@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
+import { describe, it, expect, beforeAll, afterEach } from 'vitest';
 import { PolkadotAgentKit } from '../../src/api';
 import { RECIPIENT, sleep, getBalance, estimateTransactionFee, RECIPIENT2, RECIPIENT3, RECIPIENT4, RECIPIENT5, XCM_SYSTEM_PROMPT, RECIPIENT6, RECIPIENT0 } from './utils';
 import { OllamaAgent } from './ollamaAgent';
@@ -24,7 +24,7 @@ describe('PolkadotAgentKit Integration with OllamaAgent check balance', () => {
       agentKit = new PolkadotAgentKit({
         privateKey: process.env.AGENT_PRIVATE_KEY,
         keyType: 'Sr25519',
-        chains: ['west', 'west_asset_hub', 'paseo', 'paseo_asset_hub']
+        chains: ['west', 'west_asset_hub', 'paseo', 'paseo_asset_hub','west_people']
       });
       await agentKit.initializeApi();
 

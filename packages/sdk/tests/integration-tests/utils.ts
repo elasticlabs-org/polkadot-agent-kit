@@ -1,8 +1,7 @@
 import type { Api, KnownChainId } from "@polkadot-agent-kit/common"
 import {ASSETS_PROMPT, XCM_PROMPT, SWAP_PROMPT, NOMINATION_PROMPT, IDENTITY_PROMPT, BIFROST_PROMPT} from "@polkadot-agent-kit/llm"
-import { OllamaAgent } from './ollamaAgent';
 import { UnsafeTransactionType } from "@polkadot-agent-kit/common"
-import { PolkadotAgentKit } from "../../src/api";
+
 export const RECIPIENT0 = '5Fniv36Eu3bTWVRaR6N2Ve1qVouiTd15SJcZpxPyhkngRnqj';
 export const RECIPIENT= '5CcqKCNDxrYYkPNWys8yrjHJVTzd69i66VTgtewrSbJiVqoR';
 export const RECIPIENT2 = '5D7jcv6aYbhbYGVY8k65oemM6FVNoyBfoVkuJ5cbFvbefftr';

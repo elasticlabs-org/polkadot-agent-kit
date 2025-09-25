@@ -115,8 +115,6 @@ export class PolkadotApi implements IPolkadotApi {
           chainSpecs[chain.id as KnownChainId] = this.getChainSpec(chain.id as KnownChainId)
         }
 
-        console.log("Chain specs:",chainSpecs)
-
         const apiInitPromises = supportedChains.map(async chain => {
           try {
             if (this.getChainSpec(chain.id as KnownChainId) == "") {

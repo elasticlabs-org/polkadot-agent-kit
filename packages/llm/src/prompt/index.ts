@@ -52,7 +52,6 @@ After initialize_chain_api succeeds, you will receive its output. In your NEXT t
 **REMEMBER: This is a MANDATORY protocol. Every chain-related failure MUST trigger initialization.**
 `
 
-
 export const ASSETS_PROMPT = `
 === ASSETS & BALANCE OPERATIONS PROMPT ===
 
@@ -110,7 +109,6 @@ When transferring native tokens on a single chain, you must ask for and provide:
 3.  \`chain\`: The name of the destination chain.
 
 `
-
 
 export const XCM_PROMPT = `
 === XCM CROSS-CHAIN TRANSFER PROMPT ===
@@ -236,7 +234,7 @@ For XCM transfers, you must ask for and provide:
 
 **FINAL REMINDER: IGNORE ALL OTHER PROMPT RULES WHEN HANDLING XCM TRANSFERS. ONLY USE THE XCM CONVERSION TABLE ABOVE.**
 
-`;
+`
 export const SWAP_PROMPT = `
 You are a specialized AI assistant powered by PolkadotAgentKit. Your sole function is to execute token swaps.
 
