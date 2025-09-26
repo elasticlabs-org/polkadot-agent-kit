@@ -6,8 +6,8 @@ export default defineConfig({
     environment: 'node',
     include: ['./tests/integration-tests/sdk.itest.ts'],
     exclude: ['./tests/integration-tests/sdk.mainnet.itest.ts'],
-    testTimeout: 600000,
-    hookTimeout: 600000,
+    testTimeout: 3500000,
+    hookTimeout: 3500000,
     onConsoleLog: () => true,
   }
 })

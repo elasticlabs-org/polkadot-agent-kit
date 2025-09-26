@@ -10,12 +10,12 @@ export const xcmTransferNativeAssetSchema = z.object({
   sourceChain: z
     .string()
     .describe(
-      "The source chain in ParaSpell format (e.g., 'AssetHubWestend', 'PeopleWestend', 'Polkadot')"
+      "The source chain in ParaSpell format (e.g., 'AssetHubWestend', 'PeopleWestend', 'Polkadot', 'Westend')"
     ),
   destChain: z
     .string()
     .describe(
-      "The destination chain in ParaSpell format (e.g., 'AssetHubWestend', 'PeopleWestend', 'Polkadot')"
+      "The destination chain in ParaSpell format (e.g., 'AssetHubWestend', 'PeopleWestend', 'Polkadot', 'Westend')"
     )
 })
 
