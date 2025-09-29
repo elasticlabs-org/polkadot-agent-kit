@@ -40,7 +40,7 @@ export const westendChain = createChain({
   id: "west",
   name: "Westend",
   specName: "westend",
-  wsUrls: ["wss://westend-rpc.polkadot.io"],
+  wsUrls: ["wss://westend-rpc.polkadot.io", "wss://westend-rpc.n.dwellir.com"],
   relay: "west",
   type: "relay",
   chainId: 0,
