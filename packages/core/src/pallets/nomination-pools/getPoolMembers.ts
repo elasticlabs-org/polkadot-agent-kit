@@ -1,4 +1,4 @@
-import type { Api, ChainIdRelay } from "@polkadot-agent-kit/common"
+import type { Api, ChainIdAssetHub } from "@polkadot-agent-kit/common"
 
 /**
  * Interface for pool member information
@@ -18,7 +18,7 @@ export interface PoolMember {
  * @returns Promise that resolves to an array of pool members
  */
 export const getPoolMembers = async (
-  api: Api<ChainIdRelay>,
+  api: Api<ChainIdAssetHub>,
   poolId: number
 ): Promise<PoolMember[]> => {
   try {

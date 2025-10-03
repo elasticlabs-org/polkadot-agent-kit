@@ -1,4 +1,4 @@
-import type { Api, KnownChainId } from "@polkadot-agent-kit/common"
+import type { Api, ChainIdAssetHub, KnownChainId } from "@polkadot-agent-kit/common"
 import {ASSETS_PROMPT, XCM_PROMPT, SWAP_PROMPT, NOMINATION_PROMPT, IDENTITY_PROMPT, BIFROST_PROMPT} from "@polkadot-agent-kit/llm"
 import { UnsafeTransactionType } from "@polkadot-agent-kit/common"
 
@@ -68,5 +68,19 @@ export async function getBalance(
   address: string
 ) {
   return await api.query.System.Account.getValue(address);
+}
+
+
+export interface PoolMember {
+  poolId: number
+  points: bigint
+  lastRecordedRewardCounter: bigint
+  unbondingEras: Record<number, bigint>
+}
+
+
+export const getBondedAmountByMember = async (api: Api<ChainIdAssetHub>, address: string): Promise<bigint> => {
+  const poolMember = await api.query.NominationPools.PoolMembers.getValue(address);
+  return poolMember.points
 }
 

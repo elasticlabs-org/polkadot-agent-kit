@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeAll, afterEach } from 'vitest';
 import { PolkadotAgentKit } from '../../src/api';
-import { RECIPIENT, sleep, getBalance, estimateTransactionFee, RECIPIENT2, RECIPIENT3, RECIPIENT4, RECIPIENT5, XCM_SYSTEM_PROMPT, RECIPIENT6, RECIPIENT0 } from './utils';
+import { RECIPIENT, sleep, getBalance, estimateTransactionFee, RECIPIENT2, RECIPIENT3, RECIPIENT4, RECIPIENT5, XCM_SYSTEM_PROMPT, RECIPIENT6, RECIPIENT0, getBondedAmountByMember } from './utils';
 import { OllamaAgent } from './ollamaAgent';
 import { estimateXcmFee, transferNativeCall } from '@polkadot-agent-kit/core';
 import { parseUnits, getDecimalsByChainId } from '@polkadot-agent-kit/common';
 import dotenv from 'dotenv';
-import { ASSETS_PROMPT } from '@polkadot-agent-kit/llm';
+import { ASSETS_PROMPT, NOMINATION_PROMPT } from '@polkadot-agent-kit/llm';
 dotenv.config({ path: '../../.env' });
 
 
@@ -32,7 +32,7 @@ describe('PolkadotAgentKit Integration with OllamaAgent check balance', () => {
       ollamaAgent = new OllamaAgent(agentKit, "qwen3:latest", ASSETS_PROMPT);
       await ollamaAgent.init();
 
-      console.log('🏗️ Assets Agent initialized with ASSETS_PROMPT');
+
     } else {
       throw new Error('AGENT_PRIVATE_KEY is not set');
     }
@@ -89,7 +89,6 @@ describe('PolkadotAgentKit Integration with OllamaAgent transfer_native tool', (
       ollamaAgent = new OllamaAgent(agentKit, "qwen3:latest", ASSETS_PROMPT);
       await ollamaAgent.init();
 
-      console.log('🏗️ Assets Agent initialized with ASSETS_PROMPT');
     } else {
       throw new Error('AGENT_PRIVATE_KEY is not set');
     }
@@ -326,4 +325,218 @@ describe('PolkadotAgentKit Integration with OllamaAgent for XCM Transfer', () =>
 
 })
 
+
+
+
+
+describe('PolkadotAgentKit Integration with OllamaAgent staking nomination pool tools', () => {
+  let agentKit: PolkadotAgentKit;
+  let ollamaAgent: OllamaAgent;
+
+  beforeAll(async () => {
+    // Make sure private key 
+    if (process.env.AGENT_PRIVATE_KEY) {
+      agentKit = new PolkadotAgentKit({
+        privateKey: process.env.AGENT_PRIVATE_KEY,
+        keyType: 'Sr25519',
+        chains: ['paseo_asset_hub']
+      });
+      await agentKit.initializeApi();
+
+
+      ollamaAgent = new OllamaAgent(agentKit, "qwen3:latest", NOMINATION_PROMPT);
+      await ollamaAgent.init();
+    } else {
+      throw new Error('AGENT_PRIVATE_KEY is not set');
+    }
+  }, 3500000);
+
+  afterEach(async () => {
+    // Add delay between tests to avoid stale transaction errors
+    await sleep(120000); // 120 seconds delay (2 minutes)
+  });
+
+  // This agent test account already joined another pools
+
+  it('should call join_pool tool and handle AccountBelongsToOtherPool error', async () => {
+    const userQuery = 'join pool with 0.1 PAS on Paseo Asset Hub';
+    const result = await ollamaAgent.ask(userQuery);
+    console.log('Join Pool Query Result:', result);
+
+    // Check that we have intermediate steps
+    expect(result.intermediateSteps).toBeDefined();
+    expect(result.intermediateSteps.length).toBeGreaterThan(0);
+
+    // Find the join_pool tool call
+    const joinPoolCall = result.intermediateSteps.find((step: any) =>
+      step.action?.tool === 'join_pool'
+    );
+
+    expect(joinPoolCall).toBeDefined();
+    expect(joinPoolCall.action.toolInput).toMatchObject({
+      amount: '0.1',
+      chain: 'paseo_asset_hub',
+    });
+
+    const observationStep = result.intermediateSteps.find((step: any) =>
+      step.observation && step.observation.includes('NominationPools.AccountBelongsToOtherPool')
+    );
+
+    expect(observationStep).toBeDefined();
+    expect(observationStep.observation).toContain('NominationPools.AccountBelongsToOtherPool');
+
+    // Wait for transaction to be processed
+    await sleep(30000);
+    
+  }, 3500000);
+
+
+  it('should call bond_extra tool with FreeBalance', async () => {
+
+    await sleep(60000); // 60 seconds additional delay
+    
+    const userQuery = 'bond extra 1 PAS on Paseo Asset Hub';
+    
+    // Get bonded amount before the operation
+    const bondedAmountBefore = await getBondedAmountByMember(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress());
+    console.log('Bonded amount before:', bondedAmountBefore);
+    
+    const result = await ollamaAgent.ask(userQuery);
+    console.log('Bond Extra Query Result:', result);
+
+    // Check that we have intermediate steps
+    expect(result.intermediateSteps).toBeDefined();
+    expect(result.intermediateSteps.length).toBeGreaterThan(0);
+
+    // Find the bond_extra tool call
+    const bondExtraCall = result.intermediateSteps.find((step: any) =>
+      step.action?.tool === 'bond_extra'
+    );
+
+    expect(bondExtraCall).toBeDefined();
+    expect(bondExtraCall.action.toolInput).toMatchObject({
+      amount: '1',
+      chain: 'paseo_asset_hub',
+      type: 'FreeBalance'
+    });
+
+    const observationStep = result.intermediateSteps.find((step: any) =>
+      step.observation && step.observation.includes('Successfully bonded extra tokens')
+    );
+
+    expect(observationStep).toBeDefined();
+    expect(observationStep.observation).toContain('Successfully bonded extra tokens (FreeBalance) on paseo_asset_hub');
+    
+    // Wait for transaction to be processed
+    await sleep(30000);
+    
+    // Get bonded amount after the operation
+    const bondedAmountAfter = await getBondedAmountByMember(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress());
+    console.log('Bonded amount after:', bondedAmountAfter);
+    
+    const expectedAmount = parseUnits("1", getDecimalsByChainId('paseo_asset_hub'));
+    expect(bondedAmountAfter).toEqual(bondedAmountBefore + expectedAmount);
+    
+  }, 3500000);
+
+
+  it('should call bond_extra tool with Rewards', async () => {
+    const userQuery = 'bond rewards on Paseo Asset Hub';
+    
+    const result = await ollamaAgent.ask(userQuery);
+    console.log('Bond Extra Query Result:', result);
+
+    // Check that we have intermediate steps
+    expect(result.intermediateSteps).toBeDefined();
+    expect(result.intermediateSteps.length).toBeGreaterThan(0);
+
+    // Find the bond_extra tool call
+    const bondExtraCall = result.intermediateSteps.find((step: any) =>
+      step.action?.tool === 'bond_extra'
+    );
+
+    expect(bondExtraCall).toBeDefined();
+    expect(bondExtraCall.action.toolInput).toMatchObject({
+      chain: 'paseo_asset_hub',
+      type: 'Rewards'
+    });
+
+    const observationStep = result.intermediateSteps.find((step: any) =>
+      step.observation && step.observation.includes('Successfully bonded extra tokens')
+    );
+
+    expect(observationStep).toBeDefined();
+    expect(observationStep.observation).toContain('Successfully bonded extra tokens (Rewards) on paseo_asset_hub');
+    
+    
+  }, 3500000);
+
+
+  it('should call unbond tool', async () => {
+    const userQuery = 'unbond 0.01 PAS on Paseo Asset Hub';
+    
+    const result = await ollamaAgent.ask(userQuery);
+    console.log('Unbond Query Result:', result);
+
+    // Check that we have intermediate steps
+    expect(result.intermediateSteps).toBeDefined();
+    expect(result.intermediateSteps.length).toBeGreaterThan(0);
+
+    const unbondCall = result.intermediateSteps.find((step: any) =>
+      step.action?.tool === 'unbond'
+    );
+
+    expect(unbondCall).toBeDefined();
+    expect(unbondCall.action.toolInput).toMatchObject({
+      chain: 'paseo_asset_hub',
+      amount: '0.01'
+    });
+
+    
+    
+  }, 3500000);
+
+  it('should call withdraw unbond tool', async () => {
+    const userQuery = 'withdraw unbonded on Paseo Asset Hub';
+    
+    const result = await ollamaAgent.ask(userQuery);
+    console.log('Withdraw Unbonded Query Result:', result);
+
+    // Check that we have intermediate steps
+    expect(result.intermediateSteps).toBeDefined();
+    expect(result.intermediateSteps.length).toBeGreaterThan(0);
+
+    const withdrawUnbondedCall = result.intermediateSteps.find((step: any) =>
+      step.action?.tool === 'withdraw_unbonded'
+    );
+
+    expect(withdrawUnbondedCall).toBeDefined();
+    expect(withdrawUnbondedCall.action.toolInput).toMatchObject({
+      chain: 'paseo_asset_hub',
+      numSlashingSpans: "0"
+    });
+  }, 3500000);
+
+
+  it('should call claim rewards  tool', async () => {
+    const userQuery = 'claim rewards from pool on Paseo Asset Hub';
+    
+    const result = await ollamaAgent.ask(userQuery);
+    console.log('Claim Rewards Query Result:', result);
+
+
+    expect(result.intermediateSteps).toBeDefined();
+    expect(result.intermediateSteps.length).toBeGreaterThan(0);
+
+    const withdrawUnbondedCall = result.intermediateSteps.find((step: any) =>
+      step.action?.tool === 'claim_rewards'
+    );
+
+    expect(withdrawUnbondedCall).toBeDefined();
+    expect(withdrawUnbondedCall.action.toolInput).toMatchObject({
+      chain: 'paseo_asset_hub',
+    });
+  }, 3500000);
+
+})
 

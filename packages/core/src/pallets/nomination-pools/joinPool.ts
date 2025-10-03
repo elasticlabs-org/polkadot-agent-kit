@@ -1,4 +1,4 @@
-import type { Api, ChainIdRelay } from "@polkadot-agent-kit/common"
+import type { Api, ChainIdAssetHub } from "@polkadot-agent-kit/common"
 import type { UnsafeTransactionType } from "@polkadot-agent-kit/common"
 
 import { findBestPoolId } from "../../utils/nominationPools"
@@ -10,7 +10,7 @@ import { findBestPoolId } from "../../utils/nominationPools"
  * @returns The join pool transaction call
  */
 export const joinPoolTx = async (
-  api: Api<ChainIdRelay>,
+  api: Api<ChainIdAssetHub>,
   amount: bigint
 ): Promise<UnsafeTransactionType> => {
   const poolId = await findBestPoolId(api)

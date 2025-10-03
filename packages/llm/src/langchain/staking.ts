@@ -1,6 +1,7 @@
 import { tool } from "@langchain/core/tools"
-import type { Api, ChainIdRelay, UnsafeTransactionType } from "@polkadot-agent-kit/common"
-import { getAllSupportedChains, getChainById } from "@polkadot-agent-kit/common"
+import type { Api, ChainIdAssetHub, UnsafeTransactionType } from "@polkadot-agent-kit/common"
+import { parseUnits } from "@polkadot-agent-kit/common"
+import { getAllSupportedChains, getChainById, isChainIdAssetHub } from "@polkadot-agent-kit/common"
 import type { PolkadotApi } from "@polkadot-agent-kit/core"
 import {
   bondExtraTx,
@@ -12,6 +13,7 @@ import {
 } from "@polkadot-agent-kit/core"
 import type { PolkadotSigner } from "polkadot-api"
 import type { z } from "zod"
+import { _success } from "zod/v4/core"
 
 import type {
   bondExtraToolSchema,
@@ -42,13 +44,21 @@ export const joinPoolTool = (polkadotApi: PolkadotApi, signer: PolkadotSigner) =
     return executeTool<StakingToolResult>(
       ToolNames.JOIN_POOL,
       async () => {
-        const api = polkadotApi.getApi(chain as ChainIdRelay) as Api<ChainIdRelay>
-        const chainInfo = getChainById(chain as ChainIdRelay, getAllSupportedChains())
-        const amountBigInt = BigInt(amount) * BigInt(10 ** chainInfo.decimals)
+        if (!isChainIdAssetHub(chain)) {
+          return {
+            success: false,
+            error: `Staking operations are only supported on Asset Hub chains. The provided chain '${chain}' is not an Asset Hub chain. Supported Asset Hub chains are: polkadot_asset_hub, west_asset_hub, kusama_asset_hub, paseo_asset_hub.`
+          }
+        }
+        const api = polkadotApi.getApi(chain) as Api<ChainIdAssetHub>
+
+        const chainInfo = getChainById(chain, getAllSupportedChains())
+        const amountBigInt = parseUnits(amount, chainInfo.decimals)
 
         const tx = await joinPoolTx(api, amountBigInt)
 
         const result = await submitTxWithPolkadotSigner(tx, signer)
+
         if (result.success) {
           return {
             success: true,
@@ -85,11 +95,18 @@ export const bondExtraTool = (polkadotApi: PolkadotApi, signer: PolkadotSigner) 
     return executeTool<StakingToolResult>(
       ToolNames.BOND_EXTRA,
       async () => {
-        const api = polkadotApi.getApi(chain as ChainIdRelay) as Api<ChainIdRelay>
-        const chainInfo = getChainById(chain as ChainIdRelay, getAllSupportedChains())
+        if (!isChainIdAssetHub(chain)) {
+          return {
+            success: false,
+            error: `Staking operations are only supported on Asset Hub chains. The provided chain '${chain}' is not an Asset Hub chain. Supported Asset Hub chains are: polkadot_asset_hub, west_asset_hub, kusama_asset_hub, paseo_asset_hub.`
+          }
+        }
+
+        const api = polkadotApi.getApi(chain) as Api<ChainIdAssetHub>
+        const chainInfo = getChainById(chain, getAllSupportedChains())
         let tx: UnsafeTransactionType
-        if (type === "FreeBalance") {
-          const amountBigInt = BigInt(amount!) * BigInt(10 ** chainInfo.decimals)
+        if (type === "FreeBalance" && amount) {
+          const amountBigInt = parseUnits(amount, chainInfo.decimals)
           tx = bondExtraTx(api, "FreeBalance", amountBigInt)
         } else {
           tx = bondExtraTx(api, "Rewards")
@@ -132,10 +149,19 @@ export const unbondTool = (polkadotApi: PolkadotApi, signer: PolkadotSigner, add
     return executeTool<StakingToolResult>(
       ToolNames.UNBOND,
       async () => {
-        const api = polkadotApi.getApi(chain as ChainIdRelay) as Api<ChainIdRelay>
-        const formattedAddress = validateAndFormatAddress(address, chain as ChainIdRelay)
-        const chainInfo = getChainById(chain as ChainIdRelay, getAllSupportedChains())
-        const amountBigInt = BigInt(amount) * BigInt(10 ** chainInfo.decimals)
+        if (!isChainIdAssetHub(chain)) {
+          return {
+            success: false,
+            error: `Staking operations are only supported on Asset Hub chains. The provided chain '${chain}' is not an Asset Hub chain. Supported Asset Hub chains are: polkadot_asset_hub, west_asset_hub, kusama_asset_hub, paseo_asset_hub.`
+          }
+        }
+
+        const api = polkadotApi.getApi(chain) as Api<ChainIdAssetHub>
+
+        const formattedAddress = validateAndFormatAddress(address, chain)
+
+        const chainInfo = getChainById(chain, getAllSupportedChains())
+        const amountBigInt = parseUnits(amount, chainInfo.decimals)
 
         const tx = unbondTx(api, formattedAddress, amountBigInt)
 
@@ -177,13 +203,19 @@ export const withdrawUnbondedTool = (
   signer: PolkadotSigner,
   address: string
 ) => {
-  return tool(async ({ slashingSpans, chain }: z.infer<typeof withdrawUnbondedToolSchema>) => {
+  return tool(async ({ numSlashingSpans, chain }: z.infer<typeof withdrawUnbondedToolSchema>) => {
     return executeTool<StakingToolResult>(
       ToolNames.WITHDRAW_UNBONDED,
       async () => {
-        const api = polkadotApi.getApi(chain as ChainIdRelay) as Api<ChainIdRelay>
-        const formattedAddress = validateAndFormatAddress(address, chain as ChainIdRelay)
-        const tx = withdrawUnbondedTx(api, formattedAddress, Number(slashingSpans))
+        if (!isChainIdAssetHub(chain)) {
+          return {
+            success: false,
+            error: `Staking operations are only supported on Asset Hub chains. The provided chain '${chain}' is not an Asset Hub chain. Supported Asset Hub chains are: polkadot_asset_hub, west_asset_hub, kusama_asset_hub, paseo_asset_hub.`
+          }
+        }
+        const api = polkadotApi.getApi(chain) as Api<ChainIdAssetHub>
+        const formattedAddress = validateAndFormatAddress(address, chain)
+        const tx = withdrawUnbondedTx(api, formattedAddress, Number(numSlashingSpans || 0))
 
         const result = await submitTxWithPolkadotSigner(tx, signer)
 
@@ -222,7 +254,13 @@ export const claimRewardsTool = (polkadotApi: PolkadotApi, signer: PolkadotSigne
     return executeTool<StakingToolResult>(
       ToolNames.CLAIM_REWARDS,
       async () => {
-        const api = polkadotApi.getApi(chain as ChainIdRelay) as Api<ChainIdRelay>
+        if (!isChainIdAssetHub(chain)) {
+          return {
+            success: false,
+            error: `Staking operations are only supported on Asset Hub chains. The provided chain '${chain}' is not an Asset Hub chain. Supported Asset Hub chains are: polkadot_asset_hub, west_asset_hub, kusama_asset_hub, paseo_asset_hub.`
+          }
+        }
+        const api = polkadotApi.getApi(chain) as Api<ChainIdAssetHub>
 
         const tx = claimRewardsTx(api)
 

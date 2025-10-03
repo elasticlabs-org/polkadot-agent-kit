@@ -1,6 +1,5 @@
 import type {
   Api,
-  ChainIdRelay,
   ChainOperationResult,
   KnownChainId,
   SmoldotClient
@@ -58,7 +57,7 @@ export class PolkadotApi implements IPolkadotApi {
    * @param chainId - The ID of the chain
    * @returns The API instance for the specified chain
    */
-  getApi(chainId: KnownChainId): Api<KnownChainId | ChainIdRelay> {
+  getApi(chainId: KnownChainId): Api<KnownChainId> {
     if (!this.initialized) {
       throw new Error("APIs not initialized. Call initializeApi() first.")
     }

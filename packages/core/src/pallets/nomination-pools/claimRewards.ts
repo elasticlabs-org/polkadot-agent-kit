@@ -1,4 +1,4 @@
-import type { Api, ChainIdRelay } from "@polkadot-agent-kit/common"
+import type { Api, ChainIdAssetHub } from "@polkadot-agent-kit/common"
 import type { UnsafeTransactionType } from "@polkadot-agent-kit/common"
 
 /**
@@ -6,6 +6,6 @@ import type { UnsafeTransactionType } from "@polkadot-agent-kit/common"
  * @param api - The API instance to use for the transaction
  * @returns The claim rewards transaction call
  */
-export const claimRewardsTx = (api: Api<ChainIdRelay>): UnsafeTransactionType => {
+export const claimRewardsTx = (api: Api<ChainIdAssetHub>): UnsafeTransactionType => {
   return api.tx.NominationPools.claim_payout()
 }

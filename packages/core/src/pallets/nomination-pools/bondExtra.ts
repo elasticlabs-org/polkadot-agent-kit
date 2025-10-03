@@ -1,4 +1,4 @@
-import type { Api, ChainIdRelay } from "@polkadot-agent-kit/common"
+import type { Api, ChainIdAssetHub } from "@polkadot-agent-kit/common"
 import type { UnsafeTransactionType } from "@polkadot-agent-kit/common"
 /**
  * Creates a bond extra transaction call
@@ -7,7 +7,7 @@ import type { UnsafeTransactionType } from "@polkadot-agent-kit/common"
  * @returns The bond extra transaction call
  */
 export const bondExtraTx = (
-  api: Api<ChainIdRelay>,
+  api: Api<ChainIdAssetHub>,
   type: "FreeBalance" | "Rewards",
   amount?: bigint
 ): UnsafeTransactionType => {
