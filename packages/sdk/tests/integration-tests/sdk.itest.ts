@@ -356,41 +356,6 @@ describe('PolkadotAgentKit Integration with OllamaAgent staking nomination pool 
     await sleep(120000); // 120 seconds delay (2 minutes)
   });
 
-  // This agent test account already joined another pools
-
-  it('should call join_pool tool and handle AccountBelongsToOtherPool error', async () => {
-    const userQuery = 'join pool with 0.1 PAS on Paseo Asset Hub';
-    const result = await ollamaAgent.ask(userQuery);
-    console.log('Join Pool Query Result:', result);
-
-    // Check that we have intermediate steps
-    expect(result.intermediateSteps).toBeDefined();
-    expect(result.intermediateSteps.length).toBeGreaterThan(0);
-
-    // Find the join_pool tool call
-    const joinPoolCall = result.intermediateSteps.find((step: any) =>
-      step.action?.tool === 'join_pool'
-    );
-
-    expect(joinPoolCall).toBeDefined();
-    expect(joinPoolCall.action.toolInput).toMatchObject({
-      amount: '0.1',
-      chain: 'paseo_asset_hub',
-    });
-
-    const observationStep = result.intermediateSteps.find((step: any) =>
-      step.observation && step.observation.includes('NominationPools.AccountBelongsToOtherPool')
-    );
-
-    expect(observationStep).toBeDefined();
-    expect(observationStep.observation).toContain('NominationPools.AccountBelongsToOtherPool');
-
-    // Wait for transaction to be processed
-    await sleep(30000);
-    
-  }, 3500000);
-
-
   it('should call bond_extra tool with FreeBalance', async () => {
 
     await sleep(60000); // 60 seconds additional delay

@@ -9,5 +9,11 @@ export default defineConfig({
     testTimeout: 3500000,
     hookTimeout: 3500000,
     onConsoleLog: () => true,
+    fileParallelism: false,
+    poolOptions: {
+      threads: {
+        singleThread: true
+      }
+    },
   }
 })
