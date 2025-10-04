@@ -1,12 +1,24 @@
 # @polkadot-agent-kit/llm
 
+## 2.1.2
+
+### Patch Changes
+
+- refactor code
+- Update nomination pools langchain 
+- Update nomination pools prompt
+
+- Updated dependencies
+  - @polkadot-agent-kit/common@2.1.2
+  - @polkadot-agent-kit/core@2.1.2
+
 ## 2.1.1
 
 ### Patch Changes
 
-- Update readme 
-- Update swapToolSchema 
-- Refactor tool call result 
+- Update readme
+- Update swapToolSchema
+- Refactor tool call result
 - Updated dependencies
   - @polkadot-agent-kit/common@2.1.1
   - @polkadot-agent-kit/core@2.1.1

@@ -1,12 +1,22 @@
 # @polkadot-agent-kit/core
 
+## 2.1.2
+
+### Patch Changes
+
+- refactor code
+- Add dryrun swap core 
+- Migrate nomination pools to AH 
+- Updated dependencies
+  - @polkadot-agent-kit/common@2.1.2
+
 ## 2.1.1
 
 ### Patch Changes
 
 - Update core readme
 - Add DryRun function
-- Check dryRun for transfer native asset 
+- Check dryRun for transfer native asset
 - Add drynRun for swap function
 
 - Updated dependencies
