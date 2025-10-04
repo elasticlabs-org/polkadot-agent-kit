@@ -1,12 +1,18 @@
 # @polkadot-agent-kit/common
 
+## 2.1.2
+
+### Patch Changes
+
+- refactor code
+
 ## 2.1.1
 
 ### Patch Changes
 
 - Update readme
 - Fix name convention supported-chains to supportedChains
-- Remove xcm.ts file 
+- Remove xcm.ts file
 - add key management
 
 ## 2.1.0

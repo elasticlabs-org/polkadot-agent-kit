@@ -1,6 +1,6 @@
 {
   "name": "@polkadot-agent-kit/llm",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "SDK LLM for Polkadot Agent Kit",
   "repository": {
     "type": "git",
