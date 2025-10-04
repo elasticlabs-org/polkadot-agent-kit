@@ -1,4 +1,4 @@
-import type { Api, ChainIdRelay } from "@polkadot-agent-kit/common"
+import type { Api, ChainIdAssetHub } from "@polkadot-agent-kit/common"
 import type { UnsafeTransactionType } from "@polkadot-agent-kit/common"
 
 /**
@@ -9,12 +9,15 @@ import type { UnsafeTransactionType } from "@polkadot-agent-kit/common"
  * @returns The unbond transaction call
  */
 export const unbondTx = (
-  api: Api<ChainIdRelay>,
+  api: Api<ChainIdAssetHub>,
   memberAccount: string,
   unbondingPoints: bigint
 ): UnsafeTransactionType => {
   return api.tx.NominationPools.unbond({
-    member_account: memberAccount,
+    member_account: {
+      type: "Id",
+      value: memberAccount
+    },
     unbonding_points: unbondingPoints
   })
 }

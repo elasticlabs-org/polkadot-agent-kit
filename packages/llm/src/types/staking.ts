@@ -79,7 +79,7 @@ export const unbondToolSchema = z.object({
  *   \}
  */
 export const withdrawUnbondedToolSchema = z.object({
-  slashingSpans: z.string().describe("The number of slashing spans"),
+  numSlashingSpans: z.string().optional().describe("The number of slashing spans"),
   chain: z.string().describe("The chain to withdraw unbonded tokens on")
 })
 

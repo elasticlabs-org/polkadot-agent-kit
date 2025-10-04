@@ -1,4 +1,4 @@
-import type { Api, ChainIdRelay } from "@polkadot-agent-kit/common"
+import type { Api, ChainIdAssetHub } from "@polkadot-agent-kit/common"
 
 /**
  * Interface for pool information
@@ -16,7 +16,7 @@ export interface PoolInfo {
   }
 }
 
-const getAllPoolsInfo = async (api: Api<ChainIdRelay>): Promise<PoolInfo[]> => {
+const getAllPoolsInfo = async (api: Api<ChainIdAssetHub>): Promise<PoolInfo[]> => {
   try {
     const allPoolEntries = await api.query.NominationPools.BondedPools.getEntries()
 
@@ -60,16 +60,21 @@ const getAllPoolsInfo = async (api: Api<ChainIdRelay>): Promise<PoolInfo[]> => {
   }
 }
 
-export const findBestPoolId = async (api: Api<ChainIdRelay>): Promise<number | null> => {
+export const findBestPoolId = async (api: Api<ChainIdAssetHub>): Promise<number | null> => {
   try {
     const allPools = await getAllPoolsInfo(api)
-
     if (allPools.length === 0) {
       return null
     }
 
-    const bestPool = allPools.reduce((max, pool) => (pool.points > max.points ? pool : max))
+    // Filter for open pools only
+    const openPools = allPools.filter(pool => pool.state === "Open")
 
+    if (openPools.length === 0) {
+      return null
+    }
+
+    const bestPool = openPools.reduce((max, pool) => (pool.points > max.points ? pool : max))
     return bestPool.id
   } catch (error) {
     throw new Error(`Error finding best pool: ${String(error)}`)
