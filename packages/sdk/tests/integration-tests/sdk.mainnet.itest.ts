@@ -45,8 +45,8 @@ describe('PolkadotAgentKit Integration with OllamaAgent', () => {
             amount: '0.1',
             currencyFrom: 'DOT',
             currencyTo: 'USDt',
-            from: 'Polkadot',
-            to: 'AssetHubPolkadot'
+            from: 'polkadot',
+            to: 'polkadot_asset_hub'
         });
 
 
