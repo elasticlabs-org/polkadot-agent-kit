@@ -4,24 +4,36 @@ import { ASSETS_SYSTEM_PROMPT, sleep } from "./utils";
 import { PolkadotAgentKit } from "../../src/api";
 import { getLangChainTools } from "../../src/langchain";
 import { ChatPromptTemplate } from '@langchain/core/prompts'
+import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 
 export class OllamaAgent {
   private agentExecutor: AgentExecutor | undefined;
+  private isGemini: boolean;
 
   constructor(
     private agentKit: PolkadotAgentKit,
     private model: string = "qwen3:latest",
     private systemPrompt: string = ASSETS_SYSTEM_PROMPT
-  ) {}
+  ) {
+    // Check if GEMINI_API_KEY is available
+    this.isGemini = !!process.env.GEMINI_API_KEY;
+  }
 
   async init() {
-    // Initialize the Ollama LLM
-    const llm = new ChatOllama({
-      model: this.model,
-      temperature: 0,
+    let llm:any;
 
-    });
-
+    if (this.isGemini) {
+      llm = new ChatGoogleGenerativeAI({
+        model: "gemini-2.0-flash",
+        temperature: 0,
+        apiKey: process.env.GEMINI_API_KEY,
+      });
+    } else {
+      llm = new ChatOllama({
+        model: this.model,
+        temperature: 0,
+      });
+    }
 
     const tools = getLangChainTools(this.agentKit);
 

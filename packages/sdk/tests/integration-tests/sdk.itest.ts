@@ -185,7 +185,8 @@ describe('PolkadotAgentKit Integration with OllamaAgent for XCM Transfer', () =>
     const balanceAgentBefore = await getBalance(agentKit.getApi(sourceChainId), agentKit.getCurrentAddress());
     const balanceRecipientBefore = await getBalance(agentKit.getApi(destChainId), recipient);
     const amountParsed = parseUnits(amount, getDecimalsByChainId(sourceChainId));
-
+    const feeXCMBefore = await estimateXcmFee(expectedSourceChain, agentKit.getCurrentAddress(), expectedDestChain, recipient, amountParsed.toString());
+    console.log("XCM Fee Before:", feeXCMBefore.fee);
       const result = await ollamaAgent.ask(userQuery);
       console.log(`XCM Transfer Query Result (${testName}):`, result);
 
@@ -210,8 +211,9 @@ describe('PolkadotAgentKit Integration with OllamaAgent for XCM Transfer', () =>
     expect(balanceRecipientAfter.data.free).toBeLessThan(balanceRecipientBefore.data.free + amountParsed);
 
     const balanceAgentAfter = await getBalance(agentKit.getApi(sourceChainId), agentKit.getCurrentAddress());
-    const feeXCM = await estimateXcmFee(expectedSourceChain, agentKit.getCurrentAddress(), expectedDestChain, recipient, amountParsed.toString());
-    expect(balanceAgentAfter.data.free).toBeLessThan(balanceAgentBefore.data.free - amountParsed - feeXCM.fee);
+    const feeXCMAfter = await estimateXcmFee(expectedSourceChain, agentKit.getCurrentAddress(), expectedDestChain, recipient, amountParsed.toString());
+    console.log("XCM Fee After:", feeXCMAfter.fee);
+    expect(balanceAgentAfter.data.free).toBeLessThan(balanceAgentBefore.data.free - amountParsed - feeXCMAfter.fee);
   };
 
   describe('1. Relay Chain to Parachain Transfers', () => {
