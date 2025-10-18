@@ -97,7 +97,11 @@ export const paseoChain = createChain({
   id: "paseo",
   name: "Paseo",
   specName: "paseo-testnet",
-  wsUrls: ["wss://paseo.dotters.network", "wss://paseo-rpc.n.dwellir.com", "wss://pas-rpc.stakeworld.io"],
+  wsUrls: [
+    "wss://paseo.dotters.network",
+    "wss://paseo-rpc.n.dwellir.com",
+    "wss://pas-rpc.stakeworld.io"
+  ],
   relay: "paseo",
   type: "relay",
   chainId: null,
@@ -111,7 +115,11 @@ export const paseoAssetHubChain = createChain({
   id: "paseo_asset_hub",
   name: "AssetHubPaseo",
   specName: "asset-hub-paseo",
-  wsUrls: ["wss://asset-hub-paseo-rpc.n.dwellir.com","wss://pas-rpc.stakeworld.io/assethub", "wss://sys.ibp.network/asset-hub-paseo"],
+  wsUrls: [
+    "wss://asset-hub-paseo-rpc.n.dwellir.com",
+    "wss://pas-rpc.stakeworld.io/assethub",
+    "wss://sys.ibp.network/asset-hub-paseo"
+  ],
   relay: "paseo",
   type: "system",
   chainId: 1000,

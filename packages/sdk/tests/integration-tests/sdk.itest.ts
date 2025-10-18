@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, afterEach } from 'vitest';
 import { PolkadotAgentKit } from '../../src/api';
-import { RECIPIENT, sleep, getBalance, estimateTransactionFee, RECIPIENT2, RECIPIENT3, RECIPIENT4, RECIPIENT5, XCM_SYSTEM_PROMPT, RECIPIENT6, RECIPIENT0, getBondedAmountByMember } from './utils';
+import { RECIPIENT, sleep, getBalance, estimateTransactionFee, RECIPIENT2, RECIPIENT3, RECIPIENT4, RECIPIENT5, XCM_SYSTEM_PROMPT, RECIPIENT6, RECIPIENT0, getBondedAmountByMember, RECIPIENT7, RECIPIENT8 } from './utils';
 import { OllamaAgent } from './ollamaAgent';
 import { estimateXcmFee, transferNativeCall } from '@polkadot-agent-kit/core';
 import { parseUnits, getDecimalsByChainId } from '@polkadot-agent-kit/common';
@@ -284,7 +284,7 @@ describe('PolkadotAgentKit Integration with OllamaAgent for XCM Transfer', () =>
   describe('2. Parachain to Relay Chain Transfers', () => {
     const parachainToRelayCases = [
       {
-        name: 'Paseo Asset Hub to Paseo',
+        name: 'Paseo Asset Hub to Paseo 1 ',
         query: `transfer 0.1 WND to ${RECIPIENT2} from Paseo Asset Hub to Paseo`,
         recipient: RECIPIENT2,
         sourceChainId: 'paseo_asset_hub',
@@ -293,7 +293,7 @@ describe('PolkadotAgentKit Integration with OllamaAgent for XCM Transfer', () =>
         expectedDestChain: 'Paseo'
       },
       {
-        name: 'Paseo Asset Hub to Paseo',
+        name: 'Paseo Asset Hub to Paseo 2',
         query: `transfer 0.1 WND to ${RECIPIENT3} from Asset Hub Paseo to Paseo`,
         recipient: RECIPIENT3,
         sourceChainId: 'paseo_asset_hub',
@@ -357,6 +357,66 @@ describe('PolkadotAgentKit Integration with OllamaAgent staking nomination pool 
     // Add delay between tests to avoid stale transaction errors
     await sleep(120000); // 120 seconds delay (2 minutes)
   });
+
+
+  it('should call join_pool tool', async () => {
+
+    await sleep(60000); // 60 seconds additional delay
+    
+    const userQuery = 'join pool with 1 PAS on Paseo Asset Hub';
+    
+    // Get bonded amount before the operation (only if we expect a successful join)
+    const bondedAmountBefore = await getBondedAmountByMember(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress());
+
+    
+    const result = await ollamaAgent.ask(userQuery);
+    console.log('Join Pool Query Result:', result);
+
+    // Check that we have intermediate steps
+    expect(result.intermediateSteps).toBeDefined();
+    expect(result.intermediateSteps.length).toBeGreaterThan(0);
+
+    // Find the join_pool tool call
+    const joinPoolCall = result.intermediateSteps.find((step: any) =>
+      step.action?.tool === 'join_pool'
+    );
+
+    expect(joinPoolCall).toBeDefined();
+    expect(joinPoolCall.action.toolInput).toMatchObject({
+      amount: '1',
+      chain: 'paseo_asset_hub'
+    });
+
+    // Check for either successful join or account already belongs to pool error
+    const observationStep = result.intermediateSteps.find((step: any) =>
+      step.observation && (
+        step.observation.includes('Successfully joined pool') ||
+        step.observation.includes('NominationPools.AccountBelongsToOtherPool')
+      )
+    );
+
+    expect(observationStep).toBeDefined();
+    // Wait for transaction to be processed
+    await sleep(30000);
+        
+    // Check if it's a successful join or an error
+    if (observationStep.observation.includes('Successfully joined pool')) {
+      expect(observationStep.observation).toContain('Successfully joined pool');
+      console.log('Successfully joined nomination pool');
+
+      const bondedAmountAfter = await getBondedAmountByMember(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress());
+      
+      const expectedAmount = parseUnits("1", getDecimalsByChainId('paseo_asset_hub'));
+      expect(bondedAmountAfter).toEqual(bondedAmountBefore + expectedAmount);
+
+    } else if (observationStep.observation.includes('NominationPools.AccountBelongsToOtherPool')) {
+      expect(observationStep.observation).toContain('NominationPools.AccountBelongsToOtherPool');
+      console.log('Account already belongs to a nomination pool - this is expected behavior');
+    } else {
+      throw new Error('Unexpected observation: ' + observationStep.observation);
+    }
+    
+  }, 3500000);
 
   it('should call bond_extra tool with FreeBalance', async () => {
 
@@ -495,12 +555,12 @@ describe('PolkadotAgentKit Integration with OllamaAgent staking nomination pool 
     expect(result.intermediateSteps).toBeDefined();
     expect(result.intermediateSteps.length).toBeGreaterThan(0);
 
-    const withdrawUnbondedCall = result.intermediateSteps.find((step: any) =>
+    const claimRewardsCall = result.intermediateSteps.find((step: any) =>
       step.action?.tool === 'claim_rewards'
     );
 
-    expect(withdrawUnbondedCall).toBeDefined();
-    expect(withdrawUnbondedCall.action.toolInput).toMatchObject({
+    expect(claimRewardsCall).toBeDefined();
+    expect(claimRewardsCall.action.toolInput).toMatchObject({
       chain: 'paseo_asset_hub',
     });
   }, 3500000);

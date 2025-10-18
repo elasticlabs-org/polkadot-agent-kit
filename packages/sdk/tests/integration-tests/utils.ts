@@ -9,6 +9,9 @@ export const RECIPIENT3 = '5FdxcDTshU5yhHrC91NneaJ64XCE2jwxnMCv8bfxQbwhkWMG';
 export const RECIPIENT4 = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY';
 export const RECIPIENT5 = '5Ccmxb84eREZmtSkrLJSYp6QxJwNvmNbrfBm4p5B5VnKrB8z';
 export const RECIPIENT6 = '5DNsfcAFhDMXesUwwXdBqfqPe9AHsZ5mWEnmoKq2sPMDg9re';
+export const RECIPIENT7 = '5HWWpa7SnP81UdxKGD5neyqMbjRdi324txAFZ2z4LgcBpC21';
+export const RECIPIENT8 = '5G8uJUCZMhihBdBMooxBE1pWhmvvyr2nWvaJNUKb6dNiuEjS';
+
 
 
 
@@ -81,6 +84,12 @@ export interface PoolMember {
 
 export const getBondedAmountByMember = async (api: Api<ChainIdAssetHub>, address: string): Promise<bigint> => {
   const poolMember = await api.query.NominationPools.PoolMembers.getValue(address);
-  return poolMember.points
+  if (poolMember) {
+    return poolMember.points
+  }
+  else {
+    return 0n
+  }
+
 }
 
