@@ -74,9 +74,30 @@ export const findBestPoolId = async (api: Api<ChainIdAssetHub>): Promise<number 
       return null
     }
 
-    const bestPool = openPools.reduce((max, pool) => (pool.points > max.points ? pool : max))
-    return bestPool.id
+    // Get max pool members per pool
+    const maxPoolMembers = await getMaxPoolMembersPerPool(api)
+
+    // Sort pools by points
+    const sortedPools = openPools.sort((a, b) => Number(b.points - a.points))
+
+    for (const pool of sortedPools) {
+      if (pool.memberCounter < maxPoolMembers) {
+        return pool.id
+      }
+    }
+
+    throw new Error("All nomination pools are at max member")
   } catch (error) {
     throw new Error(`Error finding best pool: ${String(error)}`)
+  }
+}
+
+export const getMaxPoolMembersPerPool = async (api: Api<ChainIdAssetHub>): Promise<number> => {
+  try {
+    const getMaxPoolMembersPerPool =
+      await api.query.NominationPools.MaxPoolMembersPerPool.getValue()
+    return getMaxPoolMembersPerPool
+  } catch (error) {
+    throw new Error(`Error getting max pool members per pool: ${String(error)}`)
   }
 }
