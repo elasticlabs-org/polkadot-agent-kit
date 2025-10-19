@@ -94,7 +94,7 @@ export const findBestPoolId = async (api: Api<ChainIdAssetHub>): Promise<number 
 
 export const getMaxPoolMembersPerPool = async (api: Api<ChainIdAssetHub>): Promise<number> => {
   try {
-    const getMaxPoolMembersPerPool =
+    const getMaxPoolMembersPerPool: number =
       await api.query.NominationPools.MaxPoolMembersPerPool.getValue()
     return getMaxPoolMembersPerPool
   } catch (error) {
