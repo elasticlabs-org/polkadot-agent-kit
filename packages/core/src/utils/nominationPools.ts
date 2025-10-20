@@ -16,27 +16,27 @@ export interface PoolInfo {
   }
 }
 
+type PoolEntry = {
+  keyArgs: [number]
+  value: {
+    state: { type: string }
+    points: bigint
+    member_counter: number
+    roles: {
+      depositor: string
+      root?: string
+      nominator?: string
+      bouncer?: string
+    }
+  }
+}
+
 const getAllPoolsInfo = async (api: Api<ChainIdAssetHub>): Promise<PoolInfo[]> => {
   try {
     const allPoolEntries = await api.query.NominationPools.BondedPools.getEntries()
 
     if (!allPoolEntries) {
       return []
-    }
-
-    type PoolEntry = {
-      keyArgs: [number]
-      value: {
-        state: { type: string }
-        points: bigint
-        member_counter: number
-        roles: {
-          depositor: string
-          root?: string
-          nominator?: string
-          bouncer?: string
-        }
-      }
     }
 
     return (allPoolEntries as PoolEntry[]).map(entry => {
@@ -94,7 +94,7 @@ export const findBestPoolId = async (api: Api<ChainIdAssetHub>): Promise<number 
 
 export const getMaxPoolMembersPerPool = async (api: Api<ChainIdAssetHub>): Promise<number> => {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const getMaxPoolMembersPerPool: number =
       await api.query.NominationPools.MaxPoolMembersPerPool.getValue()
     return getMaxPoolMembersPerPool
