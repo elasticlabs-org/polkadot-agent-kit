@@ -94,6 +94,7 @@ export const findBestPoolId = async (api: Api<ChainIdAssetHub>): Promise<number 
 
 export const getMaxPoolMembersPerPool = async (api: Api<ChainIdAssetHub>): Promise<number> => {
   try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const getMaxPoolMembersPerPool: number =
       await api.query.NominationPools.MaxPoolMembersPerPool.getValue()
     return getMaxPoolMembersPerPool
