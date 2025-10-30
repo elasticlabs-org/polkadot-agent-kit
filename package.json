@@ -42,7 +42,11 @@
     "@polkadot/api": "16.4.6",
     "@polkadot/types": "16.4.6",
     "react-is": "19.0.0",
-    "@crypto-dex-sdk/chain": "0.1.2"
+    "@crypto-dex-sdk/chain": "0.1.2",
+    "elliptic": "^6.6.1",
+    "form-data": "^4.0.4",
+    "axios": "^1.13.1",
+    "ws": "^8.18.0"
   },
   "scripts": {
     "compile": "turbo run compile",
