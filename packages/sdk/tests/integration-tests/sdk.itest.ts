@@ -1,22 +1,22 @@
 import { describe, it, expect, beforeAll, afterEach } from 'vitest';
 import { PolkadotAgentKit } from '../../src/api';
 import { RECIPIENT, sleep, getBalance, estimateTransactionFee, RECIPIENT2, RECIPIENT3, RECIPIENT4, RECIPIENT5, XCM_SYSTEM_PROMPT, RECIPIENT6, RECIPIENT0, getBondedAmountByMember, RECIPIENT7, RECIPIENT8 } from './utils';
-import { OllamaAgent } from './ollamaAgent';
+import { AgentTest } from './agents/agent';
 import { estimateXcmFee, transferNativeCall } from '@polkadot-agent-kit/core';
 import { parseUnits, getDecimalsByChainId } from '@polkadot-agent-kit/common';
 import dotenv from 'dotenv';
-import { ASSETS_PROMPT, NOMINATION_PROMPT } from '@polkadot-agent-kit/llm';
+import { ASSETS_PROMPT, NOMINATION_PROMPT, XCM_PROMPT } from '@polkadot-agent-kit/llm';
 dotenv.config({ path: '../../.env' });
 
 
 
-/// Note: 
+/// Note:   
 /// We are using Ollama for testing purposes, but you can use any other model you want
 
 
 describe('PolkadotAgentKit Integration with OllamaAgent check balance', () => {
   let agentKit: PolkadotAgentKit;
-  let ollamaAgent: OllamaAgent;
+  let agent: AgentTest;
 
   beforeAll(async () => {
     // Make sure private key 
@@ -27,12 +27,8 @@ describe('PolkadotAgentKit Integration with OllamaAgent check balance', () => {
         chains: ['west', 'west_asset_hub', 'paseo', 'paseo_asset_hub','west_people']
       });
       await agentKit.initializeApi();
-
-
-      ollamaAgent = new OllamaAgent(agentKit, "qwen3:latest", ASSETS_PROMPT);
-      await ollamaAgent.init();
-
-
+      agent = new AgentTest(agentKit, ASSETS_PROMPT);
+      await agent.init();
     } else {
       throw new Error('AGENT_PRIVATE_KEY is not set');
     }
@@ -48,13 +44,13 @@ describe('PolkadotAgentKit Integration with OllamaAgent check balance', () => {
     it.each(testCases)(
       'should call check_balance tool with correct chain for "$query"',
       async ({ query, expectedChain }) => {
-        const result = await ollamaAgent.ask(query);
+        const result = await agent.ask(query);
 
         expect(result.output).toBeDefined();
         expect(result.intermediateSteps).toBeDefined();
-        expect(result.intermediateSteps.length).toBeGreaterThan(0);
+        expect(result.intermediateSteps?.length).toBeGreaterThan(0);
 
-        const balanceCall = result.intermediateSteps.find(
+        const balanceCall = result.intermediateSteps?.find(
           (step: any) => step.action?.tool === 'check_balance'
         );
 
@@ -73,7 +69,7 @@ describe('PolkadotAgentKit Integration with OllamaAgent check balance', () => {
 
 describe('PolkadotAgentKit Integration with OllamaAgent transfer_native tool', () => {
   let agentKit: PolkadotAgentKit;
-  let ollamaAgent: OllamaAgent;
+  let agent: AgentTest;
 
   beforeAll(async () => {
     // Make sure private key 
@@ -84,10 +80,8 @@ describe('PolkadotAgentKit Integration with OllamaAgent transfer_native tool', (
         chains: ['west']
       });
       await agentKit.initializeApi();
-
-
-      ollamaAgent = new OllamaAgent(agentKit, "qwen3:latest", ASSETS_PROMPT);
-      await ollamaAgent.init();
+      agent = new AgentTest(agentKit, ASSETS_PROMPT);
+      await agent.init();
 
     } else {
       throw new Error('AGENT_PRIVATE_KEY is not set');
@@ -103,7 +97,7 @@ describe('PolkadotAgentKit Integration with OllamaAgent transfer_native tool', (
     it.each(testCases)('should call transfer_native tool with correct parameters for query: "%s"', async (userQuery) => {
       const balanceRecipientBefore = await getBalance(agentKit.getApi('west'), RECIPIENT0);
       const balanceAgentBefore = await getBalance(agentKit.getApi('west'), agentKit.getCurrentAddress());
-      const result = await ollamaAgent.ask(userQuery);
+      const result = await agent.ask(userQuery);
       console.log('Transfer Query Result:', result);
 
 
@@ -114,9 +108,9 @@ describe('PolkadotAgentKit Integration with OllamaAgent transfer_native tool', (
       const feeTx = await estimateTransactionFee(tx.transaction!, RECIPIENT0);
       expect(result.output).toBeDefined();
       expect(result.intermediateSteps).toBeDefined();
-      expect(result.intermediateSteps.length).toBeGreaterThan(0);
+      expect(result.intermediateSteps?.length).toBeGreaterThan(0);
 
-      const transferCall = result.intermediateSteps.find((step: any) =>
+      const transferCall = result.intermediateSteps?.find((step: any) =>
         step.action?.tool === 'transfer_native'
       );
 
@@ -146,7 +140,7 @@ describe('PolkadotAgentKit Integration with OllamaAgent transfer_native tool', (
 
 describe('PolkadotAgentKit Integration with OllamaAgent for XCM Transfer', () => {
   let agentKit: PolkadotAgentKit;  
-  let ollamaAgent: OllamaAgent;    
+  let agent: AgentTest;    
 
   beforeAll(async () => {
     // Make sure private key 
@@ -158,8 +152,8 @@ describe('PolkadotAgentKit Integration with OllamaAgent for XCM Transfer', () =>
       });
       await agentKit.initializeApi();
 
-      ollamaAgent = new OllamaAgent(agentKit, "qwen3:latest", XCM_SYSTEM_PROMPT);
-      await ollamaAgent.init();
+      agent = new AgentTest(agentKit, XCM_PROMPT);
+      await agent.init();
       
     } else {
       throw new Error('AGENT_PRIVATE_KEY is not set');
@@ -187,14 +181,14 @@ describe('PolkadotAgentKit Integration with OllamaAgent for XCM Transfer', () =>
     const amountParsed = parseUnits(amount, getDecimalsByChainId(sourceChainId));
     const feeXCMBefore = await estimateXcmFee(expectedSourceChain, agentKit.getCurrentAddress(), expectedDestChain, recipient, amountParsed.toString());
     console.log("XCM Fee Before:", feeXCMBefore.fee);
-      const result = await ollamaAgent.ask(userQuery);
+      const result = await agent.ask(userQuery);
       console.log(`XCM Transfer Query Result (${testName}):`, result);
 
       expect(result.output).toBeDefined();
       expect(result.intermediateSteps).toBeDefined();
-      expect(result.intermediateSteps.length).toBeGreaterThan(0);
+      expect(result.intermediateSteps?.length).toBeGreaterThan(0);
 
-      const xcmTransferCall = result.intermediateSteps.find((step: any) =>
+      const xcmTransferCall = result.intermediateSteps?.find((step: any) =>
         step.action?.tool === 'xcm_transfer_native_asset'
       );
 
@@ -331,9 +325,9 @@ describe('PolkadotAgentKit Integration with OllamaAgent for XCM Transfer', () =>
 
 
 
-describe('PolkadotAgentKit Integration with OllamaAgent staking nomination pool tools', () => {
+describe('PolkadotAgentKit Integration with LLM Agent staking nomination pool tools', () => {
   let agentKit: PolkadotAgentKit;
-  let ollamaAgent: OllamaAgent;
+  let agent: AgentTest;
 
   beforeAll(async () => {
     // Make sure private key 
@@ -346,8 +340,8 @@ describe('PolkadotAgentKit Integration with OllamaAgent staking nomination pool 
       await agentKit.initializeApi();
 
 
-      ollamaAgent = new OllamaAgent(agentKit, "qwen3:latest", NOMINATION_PROMPT);
-      await ollamaAgent.init();
+      agent = new AgentTest(agentKit, NOMINATION_PROMPT);
+      await agent.init();
     } else {
       throw new Error('AGENT_PRIVATE_KEY is not set');
     }
@@ -369,15 +363,15 @@ describe('PolkadotAgentKit Integration with OllamaAgent staking nomination pool 
     const bondedAmountBefore = await getBondedAmountByMember(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress());
 
     
-    const result = await ollamaAgent.ask(userQuery);
+    const result = await agent.ask(userQuery);
     console.log('Join Pool Query Result:', result);
 
     // Check that we have intermediate steps
     expect(result.intermediateSteps).toBeDefined();
-    expect(result.intermediateSteps.length).toBeGreaterThan(0);
+    expect(result.intermediateSteps?.length).toBeGreaterThan(0);
 
     // Find the join_pool tool call
-    const joinPoolCall = result.intermediateSteps.find((step: any) =>
+    const joinPoolCall = result.intermediateSteps?.find((step: any) =>
       step.action?.tool === 'join_pool'
     );
 
@@ -388,7 +382,7 @@ describe('PolkadotAgentKit Integration with OllamaAgent staking nomination pool 
     });
 
     // Check for either successful join or account already belongs to pool error
-    const observationStep = result.intermediateSteps.find((step: any) =>
+    const observationStep = result.intermediateSteps?.find((step: any) =>
       step.observation && (
         step.observation.includes('Successfully joined pool') ||
         step.observation.includes('NominationPools.AccountBelongsToOtherPool')
@@ -428,15 +422,15 @@ describe('PolkadotAgentKit Integration with OllamaAgent staking nomination pool 
     const bondedAmountBefore = await getBondedAmountByMember(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress());
     console.log('Bonded amount before:', bondedAmountBefore);
     
-    const result = await ollamaAgent.ask(userQuery);
+    const result = await agent.ask(userQuery);
     console.log('Bond Extra Query Result:', result);
 
     // Check that we have intermediate steps
     expect(result.intermediateSteps).toBeDefined();
-    expect(result.intermediateSteps.length).toBeGreaterThan(0);
+    expect(result.intermediateSteps?.length).toBeGreaterThan(0);
 
     // Find the bond_extra tool call
-    const bondExtraCall = result.intermediateSteps.find((step: any) =>
+    const bondExtraCall = result.intermediateSteps?.find((step: any) =>
       step.action?.tool === 'bond_extra'
     );
 
@@ -447,7 +441,7 @@ describe('PolkadotAgentKit Integration with OllamaAgent staking nomination pool 
       type: 'FreeBalance'
     });
 
-    const observationStep = result.intermediateSteps.find((step: any) =>
+    const observationStep = result.intermediateSteps?.find((step: any) =>
       step.observation && step.observation.includes('Successfully bonded extra tokens')
     );
 
@@ -470,15 +464,15 @@ describe('PolkadotAgentKit Integration with OllamaAgent staking nomination pool 
   it('should call bond_extra tool with Rewards', async () => {
     const userQuery = 'bond rewards on Paseo Asset Hub';
     
-    const result = await ollamaAgent.ask(userQuery);
+    const result = await agent.ask(userQuery);
     console.log('Bond Extra Query Result:', result);
 
     // Check that we have intermediate steps
     expect(result.intermediateSteps).toBeDefined();
-    expect(result.intermediateSteps.length).toBeGreaterThan(0);
+    expect(result.intermediateSteps?.length).toBeGreaterThan(0);
 
     // Find the bond_extra tool call
-    const bondExtraCall = result.intermediateSteps.find((step: any) =>
+    const bondExtraCall = result.intermediateSteps?.find((step: any) =>
       step.action?.tool === 'bond_extra'
     );
 
@@ -488,7 +482,7 @@ describe('PolkadotAgentKit Integration with OllamaAgent staking nomination pool 
       type: 'Rewards'
     });
 
-    const observationStep = result.intermediateSteps.find((step: any) =>
+    const observationStep = result.intermediateSteps?.find((step: any) =>
       step.observation && step.observation.includes('Successfully bonded extra tokens')
     );
 
@@ -502,14 +496,14 @@ describe('PolkadotAgentKit Integration with OllamaAgent staking nomination pool 
   it('should call unbond tool', async () => {
     const userQuery = 'unbond 0.01 PAS on Paseo Asset Hub';
     
-    const result = await ollamaAgent.ask(userQuery);
+    const result = await agent.ask(userQuery);
     console.log('Unbond Query Result:', result);
 
     // Check that we have intermediate steps
     expect(result.intermediateSteps).toBeDefined();
-    expect(result.intermediateSteps.length).toBeGreaterThan(0);
+    expect(result.intermediateSteps?.length).toBeGreaterThan(0);
 
-    const unbondCall = result.intermediateSteps.find((step: any) =>
+    const unbondCall = result.intermediateSteps?.find((step: any) =>
       step.action?.tool === 'unbond'
     );
 
@@ -526,36 +520,37 @@ describe('PolkadotAgentKit Integration with OllamaAgent staking nomination pool 
   it('should call withdraw unbond tool', async () => {
     const userQuery = 'withdraw unbonded on Paseo Asset Hub';
     
-    const result = await ollamaAgent.ask(userQuery);
+    const result = await agent.ask(userQuery);
     console.log('Withdraw Unbonded Query Result:', result);
 
     // Check that we have intermediate steps
     expect(result.intermediateSteps).toBeDefined();
-    expect(result.intermediateSteps.length).toBeGreaterThan(0);
+    expect(result.intermediateSteps?.length).toBeGreaterThan(0);
 
-    const withdrawUnbondedCall = result.intermediateSteps.find((step: any) =>
+    const withdrawUnbondedCall = result.intermediateSteps?.find((step: any) =>
       step.action?.tool === 'withdraw_unbonded'
     );
 
     expect(withdrawUnbondedCall).toBeDefined();
     expect(withdrawUnbondedCall.action.toolInput).toMatchObject({
       chain: 'paseo_asset_hub',
-      numSlashingSpans: "0"
+      slashingSpans: "0"
     });
   }, 3500000);
 
 
   it('should call claim rewards  tool', async () => {
-    const userQuery = 'claim rewards from pool on Paseo Asset Hub';
+    const userQuery = 'claim rewards from pool on paseo_asset_hub';
     
-    const result = await ollamaAgent.ask(userQuery);
+    const result = await agent.ask(userQuery);
     console.log('Claim Rewards Query Result:', result);
 
 
     expect(result.intermediateSteps).toBeDefined();
-    expect(result.intermediateSteps.length).toBeGreaterThan(0);
+    expect(result.intermediateSteps?.length).toBeGreaterThan(0);
 
-    const claimRewardsCall = result.intermediateSteps.find((step: any) =>
+
+    const claimRewardsCall = result.intermediateSteps?.find((step: any) =>
       step.action?.tool === 'claim_rewards'
     );
 

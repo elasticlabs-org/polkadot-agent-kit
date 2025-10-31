@@ -26,6 +26,7 @@ export type Api<Id extends ChainId> = ApiBase<Id> & {
   chain: Chain
   waitReady: Promise<void>
   runtimeToken: Promise<RuntimeToken>
+  _readyState?: { isReady: boolean }
   client?: {
     bestBlocks$?: { complete: () => void }
     disconnect?: () => Promise<void>
@@ -55,6 +56,8 @@ export const getApiInner = async <Id extends ChainId>(
 
   api.chainId = chainId as Id
   api.chain = chain
+  api._readyState = { isReady: false }
+
   api.waitReady = (() => {
     type Subscription = {
       unsubscribe: () => void
@@ -74,7 +77,14 @@ export const getApiInner = async <Id extends ChainId>(
           clearTimeout(timeoutId)
 
           if (subscription) subscription.unsubscribe()
-          resolve()
+
+          try {
+            // Set ready state to true only after runtimeToken is resolved
+            if (api._readyState) api._readyState.isReady = true
+            resolve()
+          } catch (err) {
+            reject(new Error(`Failed to load runtime: ${(err as Error).message}`))
+          }
         },
         error: (err: Error) => {
           clearTimeout(timeoutId)
@@ -109,7 +119,6 @@ export const getApi = async <Id extends ChainId, Papi = Api<Id>>(
   const api = (await API_CACHE.get(cacheKey)) as Api<KnownChainId>
 
   if (waitReady) await api.waitReady
-
   return api as Papi
 }
 
@@ -134,5 +143,33 @@ export const disconnect = async <Id extends ChainId>(api: Api<Id>): Promise<void
     API_CACHE.delete(cacheKey)
   } catch (error) {
     throw new Error(`Failed to disconnect API: ${(error as Error).message}`)
+  }
+}
+
+/**
+ * Checks if an API instance is ready to use
+ * @param api - The API instance to check
+ * @param timeoutMs - Optional timeout in milliseconds (default: 30000)
+ * @returns Promise that resolves to true if ready, false if timeout
+ */
+export const isApiReady = async <Id extends ChainId>(
+  api: Api<Id>,
+  timeoutMs: number = 30000
+): Promise<boolean> => {
+  // Check if already ready
+  if (api._readyState?.isReady) {
+    return true
+  }
+
+  try {
+    // Race between waitReady and timeout
+    await Promise.race([
+      api.waitReady,
+      new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), timeoutMs))
+    ])
+
+    return api._readyState?.isReady ?? false
+  } catch (_error) {
+    return false
   }
 }

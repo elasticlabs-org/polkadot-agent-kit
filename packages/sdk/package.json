@@ -49,7 +49,9 @@
     "zod": "^3.24.3",
     "@modelcontextprotocol/sdk": "^1.6.1",
     "zod-to-json-schema": "^3.24.3",
-    "@langchain/google-genai":"^0.1.6"
+    "@langchain/google-genai":"^0.1.6",
+    "@paraspell/sdk": "^10.10.7",
+    "@paraspell/assets": "^10.10.3"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.26.0",

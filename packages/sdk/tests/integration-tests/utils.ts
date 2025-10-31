@@ -1,6 +1,11 @@
 import type { Api, ChainIdAssetHub, KnownChainId } from "@polkadot-agent-kit/common"
+import { isApiReady } from "@polkadot-agent-kit/common"
 import {ASSETS_PROMPT, XCM_PROMPT, SWAP_PROMPT, NOMINATION_PROMPT, IDENTITY_PROMPT, BIFROST_PROMPT} from "@polkadot-agent-kit/llm"
 import { UnsafeTransactionType } from "@polkadot-agent-kit/common"
+import { createClient } from "polkadot-api";
+import { getWsProvider } from "polkadot-api/ws-provider/node"
+import { getOtherAssets } from "@paraspell/assets";
+import { NODE_NAMES, TNodeWithRelayChains } from "@paraspell/sdk";
 
 export const RECIPIENT0 = '5Fniv36Eu3bTWVRaR6N2Ve1qVouiTd15SJcZpxPyhkngRnqj';
 export const RECIPIENT= '5CcqKCNDxrYYkPNWys8yrjHJVTzd69i66VTgtewrSbJiVqoR';
@@ -70,7 +75,27 @@ export async function getBalance(
   api: Api<KnownChainId>,
   address: string
 ) {
+  console.log("API get balance:", api);
   return await api.query.System.Account.getValue(address);
+}
+
+/**
+ * Helper function to check if an API is ready before using it
+ * @param api - The API instance to check
+ * @param timeoutMs - Optional timeout in milliseconds (default: 60000)
+ * @returns Promise that resolves to true if ready, false otherwise
+ */
+export async function checkApiReady(
+  api: Api<KnownChainId | ChainIdAssetHub>,
+  timeoutMs: number = 60000
+): Promise<boolean> {
+  const ready = await isApiReady(api, timeoutMs);
+  if (ready) {
+    console.log(`API for chain ${api.chainId} is ready!`);
+  } else {
+    console.log(`API for chain ${api.chainId} not ready or timeout`);
+  }
+  return ready;
 }
 
 
@@ -92,4 +117,34 @@ export const getBondedAmountByMember = async (api: Api<ChainIdAssetHub>, address
   }
 
 }
+
+
+// const ASSET_HUB = "wss://polkadot-asset-hub-rpc.polkadot.io";
+// const client = createClient(getWsProvider(ASSET_HUB));
+// const address = "1ssdhRq9sxzNSAQebDPq7AMsjRxjQ3t9CQhmjYcsD1YqCxx";
+// // const api = client.getTypedApi(polkadot_asset_hub);
+
+
+// console.log("API here:", client.getUnsafeApi());
+
+// export async function getAssetBalance(api: Api<ChainIdAssetHub>, chain: string, assetSymbol:string ) {
+//     const assets = getOtherAssets(chain as TNodeWithRelayChains);
+
+//     const filteredAssets = assets.filter(asset => 
+//         asset.symbol && asset.symbol === assetSymbol
+//     );
+
+//     console.log(`Assets with symbol "${assetSymbol}":`, filteredAssets);
+//     console.log("Runtime token here 1:", client.getUnsafeApi().runtimeToken);
+    
+//     const assetAccount = await api.query.Assets.Account.getValue(filteredAssets[0].assetId, address);
+//     console.log(`Balance of ${assetSymbol}:`, assetAccount.balance);
+
+//     return assetAccount.balance;
+
+// }
+
+
+
+
 

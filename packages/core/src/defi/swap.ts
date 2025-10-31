@@ -1,4 +1,4 @@
-import { getAssetDecimals, getAssetMultiLocation } from "@paraspell/assets"
+import { getAssetDecimals } from "@paraspell/assets"
 import type { TCurrency, TMultiLocation, TNodeDotKsmWithRelayChains } from "@paraspell/sdk"
 import type {
   RouterBuilderCore,
@@ -11,6 +11,8 @@ import { RouterBuilder } from "@paraspell/xcm-router"
 import { parseUnits } from "@polkadot-agent-kit/common"
 import type { PolkadotSigner } from "polkadot-api/signer"
 
+import type { AssetInfo } from "../utils/assets"
+import { getAllAssetsBySymbol } from "../utils/assets"
 import { getPairSupported } from "../utils/defi"
 
 // Constants
@@ -26,6 +28,86 @@ export interface SwapTokenArgs {
   sender?: string
   receiver?: string
   dex?: string
+}
+
+function selectBestAsset(assets: AssetInfo[], symbol: string, chain: string): AssetInfo {
+  if (!assets || assets.length === 0) {
+    throw new Error(`No assets provided for selection of ${symbol} on ${chain}`)
+  }
+
+  let candidates = assets.filter(a => a.isFeeAsset === true)
+  if (candidates.length === 0) {
+    candidates = assets
+  }
+
+  candidates.sort((a, b) => {
+    const parentsA =
+      typeof a.multiLocation?.parents === "number"
+        ? a.multiLocation.parents
+        : Number.MAX_SAFE_INTEGER
+    const parentsB =
+      typeof b.multiLocation?.parents === "number"
+        ? b.multiLocation.parents
+        : Number.MAX_SAFE_INTEGER
+    return parentsA - parentsB
+  })
+
+  const withAssetId = candidates.filter(a => a.assetId !== undefined)
+  if (withAssetId.length > 0) {
+    candidates = withAssetId
+  }
+
+  // Validate we have a result
+  if (candidates.length === 0) {
+    const assetDetails = assets
+      .map(
+        (a, i) =>
+          `  ${i + 1}. assetId: ${a.assetId || "undefined"}, alias: ${a.alias || "N/A"}, ` +
+          `parents: ${a.multiLocation?.parents ?? "N/A"}, isFeeAsset: ${a.isFeeAsset || false}`
+      )
+      .join("\n")
+
+    throw new Error(
+      `Failed to select asset for symbol ${symbol} on ${chain}.\n\n` +
+        `Available assets:\n${assetDetails}\n\n` +
+        `Selection criteria: fee assets → lowest parents → has assetId`
+    )
+  }
+
+  // Return the first (best) asset
+  return candidates[0]
+}
+
+function getAssetMultiLocationWithSelection(
+  chain: TNodeDotKsmWithRelayChains,
+  symbol: string
+): TMultiLocation {
+  // Get all assets with this symbol
+  const assets = getAllAssetsBySymbol(chain, symbol)
+
+  // Handle no assets found
+  if (!assets || assets.length === 0) {
+    throw new Error(`No asset found for symbol ${symbol} on ${chain}`)
+  }
+
+  // Handle single asset - return directly
+  if (assets.length === 1) {
+    if (!assets[0].multiLocation) {
+      throw new Error(`Asset ${symbol} on ${chain} does not have a multilocation`)
+    }
+    return assets[0].multiLocation
+  }
+
+  // Handle multiple assets - apply selection strategy
+  const selectedAsset = selectBestAsset(assets, symbol, chain)
+
+  if (!selectedAsset.multiLocation) {
+    throw new Error(
+      `Selected asset ${symbol} (${selectedAsset.alias || selectedAsset.assetId}) on ${chain} does not have a multilocation`
+    )
+  }
+
+  return selectedAsset.multiLocation
 }
 
 /**
@@ -149,13 +231,14 @@ async function executeDexSwap(args: SwapTokenArgs, signer: PolkadotSigner): Prom
  * Gets multilocations for cross-chain currencies
  */
 function getCrossChainMultilocations(args: SwapTokenArgs) {
-  const multilocationFrom = getAssetMultiLocation(args.from as TNodeDotKsmWithRelayChains, {
-    symbol: args.currencyFrom
-  })
-
-  const multilocationTo = getAssetMultiLocation(args.to as TNodeDotKsmWithRelayChains, {
-    symbol: args.currencyTo
-  })
+  const multilocationFrom = getAssetMultiLocationWithSelection(
+    args.from as TNodeDotKsmWithRelayChains,
+    args.currencyFrom
+  )
+  const multilocationTo = getAssetMultiLocationWithSelection(
+    args.to as TNodeDotKsmWithRelayChains,
+    args.currencyTo
+  )
 
   return { multilocationFrom, multilocationTo }
 }
