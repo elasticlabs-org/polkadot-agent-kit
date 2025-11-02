@@ -71,16 +71,16 @@ importers:
         version: 3.10.0(react-hook-form@7.66.0(react@19.1.1))
       '@langchain/core':
         specifier: ^0.3.40
-        version: 0.3.79(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))
+        version: 0.3.79(@opentelemetry/api@1.9.0)(openai@4.104.0(ws@8.18.3)(zod@3.25.67))
       '@langchain/google-genai':
         specifier: ^0.1.6
-        version: 0.1.12(@langchain/core@0.3.79(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67)))(zod@3.25.67)
+        version: 0.1.12(@langchain/core@0.3.79(@opentelemetry/api@1.9.0)(openai@4.104.0(ws@8.18.3)(zod@3.25.67)))(zod@3.25.67)
       '@langchain/ollama':
         specifier: ^0.2.2
-        version: 0.2.4(@langchain/core@0.3.79(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67)))
+        version: 0.2.4(@langchain/core@0.3.79(@opentelemetry/api@1.9.0)(openai@4.104.0(ws@8.18.3)(zod@3.25.67)))
       '@langchain/openai':
         specifier: ^0.5.12
-        version: 0.5.18(@langchain/core@0.3.79(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67)))(ws@8.18.3)
+        version: 0.5.18(@langchain/core@0.3.79(@opentelemetry/api@1.9.0)(openai@4.104.0(ws@8.18.3)(zod@3.25.67)))(ws@8.18.3)
       '@polkadot-agent-kit/common':
         specifier: 2.1.1
         version: 2.1.1(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1)
@@ -89,10 +89,10 @@ importers:
         version: 2.1.1(@acala-network/types@6.3.0(@polkadot/api@16.4.6))(@ethersproject/address@5.8.0)(@polkadot/api-augment@16.4.6)(@polkadot/api-derive@16.4.6)(@polkadot/keyring@13.5.7(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(@polkadot/util@13.5.7))(@polkadot/rpc-augment@16.4.9)(@polkadot/rpc-core@16.4.9)(@polkadot/rpc-provider@16.4.9)(@polkadot/types-augment@16.4.6)(@polkadot/types-create@16.4.6)(@polkadot/types-known@16.4.6)(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(jiti@2.6.1)(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typechain@8.3.2(typescript@5.9.3))(typescript@5.9.3)(viem@2.38.6(typescript@5.9.3)(zod@3.25.67))(yaml@2.8.1)(zod@3.25.67)
       '@polkadot-agent-kit/llm':
         specifier: 2.1.1
-        version: 2.1.1(@acala-network/types@6.3.0(@polkadot/api@16.4.6))(@ethersproject/address@5.8.0)(@opentelemetry/api@1.9.0)(@polkadot/api-augment@16.4.6)(@polkadot/api-derive@16.4.6)(@polkadot/keyring@13.5.7(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(@polkadot/util@13.5.7))(@polkadot/rpc-augment@16.4.9)(@polkadot/rpc-core@16.4.9)(@polkadot/rpc-provider@16.4.9)(@polkadot/types-augment@16.4.6)(@polkadot/types-create@16.4.6)(@polkadot/types-known@16.4.6)(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(jiti@2.6.1)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typechain@8.3.2(typescript@5.9.3))(typescript@5.9.3)(viem@2.38.6(typescript@5.9.3)(zod@3.25.67))(yaml@2.8.1)
+        version: 2.1.1(@acala-network/types@6.3.0(@polkadot/api@16.4.6))(@ethersproject/address@5.8.0)(@opentelemetry/api@1.9.0)(@polkadot/api-augment@16.4.6)(@polkadot/api-derive@16.4.6)(@polkadot/keyring@13.5.7(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(@polkadot/util@13.5.7))(@polkadot/rpc-augment@16.4.9)(@polkadot/rpc-core@16.4.9)(@polkadot/rpc-provider@16.4.9)(@polkadot/types-augment@16.4.6)(@polkadot/types-create@16.4.6)(@polkadot/types-known@16.4.6)(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(jiti@2.6.1)(openai@4.104.0(ws@8.18.3)(zod@3.25.67))(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typechain@8.3.2(typescript@5.9.3))(typescript@5.9.3)(viem@2.38.6(typescript@5.9.3)(zod@3.25.67))(yaml@2.8.1)
       '@polkadot-agent-kit/sdk':
         specifier: 2.1.1
-        version: 2.1.1(@acala-network/types@6.3.0(@polkadot/api@16.4.6))(@ethersproject/address@5.8.0)(@opentelemetry/api@1.9.0)(@polkadot/api-augment@16.4.6)(@polkadot/api-derive@16.4.6)(@polkadot/keyring@13.5.7(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(@polkadot/util@13.5.7))(@polkadot/rpc-augment@16.4.9)(@polkadot/rpc-core@16.4.9)(@polkadot/rpc-provider@16.4.9)(@polkadot/types-augment@16.4.6)(@polkadot/types-create@16.4.6)(@polkadot/types-known@16.4.6)(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(ai@4.3.19(react@19.1.1)(zod@3.25.67))(jiti@2.6.1)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typechain@8.3.2(typescript@5.9.3))(typescript@5.9.3)(viem@2.38.6(typescript@5.9.3)(zod@3.25.67))(yaml@2.8.1)
+        version: 2.1.1(@acala-network/types@6.3.0(@polkadot/api@16.4.6))(@ethersproject/address@5.8.0)(@opentelemetry/api@1.9.0)(@polkadot/api-augment@16.4.6)(@polkadot/api-derive@16.4.6)(@polkadot/keyring@13.5.7(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(@polkadot/util@13.5.7))(@polkadot/rpc-augment@16.4.9)(@polkadot/rpc-core@16.4.9)(@polkadot/rpc-provider@16.4.9)(@polkadot/types-augment@16.4.6)(@polkadot/types-create@16.4.6)(@polkadot/types-known@16.4.6)(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(ai@4.3.19(react@19.1.1)(zod@3.25.67))(jiti@2.6.1)(openai@4.104.0(ws@8.18.3)(zod@3.25.67))(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typechain@8.3.2(typescript@5.9.3))(typescript@5.9.3)(viem@2.38.6(typescript@5.9.3)(zod@3.25.67))(yaml@2.8.1)
       '@radix-ui/react-accordion':
         specifier: 1.2.2
         version: 1.2.2(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -203,7 +203,7 @@ importers:
         version: 1.4.1(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       langchain:
         specifier: ^0.1.21
-        version: 0.1.37(axios@1.13.1)(handlebars@4.7.8)(ignore@5.3.2)(lodash@4.17.21)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))(ws@8.18.3)
+        version: 0.1.37(axios@1.13.1)(handlebars@4.7.8)(ignore@5.3.2)(lodash@4.17.21)(openai@4.104.0(ws@8.18.3)(zod@3.25.67))(ws@8.18.3)
       lucide-react:
         specifier: ^0.454.0
         version: 0.454.0(react@19.1.1)
@@ -650,11 +650,11 @@ importers:
   packages/sdk:
     dependencies:
       '@langchain/core':
-        specifier: ^1.0.2
-        version: 1.0.2(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))
+        specifier: ^0.3.40
+        version: 0.3.79(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))
       '@langchain/google-genai':
         specifier: ^1.0.0
-        version: 1.0.0(@langchain/core@1.0.2(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67)))
+        version: 1.0.0(@langchain/core@0.3.79(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67)))
       '@modelcontextprotocol/sdk':
         specifier: ^1.6.1
         version: 1.20.2
@@ -688,7 +688,7 @@ importers:
     devDependencies:
       '@agentic/langchain':
         specifier: ^7.6.9
-        version: 7.6.9(@langchain/core@1.0.2(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67)))(zod@3.25.67)
+        version: 7.6.9(@langchain/core@0.3.79(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67)))(zod@3.25.67)
       '@babel/plugin-syntax-import-attributes':
         specifier: ^7.26.0
         version: 7.27.1(@babel/core@7.28.5)
@@ -700,7 +700,7 @@ importers:
         version: 1.9.1(rollup@4.52.5)
       '@langchain/ollama':
         specifier: ^0.2.2
-        version: 0.2.4(@langchain/core@1.0.2(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67)))
+        version: 0.2.4(@langchain/core@0.3.79(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67)))
       '@rollup/plugin-babel':
         specifier: ^6.0.4
         version: 6.1.0(@babel/core@7.28.5)(@types/babel__core@7.20.5)(rollup@4.52.5)
@@ -2589,10 +2589,6 @@ packages:
   '@langchain/core@0.3.79':
     resolution: {integrity: sha512-ZLAs5YMM5N2UXN3kExMglltJrKKoW7hs3KMZFlXUnD7a5DFKBYxPFMeXA4rT+uvTxuJRZPCYX0JKI5BhyAWx4A==, tarball: https://registry.npmjs.org/@langchain/core/-/core-0.3.79.tgz}
     engines: {node: '>=18'}
-
-  '@langchain/core@1.0.2':
-    resolution: {integrity: sha512-6mOn4bZyO6XT0GGrEijRtMVrmYJGZ8y1BcwyTPDptFz38lP0CEzrKEYB++h+u3TEcAd3eO25l1aGw/zVlVgw2Q==, tarball: https://registry.npmjs.org/@langchain/core/-/core-1.0.2.tgz}
-    engines: {node: '>=20'}
 
   '@langchain/google-genai@0.1.12':
     resolution: {integrity: sha512-0Ea0E2g63ejCuormVxbuoyJQ5BYN53i2/fb6WP8bMKzyh+y43R13V8JqOtr3e/GmgNyv3ou/VeaZjx7KAvu/0g==, tarball: https://registry.npmjs.org/@langchain/google-genai/-/google-genai-0.1.12.tgz}
@@ -9352,10 +9348,10 @@ snapshots:
     transitivePeerDependencies:
       - babel-plugin-macros
 
-  '@agentic/langchain@7.6.9(@langchain/core@1.0.2(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67)))(zod@3.25.67)':
+  '@agentic/langchain@7.6.9(@langchain/core@0.3.79(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67)))(zod@3.25.67)':
     dependencies:
       '@agentic/core': 7.6.9(zod@3.25.67)
-      '@langchain/core': 1.0.2(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))
+      '@langchain/core': 0.3.79(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))
     transitivePeerDependencies:
       - babel-plugin-macros
       - zod
@@ -11563,6 +11559,23 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
+  '@langchain/community@0.0.57(lodash@4.17.21)(openai@4.104.0(ws@8.18.3)(zod@3.25.67))(ws@8.18.3)':
+    dependencies:
+      '@langchain/core': 0.1.63(openai@4.104.0(ws@8.18.3)(zod@3.25.67))
+      '@langchain/openai': 0.0.34(ws@8.18.3)
+      expr-eval: 2.0.2
+      flat: 5.0.2
+      langsmith: 0.1.68(openai@4.104.0(ws@8.18.3)(zod@3.25.67))
+      uuid: 9.0.1
+      zod: 3.25.67
+      zod-to-json-schema: 3.24.6(zod@3.25.67)
+    optionalDependencies:
+      lodash: 4.17.21
+      ws: 8.18.3
+    transitivePeerDependencies:
+      - encoding
+      - openai
+
   '@langchain/community@0.0.57(lodash@4.17.21)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))(ws@8.18.3)':
     dependencies:
       '@langchain/core': 0.1.63(openai@5.23.2(ws@8.18.3)(zod@3.25.67))
@@ -11578,6 +11591,23 @@ snapshots:
       ws: 8.18.3
     transitivePeerDependencies:
       - encoding
+      - openai
+
+  '@langchain/core@0.1.63(openai@4.104.0(ws@8.18.3)(zod@3.25.67))':
+    dependencies:
+      ansi-styles: 5.2.0
+      camelcase: 6.3.0
+      decamelize: 1.2.0
+      js-tiktoken: 1.0.21
+      langsmith: 0.1.68(openai@4.104.0(ws@8.18.3)(zod@3.25.67))
+      ml-distance: 4.0.1
+      mustache: 4.2.0
+      p-queue: 6.6.2
+      p-retry: 4.6.2
+      uuid: 9.0.1
+      zod: 3.25.67
+      zod-to-json-schema: 3.24.6(zod@3.25.67)
+    transitivePeerDependencies:
       - openai
 
   '@langchain/core@0.1.63(openai@5.23.2(ws@8.18.3)(zod@3.25.67))':
@@ -11629,6 +11659,26 @@ snapshots:
     transitivePeerDependencies:
       - openai
 
+  '@langchain/core@0.3.79(@opentelemetry/api@1.9.0)(openai@4.104.0(ws@8.18.3)(zod@3.25.67))':
+    dependencies:
+      '@cfworker/json-schema': 4.1.1
+      ansi-styles: 5.2.0
+      camelcase: 6.3.0
+      decamelize: 1.2.0
+      js-tiktoken: 1.0.21
+      langsmith: 0.3.77(@opentelemetry/api@1.9.0)(openai@4.104.0(ws@8.18.3)(zod@3.25.67))
+      mustache: 4.2.0
+      p-queue: 6.6.2
+      p-retry: 4.6.2
+      uuid: 10.0.0
+      zod: 3.25.67
+      zod-to-json-schema: 3.24.6(zod@3.25.67)
+    transitivePeerDependencies:
+      - '@opentelemetry/api'
+      - '@opentelemetry/exporter-trace-otlp-proto'
+      - '@opentelemetry/sdk-trace-base'
+      - openai
+
   '@langchain/core@0.3.79(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))':
     dependencies:
       '@cfworker/json-schema': 4.1.1
@@ -11649,48 +11699,29 @@ snapshots:
       - '@opentelemetry/sdk-trace-base'
       - openai
 
-  '@langchain/core@1.0.2(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))':
-    dependencies:
-      '@cfworker/json-schema': 4.1.1
-      ansi-styles: 5.2.0
-      camelcase: 6.3.0
-      decamelize: 1.2.0
-      js-tiktoken: 1.0.21
-      langsmith: 0.3.77(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))
-      mustache: 4.2.0
-      p-queue: 6.6.2
-      p-retry: 4.6.2
-      uuid: 10.0.0
-      zod: 3.25.76
-    transitivePeerDependencies:
-      - '@opentelemetry/api'
-      - '@opentelemetry/exporter-trace-otlp-proto'
-      - '@opentelemetry/sdk-trace-base'
-      - openai
-
-  '@langchain/google-genai@0.1.12(@langchain/core@0.3.79(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67)))(zod@3.25.67)':
+  '@langchain/google-genai@0.1.12(@langchain/core@0.3.79(@opentelemetry/api@1.9.0)(openai@4.104.0(ws@8.18.3)(zod@3.25.67)))(zod@3.25.67)':
     dependencies:
       '@google/generative-ai': 0.24.1
-      '@langchain/core': 0.3.79(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))
+      '@langchain/core': 0.3.79(@opentelemetry/api@1.9.0)(openai@4.104.0(ws@8.18.3)(zod@3.25.67))
       zod-to-json-schema: 3.24.6(zod@3.25.67)
     transitivePeerDependencies:
       - zod
 
-  '@langchain/google-genai@1.0.0(@langchain/core@1.0.2(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67)))':
+  '@langchain/google-genai@1.0.0(@langchain/core@0.3.79(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67)))':
     dependencies:
       '@google/generative-ai': 0.24.1
-      '@langchain/core': 1.0.2(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))
+      '@langchain/core': 0.3.79(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))
       uuid: 11.1.0
+
+  '@langchain/ollama@0.2.4(@langchain/core@0.3.79(@opentelemetry/api@1.9.0)(openai@4.104.0(ws@8.18.3)(zod@3.25.67)))':
+    dependencies:
+      '@langchain/core': 0.3.79(@opentelemetry/api@1.9.0)(openai@4.104.0(ws@8.18.3)(zod@3.25.67))
+      ollama: 0.5.18
+      uuid: 10.0.0
 
   '@langchain/ollama@0.2.4(@langchain/core@0.3.79(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67)))':
     dependencies:
       '@langchain/core': 0.3.79(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))
-      ollama: 0.5.18
-      uuid: 10.0.0
-
-  '@langchain/ollama@0.2.4(@langchain/core@1.0.2(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67)))':
-    dependencies:
-      '@langchain/core': 1.0.2(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))
       ollama: 0.5.18
       uuid: 10.0.0
 
@@ -11705,6 +11736,15 @@ snapshots:
       - encoding
       - ws
 
+  '@langchain/openai@0.5.18(@langchain/core@0.3.79(@opentelemetry/api@1.9.0)(openai@4.104.0(ws@8.18.3)(zod@3.25.67)))(ws@8.18.3)':
+    dependencies:
+      '@langchain/core': 0.3.79(@opentelemetry/api@1.9.0)(openai@4.104.0(ws@8.18.3)(zod@3.25.67))
+      js-tiktoken: 1.0.21
+      openai: 5.23.2(ws@8.18.3)(zod@3.25.67)
+      zod: 3.25.67
+    transitivePeerDependencies:
+      - ws
+
   '@langchain/openai@0.5.18(@langchain/core@0.3.79(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67)))(ws@8.18.3)':
     dependencies:
       '@langchain/core': 0.3.79(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))
@@ -11713,6 +11753,13 @@ snapshots:
       zod: 3.25.67
     transitivePeerDependencies:
       - ws
+
+  '@langchain/textsplitters@0.0.3(openai@4.104.0(ws@8.18.3)(zod@3.25.67))':
+    dependencies:
+      '@langchain/core': 0.2.36(openai@4.104.0(ws@8.18.3)(zod@3.25.67))
+      js-tiktoken: 1.0.21
+    transitivePeerDependencies:
+      - openai
 
   '@langchain/textsplitters@0.0.3(openai@5.23.2(ws@8.18.3)(zod@3.25.67))':
     dependencies:
@@ -12286,9 +12333,9 @@ snapshots:
       - yaml
       - zod
 
-  '@polkadot-agent-kit/llm@2.1.1(@acala-network/types@6.3.0(@polkadot/api@16.4.6))(@ethersproject/address@5.8.0)(@opentelemetry/api@1.9.0)(@polkadot/api-augment@16.4.6)(@polkadot/api-derive@16.4.6)(@polkadot/keyring@13.5.7(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(@polkadot/util@13.5.7))(@polkadot/rpc-augment@16.4.9)(@polkadot/rpc-core@16.4.9)(@polkadot/rpc-provider@16.4.9)(@polkadot/types-augment@16.4.6)(@polkadot/types-create@16.4.6)(@polkadot/types-known@16.4.6)(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(jiti@2.6.1)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typechain@8.3.2(typescript@5.9.3))(typescript@5.9.3)(viem@2.38.6(typescript@5.9.3)(zod@3.25.67))(yaml@2.8.1)':
+  '@polkadot-agent-kit/llm@2.1.1(@acala-network/types@6.3.0(@polkadot/api@16.4.6))(@ethersproject/address@5.8.0)(@opentelemetry/api@1.9.0)(@polkadot/api-augment@16.4.6)(@polkadot/api-derive@16.4.6)(@polkadot/keyring@13.5.7(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(@polkadot/util@13.5.7))(@polkadot/rpc-augment@16.4.9)(@polkadot/rpc-core@16.4.9)(@polkadot/rpc-provider@16.4.9)(@polkadot/types-augment@16.4.6)(@polkadot/types-create@16.4.6)(@polkadot/types-known@16.4.6)(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(jiti@2.6.1)(openai@4.104.0(ws@8.18.3)(zod@3.25.67))(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typechain@8.3.2(typescript@5.9.3))(typescript@5.9.3)(viem@2.38.6(typescript@5.9.3)(zod@3.25.67))(yaml@2.8.1)':
     dependencies:
-      '@langchain/core': 0.3.79(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))
+      '@langchain/core': 0.3.79(@opentelemetry/api@1.9.0)(openai@4.104.0(ws@8.18.3)(zod@3.25.67))
       '@polkadot-agent-kit/common': 2.1.1(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1)
       '@polkadot-agent-kit/core': 2.1.1(@acala-network/types@6.3.0(@polkadot/api@16.4.6))(@ethersproject/address@5.8.0)(@polkadot/api-augment@16.4.6)(@polkadot/api-derive@16.4.6)(@polkadot/keyring@13.5.7(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(@polkadot/util@13.5.7))(@polkadot/rpc-augment@16.4.9)(@polkadot/rpc-core@16.4.9)(@polkadot/rpc-provider@16.4.9)(@polkadot/types-augment@16.4.6)(@polkadot/types-create@16.4.6)(@polkadot/types-known@16.4.6)(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(jiti@2.6.1)(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typechain@8.3.2(typescript@5.9.3))(typescript@5.9.3)(viem@2.38.6(typescript@5.9.3)(zod@3.25.67))(yaml@2.8.1)(zod@3.25.67)
       polkadot-api: 1.20.1(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1)
@@ -12330,13 +12377,13 @@ snapshots:
       - viem
       - yaml
 
-  '@polkadot-agent-kit/sdk@2.1.1(@acala-network/types@6.3.0(@polkadot/api@16.4.6))(@ethersproject/address@5.8.0)(@opentelemetry/api@1.9.0)(@polkadot/api-augment@16.4.6)(@polkadot/api-derive@16.4.6)(@polkadot/keyring@13.5.7(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(@polkadot/util@13.5.7))(@polkadot/rpc-augment@16.4.9)(@polkadot/rpc-core@16.4.9)(@polkadot/rpc-provider@16.4.9)(@polkadot/types-augment@16.4.6)(@polkadot/types-create@16.4.6)(@polkadot/types-known@16.4.6)(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(ai@4.3.19(react@19.1.1)(zod@3.25.67))(jiti@2.6.1)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typechain@8.3.2(typescript@5.9.3))(typescript@5.9.3)(viem@2.38.6(typescript@5.9.3)(zod@3.25.67))(yaml@2.8.1)':
+  '@polkadot-agent-kit/sdk@2.1.1(@acala-network/types@6.3.0(@polkadot/api@16.4.6))(@ethersproject/address@5.8.0)(@opentelemetry/api@1.9.0)(@polkadot/api-augment@16.4.6)(@polkadot/api-derive@16.4.6)(@polkadot/keyring@13.5.7(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(@polkadot/util@13.5.7))(@polkadot/rpc-augment@16.4.9)(@polkadot/rpc-core@16.4.9)(@polkadot/rpc-provider@16.4.9)(@polkadot/types-augment@16.4.6)(@polkadot/types-create@16.4.6)(@polkadot/types-known@16.4.6)(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(ai@4.3.19(react@19.1.1)(zod@3.25.67))(jiti@2.6.1)(openai@4.104.0(ws@8.18.3)(zod@3.25.67))(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typechain@8.3.2(typescript@5.9.3))(typescript@5.9.3)(viem@2.38.6(typescript@5.9.3)(zod@3.25.67))(yaml@2.8.1)':
     dependencies:
-      '@langchain/core': 0.3.79(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))
+      '@langchain/core': 0.3.79(@opentelemetry/api@1.9.0)(openai@4.104.0(ws@8.18.3)(zod@3.25.67))
       '@modelcontextprotocol/sdk': 1.20.2
       '@polkadot-agent-kit/common': 2.1.1(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1)
       '@polkadot-agent-kit/core': 2.1.1(@acala-network/types@6.3.0(@polkadot/api@16.4.6))(@ethersproject/address@5.8.0)(@polkadot/api-augment@16.4.6)(@polkadot/api-derive@16.4.6)(@polkadot/keyring@13.5.7(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(@polkadot/util@13.5.7))(@polkadot/rpc-augment@16.4.9)(@polkadot/rpc-core@16.4.9)(@polkadot/rpc-provider@16.4.9)(@polkadot/types-augment@16.4.6)(@polkadot/types-create@16.4.6)(@polkadot/types-known@16.4.6)(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(jiti@2.6.1)(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typechain@8.3.2(typescript@5.9.3))(typescript@5.9.3)(viem@2.38.6(typescript@5.9.3)(zod@3.25.67))(yaml@2.8.1)(zod@3.25.67)
-      '@polkadot-agent-kit/llm': 2.1.1(@acala-network/types@6.3.0(@polkadot/api@16.4.6))(@ethersproject/address@5.8.0)(@opentelemetry/api@1.9.0)(@polkadot/api-augment@16.4.6)(@polkadot/api-derive@16.4.6)(@polkadot/keyring@13.5.7(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(@polkadot/util@13.5.7))(@polkadot/rpc-augment@16.4.9)(@polkadot/rpc-core@16.4.9)(@polkadot/rpc-provider@16.4.9)(@polkadot/types-augment@16.4.6)(@polkadot/types-create@16.4.6)(@polkadot/types-known@16.4.6)(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(jiti@2.6.1)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typechain@8.3.2(typescript@5.9.3))(typescript@5.9.3)(viem@2.38.6(typescript@5.9.3)(zod@3.25.67))(yaml@2.8.1)
+      '@polkadot-agent-kit/llm': 2.1.1(@acala-network/types@6.3.0(@polkadot/api@16.4.6))(@ethersproject/address@5.8.0)(@opentelemetry/api@1.9.0)(@polkadot/api-augment@16.4.6)(@polkadot/api-derive@16.4.6)(@polkadot/keyring@13.5.7(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(@polkadot/util@13.5.7))(@polkadot/rpc-augment@16.4.9)(@polkadot/rpc-core@16.4.9)(@polkadot/rpc-provider@16.4.9)(@polkadot/types-augment@16.4.6)(@polkadot/types-create@16.4.6)(@polkadot/types-known@16.4.6)(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(jiti@2.6.1)(openai@4.104.0(ws@8.18.3)(zod@3.25.67))(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typechain@8.3.2(typescript@5.9.3))(typescript@5.9.3)(viem@2.38.6(typescript@5.9.3)(zod@3.25.67))(yaml@2.8.1)
       ai: 4.3.19(react@19.1.1)(zod@3.25.67)
       polkadot-api: 1.20.1(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1)
       zod: 3.25.67
@@ -17528,6 +17575,103 @@ snapshots:
 
   ky@1.13.0: {}
 
+  langchain@0.1.37(axios@1.13.1)(handlebars@4.7.8)(ignore@5.3.2)(lodash@4.17.21)(openai@4.104.0(ws@8.18.3)(zod@3.25.67))(ws@8.18.3):
+    dependencies:
+      '@anthropic-ai/sdk': 0.9.1
+      '@langchain/community': 0.0.57(lodash@4.17.21)(openai@4.104.0(ws@8.18.3)(zod@3.25.67))(ws@8.18.3)
+      '@langchain/core': 0.1.63(openai@4.104.0(ws@8.18.3)(zod@3.25.67))
+      '@langchain/openai': 0.0.34(ws@8.18.3)
+      '@langchain/textsplitters': 0.0.3(openai@4.104.0(ws@8.18.3)(zod@3.25.67))
+      binary-extensions: 2.3.0
+      js-tiktoken: 1.0.21
+      js-yaml: 4.1.0
+      jsonpointer: 5.0.1
+      langchainhub: 0.0.11
+      langsmith: 0.1.68(openai@4.104.0(ws@8.18.3)(zod@3.25.67))
+      ml-distance: 4.0.1
+      openapi-types: 12.1.3
+      p-retry: 4.6.2
+      uuid: 9.0.1
+      yaml: 2.8.1
+      zod: 3.25.67
+      zod-to-json-schema: 3.24.6(zod@3.25.67)
+    optionalDependencies:
+      axios: 1.13.1
+      handlebars: 4.7.8
+      ignore: 5.3.2
+      ws: 8.18.3
+    transitivePeerDependencies:
+      - '@aws-crypto/sha256-js'
+      - '@aws-sdk/client-bedrock-agent-runtime'
+      - '@aws-sdk/client-bedrock-runtime'
+      - '@aws-sdk/client-dynamodb'
+      - '@aws-sdk/client-kendra'
+      - '@aws-sdk/client-lambda'
+      - '@azure/search-documents'
+      - '@clickhouse/client'
+      - '@cloudflare/ai'
+      - '@datastax/astra-db-ts'
+      - '@elastic/elasticsearch'
+      - '@getmetal/metal-sdk'
+      - '@getzep/zep-js'
+      - '@gradientai/nodejs-sdk'
+      - '@huggingface/inference'
+      - '@mlc-ai/web-llm'
+      - '@mozilla/readability'
+      - '@neondatabase/serverless'
+      - '@opensearch-project/opensearch'
+      - '@planetscale/database'
+      - '@premai/prem-sdk'
+      - '@qdrant/js-client-rest'
+      - '@raycast/api'
+      - '@rockset/client'
+      - '@smithy/eventstream-codec'
+      - '@smithy/protocol-http'
+      - '@smithy/signature-v4'
+      - '@smithy/util-utf8'
+      - '@supabase/postgrest-js'
+      - '@tensorflow-models/universal-sentence-encoder'
+      - '@tensorflow/tfjs-converter'
+      - '@tensorflow/tfjs-core'
+      - '@upstash/redis'
+      - '@upstash/vector'
+      - '@vercel/postgres'
+      - '@writerai/writer-sdk'
+      - '@xenova/transformers'
+      - '@zilliz/milvus2-sdk-node'
+      - better-sqlite3
+      - cassandra-driver
+      - cborg
+      - closevector-common
+      - closevector-node
+      - closevector-web
+      - cohere-ai
+      - discord.js
+      - dria
+      - duck-duck-scrape
+      - encoding
+      - firebase-admin
+      - googleapis
+      - hnswlib-node
+      - interface-datastore
+      - it-all
+      - jsonwebtoken
+      - llmonitor
+      - lodash
+      - lunary
+      - mysql2
+      - neo4j-driver
+      - openai
+      - pg
+      - pg-copy-streams
+      - pickleparser
+      - portkey-ai
+      - replicate
+      - typesense
+      - usearch
+      - vectordb
+      - voy-search
+
   langchain@0.1.37(axios@1.13.1)(handlebars@4.7.8)(ignore@5.3.2)(lodash@4.17.21)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))(ws@8.18.3):
     dependencies:
       '@anthropic-ai/sdk': 0.9.1
@@ -17648,6 +17792,19 @@ snapshots:
       uuid: 10.0.0
     optionalDependencies:
       openai: 5.23.2(ws@8.18.3)(zod@3.25.67)
+
+  langsmith@0.3.77(@opentelemetry/api@1.9.0)(openai@4.104.0(ws@8.18.3)(zod@3.25.67)):
+    dependencies:
+      '@types/uuid': 10.0.0
+      chalk: 4.1.2
+      console-table-printer: 2.15.0
+      p-queue: 6.6.2
+      p-retry: 4.6.2
+      semver: 7.7.3
+      uuid: 10.0.0
+    optionalDependencies:
+      '@opentelemetry/api': 1.9.0
+      openai: 4.104.0(ws@8.18.3)(zod@3.25.67)
 
   langsmith@0.3.77(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67)):
     dependencies:
@@ -20009,7 +20166,8 @@ snapshots:
 
   zod@3.25.67: {}
 
-  zod@3.25.76: {}
+  zod@3.25.76:
+    optional: true
 
   zustand@5.0.8(@types/react@19.2.2)(react@19.1.1)(use-sync-external-store@1.6.0(react@19.1.1)):
     optionalDependencies:

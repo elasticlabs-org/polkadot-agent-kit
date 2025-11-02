@@ -1,6 +1,6 @@
 import { getNativeAssets, getOtherAssets } from "@paraspell/assets"
 import type { TLocation, TNodeWithRelayChains, TRelaychain } from "@paraspell/sdk"
-import { SUBSTRATE_CHAINS, RELAYCHAINS } from "@paraspell/sdk"
+import { RELAYCHAINS, SUBSTRATE_CHAINS } from "@paraspell/sdk"
 import type { Api, KnownChainId } from "@polkadot-agent-kit/common"
 
 // Type for asset information from ParaSpell

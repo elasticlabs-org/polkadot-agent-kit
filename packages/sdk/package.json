@@ -41,7 +41,7 @@
     "test:integration:mainnet": "vitest run --config ./vitest.config.mainnet.ts --sequence.concurrent"
   },
   "dependencies": {
-    "@langchain/core": "^1.0.2",
+    "@langchain/core": "^0.3.40",
     "@polkadot-agent-kit/common": "workspace:*",
     "@polkadot-agent-kit/core": "workspace:*",
     "@polkadot-agent-kit/llm": "workspace:*",

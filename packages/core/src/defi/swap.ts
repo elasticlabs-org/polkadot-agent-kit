@@ -42,13 +42,9 @@ function selectBestAsset(assets: AssetInfo[], symbol: string, chain: string): As
 
   candidates.sort((a, b) => {
     const parentsA =
-      typeof a.location?.parents === "number"
-        ? a.location.parents
-        : Number.MAX_SAFE_INTEGER
+      typeof a.location?.parents === "number" ? a.location.parents : Number.MAX_SAFE_INTEGER
     const parentsB =
-      typeof b.location?.parents === "number"
-        ? b.location.parents
-        : Number.MAX_SAFE_INTEGER
+      typeof b.location?.parents === "number" ? b.location.parents : Number.MAX_SAFE_INTEGER
     return parentsA - parentsB
   })
 
@@ -175,21 +171,11 @@ async function executeCrossChainSwap(
 
   // Validate fees before proceeding
   await validateSwapFees({
-    builder: createCrossChainRouterBuilder(
-      args,
-      locationFrom,
-      locationTo,
-      formattedAmount
-    ),
+    builder: createCrossChainRouterBuilder(args, locationFrom, locationTo, formattedAmount),
     swapType: "cross-chain"
   })
 
-  return await createCrossChainRouterBuilder(
-    args,
-    locationFrom,
-    locationTo,
-    formattedAmount
-  )
+  return await createCrossChainRouterBuilder(args, locationFrom, locationTo, formattedAmount)
     .signer(signer)
     .buildTransactions()
 }
