@@ -1,5 +1,5 @@
 import { getAssetDecimals } from "@paraspell/assets"
-import type { TCurrency, TMultiLocation, TNodeDotKsmWithRelayChains } from "@paraspell/sdk"
+import type { TCurrency, TLocation, TNodeDotKsmWithRelayChains } from "@paraspell/sdk"
 import type {
   RouterBuilderCore,
   TBuildTransactionsOptions,
@@ -42,12 +42,12 @@ function selectBestAsset(assets: AssetInfo[], symbol: string, chain: string): As
 
   candidates.sort((a, b) => {
     const parentsA =
-      typeof a.multiLocation?.parents === "number"
-        ? a.multiLocation.parents
+      typeof a.location?.parents === "number"
+        ? a.location.parents
         : Number.MAX_SAFE_INTEGER
     const parentsB =
-      typeof b.multiLocation?.parents === "number"
-        ? b.multiLocation.parents
+      typeof b.location?.parents === "number"
+        ? b.location.parents
         : Number.MAX_SAFE_INTEGER
     return parentsA - parentsB
   })
@@ -63,7 +63,7 @@ function selectBestAsset(assets: AssetInfo[], symbol: string, chain: string): As
       .map(
         (a, i) =>
           `  ${i + 1}. assetId: ${a.assetId || "undefined"}, alias: ${a.alias || "N/A"}, ` +
-          `parents: ${a.multiLocation?.parents ?? "N/A"}, isFeeAsset: ${a.isFeeAsset || false}`
+          `parents: ${a.location?.parents ?? "N/A"}, isFeeAsset: ${a.isFeeAsset || false}`
       )
       .join("\n")
 
@@ -78,10 +78,10 @@ function selectBestAsset(assets: AssetInfo[], symbol: string, chain: string): As
   return candidates[0]
 }
 
-function getAssetMultiLocationWithSelection(
+function getAssetlocationWithSelection(
   chain: TNodeDotKsmWithRelayChains,
   symbol: string
-): TMultiLocation {
+): TLocation {
   // Get all assets with this symbol
   const assets = getAllAssetsBySymbol(chain, symbol)
 
@@ -92,22 +92,22 @@ function getAssetMultiLocationWithSelection(
 
   // Handle single asset - return directly
   if (assets.length === 1) {
-    if (!assets[0].multiLocation) {
-      throw new Error(`Asset ${symbol} on ${chain} does not have a multilocation`)
+    if (!assets[0].location) {
+      throw new Error(`Asset ${symbol} on ${chain} does not have a location`)
     }
-    return assets[0].multiLocation
+    return assets[0].location
   }
 
   // Handle multiple assets - apply selection strategy
   const selectedAsset = selectBestAsset(assets, symbol, chain)
 
-  if (!selectedAsset.multiLocation) {
+  if (!selectedAsset.location) {
     throw new Error(
-      `Selected asset ${symbol} (${selectedAsset.alias || selectedAsset.assetId}) on ${chain} does not have a multilocation`
+      `Selected asset ${symbol} (${selectedAsset.alias || selectedAsset.assetId}) on ${chain} does not have a location`
     )
   }
 
-  return selectedAsset.multiLocation
+  return selectedAsset.location
 }
 
 /**
@@ -167,9 +167,9 @@ async function executeCrossChainSwap(
   args: SwapTokenArgs,
   signer: PolkadotSigner
 ): Promise<TRouterPlan> {
-  const { multilocationFrom, multilocationTo } = getCrossChainMultilocations(args)
-  if (!multilocationFrom || !multilocationTo) {
-    throw new Error("Failed to get multilocations for cross-chain swap")
+  const { locationFrom, locationTo } = getCrossChainlocations(args)
+  if (!locationFrom || !locationTo) {
+    throw new Error("Failed to get locations for cross-chain swap")
   }
   const formattedAmount = formatCrossChainAmount(args)
 
@@ -177,8 +177,8 @@ async function executeCrossChainSwap(
   await validateSwapFees({
     builder: createCrossChainRouterBuilder(
       args,
-      multilocationFrom,
-      multilocationTo,
+      locationFrom,
+      locationTo,
       formattedAmount
     ),
     swapType: "cross-chain"
@@ -186,8 +186,8 @@ async function executeCrossChainSwap(
 
   return await createCrossChainRouterBuilder(
     args,
-    multilocationFrom,
-    multilocationTo,
+    locationFrom,
+    locationTo,
     formattedAmount
   )
     .signer(signer)
@@ -228,19 +228,19 @@ async function executeDexSwap(args: SwapTokenArgs, signer: PolkadotSigner): Prom
 }
 
 /**
- * Gets multilocations for cross-chain currencies
+ * Gets locations for cross-chain currencies
  */
-function getCrossChainMultilocations(args: SwapTokenArgs) {
-  const multilocationFrom = getAssetMultiLocationWithSelection(
+function getCrossChainlocations(args: SwapTokenArgs) {
+  const locationFrom = getAssetlocationWithSelection(
     args.from as TNodeDotKsmWithRelayChains,
     args.currencyFrom
   )
-  const multilocationTo = getAssetMultiLocationWithSelection(
+  const locationTo = getAssetlocationWithSelection(
     args.to as TNodeDotKsmWithRelayChains,
     args.currencyTo
   )
 
-  return { multilocationFrom, multilocationTo }
+  return { locationFrom, locationTo }
 }
 
 /**
@@ -278,16 +278,16 @@ function validateAndGetDexPair(args: SwapTokenArgs) {
  */
 function createCrossChainRouterBuilder(
   args: SwapTokenArgs,
-  multilocationFrom: TMultiLocation,
-  multilocationTo: TMultiLocation,
+  locationFrom: TLocation,
+  locationTo: TLocation,
   formattedAmount: string
 ) {
   return RouterBuilder()
     .from(args.from as TNodeDotKsmWithRelayChains)
     .to(args.to as TNodeDotKsmWithRelayChains)
     .exchange(HYDRATION_DEX)
-    .currencyFrom({ multilocation: multilocationFrom })
-    .currencyTo({ multilocation: multilocationTo })
+    .currencyFrom({ location: locationFrom })
+    .currencyTo({ location: locationTo })
     .amount(BigInt(formattedAmount).toString())
     .slippagePct(DEFAULT_SLIPPAGE_PCT)
     .senderAddress(args.sender || "")

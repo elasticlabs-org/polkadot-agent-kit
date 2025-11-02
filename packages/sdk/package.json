@@ -41,7 +41,7 @@
     "test:integration:mainnet": "vitest run --config ./vitest.config.mainnet.ts --sequence.concurrent"
   },
   "dependencies": {
-    "@langchain/core": "^0.3.40",
+    "@langchain/core": "^1.0.2",
     "@polkadot-agent-kit/common": "workspace:*",
     "@polkadot-agent-kit/core": "workspace:*",
     "@polkadot-agent-kit/llm": "workspace:*",
@@ -49,9 +49,9 @@
     "zod": "^3.24.3",
     "@modelcontextprotocol/sdk": "^1.6.1",
     "zod-to-json-schema": "^3.24.3",
-    "@langchain/google-genai":"^0.1.6",
-    "@paraspell/sdk": "^10.10.7",
-    "@paraspell/assets": "^10.10.3"
+    "@langchain/google-genai":"^1.0.0",
+    "@paraspell/sdk": "11.12.9",
+    "@paraspell/assets": "11.12.9"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.26.0",

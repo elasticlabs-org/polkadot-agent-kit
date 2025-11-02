@@ -3,7 +3,7 @@ import { PolkadotAgentKit } from '../../src/api';
 import { AgentTest } from './agents/agent';
 import dotenv from 'dotenv';
 import { getBalance, sleep } from './utils';
-import { Api, ChainIdAssetHub } from '@polkadot-agent-kit/common';
+import { Api, ChainIdAssetHub, getDecimalsByChainId, parseUnits } from '@polkadot-agent-kit/common';
 import { getAssetBalance } from '@polkadot-agent-kit/core';
 import { SWAP_PROMPT } from '@polkadot-agent-kit/llm';
 dotenv.config({ path: '../../.env' });
@@ -34,19 +34,20 @@ describe('PolkadotAgentKit Integration with LLM Agent', () => {
 
     it('should call swap_tokens tool for Polkadot to Polkadot Asset Hub swap', async () => {
         
-        // swap at least 1 DOT for sufficient fees on DEX
+        // swap at least 0.2 DOT for sufficient fees on DEX
+        // Sometime it is not working with NoDeal issue from Hydration due to insuficient liquidity/fees for Hydration
         
-        const userQuery = `swap 0.2 DOT from Polkadot to USDt on Polkadot Asset Hub`;
+        const amount = parseUnits("0.2", getDecimalsByChainId('polkadot'));
+        const userQuery = `swap 0.2 DOT from Polkadot to USDC on Polkadot Asset Hub`;
 
-        console.log("Bot agent:", agentKit.getCurrentAddress())
         const apiPolkadot = agentKit.getApi('polkadot');
 
         const balanceDotBefore = await getBalance(apiPolkadot, agentKit.getCurrentAddress());
         console.log('Balance DOT Before:', balanceDotBefore);
         const apiPolkadotAssetHub = agentKit.getApi('polkadot_asset_hub') as Api<ChainIdAssetHub>;
 
-        const balanceUsdtBefore = await getAssetBalance(apiPolkadotAssetHub, 'AssetHubPolkadot', 'USDt', agentKit.getCurrentAddress());
-        console.log("Balance USDC before:",balanceUsdtBefore);
+        const balanceUSDCBefore = await getAssetBalance(apiPolkadotAssetHub, 'AssetHubPolkadot', 'USDC', agentKit.getCurrentAddress());
+        console.log("Balance USDC before:",balanceUSDCBefore);
 
 
 
@@ -65,7 +66,7 @@ describe('PolkadotAgentKit Integration with LLM Agent', () => {
         expect(swapCall.action.toolInput).toMatchObject({
             amount: '0.2',
             currencyFrom: 'DOT',
-            currencyTo: 'USDt',
+            currencyTo: 'USDC',
             from: 'Polkadot',
             to: 'AssetHubPolkadot'
         });
@@ -77,8 +78,12 @@ describe('PolkadotAgentKit Integration with LLM Agent', () => {
         console.log('Balance DOT After:', balanceDotAfter);
         const apiPolkadotAssetHubAfter = agentKit.getApi('polkadot_asset_hub') as Api<ChainIdAssetHub>;
 
-        const balanceUsdtAfter = await getAssetBalance(apiPolkadotAssetHubAfter, 'AssetHubPolkadot', 'USDt', agentKit.getCurrentAddress());
-        console.log("Balance USDC after:",balanceUsdtAfter);
+        const balanceUSDCAfter = await getAssetBalance(apiPolkadotAssetHubAfter, 'AssetHubPolkadot', 'USDC', agentKit.getCurrentAddress());
+        console.log("Balance USDC after:",balanceUSDCAfter);
+
+        // compare the balance before and after swapping 
+        expect(balanceDotAfter.data.free).toBeLessThan(balanceDotBefore.data.free - amount);
+        expect(balanceUSDCAfter).toBeGreaterThan(balanceUSDCBefore);
 
 
 

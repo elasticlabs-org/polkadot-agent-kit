@@ -183,7 +183,6 @@ describe('PolkadotAgentKit Integration with OllamaAgent for XCM Transfer', () =>
     console.log("XCM Fee Before:", feeXCMBefore.fee);
       const result = await agent.ask(userQuery);
       console.log(`XCM Transfer Query Result (${testName}):`, result);
-
       expect(result.output).toBeDefined();
       expect(result.intermediateSteps).toBeDefined();
       expect(result.intermediateSteps?.length).toBeGreaterThan(0);
@@ -279,7 +278,7 @@ describe('PolkadotAgentKit Integration with OllamaAgent for XCM Transfer', () =>
     const parachainToRelayCases = [
       {
         name: 'Paseo Asset Hub to Paseo 1 ',
-        query: `transfer 0.1 WND to ${RECIPIENT2} from Paseo Asset Hub to Paseo`,
+        query: `transfer 0.1 PAS to ${RECIPIENT2} from Paseo Asset Hub to Paseo`,
         recipient: RECIPIENT2,
         sourceChainId: 'paseo_asset_hub',
         destChainId: 'paseo',

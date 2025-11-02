@@ -1,6 +1,6 @@
 import { getNativeAssets, getOtherAssets } from "@paraspell/assets"
-import type { TMultiLocation, TNodeWithRelayChains, TRelayChain } from "@paraspell/sdk"
-import { NODES_WITH_RELAY_CHAINS, RELAY_CHAINS } from "@paraspell/sdk"
+import type { TLocation, TNodeWithRelayChains, TRelaychain } from "@paraspell/sdk"
+import { SUBSTRATE_CHAINS, RELAYCHAINS } from "@paraspell/sdk"
 import type { Api, KnownChainId } from "@polkadot-agent-kit/common"
 
 // Type for asset information from ParaSpell
@@ -8,7 +8,7 @@ export interface AssetInfo {
   symbol: string
   assetId?: string
   decimals: number
-  multiLocation?: TMultiLocation
+  location?: TLocation
   existentialDeposit?: string
   isFeeAsset?: boolean
   alias?: string
@@ -41,7 +41,7 @@ export function getAllAssetsBySymbol(chain: string, assetSymbol: string): AssetI
   let assets: AssetInfo[] = []
   if (isValidTNodeWithRelayChains(chain)) {
     if (isValidRelayChains(chain)) {
-      assets = getNativeAssets(chain as TRelayChain) as AssetInfo[]
+      assets = getNativeAssets(chain as TRelaychain) as AssetInfo[]
     } else {
       assets = getOtherAssets(chain as TNodeWithRelayChains) as AssetInfo[]
     }
@@ -56,10 +56,10 @@ export function getAllAssetsBySymbol(chain: string, assetSymbol: string): AssetI
 
 // Including relay chains
 function isValidTNodeWithRelayChains(chain: string): boolean {
-  return (NODES_WITH_RELAY_CHAINS as readonly string[]).includes(chain)
+  return (SUBSTRATE_CHAINS as readonly string[]).includes(chain)
 }
 
 // Just relay chains
 function isValidRelayChains(chain: string): boolean {
-  return (RELAY_CHAINS as readonly string[]).includes(chain)
+  return (RELAYCHAINS as readonly string[]).includes(chain)
 }

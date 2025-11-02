@@ -33,20 +33,22 @@ export class AgentTest {
 
   async init() {
     // Create LLM based on provider
+    console.log("This model:",this.model);
+    
+    const tools = getLangChainTools(this.agentKit);
+    
     const llm = this.provider === 'gemini'
       ? new ChatGoogleGenerativeAI({
           model: this.model,
-          temperature: 0,
           apiKey: process.env.GEMINI_API_KEY,
+          convertSystemMessageToHumanContent: true,
         })
       : new ChatOllama({
           model: this.model,
-          temperature: 0,
         });
 
-    const tools = getLangChainTools(this.agentKit);
 
-    const agent = await createToolCallingAgent({
+    const agent = createToolCallingAgent({
       llm: llm as any,
       tools: tools as any,
       prompt: ChatPromptTemplate.fromMessages([
