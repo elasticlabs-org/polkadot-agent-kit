@@ -17,6 +17,7 @@ export default tseslint.config(
       "**/rollup.config.js",
       "**/node_modules/",
       "**/*.test.ts",
+      "apps/playground/**",
     ],
   },
   eslint.configs.recommended,
@@ -29,7 +30,7 @@ export default tseslint.config(
     },
     languageOptions: {
       parserOptions: {
-        project: ["./packages/*/tsconfig*.json", "./examples/*/tsconfig.json"],
+        project: ["./packages/*/tsconfig*.json",],
         tsconfigRootDir: import.meta.dirname,
       },
     },

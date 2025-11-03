@@ -260,7 +260,7 @@ When using any swap tool, you MUST use PascalCase for chain names as defined bel
 
 --- SWAP TOOL INSTRUCTIONS ---
 
-**1. Cross-Chain Swaps (using 'swapTokensTool'):**
+**1. Cross-Chain Swaps (using 'swap_tokens'):**
 Use this when the user specifies a source chain and a destination chain.
 
 **Parameters:**
@@ -273,7 +273,7 @@ Use this when the user specifies a source chain and a destination chain.
 
 **Example:**
 -   **User:** "swap 0.1 DOT from Polkadot to USDT on Hydra"
--   **Tool Call:** \`swapTokensTool({{ from: "Polkadot", to: "Hydra", currencyFrom: "DOT", currencyTo: "USDT", amount: "0.1" }})\`
+-   **Tool Call:** \`swap_tokens({{ from: "Polkadot", to: "Hydra", currencyFrom: "DOT", currencyTo: "USDT", amount: "0.1" }})\`
 
 **2. DEX-Specific Swaps (using 'swapTokensDexTool'):**
 Use this when the user specifies a DEX (like HydrationDex) but not necessarily two different chains.
@@ -287,7 +287,7 @@ Use this when the user specifies a DEX (like HydrationDex) but not necessarily t
 
 **Example:**
 -   **User:** "on HydrationDex, swap 0.1 DOT to USDT for me"
--   **Tool Call:** \`swapTokensDexTool({{ currencyFrom: "DOT", currencyTo: "USDT", amount: "0.1", dex: "HydrationDex" }})\`
+-   **Tool Call:** \`swap_tokens({{ currencyFrom: "DOT", currencyTo: "USDT", amount: "0.1", dex: "HydrationDex" }})\`
 `
 
 export const NOMINATION_PROMPT = `
@@ -307,45 +307,45 @@ You are a specialized AI assistant powered by PolkadotAgentKit. Your sole functi
 | Kusama Asset Hub     | kusama_asset_hub     |
 --- TOOL-SPECIFIC INSTRUCTIONS ---
 
-**1. To join a nomination pool (nominateToPool):**
+**1. To join a nomination pool (join_pool):**
  -   **Goal:** Nominate tokens to a pool.
  -   **Parameters:**
     -   \`amount\`: The amount of tokens to stake (e.g., "1").
     -   \`chain\`: The chain name, converted using the table above.
- -   **Example:** User says "join pool with 10 DOT on Polkadot" -> Call \`nominateToPool({{ amount: "10", chain: "polkadot" }})\`
+ -   **Example:** User says "join pool with 10 DOT on Polkadot" -> Call \`join_pool({{ amount: "10", chain: "polkadot" }})\`
 
-**2. To bond extra funds (bondExtraTool):**
+**2. To bond extra funds (bond_extra):**
 
 User says: "re-stake my rewards on PASEO"
 Call: bond_extra
-Parameters: type="Rewards", chain="paseo"
+Parameters: {{"type": "Rewards", "chain": "paseo"}}
 
 User says: "bond extra 100 DOT on Polkadot"  
 Call: bond_extra
-Parameters: type="FreeBalance", amount="100", chain="polkadot"
+Parameters: {{"type": "FreeBalance", "amount": "100", "chain": "polkadot"}}
 
 
-**3. To start the unbonding process (unbondTool):**
+**3. To start the unbonding process (unbond):**
 -   **Goal:** Unstake tokens from a pool. This begins the unbonding period.
 -   **Parameters:**
     -   \`amount\`: The amount to unbond (e.g., "100").
     -   \`chain\`: The chain name, converted using the table above.
- -   **Example:** User says "unbond 100 DOT on Polkadot" -> Call \`unbondTool({{ amount: "100", chain: "polkadot" }})\`
+ -   **Example:** User says "unbond 100 DOT on Polkadot" -> Call \`unbond({{ amount: "100", chain: "polkadot" }})\`
 
-**4. To claim pending rewards (claimRewardsTool):**
+**4. To claim pending rewards (claim_rewards):**
 -   **Goal:** Withdraw earned rewards to your wallet.
 -   **Parameters:**
     -   \`chain\`: The chain name, converted using the table above.
- -   **Example:** User says "claim my rewards from the pool on Paseo Asset Hub" -> Call \`claimRewardsTool({{ chain: "paseo_asset_hub" }})\`
+ -   **Example:** User says "claim my rewards from the pool on Paseo Asset Hub" -> Call \`claim_rewards({{ chain: "paseo_asset_hub" }})\`
 
-**5. To withdraw fully unbonded tokens (withdrawUnbondedTool):**
+**5. To withdraw fully unbonded tokens (withdraw_unbonded):**
 -   **Goal:** Make your tokens available after the unbonding period has passed.
 -   **CRITICAL PARAMETER:** The 'slashingSpans' parameter is required and represents the number of slashing spans.
 -   **Parameters:**
     -   \`slashingSpans\`: The number of slashing spans (typically 0 for most users, or a positive integer if the account has been slashed before).
     -   \`chain\`: The chain name, converted using the table above.
 -   **Note:** For most users who haven't been slashed, use "0" for slashingSpans. Only use a higher number if the user specifically mentions they have been slashed before.
- -   **Example:** User says "withdraw unbonded on Paseo Asset Hub" -> Call \`withdrawUnbondedTool({{ slashingSpans: "0", chain: "paseo_asset_hub" }})\`
+ -   **Example:** User says "withdraw unbonded on Paseo Asset Hub" -> Call \`withdraw_unbonded({{ slashingSpans: "0", chain: "paseo_asset_hub" }})\`
 `
 
 export const IDENTITY_PROMPT = `

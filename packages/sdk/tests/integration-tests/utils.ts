@@ -1,6 +1,8 @@
 import type { Api, ChainIdAssetHub, KnownChainId } from "@polkadot-agent-kit/common"
+import { isApiReady } from "@polkadot-agent-kit/common"
 import {ASSETS_PROMPT, XCM_PROMPT, SWAP_PROMPT, NOMINATION_PROMPT, IDENTITY_PROMPT, BIFROST_PROMPT} from "@polkadot-agent-kit/llm"
 import { UnsafeTransactionType } from "@polkadot-agent-kit/common"
+
 
 export const RECIPIENT0 = '5Fniv36Eu3bTWVRaR6N2Ve1qVouiTd15SJcZpxPyhkngRnqj';
 export const RECIPIENT= '5CcqKCNDxrYYkPNWys8yrjHJVTzd69i66VTgtewrSbJiVqoR';
@@ -9,6 +11,9 @@ export const RECIPIENT3 = '5FdxcDTshU5yhHrC91NneaJ64XCE2jwxnMCv8bfxQbwhkWMG';
 export const RECIPIENT4 = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY';
 export const RECIPIENT5 = '5Ccmxb84eREZmtSkrLJSYp6QxJwNvmNbrfBm4p5B5VnKrB8z';
 export const RECIPIENT6 = '5DNsfcAFhDMXesUwwXdBqfqPe9AHsZ5mWEnmoKq2sPMDg9re';
+export const RECIPIENT7 = '5HWWpa7SnP81UdxKGD5neyqMbjRdi324txAFZ2z4LgcBpC21';
+export const RECIPIENT8 = '5G8uJUCZMhihBdBMooxBE1pWhmvvyr2nWvaJNUKb6dNiuEjS';
+
 
 
 
@@ -67,7 +72,27 @@ export async function getBalance(
   api: Api<KnownChainId>,
   address: string
 ) {
+  console.log("API get balance:", api);
   return await api.query.System.Account.getValue(address);
+}
+
+/**
+ * Helper function to check if an API is ready before using it
+ * @param api - The API instance to check
+ * @param timeoutMs - Optional timeout in milliseconds (default: 60000)
+ * @returns Promise that resolves to true if ready, false otherwise
+ */
+export async function checkApiReady(
+  api: Api<KnownChainId | ChainIdAssetHub>,
+  timeoutMs: number = 60000
+): Promise<boolean> {
+  const ready = await isApiReady(api, timeoutMs);
+  if (ready) {
+    console.log(`API for chain ${api.chainId} is ready!`);
+  } else {
+    console.log(`API for chain ${api.chainId} not ready or timeout`);
+  }
+  return ready;
 }
 
 
@@ -81,6 +106,16 @@ export interface PoolMember {
 
 export const getBondedAmountByMember = async (api: Api<ChainIdAssetHub>, address: string): Promise<bigint> => {
   const poolMember = await api.query.NominationPools.PoolMembers.getValue(address);
-  return poolMember.points
+  if (poolMember) {
+    return poolMember.points
+  }
+  else {
+    return 0n
+  }
+
 }
+
+
+
+
 

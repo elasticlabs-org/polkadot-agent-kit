@@ -1,3 +1,4 @@
+export * from "./assets"
 export * from "./dryRun"
 export * from "./format"
 export * from "./isValidAddress"

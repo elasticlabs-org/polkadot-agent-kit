@@ -1,5 +1,5 @@
-import { getAssetDecimals, getAssetMultiLocation } from "@paraspell/assets"
-import type { TCurrency, TMultiLocation, TNodeDotKsmWithRelayChains } from "@paraspell/sdk"
+import { getAssetDecimals } from "@paraspell/assets"
+import type { TCurrency, TLocation, TNodeDotKsmWithRelayChains } from "@paraspell/sdk"
 import type {
   RouterBuilderCore,
   TBuildTransactionsOptions,
@@ -11,6 +11,8 @@ import { RouterBuilder } from "@paraspell/xcm-router"
 import { parseUnits } from "@polkadot-agent-kit/common"
 import type { PolkadotSigner } from "polkadot-api/signer"
 
+import type { AssetInfo } from "../utils/assets"
+import { getAllAssetsBySymbol } from "../utils/assets"
 import { getPairSupported } from "../utils/defi"
 
 // Constants
@@ -26,6 +28,82 @@ export interface SwapTokenArgs {
   sender?: string
   receiver?: string
   dex?: string
+}
+
+function selectBestAsset(assets: AssetInfo[], symbol: string, chain: string): AssetInfo {
+  if (!assets || assets.length === 0) {
+    throw new Error(`No assets provided for selection of ${symbol} on ${chain}`)
+  }
+
+  let candidates = assets.filter(a => a.isFeeAsset === true)
+  if (candidates.length === 0) {
+    candidates = assets
+  }
+
+  candidates.sort((a, b) => {
+    const parentsA =
+      typeof a.location?.parents === "number" ? a.location.parents : Number.MAX_SAFE_INTEGER
+    const parentsB =
+      typeof b.location?.parents === "number" ? b.location.parents : Number.MAX_SAFE_INTEGER
+    return parentsA - parentsB
+  })
+
+  const withAssetId = candidates.filter(a => a.assetId !== undefined)
+  if (withAssetId.length > 0) {
+    candidates = withAssetId
+  }
+
+  // Validate we have a result
+  if (candidates.length === 0) {
+    const assetDetails = assets
+      .map(
+        (a, i) =>
+          `  ${i + 1}. assetId: ${a.assetId || "undefined"}, alias: ${a.alias || "N/A"}, ` +
+          `parents: ${a.location?.parents ?? "N/A"}, isFeeAsset: ${a.isFeeAsset || false}`
+      )
+      .join("\n")
+
+    throw new Error(
+      `Failed to select asset for symbol ${symbol} on ${chain}.\n\n` +
+        `Available assets:\n${assetDetails}\n\n` +
+        `Selection criteria: fee assets → lowest parents → has assetId`
+    )
+  }
+
+  // Return the first (best) asset
+  return candidates[0]
+}
+
+function getAssetlocationWithSelection(
+  chain: TNodeDotKsmWithRelayChains,
+  symbol: string
+): TLocation {
+  // Get all assets with this symbol
+  const assets = getAllAssetsBySymbol(chain, symbol)
+
+  // Handle no assets found
+  if (!assets || assets.length === 0) {
+    throw new Error(`No asset found for symbol ${symbol} on ${chain}`)
+  }
+
+  // Handle single asset - return directly
+  if (assets.length === 1) {
+    if (!assets[0].location) {
+      throw new Error(`Asset ${symbol} on ${chain} does not have a location`)
+    }
+    return assets[0].location
+  }
+
+  // Handle multiple assets - apply selection strategy
+  const selectedAsset = selectBestAsset(assets, symbol, chain)
+
+  if (!selectedAsset.location) {
+    throw new Error(
+      `Selected asset ${symbol} (${selectedAsset.alias || selectedAsset.assetId}) on ${chain} does not have a location`
+    )
+  }
+
+  return selectedAsset.location
 }
 
 /**
@@ -85,29 +163,19 @@ async function executeCrossChainSwap(
   args: SwapTokenArgs,
   signer: PolkadotSigner
 ): Promise<TRouterPlan> {
-  const { multilocationFrom, multilocationTo } = getCrossChainMultilocations(args)
-  if (!multilocationFrom || !multilocationTo) {
-    throw new Error("Failed to get multilocations for cross-chain swap")
+  const { locationFrom, locationTo } = getCrossChainlocations(args)
+  if (!locationFrom || !locationTo) {
+    throw new Error("Failed to get locations for cross-chain swap")
   }
   const formattedAmount = formatCrossChainAmount(args)
 
   // Validate fees before proceeding
   await validateSwapFees({
-    builder: createCrossChainRouterBuilder(
-      args,
-      multilocationFrom,
-      multilocationTo,
-      formattedAmount
-    ),
+    builder: createCrossChainRouterBuilder(args, locationFrom, locationTo, formattedAmount),
     swapType: "cross-chain"
   })
 
-  return await createCrossChainRouterBuilder(
-    args,
-    multilocationFrom,
-    multilocationTo,
-    formattedAmount
-  )
+  return await createCrossChainRouterBuilder(args, locationFrom, locationTo, formattedAmount)
     .signer(signer)
     .buildTransactions()
 }
@@ -146,18 +214,19 @@ async function executeDexSwap(args: SwapTokenArgs, signer: PolkadotSigner): Prom
 }
 
 /**
- * Gets multilocations for cross-chain currencies
+ * Gets locations for cross-chain currencies
  */
-function getCrossChainMultilocations(args: SwapTokenArgs) {
-  const multilocationFrom = getAssetMultiLocation(args.from as TNodeDotKsmWithRelayChains, {
-    symbol: args.currencyFrom
-  })
+function getCrossChainlocations(args: SwapTokenArgs) {
+  const locationFrom = getAssetlocationWithSelection(
+    args.from as TNodeDotKsmWithRelayChains,
+    args.currencyFrom
+  )
+  const locationTo = getAssetlocationWithSelection(
+    args.to as TNodeDotKsmWithRelayChains,
+    args.currencyTo
+  )
 
-  const multilocationTo = getAssetMultiLocation(args.to as TNodeDotKsmWithRelayChains, {
-    symbol: args.currencyTo
-  })
-
-  return { multilocationFrom, multilocationTo }
+  return { locationFrom, locationTo }
 }
 
 /**
@@ -195,16 +264,16 @@ function validateAndGetDexPair(args: SwapTokenArgs) {
  */
 function createCrossChainRouterBuilder(
   args: SwapTokenArgs,
-  multilocationFrom: TMultiLocation,
-  multilocationTo: TMultiLocation,
+  locationFrom: TLocation,
+  locationTo: TLocation,
   formattedAmount: string
 ) {
   return RouterBuilder()
     .from(args.from as TNodeDotKsmWithRelayChains)
     .to(args.to as TNodeDotKsmWithRelayChains)
     .exchange(HYDRATION_DEX)
-    .currencyFrom({ multilocation: multilocationFrom })
-    .currencyTo({ multilocation: multilocationTo })
+    .currencyFrom({ location: locationFrom })
+    .currencyTo({ location: locationTo })
     .amount(BigInt(formattedAmount).toString())
     .slippagePct(DEFAULT_SLIPPAGE_PCT)
     .senderAddress(args.sender || "")
