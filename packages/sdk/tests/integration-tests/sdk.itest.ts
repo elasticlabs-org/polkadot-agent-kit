@@ -201,12 +201,12 @@ describe('PolkadotAgentKit Integration with OllamaAgent for XCM Transfer', () =>
 
       await sleep(3 * 60 * 1000); // 3 minutes
     const balanceRecipientAfter = await getBalance(agentKit.getApi(destChainId), recipient);
-    expect(balanceRecipientAfter.data.free).toBeLessThanOrEqual(balanceRecipientBefore.data.free + amountParsed);
+    expect(balanceRecipientAfter.data.free).toBeLessThan(balanceRecipientBefore.data.free + amountParsed);
 
     const balanceAgentAfter = await getBalance(agentKit.getApi(sourceChainId), agentKit.getCurrentAddress());
     const feeXCMAfter = await estimateXcmFee(expectedSourceChain, agentKit.getCurrentAddress(), expectedDestChain, recipient, amountParsed.toString());
     console.log("XCM Fee After:", feeXCMAfter.fee);
-    expect(balanceAgentAfter.data.free).toBeLessThanOrEqual(balanceAgentBefore.data.free - amountParsed - feeXCMAfter.fee);
+    expect(balanceAgentAfter.data.free).toBeLessThan(balanceAgentBefore.data.free - amountParsed - feeXCMAfter.fee);
   };
 
   describe('1. Relay Chain to Parachain Transfers', () => {
@@ -346,55 +346,10 @@ describe('PolkadotAgentKit Integration with LLM Agent staking nomination pool to
     }
   }, 3500000);
 
-    
-    const result = await agent.ask(userQuery);
-    console.log('Join Pool Query Result:', result);
-
-    // Check that we have intermediate steps
-    expect(result.intermediateSteps).toBeDefined();
-    expect(result.intermediateSteps?.length).toBeGreaterThan(0);
-
-    // Find the join_pool tool call
-    const joinPoolCall = result.intermediateSteps?.find((step: any) =>
-      step.action?.tool === 'join_pool'
-    );
-
-    expect(joinPoolCall).toBeDefined();
-    expect(joinPoolCall.action.toolInput).toMatchObject({
-      amount: '1',
-      chain: 'paseo_asset_hub'
-    });
-
-    // Check for either successful join or account already belongs to pool error
-    const observationStep = result.intermediateSteps?.find((step: any) =>
-      step.observation && (
-        step.observation.includes('Successfully joined pool') ||
-        step.observation.includes('NominationPools.AccountBelongsToOtherPool')
-      )
-    );
-
-    expect(observationStep).toBeDefined();
-    // Wait for transaction to be processed
-    await sleep(30000);
-        
-    // Check if it's a successful join or an error
-    if (observationStep.observation.includes('Successfully joined pool')) {
-      expect(observationStep.observation).toContain('Successfully joined pool');
-      console.log('Successfully joined nomination pool');
-
-      const bondedAmountAfter = await getBondedAmountByMember(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress());
-      
-      const expectedAmount = parseUnits("1", getDecimalsByChainId('paseo_asset_hub'));
-      expect(bondedAmountAfter).toEqual(bondedAmountBefore + expectedAmount);
-
-    } else if (observationStep.observation.includes('NominationPools.AccountBelongsToOtherPool')) {
-      expect(observationStep.observation).toContain('NominationPools.AccountBelongsToOtherPool');
-      console.log('Account already belongs to a nomination pool - this is expected behavior');
-    } else {
-      throw new Error('Unexpected observation: ' + observationStep.observation);
-    }
-    
-  }, 3500000);
+  afterEach(async () => {
+    // Add delay between tests to avoid stale transaction errors
+    await sleep(120000); // 120 seconds delay (2 minutes)
+  });
 
 
   it('should call join_pool tool', async () => {
@@ -604,11 +559,4 @@ describe('PolkadotAgentKit Integration with LLM Agent staking nomination pool to
     });
   }, 3500000);
 
-    expect(claimRewardsCall).toBeDefined();
-    expect(claimRewardsCall.action.toolInput).toMatchObject({
-      chain: 'paseo_asset_hub',
-    });
-  }, 3500000);
-
 })
-
