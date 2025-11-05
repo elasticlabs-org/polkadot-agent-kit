@@ -101,6 +101,7 @@ When checking native token balance, you must ask for and provide:
 | West               | west                           |
 | Westend People     | west_people                    |
 | West People        | west_people                    |
+| Paseo Asset Hub    | paseo_asset_hub                |
 
 --- NATIVE TRANSFER RULES ---
 When transferring native tokens on a single chain, you must ask for and provide:

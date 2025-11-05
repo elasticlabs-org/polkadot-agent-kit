@@ -8,12 +8,13 @@ export async function estimateXcmFee(
   to: string,
   amount: string
 ) {
+
   const nativeSymbol = getNativeAssets(srcChain as TNodeDotKsmWithRelayChains)
   const fee = await Builder()
     .from(srcChain as TNodeDotKsmWithRelayChains)
     .senderAddress(from)
     .to(destChain as TDestination)
-    .currency({ symbol: nativeSymbol[0].symbol, amount })
+    .currency({ symbol: { type: 'Native', value: nativeSymbol[0].symbol }, amount} )
     .address(to)
     .getOriginXcmFee()
 
