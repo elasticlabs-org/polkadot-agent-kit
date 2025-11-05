@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, afterEach } from 'vitest';
 import { PolkadotAgentKit } from '../../src/api';
-import { RECIPIENT, sleep, getBalance, estimateTransactionFee, RECIPIENT2, RECIPIENT3, RECIPIENT4, RECIPIENT5, XCM_SYSTEM_PROMPT, RECIPIENT6, RECIPIENT0, getBondedAmountByMember, RECIPIENT7, RECIPIENT8 } from './utils';
+import { RECIPIENT, sleep, getBalance, estimateTransactionFee, RECIPIENT2, RECIPIENT3, RECIPIENT4, RECIPIENT5, XCM_SYSTEM_PROMPT, RECIPIENT6, RECIPIENT0, getBondedAmountByMember, RECIPIENT7, RECIPIENT8, getPendingRewards, getCurrentEra, getUnbondingByEra } from './utils';
 import { AgentTest } from './agents/agent';
 import { estimateXcmFee, transferNativeCall } from '@polkadot-agent-kit/core';
 import { parseUnits, getDecimalsByChainId } from '@polkadot-agent-kit/common';
@@ -154,7 +154,7 @@ describe('PolkadotAgentKit Integration with OllamaAgent for XCM Transfer', () =>
 
       agent = new AgentTest(agentKit, XCM_PROMPT);
       await agent.init();
-      
+
     } else {
       throw new Error('AGENT_PRIVATE_KEY is not set');
     }
@@ -355,13 +355,13 @@ describe('PolkadotAgentKit Integration with LLM Agent staking nomination pool to
   it('should call join_pool tool', async () => {
 
     await sleep(60000); // 60 seconds additional delay
-    
+
     const userQuery = 'join pool with 1 PAS on Paseo Asset Hub';
-    
+
     // Get bonded amount before the operation (only if we expect a successful join)
     const bondedAmountBefore = await getBondedAmountByMember(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress());
 
-    
+
     const result = await agent.ask(userQuery);
     console.log('Join Pool Query Result:', result);
 
@@ -391,14 +391,14 @@ describe('PolkadotAgentKit Integration with LLM Agent staking nomination pool to
     expect(observationStep).toBeDefined();
     // Wait for transaction to be processed
     await sleep(30000);
-        
+
     // Check if it's a successful join or an error
     if (observationStep.observation.includes('Successfully joined pool')) {
       expect(observationStep.observation).toContain('Successfully joined pool');
       console.log('Successfully joined nomination pool');
 
       const bondedAmountAfter = await getBondedAmountByMember(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress());
-      
+
       const expectedAmount = parseUnits("1", getDecimalsByChainId('paseo_asset_hub'));
       expect(bondedAmountAfter).toEqual(bondedAmountBefore + expectedAmount);
 
@@ -408,19 +408,19 @@ describe('PolkadotAgentKit Integration with LLM Agent staking nomination pool to
     } else {
       throw new Error('Unexpected observation: ' + observationStep.observation);
     }
-    
+
   }, 3500000);
 
   it('should call bond_extra tool with FreeBalance', async () => {
 
     await sleep(60000); // 60 seconds additional delay
-    
+
     const userQuery = 'bond extra 1 PAS on Paseo Asset Hub';
-    
+
     // Get bonded amount before the operation
     const bondedAmountBefore = await getBondedAmountByMember(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress());
     console.log('Bonded amount before:', bondedAmountBefore);
-    
+
     const result = await agent.ask(userQuery);
     console.log('Bond Extra Query Result:', result);
 
@@ -446,23 +446,29 @@ describe('PolkadotAgentKit Integration with LLM Agent staking nomination pool to
 
     expect(observationStep).toBeDefined();
     expect(observationStep.observation).toContain('Successfully bonded extra tokens (FreeBalance) on paseo_asset_hub');
-    
+
     // Wait for transaction to be processed
     await sleep(30000);
-    
+
     // Get bonded amount after the operation
     const bondedAmountAfter = await getBondedAmountByMember(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress());
     console.log('Bonded amount after:', bondedAmountAfter);
-    
+
     const expectedAmount = parseUnits("1", getDecimalsByChainId('paseo_asset_hub'));
     expect(bondedAmountAfter).toEqual(bondedAmountBefore + expectedAmount);
-    
+
   }, 3500000);
 
 
   it('should call bond_extra tool with Rewards', async () => {
     const userQuery = 'bond rewards on Paseo Asset Hub';
-    
+
+    const pendingReward = await getPendingRewards(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress());
+
+    // Get bonded amount before the operation
+    const bondedAmountBefore = await getBondedAmountByMember(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress());
+    console.log('Bonded amount before:', bondedAmountBefore);
+
     const result = await agent.ask(userQuery);
     console.log('Bond Extra Query Result:', result);
 
@@ -487,14 +493,30 @@ describe('PolkadotAgentKit Integration with LLM Agent staking nomination pool to
 
     expect(observationStep).toBeDefined();
     expect(observationStep.observation).toContain('Successfully bonded extra tokens (Rewards) on paseo_asset_hub');
-    
-    
+
+
+
+    // Wait for transaction to be processed
+    await sleep(10000);
+
+    // Get bonded amount after the operation
+    const bondedAmountAfter = await getBondedAmountByMember(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress());
+    console.log('Bonded amount after:', bondedAmountAfter);
+
+
+    expect(bondedAmountAfter).toEqual(bondedAmountBefore + pendingReward);
+
   }, 3500000);
 
 
   it('should call unbond tool', async () => {
+    const amountParsed = parseUnits("0.01", getDecimalsByChainId('paseo_asset_hub'));
     const userQuery = 'unbond 0.01 PAS on Paseo Asset Hub';
-    
+
+
+    const currentEra = await getCurrentEra(agentKit.getApi('paseo_asset_hub') as any);
+    const unbondingBefore = await getUnbondingByEra(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress(), currentEra);
+
     const result = await agent.ask(userQuery);
     console.log('Unbond Query Result:', result);
 
@@ -512,13 +534,16 @@ describe('PolkadotAgentKit Integration with LLM Agent staking nomination pool to
       amount: '0.01'
     });
 
-    
-    
+    await sleep(5000);
+
+    const unbondingAfter = await getUnbondingByEra(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress(), currentEra);
+
+    expect(unbondingAfter).toEqual(unbondingBefore + amountParsed);
+
   }, 3500000);
 
   it('should call withdraw unbond tool', async () => {
     const userQuery = 'withdraw unbonded on Paseo Asset Hub';
-    
     const result = await agent.ask(userQuery);
     console.log('Withdraw Unbonded Query Result:', result);
 
@@ -535,12 +560,15 @@ describe('PolkadotAgentKit Integration with LLM Agent staking nomination pool to
       chain: 'paseo_asset_hub',
       slashingSpans: "0"
     });
+
+
   }, 3500000);
 
 
   it('should call claim rewards  tool', async () => {
     const userQuery = 'claim rewards from pool on paseo_asset_hub';
-    
+
+
     const result = await agent.ask(userQuery);
     console.log('Claim Rewards Query Result:', result);
 
@@ -557,6 +585,11 @@ describe('PolkadotAgentKit Integration with LLM Agent staking nomination pool to
     expect(claimRewardsCall.action.toolInput).toMatchObject({
       chain: 'paseo_asset_hub',
     });
+
+    await sleep(5000);
+    const pendingRewardAfter = await getPendingRewards(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress());
+
+    expect(pendingRewardAfter).toEqual(0n);
   }, 3500000);
 
 })
