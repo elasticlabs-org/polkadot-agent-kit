@@ -37,7 +37,7 @@ export const xcmTransferNativeAsset = async (
       .from(srcChain as TNodeDotKsmWithRelayChains)
       .senderAddress(from)
       .to(destChain as TDestination)
-      .currency({ symbol: nativeSymbol[0].symbol, amount: parsedAmount })
+      .currency({ symbol: { type: "Native", value: nativeSymbol[0].symbol }, amount: parsedAmount })
       .address(to)
       .dryRun()
 
@@ -56,7 +56,10 @@ export const xcmTransferNativeAsset = async (
         .from(srcChain as TNodeDotKsmWithRelayChains)
         .senderAddress(from)
         .to(destChain as TDestination)
-        .currency({ symbol: nativeSymbol[0].symbol, amount: parsedAmount })
+        .currency({
+          symbol: { type: "Native", value: nativeSymbol[0].symbol },
+          amount: parsedAmount
+        })
         .address(to)
         .build()
 

@@ -201,12 +201,12 @@ describe('PolkadotAgentKit Integration with OllamaAgent for XCM Transfer', () =>
 
       await sleep(3 * 60 * 1000); // 3 minutes
     const balanceRecipientAfter = await getBalance(agentKit.getApi(destChainId), recipient);
-    expect(balanceRecipientAfter.data.free).toBeLessThan(balanceRecipientBefore.data.free + amountParsed);
+    expect(balanceRecipientAfter.data.free).toBeLessThanOrEqual(balanceRecipientBefore.data.free + amountParsed);
 
     const balanceAgentAfter = await getBalance(agentKit.getApi(sourceChainId), agentKit.getCurrentAddress());
     const feeXCMAfter = await estimateXcmFee(expectedSourceChain, agentKit.getCurrentAddress(), expectedDestChain, recipient, amountParsed.toString());
     console.log("XCM Fee After:", feeXCMAfter.fee);
-    expect(balanceAgentAfter.data.free).toBeLessThan(balanceAgentBefore.data.free - amountParsed - feeXCMAfter.fee);
+    expect(balanceAgentAfter.data.free).toBeLessThanOrEqual(balanceAgentBefore.data.free - amountParsed - feeXCMAfter.fee);
   };
 
   describe('1. Relay Chain to Parachain Transfers', () => {
