@@ -115,6 +115,31 @@ export const getBondedAmountByMember = async (api: Api<ChainIdAssetHub>, address
 
 }
 
+export async function getPendingRewards(api: Api<ChainIdAssetHub>, address: string): Promise<bigint> {
+  const pendingRewards = await api.apis.NominationPoolsApi.pending_rewards(address) as bigint;
+
+  return pendingRewards
+}
+
+export const getUnbondingByEra = async (api: Api<ChainIdAssetHub>, address: string, era: number): Promise<bigint> => {
+  const poolMember = await api.query.NominationPools.PoolMembers.getValue(address);
+  if (!poolMember) return 0n;
+  
+  const unbondingEras = poolMember.unbonding_eras;
+  const unbondingEra = unbondingEras.find((eraEntry) => eraEntry[0] === era);
+  
+  if (!unbondingEra) return 0n;
+  return unbondingEra[1];
+}
+
+export const getCurrentEra = async (api: Api<ChainIdAssetHub>) : Promise<number>  => {
+
+  const currentEra = await api.query.Staking.CurrentEra.getValue();
+
+  return currentEra + 28
+
+}
+
 
 
 
