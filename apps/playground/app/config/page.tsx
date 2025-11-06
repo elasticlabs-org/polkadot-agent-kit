@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { Settings, Key, Cpu } from "lucide-react"
+import { Settings, Key, Cpu, Loader2 } from "lucide-react"
 import Sidebar from "@/components/sidebar"
 import { ChainSelector } from "@/components/chain-selector"
 import { useAgentStore } from "@/stores/agent-store"
@@ -496,8 +496,17 @@ export default function ConfigPage() {
                   }
                   className="mt-6 sm:mt-8 px-6 sm:px-8 h-10 sm:h-12 text-sm sm:text-base font-medium modern-button-primary w-full sm:w-auto"
                 >
-                  <Settings className="w-5 h-5 mr-2" />
-                  {isInitializing ? "Connecting..." : "Connect Agent"}
+                  {isInitializing ? (
+                    <>
+                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                      Connecting...
+                    </>
+                  ) : (
+                    <>
+                      <Settings className="w-5 h-5 mr-2" />
+                      Connect Agent
+                    </>
+                  )}
                 </Button>
               </Card>
             </div>
