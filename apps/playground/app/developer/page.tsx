@@ -6,10 +6,8 @@ import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Play, Zap, Terminal } from "lucide-react"
+import { Play, Zap, Terminal, Loader2 } from "lucide-react"
 import {
   Collapsible,
   CollapsibleContent,
@@ -22,12 +20,6 @@ type ToolLike = { name?: string; description?: string; schema?: any; schemaJson?
 type EndpointKey = "assets" | "swap" | "bifrost" | "staking"
 type ToolsMap = Record<EndpointKey, Record<string, ToolLike>>
 
-interface AgentConfigLocal {
-  privateKey: string
-  keyType: "Sr25519" | "Ed25519"
-  chains: string[]
-  isConfigured?: boolean
-}
 
 interface ToolCall {
   id: string
@@ -44,10 +36,10 @@ export default function DeveloperPage() {
 
   const [selectedEndpoint, setSelectedEndpoint] = useState<EndpointKey | "">("")
   const [selectedMethod, setSelectedMethod] = useState("")
-  const [toolParams, setToolParams] = useState("{}")
   const [toolCalls, setToolCalls] = useState<ToolCall[]>([])
   const [formData, setFormData] = useState<Record<string, any>>({})
   const [parsedSchema, setParsedSchema] = useState<any>(null)
+  const [isExecuting, setIsExecuting] = useState(false)
 
   // Restore agent session on page load
   useAgentRestore()
@@ -195,7 +187,8 @@ export default function DeveloperPage() {
   }
 
   const runTool = async (params: Record<string, any>) => {
-    if (!selectedTool) return
+    if (!selectedTool || isExecuting) return
+    setIsExecuting(true)
     const id = String(Date.now())
     setToolCalls(prev => [...prev, { id, tool: selectedEndpoint || "", method: selectedMethod, params: JSON.stringify(params, null, 2), status: "pending" }])
     try {
@@ -205,6 +198,8 @@ export default function DeveloperPage() {
       setToolCalls(prev => prev.map(c => c.id === id ? { ...c, status: "success", response: JSON.stringify(res, null, 2) } : c))
     } catch (err: any) {
       setToolCalls(prev => prev.map(c => c.id === id ? { ...c, status: "error", response: String(err?.message || err) } : c))
+    } finally {
+      setIsExecuting(false)
     }
   }
 
@@ -297,11 +292,20 @@ export default function DeveloperPage() {
                   <div className="pt-4 border-t border-white/10">
                     <Button
                       onClick={() => runTool(formData)}
-                      disabled={!isInitialized || !selectedEndpoint || !selectedMethod}
+                      disabled={!isInitialized || !selectedEndpoint || !selectedMethod || isExecuting}
                       className="w-full modern-button-primary"
                     >
-                      <Play className="w-4 h-4 mr-2" />
-                      Execute API Call
+                      {isExecuting ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Executing...
+                        </>
+                      ) : (
+                        <>
+                          <Play className="w-4 h-4 mr-2" />
+                          Execute API Call
+                        </>
+                      )}
                     </Button>
                   </div>
                 </div>

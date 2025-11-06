@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import { Bot } from "lucide-react"
 import Sidebar from "@/components/sidebar"
 import { useAgentStore, useAgentRestore } from "@/stores/agent-store"
@@ -15,15 +14,6 @@ interface ChatMessage {
   timestamp: Date
 }
 
-interface AgentConfig {
-  llmProvider: string
-  llmModel: string
-  apiKey: string
-  privateKey: string
-  keyType: string
-  chains: string[]
-  isConfigured: boolean
-}
 
 export default function ChatPage() {
   const { agentKit, isInitialized, config } = useAgentStore()
