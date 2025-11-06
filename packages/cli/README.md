@@ -1,6 +1,17 @@
-# @polkadot-agent-kit/cli
+<div align="center">
+  <h1 align="center">@polkadot-agent-kit/cli</h1>
+  <h4 align="center">A powerful command-line interface for managing AI agents that interact with the Polkadot ecosystem.</h4>
+  <p align="center">
+    <a href="https://npmjs.com/package/@polkadot-agent-kit/cli">
+      <img alt="version" src="https://img.shields.io/npm/v/@polkadot-agent-kit/cli?style=flat-square" />
+    </a>
+    <a href="https://npmjs.com/package/@polkadot-agent-kit/sdk">
+      <img alt="downloads" src="https://img.shields.io/npm/dm/@polkadot-agent-kit/cli?style=flat-square" />
+    </a>
+  </p>
+</div>
 
-A powerful command-line interface for managing AI agents that interact with the Polkadot ecosystem.
+
 
 ## Installation
 

@@ -5,9 +5,9 @@ import { registerIdentity, submitTxWithPolkadotSigner } from "@polkadot-agent-ki
 import type { PolkadotSigner } from "polkadot-api"
 import type z from "zod"
 
-import type { registerIdentitySchema, RegisterIdentityToolResult } from "../types"
-import { toolConfigRegisterIdentity, ToolNames } from "../types"
-import { executeTool } from "../utils"
+import type { registerIdentitySchema, RegisterIdentityToolResult } from "../../types"
+import { toolConfigRegisterIdentity, ToolNames } from "../../types"
+import { executeTool } from "../../utils"
 
 export const registerIdentityTool = (polkadotApi: PolkadotApi, signer: PolkadotSigner) => {
   return tool(

@@ -1,6 +1,15 @@
-# Polkadot Agent Kit SDK
-
-A TypeScript SDK for building AI agents that interact with the Polkadot ecosystem.
+<div align="center">
+  <h1 align="center">@polkadot-agent-kit/sdk</h1>
+  <h4 align="center">A TypeScript SDK for building AI agents that interact with the Polkadot ecosystem.</h4>
+  <p align="center">
+    <a href="https://npmjs.com/package/@polkadot-agent-kit/sdk">
+      <img alt="version" src="https://img.shields.io/npm/v/@polkadot-agent-kit/sdk?style=flat-square" />
+    </a>
+    <a href="https://npmjs.com/package/@polkadot-agent-kit/sdk">
+      <img alt="downloads" src="https://img.shields.io/npm/dm/@polkadot-agent-kit/sdk?style=flat-square" />
+    </a>
+  </p>
+</div>
 
 ## Installation
 
@@ -11,9 +20,8 @@ npm install @polkadot-agent-kit/sdk
 ## Features
 
 - **Multi-chain Support**: Connect to multiple Polkadot ecosystem chains
-- **Dynamic Chain Loading**: Dynamically initialize new chains at runtime
-- **Native Asset Operations**: Check balances and transfer tokens  
-- **Cross-chain Transfers**: XCM transfers between parachains
+- **Assets Operations**: Check balances and transfer tokens  
+- **Cross-chain Transfers**: XCM transfers between parachains and relaychains 
 - **LangChain Integration**: Ready-to-use tools for AI agents
 
 ## Quick Start
@@ -37,136 +45,37 @@ const tools = getLangChainTools(agent)
 
 ## Supported Chains
 
-- **Polkadot** (`polkadot`) - Polkadot relay chain
-- **Westend** (`west`) - Westend testnet relay chain 
-- **Kusama** (`kusama`) - Kusama relay chain 
-- **Paseo** (`paseo`) - Paseo testnet relay chain 
-- **Polkadot Asset Hub** (`polkadot_asset_hub`) - Polkadot Asset Hub parachain
-- **Westend Asset Hub** (`west_asset_hub`) - Westend Asset Hub parachain
-- **Kusama Asset Hub** (`kusama_asset_hub`) - Kusama Asset Hub parachain
-- **Paseo Asset Hub** (`paseo_asset_hub`) - Paseo Asset Hub parachain
-- **HydraDX** (`hydra`) - HydraDX parachain
-- **More chains supported**
+### Relay Chains
 
-## API Reference
+| Chain Name | Chain ID | Network |
+|------------|----------|---------|
+| Polkadot | `polkadot` | Mainnet |
+| Kusama | `kusama` | Mainnet |
+| Westend | `west` | Testnet |
+| Paseo | `paseo` | Testnet |
 
-### Core Methods
+### Parachains
 
-- `initializeApi()` - Initialize APIs for configured chains
-- `disconnect()` - Disconnect from all chains
+| Chain Name | Chain ID | Network |
+|------------|----------|---------|
+| Polkadot Asset Hub | `polkadot_asset_hub` | Mainnet |
+| Kusama Asset Hub | `kusama_asset_hub` | Mainnet |
+| HydraDX | `hydra` | Mainnet |
+| Westend Asset Hub | `west_asset_hub` | Testnet |
+| Paseo Asset Hub | `paseo_asset_hub` | Testnet |
+| Bifrost | `bifrost_polkadot` | Mainnet |
+> **Note:** More chains are supported. See the [chain configuration](packages/common/src/chains/supportedChains.ts) for the complete list.
 
 
 ### LangChain Tools
 
-The `getLangChainTools()` function provides 11 ready-to-use LangChain tools for AI agents:
+The `getLangChainTools()` function provides multiple ready-to-use LangChain tools for AI agents
 
-#### Balance & Transfer Tools
-- **`check_balance`** - Check wallet balance on specific chains
-  ```typescript
-  // Example: "Check my balance on Polkadot"
-  { chain: "polkadot" }
-  ```
 
-- **`transfer_native`** - Transfer native tokens to an address
-  ```typescript
-  // Example: "Transfer 5 DOT to Alice"
-  { 
-    amount: "5", 
-    to: "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY", 
-    chain: "polkadot" 
-  }
-  ```
+## License
 
-- **`xcm_transfer_native_asset`** - Cross-chain transfers via XCM
-  ```typescript
-  // Example: "Transfer 10 DOT from Polkadot to Asset Hub"
-  { 
-    amount: "10",
-    to: "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
-    sourceChain: "Polkadot",
-    destChain: "AssetHubPolkadot"
-  }
-  ```
+Published under [MIT License](https://github.com/elasticlabs-org/polkadot-agent-kit/blob/main/LICENSE).
 
-#### DeFi Tools
-- **`swap_tokens`** - Token swaps using Hydration DEX
-  ```typescript
-  // Cross-chain swap
-  { 
-    from: "polkadot",
-    to: "hydra",
-    currencyFrom: "DOT",
-    currencyTo: "HDX",
-    amount: "10000000000"
-  }
-  
-  // DEX-specific swap
-  { 
-    currencyFrom: "HDX",
-    currencyTo: "USDT",
-    amount: "5000000000",
-    dex: "HydrationDex"
-  }
-  ```
+---
 
-#### Staking Tools
-- **`join_pool`** - Join a nomination pool for staking
-  ```typescript
-  // Example: "Join a nomination pool with 1.5 DOT"
-  { amount: "1.5", chain: "polkadot" }
-  ```
-
-- **`bond_extra`** - Bond additional tokens to a nomination pool
-  ```typescript
-  // Bond from free balance
-  { type: "FreeBalance", amount: "1.5", chain: "polkadot" }
-  
-  // Re-stake rewards
-  { type: "Rewards", chain: "polkadot" }
-  ```
-
-- **`unbond`** - Unbond tokens from a nomination pool
-  ```typescript
-  // Example: "Unbond 1 DOT from my nomination pool"
-  { amount: "1", chain: "polkadot" }
-  ```
-
-- **`withdraw_unbonded`** - Withdraw unbonded tokens from a nomination pool
-  ```typescript
-  // Example: "Withdraw my unbonded tokens"
-  { slashingSpans: "0", chain: "polkadot" }
-  ```
-
-- **`claim_rewards`** - Claim rewards from a nomination pool
-  ```typescript
-  // Example: "Claim my staking rewards"
-  { chain: "polkadot" }
-  ```
-
-#### Identity Tools
-- **`register_identity`** - Register an identity on People Chain
-  ```typescript
-  // Example: "Register my identity with display name 'Alice'"
-  { 
-    display: "Alice",
-    email: "alice@example.com",
-    twitter: "@alice_crypto"
-  }
-  ```
-
-#### System Tools
-- **`initialize_chain_api`** - Dynamically initialize chain APIs
-  ```typescript
-  // Example: "Initialize Kusama chain API"
-  { chainId: "kusama" }
-  ```
-
-## Configuration
-
-```typescript
-interface PolkadotAgentKitConfig {
-  privateKey?: string
-  chains?: KnownChainId[] // Optional: restrict to specific chains
-}
-```
-
+Made with 💛 by [Elastic Labs](https://elasticlabs.org/)
