@@ -1,6 +1,15 @@
-# Polkadot Agent Kit SDK
-
-A TypeScript SDK for building AI agents that interact with the Polkadot ecosystem.
+<div align="center">
+  <h1 align="center">@polkadot-agent-kit/sdk</h1>
+  <h4 align="center">A TypeScript SDK for building AI agents that interact with the Polkadot ecosystem.</h4>
+  <p align="center">
+    <a href="https://npmjs.com/package/@polkadot-agent-kit/sdk">
+      <img alt="version" src="https://img.shields.io/npm/v/@polkadot-agent-kit/sdk?style=flat-square" />
+    </a>
+    <a href="https://npmjs.com/package/@polkadot-agent-kit/sdk">
+      <img alt="downloads" src="https://img.shields.io/npm/dm/@polkadot-agent-kit/sdk?style=flat-square" />
+    </a>
+  </p>
+</div>
 
 ## Installation
 
@@ -63,3 +72,10 @@ const tools = getLangChainTools(agent)
 The `getLangChainTools()` function provides multiple ready-to-use LangChain tools for AI agents
 
 
+## License
+
+Published under [MIT License](https://github.com/elasticlabs-org/polkadot-agent-kit/blob/main/LICENSE).
+
+---
+
+Made with 💛 by [Elastic Labs](https://elasticlabs.org/)

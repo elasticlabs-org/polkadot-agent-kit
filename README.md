@@ -29,6 +29,12 @@ Explore real-world implementations:
 - **[Telegram Bot Example](examples/telegram-bot/)**
 - **[Polkadot Agent Kit MCP Server Example](examples/mcp-server/)**
 
+
+## Application 
+
+- **[Polkadot Agent Kit Developer Portal ](apps/playground)**
+
+
 ## 🚀 How to Run the Monorepo
 
 ### Prerequisites
