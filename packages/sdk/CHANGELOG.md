@@ -1,13 +1,27 @@
 # @polkadot-agent-kit/sdk
 
+## 2.1.3
+
+### Patch Changes
+
+- Release version 2.1.3
+- Add gemini model choice to integration tests 
+- add assertions for integration tests , make sure logic work 
+- add vdot and swap mainnet integration tests 
+
+- Updated dependencies
+  - @polkadot-agent-kit/common@2.1.3
+  - @polkadot-agent-kit/core@2.1.3
+  - @polkadot-agent-kit/llm@2.1.3
+
 ## 2.1.2
 
 ### Patch Changes
 
 - refactor code
 - Update integration tests clear
-- Divide 2 integration tests for testnet and mainnet 
-- Add nomination pools integration tests 
+- Divide 2 integration tests for testnet and mainnet
+- Add nomination pools integration tests
 
 - Updated dependencies
   - @polkadot-agent-kit/common@2.1.2

@@ -1,6 +1,6 @@
 {
   "name": "@polkadot-agent-kit/core",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "Core Package for Polkadot Agent Kit",
   "repository": {
     "type": "git",
@@ -40,7 +40,7 @@
   "dependencies": {
     "@paraspell/sdk": "11.12.9",
     "@paraspell/xcm-router": "11.12.9",
-    "@paraspell/assets":"11.12.9",
+    "@paraspell/assets": "11.12.9",
     "@polkadot-agent-kit/common": "workspace:*",
     "@subsquid/ss58": "^2.0.2",
     "polkadot-api": "^1.14.1"
