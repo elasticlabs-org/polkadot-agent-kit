@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { Settings, Key, Cpu, Loader2 } from "lucide-react"
+import { Settings, Key, Cpu, Loader2, Check, ArrowLeft, ArrowRight, Link } from "lucide-react"
 import Sidebar from "@/components/sidebar"
 import { ChainSelector } from "@/components/chain-selector"
 import { useAgentStore } from "@/stores/agent-store"
@@ -44,6 +44,7 @@ export default function ConfigPage() {
     setInitializing 
   } = useAgentStore()
   
+  const [currentStep, setCurrentStep] = useState(1)
   const [agentConfig, setAgentConfig] = useState<AgentConfig>({
     llmProvider: "",
     llmModel: "",
@@ -54,6 +55,24 @@ export default function ConfigPage() {
     isConfigured: false,
   })
   const [llmConnected, setLlmConnected] = useState<"idle" | "ok" | "error">("idle")
+
+  const nextStep = () => {
+    if (currentStep < 3) {
+      setCurrentStep(currentStep + 1)
+    }
+  }
+
+  const prevStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1)
+    }
+  }
+
+  const goToStep = (step: number) => {
+    if (step >= 1 && step <= 3) {
+      setCurrentStep(step)
+    }
+  }
 
   // Function to validate OpenAI API key and check for gpt-4o-mini availability
   const validateOpenAIKey = async (apiKey: string): Promise<{ isValid: boolean; error?: string }> => {
@@ -162,7 +181,103 @@ export default function ConfigPage() {
     }
   }, [])
 
-  const handleConfigureAgent = async () => {
+  const validateStep1 = async (): Promise<boolean> => {
+    if (!agentConfig.llmProvider) {
+      alert("Please select an LLM provider")
+      return false
+    }
+    if (!agentConfig.llmModel) {
+      alert("Please select a model")
+      return false
+    }
+    const needsApiKey = agentConfig.llmProvider === "openai" || agentConfig.llmProvider === "gemini"
+    if (needsApiKey) {
+      const apiKey = agentConfig.apiKey || 
+        (agentConfig.llmProvider === "openai" ? process.env.NEXT_PUBLIC_OPENAI_KEY : process.env.NEXT_PUBLIC_GOOGLE_API_KEY)
+      if (!apiKey) {
+        const envVar = agentConfig.llmProvider === "openai" ? "NEXT_PUBLIC_OPENAI_KEY" : "NEXT_PUBLIC_GOOGLE_API_KEY"
+        alert(`API key is required for ${agentConfig.llmProvider}. Provide it or set ${envVar}.`)
+        return false
+      }
+    }
+    return true
+  }
+
+  const validateStep2 = (): boolean => {
+    if (!agentConfig.privateKey) {
+      alert("Private key is required")
+      return false
+    }
+    if (!agentConfig.keyType) {
+      alert("Please select a key type")
+      return false
+    }
+    if (!agentConfig.chains || agentConfig.chains.length === 0) {
+      alert("Please select at least one chain")
+      return false
+    }
+    return true
+  }
+
+  const handleStep1Continue = async () => {
+    const isValid = await validateStep1()
+    if (isValid) {
+      // Persist LLM config
+      const needsApiKey = agentConfig.llmProvider === "openai" || agentConfig.llmProvider === "gemini"
+      const envApiKey = agentConfig.llmProvider === "openai"
+        ? process.env.NEXT_PUBLIC_OPENAI_KEY
+        : agentConfig.llmProvider === "gemini"
+          ? process.env.NEXT_PUBLIC_GOOGLE_API_KEY
+          : null
+      const apiKeyToPersist = agentConfig.llmProvider === "ollama" ? null : (agentConfig.apiKey || envApiKey || null)
+      localStorage.setItem("llm_config", JSON.stringify({
+        provider: agentConfig.llmProvider,
+        model: agentConfig.llmModel,
+        apiKey: apiKeyToPersist
+      }))
+
+      // Validate LLM connection
+      setLlmConnected("idle")
+      if (agentConfig.llmProvider === "ollama") {
+        const controller = new AbortController()
+        const timeout = setTimeout(() => controller.abort(), 2500)
+        try {
+          const res = await fetch("http://127.0.0.1:11434/api/tags", { signal: controller.signal })
+          setLlmConnected(res.ok ? "ok" : "error")
+        } catch (_) {
+          setLlmConnected("error")
+        } finally {
+          clearTimeout(timeout)
+        }
+      } else if (agentConfig.llmProvider === "openai") {
+        try {
+          const validation = await validateOpenAIKey(agentConfig.apiKey || envApiKey || "")
+          setLlmConnected(validation.isValid ? "ok" : "error")
+          if (!validation.isValid) {
+            console.warn("OpenAI validation failed:", validation.error)
+            alert(`OpenAI validation failed: ${validation.error}`)
+            return
+          }
+        } catch (e: any) {
+          console.warn("OpenAI validation error:", e?.message || e)
+          setLlmConnected("error")
+          return
+        }
+      } else if (agentConfig.llmProvider === "gemini") {
+        setLlmConnected((agentConfig.apiKey || envApiKey) ? "ok" : "error")
+      }
+
+      nextStep()
+    }
+  }
+
+  const handleStep2Continue = () => {
+    if (validateStep2()) {
+      nextStep()
+    }
+  }
+
+  const handleConnect = async () => {
     const needsApiKey = agentConfig.llmProvider === "openai" || agentConfig.llmProvider === "gemini"
 
     // Determine what changed vs persisted values
@@ -195,39 +310,6 @@ export default function ConfigPage() {
       )
     })()
 
-    // Validate only the parts that changed
-    if (llmChanged) {
-      if (!agentConfig.llmProvider) {
-        alert("Please select an LLM provider")
-        return
-      }
-      if (needsApiKey) {
-        const apiKey = agentConfig.apiKey || 
-          (agentConfig.llmProvider === "openai" ? process.env.NEXT_PUBLIC_OPENAI_KEY : process.env.NEXT_PUBLIC_GOOGLE_API_KEY)
-        if (!apiKey) {
-          const envVar = agentConfig.llmProvider === "openai" ? "NEXT_PUBLIC_OPENAI_KEY" : "NEXT_PUBLIC_GOOGLE_API_KEY"
-          alert(`API key is required for ${agentConfig.llmProvider}. Provide it or set ${envVar}.`)
-          return
-        }
-        agentConfig.apiKey = apiKey
-      }
-    }
- 
-    if (polkadotChanged) {
-      if (!agentConfig.privateKey) {
-        alert("Private key is required")
-        return
-      }
-      if (!agentConfig.keyType) {
-        alert("Please select a key type")
-        return
-      }
-      if (!agentConfig.chains || agentConfig.chains.length === 0) {
-        alert("Please select at least one chain")
-        return
-      }
-    }
-
     setInitializing(true)
     setLlmConnected("idle")
 
@@ -259,7 +341,7 @@ export default function ConfigPage() {
           }
         } else if (agentConfig.llmProvider === "openai") {
           try {
-            const validation = await validateOpenAIKey(agentConfig.apiKey)
+            const validation = await validateOpenAIKey(agentConfig.apiKey || envApiKey || "")
             setLlmConnected(validation.isValid ? "ok" : "error")
             if (!validation.isValid) {
               console.warn("OpenAI validation failed:", validation.error)
@@ -270,8 +352,7 @@ export default function ConfigPage() {
             setLlmConnected("error")
           }
         } else if (agentConfig.llmProvider === "gemini") {
-          // For Gemini, just trust the key presence since CORS may block validation.
-          setLlmConnected(agentConfig.apiKey ? "ok" : "error")
+          setLlmConnected((agentConfig.apiKey || envApiKey) ? "ok" : "error")
         }
       }
 
@@ -308,6 +389,21 @@ export default function ConfigPage() {
     }
   }
 
+  const getStepStatus = (step: number) => {
+    if (step < currentStep) return "completed"
+    if (step === currentStep) return "active"
+    return "inactive"
+  }
+
+  const getChainNames = () => {
+    return agentConfig.chains
+      .map(chainId => {
+        const chain = availableChains.find(c => c.id === chainId)
+        return chain ? chain.name : chainId
+      })
+      .join(", ")
+  }
+
   return (
     <div className="modern-container">
       <div className="flex min-h-screen">
@@ -335,180 +431,375 @@ export default function ConfigPage() {
           </div>
 
           <div className="flex-1 overflow-y-auto p-4 sm:p-6">
-            <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8">
-              {/* LLM Configuration */}
-              <Card className="p-4 sm:p-6 lg:p-8 modern-card">
-                <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3 modern-text-primary">
-                  <Cpu className="w-5 h-5 sm:w-6 sm:h-6" />
-                  LLM Configuration
-                </h3>
-
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-                  <div>
-                    <label className="text-sm font-semibold mb-3 block modern-text-primary">LLM Provider</label>
-                    <Select
-                      value={agentConfig.llmProvider}
-                      onValueChange={(value) =>
-                        setAgentConfig((prev) => ({ ...prev, llmProvider: value, llmModel: "" }))
-                      }
-                    >
-                      <SelectTrigger className="h-10 sm:h-12 modern-select">
-                        <SelectValue placeholder="Select LLM Provider..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {llmProviders.map((provider) => (
-                          <SelectItem key={provider.value} value={provider.value}>
-                            {provider.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+            <div className="max-w-4xl mx-auto">
+              {/* Step Indicator */}
+              <div className="mb-8">
+                <div className="flex items-center justify-between relative">
+                  {/* Connecting Line */}
+                  <div className="absolute top-6 left-0 right-0 h-0.5 bg-white/10 -z-10">
+                    <div 
+                      className="h-full bg-blue-500 transition-all duration-300"
+                      style={{ width: `${((currentStep - 1) / 2) * 100}%` }}
+                    />
                   </div>
 
-                  <div>
-                    <label className="text-sm font-semibold mb-3 block modern-text-primary">Model</label>
-                    <Select
-                      value={agentConfig.llmModel}
-                      onValueChange={(value) => setAgentConfig((prev) => ({ ...prev, llmModel: value }))}
-                      disabled={!agentConfig.llmProvider}
+                  {/* Step 1 */}
+                  <div className="flex flex-col items-center flex-1">
+                    <div
+                      className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 ${
+                        getStepStatus(1) === "completed"
+                          ? "bg-blue-500"
+                          : getStepStatus(1) === "active"
+                          ? "bg-blue-500"
+                          : "bg-white/10"
+                      }`}
                     >
-                      <SelectTrigger className="h-10 sm:h-12 modern-select">
-                        <SelectValue placeholder="Select Model..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {agentConfig.llmProvider &&
-                          llmProviders
-                            .find((p) => p.value === agentConfig.llmProvider)
-                            ?.models.map((model) => (
-                              <SelectItem key={model} value={model}>
-                                {model}
+                      {getStepStatus(1) === "completed" ? (
+                        <Check className="w-6 h-6 text-white" />
+                      ) : (
+                        <span className={`text-lg font-semibold ${getStepStatus(1) === "active" ? "text-white" : "text-white/50"}`}>
+                          1
+                        </span>
+                      )}
+                    </div>
+                    <div className="mt-3 text-center">
+                      <h3 className={`text-sm font-semibold ${getStepStatus(1) === "active" || getStepStatus(1) === "completed" ? "modern-text-primary" : "modern-text-secondary"}`}>
+                        LLM Configuration
+                      </h3>
+                      <p className="text-xs modern-text-secondary mt-1">Configure your AI provider</p>
+                    </div>
+                  </div>
+
+                  {/* Step 2 */}
+                  <div className="flex flex-col items-center flex-1">
+                    <div
+                      className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 ${
+                        getStepStatus(2) === "completed"
+                          ? "bg-blue-500"
+                          : getStepStatus(2) === "active"
+                          ? "bg-blue-500"
+                          : "bg-white/10"
+                      }`}
+                    >
+                      {getStepStatus(2) === "completed" ? (
+                        <Check className="w-6 h-6 text-white" />
+                      ) : (
+                        <span className={`text-lg font-semibold ${getStepStatus(2) === "active" ? "text-white" : "text-white/50"}`}>
+                          2
+                        </span>
+                      )}
+                    </div>
+                    <div className="mt-3 text-center">
+                      <h3 className={`text-sm font-semibold ${getStepStatus(2) === "active" || getStepStatus(2) === "completed" ? "modern-text-primary" : "modern-text-secondary"}`}>
+                        Agent Configuration
+                      </h3>
+                      <p className="text-xs modern-text-secondary mt-1">Set up your blockchain agent</p>
+                    </div>
+                  </div>
+
+                  {/* Step 3 */}
+                  <div className="flex flex-col items-center flex-1">
+                    <div
+                      className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 ${
+                        getStepStatus(3) === "completed"
+                          ? "bg-blue-500"
+                          : getStepStatus(3) === "active"
+                          ? "bg-blue-500"
+                          : "bg-white/10"
+                      }`}
+                    >
+                      {getStepStatus(3) === "completed" ? (
+                        <Check className="w-6 h-6 text-white" />
+                      ) : (
+                        <span className={`text-lg font-semibold ${getStepStatus(3) === "active" ? "text-white" : "text-white/50"}`}>
+                          3
+                        </span>
+                      )}
+                    </div>
+                    <div className="mt-3 text-center">
+                      <h3 className={`text-sm font-semibold ${getStepStatus(3) === "active" || getStepStatus(3) === "completed" ? "modern-text-primary" : "modern-text-secondary"}`}>
+                        Connect
+                      </h3>
+                      <p className="text-xs modern-text-secondary mt-1">Finalize and connect</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Step 1: LLM Configuration */}
+              {currentStep === 1 && (
+                <Card className="p-4 sm:p-6 lg:p-8 modern-card">
+                  <div className="mb-6">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                        <Cpu className="w-5 h-5 text-blue-400" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg sm:text-xl font-bold modern-text-primary">LLM Configuration</h3>
+                        <p className="text-sm modern-text-secondary">Configure your AI language model provider</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                      <div>
+                        <label className="text-sm font-semibold mb-3 block modern-text-primary">AI Provider</label>
+                        <Select
+                          value={agentConfig.llmProvider}
+                          onValueChange={(value) =>
+                            setAgentConfig((prev) => ({ ...prev, llmProvider: value, llmModel: "" }))
+                          }
+                        >
+                          <SelectTrigger className="h-10 sm:h-12 modern-select">
+                            <SelectValue placeholder="Select LLM Provider..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {llmProviders.map((provider) => (
+                              <SelectItem key={provider.value} value={provider.value}>
+                                {provider.label}
                               </SelectItem>
                             ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
+                          </SelectContent>
+                        </Select>
+                      </div>
 
-                <div className="mt-6">
-                  <label className="text-sm font-semibold mb-3 block modern-text-primary">API Key</label>
-                  <Input
-                    type="password"
-                    placeholder={
-                      agentConfig.llmProvider === "openai"
-                        ? "Enter your API key or leave empty to use NEXT_PUBLIC_OPENAI_KEY..."
-                        : agentConfig.llmProvider === "gemini"
-                          ? "Enter your API key or leave empty to use NEXT_PUBLIC_GOOGLE_API_KEY..."
-                          : "API key not required for Ollama"
-                    }
-                    value={agentConfig.apiKey}
-                    onChange={(e) => setAgentConfig((prev) => ({ ...prev, apiKey: e.target.value }))}
-                    className="h-10 sm:h-12 modern-input font-mono"
-                    disabled={agentConfig.llmProvider === "ollama"}
-                  />
-                  {agentConfig.llmProvider === "ollama" ? (
-                    <p className="text-xs modern-text-secondary mt-2">API key not required for Ollama.</p>
-                  ) : (
-                    <div className="mt-2">
-                      <p className="text-xs modern-text-secondary">
-                        {agentConfig.llmProvider === "openai"
-                          ? "Leave empty to use NEXT_PUBLIC_OPENAI_KEY environment variable, or enter your API key directly."
-                          : "Leave empty to use NEXT_PUBLIC_GOOGLE_API_KEY environment variable, or enter your API key directly."}
-                      </p>
-                      {!agentConfig.apiKey && agentConfig.llmProvider === "openai" && process.env.NEXT_PUBLIC_OPENAI_KEY && (
-                        <p className="text-xs text-green-400 mt-1 flex items-center gap-1">
-                          <span className="w-1.5 h-1.5 bg-green-400 rounded-full"></span>
-                          Using environment variable: NEXT_PUBLIC_OPENAI_KEY
-                        </p>
-                      )}
-                      {!agentConfig.apiKey && agentConfig.llmProvider === "gemini" && process.env.NEXT_PUBLIC_GOOGLE_API_KEY && (
-                        <p className="text-xs text-green-400 mt-1 flex items-center gap-1">
-                          <span className="w-1.5 h-1.5 bg-green-400 rounded-full"></span>
-                          Using environment variable: NEXT_PUBLIC_GOOGLE_API_KEY
-                        </p>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </Card>
-
-              {/* Agent Configuration */}
-              <Card className="p-4 sm:p-6 lg:p-8 modern-card">
-                <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3 modern-text-primary">
-                  <Key className="w-5 h-5 sm:w-6 sm:h-6" />
-                  Polkadot Agent Configuration
-                </h3>
-
-                <div className="space-y-4 sm:space-y-6">
-                  <div>
-                    <label className="text-sm font-semibold mb-3 block modern-text-primary">Private Key</label>
-                    <Input
-                      type="password"
-                      placeholder="Enter your private key..."
-                      value={agentConfig.privateKey}
-                      onChange={(e) => setAgentConfig((prev) => ({ ...prev, privateKey: e.target.value }))}
-                      className="h-10 sm:h-12 modern-input font-mono"
-                    />
-                    <p className="text-xs modern-text-secondary mt-2">
-                      Your private key is used to sign transactions and interact with the Polkadot network
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div>
-                      <label className="text-sm font-semibold mb-3 block modern-text-primary">Key Type</label>
-                      <Select
-                        value={agentConfig.keyType}
-                        onValueChange={(value) => setAgentConfig((prev) => ({ ...prev, keyType: value }))}
-                      >
-                        <SelectTrigger className="h-10 sm:h-12 modern-select">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {keyTypes.map((keyType) => (
-                            <SelectItem key={keyType} value={keyType}>
-                              {keyType}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <div>
+                        <label className="text-sm font-semibold mb-3 block modern-text-primary">Model</label>
+                        <Select
+                          value={agentConfig.llmModel}
+                          onValueChange={(value) => setAgentConfig((prev) => ({ ...prev, llmModel: value }))}
+                          disabled={!agentConfig.llmProvider}
+                        >
+                          <SelectTrigger className="h-10 sm:h-12 modern-select">
+                            <SelectValue placeholder="Select Model..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {agentConfig.llmProvider &&
+                              llmProviders
+                                .find((p) => p.value === agentConfig.llmProvider)
+                                ?.models.map((model) => (
+                                  <SelectItem key={model} value={model}>
+                                    {model}
+                                  </SelectItem>
+                                ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
 
                     <div>
-                      <ChainSelector
-                        selectedChains={agentConfig.chains}
-                        onChainsChange={(chains) => {
-                          setAgentConfig((prev) => ({
-                            ...prev,
-                            chains,
-                          }))
-                        }}
-                        availableChains={availableChains}
-                        disabled={isInitializing}
+                      <label className="text-sm font-semibold mb-3 block modern-text-primary">API Key</label>
+                      <Input
+                        type="password"
+                        placeholder={
+                          agentConfig.llmProvider === "openai"
+                            ? "Enter your API key or leave empty to use NEXT_PUBLIC_OPENAI_KEY..."
+                            : agentConfig.llmProvider === "gemini"
+                              ? "Enter your API key or leave empty to use NEXT_PUBLIC_GOOGLE_API_KEY..."
+                              : "API key not required for Ollama"
+                        }
+                        value={agentConfig.apiKey}
+                        onChange={(e) => setAgentConfig((prev) => ({ ...prev, apiKey: e.target.value }))}
+                        className="h-10 sm:h-12 modern-input font-mono"
+                        disabled={agentConfig.llmProvider === "ollama"}
                       />
+                      {agentConfig.llmProvider === "ollama" ? (
+                        <p className="text-xs modern-text-secondary mt-2">API key not required for Ollama.</p>
+                      ) : (
+                        <div className="mt-2">
+                          <p className="text-xs modern-text-secondary">
+                            Your API key will be stored securely and encrypted.
+                          </p>
+                          {!agentConfig.apiKey && agentConfig.llmProvider === "openai" && process.env.NEXT_PUBLIC_OPENAI_KEY && (
+                            <p className="text-xs text-green-400 mt-1 flex items-center gap-1">
+                              <span className="w-1.5 h-1.5 bg-green-400 rounded-full"></span>
+                              Using environment variable: NEXT_PUBLIC_OPENAI_KEY
+                            </p>
+                          )}
+                          {!agentConfig.apiKey && agentConfig.llmProvider === "gemini" && process.env.NEXT_PUBLIC_GOOGLE_API_KEY && (
+                            <p className="text-xs text-green-400 mt-1 flex items-center gap-1">
+                              <span className="w-1.5 h-1.5 bg-green-400 rounded-full"></span>
+                              Using environment variable: NEXT_PUBLIC_GOOGLE_API_KEY
+                            </p>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
-                </div>
 
-                <Button
-                  onClick={handleConfigureAgent}
-                  disabled={
-                    isInitializing
-                  }
-                  className="mt-6 sm:mt-8 px-6 sm:px-8 h-10 sm:h-12 text-sm sm:text-base font-medium modern-button-primary w-full sm:w-auto"
-                >
-                  {isInitializing ? (
-                    <>
-                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                      Connecting...
-                    </>
-                  ) : (
-                    <>
-                      <Settings className="w-5 h-5 mr-2" />
-                      Connect Agent
-                    </>
-                  )}
-                </Button>
-              </Card>
+                  <div className="flex justify-end mt-8">
+                    <Button
+                      onClick={handleStep1Continue}
+                      className="px-6 sm:px-8 h-10 sm:h-12 text-sm sm:text-base font-medium modern-button-primary"
+                    >
+                      Continue
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </div>
+                </Card>
+              )}
+
+              {/* Step 2: Agent Configuration */}
+              {currentStep === 2 && (
+                <Card className="p-4 sm:p-6 lg:p-8 modern-card">
+                  <div className="mb-6">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                        <Key className="w-5 h-5 text-blue-400" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg sm:text-xl font-bold modern-text-primary">Agent Configuration</h3>
+                        <p className="text-sm modern-text-secondary">Set up your blockchain agent credentials</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-6">
+                    <div>
+                      <label className="text-sm font-semibold mb-3 block modern-text-primary">Private Key</label>
+                      <Input
+                        type="password"
+                        placeholder="Enter your private key..."
+                        value={agentConfig.privateKey}
+                        onChange={(e) => setAgentConfig((prev) => ({ ...prev, privateKey: e.target.value }))}
+                        className="h-10 sm:h-12 modern-input font-mono"
+                      />
+                      <p className="text-xs modern-text-secondary mt-2">
+                        Your private key is encrypted and never leaves your device
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      <div>
+                        <label className="text-sm font-semibold mb-3 block modern-text-primary">Key Type</label>
+                        <Select
+                          value={agentConfig.keyType}
+                          onValueChange={(value) => setAgentConfig((prev) => ({ ...prev, keyType: value }))}
+                        >
+                          <SelectTrigger className="h-10 sm:h-12 modern-select">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {keyTypes.map((keyType) => (
+                              <SelectItem key={keyType} value={keyType}>
+                                {keyType}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div>
+                        <ChainSelector
+                          selectedChains={agentConfig.chains}
+                          onChainsChange={(chains) => {
+                            setAgentConfig((prev) => ({
+                              ...prev,
+                              chains,
+                            }))
+                          }}
+                          availableChains={availableChains}
+                          disabled={isInitializing}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between mt-8">
+                    <Button
+                      onClick={prevStep}
+                      variant="outline"
+                      className="px-6 sm:px-8 h-10 sm:h-12 text-sm sm:text-base font-medium"
+                    >
+                      <ArrowLeft className="w-4 h-4 mr-2" />
+                      Back
+                    </Button>
+                    <Button
+                      onClick={handleStep2Continue}
+                      className="px-6 sm:px-8 h-10 sm:h-12 text-sm sm:text-base font-medium modern-button-primary"
+                    >
+                      Continue
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </div>
+                </Card>
+              )}
+
+              {/* Step 3: Connect */}
+              {currentStep === 3 && (
+                <Card className="p-4 sm:p-6 lg:p-8 modern-card">
+                  <div className="mb-6">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                        <Link className="w-5 h-5 text-blue-400" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg sm:text-xl font-bold modern-text-primary">Ready to Connect</h3>
+                        <p className="text-sm modern-text-secondary">Review your configuration and connect your agent</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-6">
+                    <div>
+                      <h4 className="text-sm font-semibold mb-4 modern-text-primary">Configuration Summary</h4>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between py-3 border-b border-white/10">
+                          <div className="flex items-center gap-2">
+                            <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30 px-2 py-1 text-xs">
+                              LLM
+                            </Badge>
+                            <span className="text-sm modern-text-primary">LLM Model</span>
+                          </div>
+                          <span className="text-sm modern-text-primary font-medium">
+                            {agentConfig.llmProvider}-{agentConfig.llmModel || "Not selected"}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between py-3">
+                          <div className="flex items-center gap-2">
+                            <Badge className="bg-green-500/20 text-green-400 border-green-500/30 px-2 py-1 text-xs">
+                              Agent
+                            </Badge>
+                            <span className="text-sm modern-text-primary">Blockchain</span>
+                          </div>
+                          <span className="text-sm modern-text-primary font-medium">
+                            {getChainNames() || "Not selected"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between mt-8">
+                    <Button
+                      onClick={prevStep}
+                      variant="outline"
+                      className="px-6 sm:px-8 h-10 sm:h-12 text-sm sm:text-base font-medium"
+                    >
+                      <ArrowLeft className="w-4 h-4 mr-2" />
+                      Back
+                    </Button>
+                    <Button
+                      onClick={handleConnect}
+                      disabled={isInitializing}
+                      className="px-6 sm:px-8 h-10 sm:h-12 text-sm sm:text-base font-medium modern-button-primary"
+                    >
+                      {isInitializing ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Connecting...
+                        </>
+                      ) : (
+                        <>
+                          Connect Agent
+                          <ArrowRight className="w-4 h-4 ml-2" />
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </Card>
+              )}
             </div>
           </div>
         </div>
