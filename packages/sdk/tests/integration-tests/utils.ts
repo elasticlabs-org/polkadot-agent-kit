@@ -1,6 +1,5 @@
 import type { Api, ChainIdAssetHub, KnownChainId } from "@polkadot-agent-kit/common"
 import { isApiReady } from "@polkadot-agent-kit/common"
-import {ASSETS_PROMPT, XCM_PROMPT, SWAP_PROMPT, NOMINATION_PROMPT, IDENTITY_PROMPT, BIFROST_PROMPT} from "@polkadot-agent-kit/llm"
 import { UnsafeTransactionType } from "@polkadot-agent-kit/common"
 
 
@@ -15,45 +14,6 @@ export const RECIPIENT7 = '5HWWpa7SnP81UdxKGD5neyqMbjRdi324txAFZ2z4LgcBpC21';
 export const RECIPIENT8 = '5G8uJUCZMhihBdBMooxBE1pWhmvvyr2nWvaJNUKb6dNiuEjS';
 
 
-
-
-const XCM_ONLY_CONTEXT = `
-=== XCM TRANSFER SPECIALIST ===
-You are a specialized agent for XCM cross-chain transfers ONLY.
-
-**EXCLUSIVE CHAIN NAME RULES FOR XCM:**
-- "West" → "Westend" 
-- "Westend" → "Westend"
-- "West Asset Hub" → "AssetHubWestend"
-- "Westend Asset Hub" → "AssetHubWestend"
-- "Asset Hub West" → "AssetHubWestend"
-
-**TOOL**: xcm_transfer_native_asset
-**FORMAT**: ParaSpell (PascalCase)
-**TRIGGER**: "from X to Y" pattern
-
-` + XCM_PROMPT;
-
-
-const ASSETS_ONLY_CONTEXT = `
-=== BALANCE & NATIVE TRANSFER SPECIALIST ===
-You are a specialized agent for balance checks and native transfers ONLY.
-
-**EXCLUSIVE CHAIN NAME RULES FOR ASSETS:**
-- "West" → "west"
-- "Westend" → "west" 
-- "West Asset Hub" → "west_asset_hub"
-- "Westend Asset Hub" → "west_asset_hub"
-
-**TOOLS**: check_balance, transfer_native
-**FORMAT**: Internal chain IDs (lowercase)
-**TRIGGER**: Single chain operations
-
-` + ASSETS_PROMPT;
-
-
-export const XCM_SYSTEM_PROMPT = XCM_ONLY_CONTEXT;
-export const ASSETS_SYSTEM_PROMPT = ASSETS_ONLY_CONTEXT;
 
 export function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -72,7 +32,6 @@ export async function getBalance(
   api: Api<KnownChainId>,
   address: string
 ) {
-  console.log("API get balance:", api);
   return await api.query.System.Account.getValue(address);
 }
 

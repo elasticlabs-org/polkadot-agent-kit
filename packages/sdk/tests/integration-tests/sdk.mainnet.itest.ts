@@ -7,13 +7,8 @@ import { Api, ChainIdAssetHub, getDecimalsByChainId, parseUnits } from '@polkado
 import { getAssetBalance as getAssetBalanceParaSpell } from '@paraspell/sdk-core';
 import { getAssetBalance } from '@polkadot-agent-kit/core';
 import { Builder } from '@paraspell/sdk';
-import type { TCurrencyCore } from '@paraspell/assets';
 import { SWAP_PROMPT, BIFROST_PROMPT } from '@polkadot-agent-kit/llm';
 dotenv.config({ path: '../../.env' });
-
-
-
-
 
 
 describe('PolkadotAgentKit Integration with LLM Agent Swap', () => {

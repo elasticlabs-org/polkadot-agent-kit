@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, afterEach } from 'vitest';
 import { PolkadotAgentKit } from '../../src/api';
-import { RECIPIENT, sleep, getBalance, estimateTransactionFee, RECIPIENT2, RECIPIENT3, RECIPIENT4, RECIPIENT5, XCM_SYSTEM_PROMPT, RECIPIENT6, RECIPIENT0, getBondedAmountByMember, RECIPIENT7, RECIPIENT8, getPendingRewards, getCurrentEra, getUnbondingByEra } from './utils';
+import { RECIPIENT, sleep, getBalance, estimateTransactionFee, RECIPIENT2, RECIPIENT3, RECIPIENT4, RECIPIENT5, RECIPIENT6, RECIPIENT0, getBondedAmountByMember, RECIPIENT7, RECIPIENT8, getPendingRewards, getCurrentEra, getUnbondingByEra } from './utils';
 import { AgentTest } from './agents/agent';
 import { estimateXcmFee, transferNativeCall } from '@polkadot-agent-kit/core';
 import { parseUnits, getDecimalsByChainId } from '@polkadot-agent-kit/common';
