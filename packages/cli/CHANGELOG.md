@@ -1,5 +1,15 @@
 # @polkadot-agent-kit/cli
 
+## 2.1.3
+
+### Patch Changes
+
+- Release version 2.1.2
+- Updated dependencies
+  - @polkadot-agent-kit/common@2.1.3
+  - @polkadot-agent-kit/llm@2.1.3
+  - @polkadot-agent-kit/sdk@2.1.3
+
 ## 2.1.2
 
 ### Patch Changes

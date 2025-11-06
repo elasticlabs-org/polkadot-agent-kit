@@ -1,12 +1,24 @@
 # @polkadot-agent-kit/core
 
+## 2.1.3
+
+### Patch Changes
+
+- Release version 2.1.3
+- Update syntax with the latest paraspell sdk 
+- fix dry run helper function
+- add dry run mint vdot
+- fix duplicate native assets symbol if destination chain is asset hub 
+- Updated dependencies
+  - @polkadot-agent-kit/common@2.1.3
+
 ## 2.1.2
 
 ### Patch Changes
 
 - refactor code
-- Add dryrun swap core 
-- Migrate nomination pools to AH 
+- Add dryrun swap core
+- Migrate nomination pools to AH
 - Updated dependencies
   - @polkadot-agent-kit/common@2.1.2
 
