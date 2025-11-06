@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Bot } from "lucide-react"
 import Sidebar from "@/components/sidebar"
 import { useAgentStore, useAgentRestore } from "@/stores/agent-store"
+import { executeChatMessage } from "./actions"
 
 interface ChatMessage {
   id: string
@@ -16,7 +17,7 @@ interface ChatMessage {
 
 
 export default function ChatPage() {
-  const { agentKit, isInitialized, config } = useAgentStore()
+  const { isInitialized } = useAgentStore()
   const [chatInput, setChatInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [isClient, setIsClient] = useState(false)
@@ -32,7 +33,7 @@ export default function ChatPage() {
   }, [])
 
   const handleSendMessage = async () => {
-    if (!chatInput.trim() || !isInitialized || !agentKit) return
+    if (!chatInput.trim() || !isInitialized) return
 
     const userMessage: ChatMessage = {
       id: `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -42,82 +43,30 @@ export default function ChatPage() {
     }
 
     setChatMessages((prev) => [...prev, userMessage])
+    const messageToSend = chatInput
     setChatInput("")
     setIsLoading(true)
 
     try {
-      // Use the shared agentKit from Zustand store to create LangChain agent
-      const { getLangChainTools } = await import("@polkadot-agent-kit/sdk")
-      const { AgentExecutor, createToolCallingAgent } = await import("langchain/agents")
-      const { ChatPromptTemplate } = await import("@langchain/core/prompts")
-      const { ChatOllama } = await import("@langchain/ollama")
-      
-      // Get LLM config from localStorage
-      const llmConfig = localStorage.getItem("llm_config")
-      if (!llmConfig) throw new Error("LLM configuration not found")
-      
-      const { provider, model, apiKey: storedApiKey } = JSON.parse(llmConfig)
+      const result = await executeChatMessage(messageToSend)
 
-      let llm: any
-      if (provider === "ollama") {
-        llm = new ChatOllama({
-          model: model || "qwen3:latest",
-          temperature: 0,
-        })
-      } else if (provider === "openai") {
-        // Dynamically load OpenAI client for browser use
-        const { ChatOpenAI } = await import("@langchain/openai")
-        const apiKey = storedApiKey || process.env.NEXT_PUBLIC_OPENAI_KEY
-        if (!apiKey) throw new Error("OpenAI API key not found. Provide it or set NEXT_PUBLIC_OPENAI_KEY.")
-        llm = new ChatOpenAI({
-          model: model || "gpt-4o-mini",
-          temperature: 0,
-          apiKey,
-        })
-      } else if (provider === "gemini") {
-        const { ChatGoogleGenerativeAI } = await import("@langchain/google-genai")
-        const apiKey = storedApiKey || process.env.NEXT_PUBLIC_GOOGLE_API_KEY
-        if (!apiKey) throw new Error("Google Generative AI API key not found. Set it in config or NEXT_PUBLIC_GOOGLE_API_KEY.")
-        llm = new ChatGoogleGenerativeAI({
-          model: model || "gemini-2.0-flash",
-          temperature: 0,
-          apiKey,
-        })
+      if (result.success) {
+        const aiMessage: ChatMessage = {
+          id: (Date.now() + 1).toString(),
+          type: "ai",
+          content: result.message,
+          timestamp: new Date(),
+        }
+        setChatMessages((prev) => [...prev, aiMessage])
       } else {
-        throw new Error(`Unsupported LLM provider: ${provider}`)
+        const aiMessage: ChatMessage = {
+          id: (Date.now() + 1).toString(),
+          type: "ai",
+          content: `Error: ${result.error || "Unknown error occurred"}`,
+          timestamp: new Date(),
+        }
+        setChatMessages((prev) => [...prev, aiMessage])
       }
-
-      const tools = getLangChainTools(agentKit)
-      const agentPrompt = createToolCallingAgent({
-        llm: llm as any,
-        tools: tools as any,
-        prompt: ChatPromptTemplate.fromMessages([
-          ["system", "You are a helpful Polkadot assistant. Use the available tools to help users with blockchain operations."],
-          ["placeholder", "{chat_history}"],
-          ["human", "{input}"],
-          ["placeholder", "{agent_scratchpad}"],
-        ]) as any,
-      })
-
-      const agentExecutor = new AgentExecutor({
-        agent: agentPrompt,
-        tools: tools as any,
-        verbose: true,
-        returnIntermediateSteps: true,
-      })
-
-      const result = await agentExecutor.invoke({ input: userMessage.content })
-      let outputText = typeof result.output === "string" ? result.output : JSON.stringify(result.output, null, 2)
-      
-      outputText = outputText.replace(/<think>[\s\S]*?<\/think>/g, '').trim()
-      
-      const aiMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        type: "ai",
-        content: outputText,
-        timestamp: new Date(),
-      }
-      setChatMessages((prev) => [...prev, aiMessage])
     } catch (err: any) {
       const aiMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),

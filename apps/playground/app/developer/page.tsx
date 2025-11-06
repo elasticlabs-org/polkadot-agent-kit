@@ -31,7 +31,7 @@ interface ToolCall {
 }
 
 export default function DeveloperPage() {
-  const { agentKit, isInitialized, config } = useAgentStore()
+  const { isInitialized, config } = useAgentStore()
   const [toolsMap, setToolsMap] = useState<ToolsMap | null>(null)
 
   const [selectedEndpoint, setSelectedEndpoint] = useState<EndpointKey | "">("")

@@ -1,6 +1,7 @@
-import { create, StoreApi } from 'zustand'
+import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import React from 'react'
+import { checkInitializationStatus } from '@/app/config/actions'
 
 interface AgentConfig {
   privateKey: string
@@ -10,164 +11,66 @@ interface AgentConfig {
 }
 
 interface AgentState {
-  // Configuration
-  config: AgentConfig | null
+  // Configuration (non-sensitive UI state only)
+  config: Omit<AgentConfig, 'privateKey'> | null
   isConfigured: boolean
   
-  // Agent instance
-  agentKit: any | null
+  // Initialization status (synced with server)
   isInitialized: boolean
   isInitializing: boolean
   
-  // Session management
-  sessionExpiry: number | null
-  
   // Actions
-  setConfig: (config: AgentConfig) => void
+  setConfig: (config: Omit<AgentConfig, 'privateKey'>) => void
   initializeAgent: () => Promise<void>
   resetAgent: () => void
   setInitializing: (loading: boolean) => void
-  checkSession: () => boolean
-  restoreAgent: () => Promise<void>
+  syncInitializationStatus: () => Promise<void>
 }
 
 export const useAgentStore = create<AgentState>()(
   persist(
-    (set: StoreApi<AgentState>['setState'], get: StoreApi<AgentState>['getState']) => {
-      // Check session on store initialization
-      const checkAndRestoreSession = () => {
-        const { sessionExpiry, isInitialized, config } = get()
-        if (sessionExpiry && isInitialized && config) {
-          const now = Date.now()
-          if (now > sessionExpiry) {
-            // Session expired, reset
-            set({
-              agentKit: null,
-              isInitialized: false,
-              sessionExpiry: null
-            })
-            return false
-          }
-          // Session is valid, but we need to reinitialize the agentKit
-          // since it can't be serialized
-          return true
-        }
-        return false
-      }
-
-      return {
+    (set, get) => ({
       // Initial state
       config: null,
       isConfigured: false,
-      agentKit: null,
       isInitialized: false,
       isInitializing: false,
-      sessionExpiry: null,
 
       // Actions
-      setConfig: (config: AgentConfig) => {
-
+      setConfig: (config: Omit<AgentConfig, 'privateKey'>) => {
         set({ 
           config,
           isConfigured: config.isConfigured || false
         })
-
       },
 
       setInitializing: (isInitializing: boolean) => {
         set({ isInitializing })
       },
 
-      checkSession: () => {
-        const { sessionExpiry, isInitialized } = get()
-        if (!sessionExpiry || !isInitialized) return false
-        
-        const now = Date.now()
-        if (now > sessionExpiry) {
-          // Session expired, reset agent
-          set({
-            agentKit: null,
-            isInitialized: false,
-            sessionExpiry: null
-          })
-          return false
-        }
-        return true
-      },
-
-      restoreAgent: async () => {
-        const { config, sessionExpiry } = get()
-        if (!config || !sessionExpiry) return
-
-        const now = Date.now()
-        if (now > sessionExpiry) {
-          // Session expired
-          set({
-            agentKit: null,
-            isInitialized: false,
-            sessionExpiry: null
-          })
-          return
-        }
-
+      syncInitializationStatus: async () => {
         try {
-          set({ isInitializing: true })
-          
-          const { PolkadotAgentKit } = await import("@polkadot-agent-kit/sdk")
-          
-          const agentKit = new PolkadotAgentKit({
-            privateKey: config.privateKey,
-            keyType: config.keyType,
-            chains: config.chains as any,
+          const status = await checkInitializationStatus()
+          set({
+            isInitialized: status.isInitialized,
+            isConfigured: status.hasAgentConfig && status.hasLlmConfig
           })
-
-          await agentKit.initializeApi()
-
-          set({ 
-            agentKit,
-            isInitialized: true,
-            isInitializing: false
-          })
-
         } catch (error) {
-          console.error('[AgentStore] Failed to restore agent:', error)
-          set({ 
+          console.error('[AgentStore] Failed to sync initialization status:', error)
+          set({
             isInitialized: false,
-            isInitializing: false
+            isConfigured: false
           })
         }
       },
 
       initializeAgent: async () => {
-        const { config } = get()
-        if (!config || !config.isConfigured) {
-          console.log('[AgentStore] Agent not configured, config:', config)
-          throw new Error('Agent not configured')
-        }
-
-        set({ isInitializing: true })
-
+        // Agent initialization is now handled by server actions
+        // This function is kept for compatibility but just syncs status
         try {
-          const { PolkadotAgentKit } = await import("@polkadot-agent-kit/sdk")
-          
-          const agentKit = new PolkadotAgentKit({
-            privateKey: config.privateKey,
-            keyType: config.keyType,
-            chains: config.chains as any,
-          })
-
-          await agentKit.initializeApi()
-
-          // Set session expiry to 15 minutes from now
-          const sessionExpiry = Date.now() + (15 * 60 * 1000) // 15 minutes
-          
-          set({ 
-            agentKit,
-            isInitialized: true,
-            isInitializing: false,
-            sessionExpiry
-          })
-
+          set({ isInitializing: true })
+          await get().syncInitializationStatus()
+          set({ isInitializing: false })
         } catch (error) {
           console.error('[AgentStore] Failed to initialize agent:', error)
           set({ 
@@ -182,12 +85,9 @@ export const useAgentStore = create<AgentState>()(
         set({
           config: null,
           isConfigured: false,
-          agentKit: null,
           isInitialized: false,
-          isInitializing: false,
-          sessionExpiry: null
+          isInitializing: false
         })
-      }
       }
     }),
     {
@@ -195,22 +95,18 @@ export const useAgentStore = create<AgentState>()(
       partialize: (state: AgentState) => ({
         config: state.config,
         isConfigured: state.isConfigured,
-        isInitialized: state.isInitialized,
-        sessionExpiry: state.sessionExpiry
+        isInitialized: state.isInitialized
       }),
-      // Use JSON storage helper to keep the { state, version } shape correct
       storage: createJSONStorage(() => localStorage)
     }
-  )
+  ))
 
-// Hook to automatically restore agent on page load
+// Hook to automatically sync initialization status on page load
 export const useAgentRestore = () => {
-  const { isInitialized, agentKit, restoreAgent, checkSession } = useAgentStore()
+  const { syncInitializationStatus } = useAgentStore()
   
   React.useEffect(() => {
-    // Check if we have a valid session but no agent instance
-    if (checkSession() && !agentKit) {
-      restoreAgent()
-    }
+    syncInitializationStatus()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 }

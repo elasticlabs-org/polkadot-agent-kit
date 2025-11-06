@@ -12,6 +12,7 @@ import Sidebar from "@/components/sidebar"
 import { ChainSelector } from "@/components/chain-selector"
 import { useAgentStore } from "@/stores/agent-store"
 import type { KnownChainId, KeyType } from "@polkadot-agent-kit/common"
+import { storeLlmConfig, storeAgentConfig } from "./actions"
 interface AgentConfig {
   llmProvider: string
   llmModel: string
@@ -156,29 +157,31 @@ export default function ConfigPage() {
     if (config) {
       setAgentConfig((prev) => ({
         ...prev,
-        privateKey: config.privateKey || prev.privateKey,
         keyType: (config.keyType as string) || prev.keyType,
         chains: (config.chains as string[]) || prev.chains,
       }))
     }
   }, [config])
 
-  // Prefill LLM config from localStorage when available
+  // Prefill LLM config from server session when available
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem("llm_config")
-      if (saved) {
-        const { provider, model, apiKey } = JSON.parse(saved)
-        setAgentConfig((prev) => ({
-          ...prev,
-          llmProvider: provider || prev.llmProvider,
-          llmModel: model || prev.llmModel,
-          apiKey: apiKey || prev.apiKey,
-        }))
+    const loadLlmConfig = async () => {
+      try {
+        const { getStoredLlmConfig } = await import('./actions')
+        const llmConfig = await getStoredLlmConfig()
+        if (llmConfig) {
+          setAgentConfig((prev) => ({
+            ...prev,
+            llmProvider: llmConfig.provider || prev.llmProvider,
+            llmModel: llmConfig.model || prev.llmModel,
+            apiKey: llmConfig.apiKey || prev.apiKey,
+          }))
+        }
+      } catch (e) {
+        // ignore
       }
-    } catch (e) {
-      // ignore
     }
+    loadLlmConfig()
   }, [])
 
   const validateStep1 = async (): Promise<boolean> => {
@@ -222,7 +225,7 @@ export default function ConfigPage() {
   const handleStep1Continue = async () => {
     const isValid = await validateStep1()
     if (isValid) {
-      // Persist LLM config
+      // Store LLM config in server session
       const needsApiKey = agentConfig.llmProvider === "openai" || agentConfig.llmProvider === "gemini"
       const envApiKey = agentConfig.llmProvider === "openai"
         ? process.env.NEXT_PUBLIC_OPENAI_KEY
@@ -230,11 +233,17 @@ export default function ConfigPage() {
           ? process.env.NEXT_PUBLIC_GOOGLE_API_KEY
           : null
       const apiKeyToPersist = agentConfig.llmProvider === "ollama" ? null : (agentConfig.apiKey || envApiKey || null)
-      localStorage.setItem("llm_config", JSON.stringify({
+      
+      const result = await storeLlmConfig({
         provider: agentConfig.llmProvider,
         model: agentConfig.llmModel,
         apiKey: apiKeyToPersist
-      }))
+      })
+
+      if (!result.success) {
+        alert(result.error || "Failed to store LLM configuration")
+        return
+      }
 
       // Validate LLM connection
       setLlmConnected("idle")
@@ -278,98 +287,54 @@ export default function ConfigPage() {
   }
 
   const handleConnect = async () => {
-    const needsApiKey = agentConfig.llmProvider === "openai" || agentConfig.llmProvider === "gemini"
-
-    // Determine what changed vs persisted values
-    const prevLlmRaw = typeof window !== 'undefined' ? localStorage.getItem("llm_config") : null
-    const prevLlm = prevLlmRaw ? JSON.parse(prevLlmRaw) : null
-    const prevAgent = config
-
-    const llmChanged = (() => {
-      const prevProvider = prevLlm?.provider || ""
-      const prevModel = prevLlm?.model || ""
-      const prevApiKey = prevLlm?.apiKey || ""
-      return (
-        prevProvider !== agentConfig.llmProvider ||
-        prevModel !== agentConfig.llmModel ||
-        (needsApiKey && (prevApiKey || "") !== (agentConfig.apiKey || ""))
-      )
-    })()
-
-    const chainsEqual = (a: string[] = [], b: string[] = []) => {
-      if (a.length !== b.length) return false
-      for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false
-      return true
-    }
-    const polkadotChanged = (() => {
-      if (!prevAgent) return true
-      return (
-        prevAgent.privateKey !== agentConfig.privateKey ||
-        prevAgent.keyType !== (agentConfig.keyType as any) ||
-        !chainsEqual(prevAgent.chains as any, agentConfig.chains)
-      )
-    })()
-
     setInitializing(true)
     setLlmConnected("idle")
 
     try {
-      // If LLM changed, persist LLM config and (optionally) validate
-      if (llmChanged) {
-        const envApiKey = agentConfig.llmProvider === "openai"
-          ? process.env.NEXT_PUBLIC_OPENAI_KEY
-          : agentConfig.llmProvider === "gemini"
-            ? process.env.NEXT_PUBLIC_GOOGLE_API_KEY
-            : null
-        const apiKeyToPersist = agentConfig.llmProvider === "ollama" ? null : (agentConfig.apiKey || envApiKey || null)
-        localStorage.setItem("llm_config", JSON.stringify({
-          provider: agentConfig.llmProvider,
-          model: agentConfig.llmModel,
-          apiKey: apiKeyToPersist
-        }))
+      // Store agent config in server session
+      const agentResult = await storeAgentConfig({
+        privateKey: agentConfig.privateKey,
+        keyType: agentConfig.keyType as "Sr25519" | "Ed25519",
+        chains: agentConfig.chains,
+      })
 
-        if (agentConfig.llmProvider === "ollama") {
-          const controller = new AbortController()
-          const timeout = setTimeout(() => controller.abort(), 2500)
-          try {
-            const res = await fetch("http://127.0.0.1:11434/api/tags", { signal: controller.signal })
-            setLlmConnected(res.ok ? "ok" : "error")
-          } catch (_) {
-            setLlmConnected("error")
-          } finally {
-            clearTimeout(timeout)
-          }
-        } else if (agentConfig.llmProvider === "openai") {
-          try {
-            const validation = await validateOpenAIKey(agentConfig.apiKey || envApiKey || "")
-            setLlmConnected(validation.isValid ? "ok" : "error")
-            if (!validation.isValid) {
-              console.warn("OpenAI validation failed:", validation.error)
-              alert(`OpenAI validation failed: ${validation.error}`)
-            }
-          } catch (e: any) {
-            console.warn("OpenAI validation error:", e?.message || e)
-            setLlmConnected("error")
-          }
-        } else if (agentConfig.llmProvider === "gemini") {
-          setLlmConnected((agentConfig.apiKey || envApiKey) ? "ok" : "error")
-        }
+      if (!agentResult.success) {
+        alert(agentResult.error || "Failed to store agent configuration")
+        setInitializing(false)
+        return
       }
 
-      // If Polkadot config changed, update store and (re)initialize agent
-      if (polkadotChanged) {
-        const storeConfig = {
-          privateKey: agentConfig.privateKey,
-          keyType: agentConfig.keyType as "Sr25519" | "Ed25519",
-          chains: agentConfig.chains,
-          isConfigured: true
-        }
-        try {
-          setConfig(storeConfig)
-        } catch (error) {
-          console.error('[ConfigPage] Error calling setConfig:', error)
-        }
-        await initializeAgent()
+      // Store LLM config in server session (if not already stored in step 1)
+      const needsApiKey = agentConfig.llmProvider === "openai" || agentConfig.llmProvider === "gemini"
+      const envApiKey = agentConfig.llmProvider === "openai"
+        ? process.env.NEXT_PUBLIC_OPENAI_KEY
+        : agentConfig.llmProvider === "gemini"
+          ? process.env.NEXT_PUBLIC_GOOGLE_API_KEY
+          : null
+      const apiKeyToPersist = agentConfig.llmProvider === "ollama" ? null : (agentConfig.apiKey || envApiKey || null)
+      
+      const llmResult = await storeLlmConfig({
+        provider: agentConfig.llmProvider,
+        model: agentConfig.llmModel,
+        apiKey: apiKeyToPersist
+      })
+
+      if (!llmResult.success) {
+        alert(llmResult.error || "Failed to store LLM configuration")
+        setInitializing(false)
+        return
+      }
+
+      // Update local state for UI (without privateKey)
+      const storeConfig = {
+        keyType: agentConfig.keyType as "Sr25519" | "Ed25519",
+        chains: agentConfig.chains,
+        isConfigured: true
+      }
+      try {
+        setConfig(storeConfig)
+      } catch (error) {
+        console.error('[ConfigPage] Error calling setConfig:', error)
       }
 
       const updatedConfig = { ...agentConfig, isConfigured: true }
