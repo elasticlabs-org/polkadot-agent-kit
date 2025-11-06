@@ -6,10 +6,10 @@ import { submitTxWithPolkadotSigner, transferNativeCall } from "@polkadot-agent-
 import type { PolkadotSigner } from "polkadot-api/signer"
 import type { z } from "zod"
 
-import type { TransferToolResult, transferToolSchema } from "../types"
-import { ToolNames } from "../types/common"
-import { toolConfigTransferNative } from "../types/transfer"
-import { executeTool, validateAndFormatAddress } from "../utils"
+import type { TransferToolResult, transferToolSchema } from "../../types"
+import { ToolNames } from "../../types/common"
+import { toolConfigTransferNative } from "../../types/transfer"
+import { executeTool, validateAndFormatAddress } from "../../utils"
 
 /**
  * Returns a tool that transfers native tokens to a specific address

@@ -22,16 +22,16 @@ import type {
   StakingToolResult,
   unbondToolSchema,
   withdrawUnbondedToolSchema
-} from "../types"
-import { ToolNames } from "../types/common"
+} from "../../types"
+import { ToolNames } from "../../types/common"
 import {
   toolConfigBondExtra,
   toolConfigClaimRewards,
   toolConfigJoinPool,
   toolConfigUnbond,
   toolConfigWithdrawUnbonded
-} from "../types/staking"
-import { executeTool, validateAndFormatAddress } from "../utils"
+} from "../../types/staking"
+import { executeTool, validateAndFormatAddress } from "../../utils"
 
 /**
  * Returns a tool that joins a nomination pool

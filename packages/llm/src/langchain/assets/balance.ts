@@ -5,10 +5,10 @@ import type { PolkadotApi } from "@polkadot-agent-kit/core"
 import { getNativeBalance } from "@polkadot-agent-kit/core"
 import type { z } from "zod"
 
-import type { BalanceToolResult, balanceToolSchema } from "../types"
-import { toolConfigBalance } from "../types/balance"
-import { ToolNames } from "../types/common"
-import { executeTool, validateAndFormatAddress } from "../utils"
+import type { BalanceToolResult, balanceToolSchema } from "../../types"
+import { toolConfigBalance } from "../../types/balance"
+import { ToolNames } from "../../types/common"
+import { executeTool, validateAndFormatAddress } from "../../utils"
 
 /**
  * Returns a tool that checks the balance of a specific address

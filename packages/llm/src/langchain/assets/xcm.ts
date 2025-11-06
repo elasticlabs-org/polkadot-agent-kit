@@ -3,10 +3,10 @@ import { submitTxWithPolkadotSigner, xcmTransferNativeAsset } from "@polkadot-ag
 import type { PolkadotSigner } from "polkadot-api/signer"
 import type { z } from "zod"
 
-import type { xcmTransferNativeAssetSchema, XcmTransferNativeAssetToolResult } from "../types"
-import { ToolNames } from "../types/common"
-import { toolConfigXcmTransferNativeAsset } from "../types/xcm"
-import { executeTool } from "../utils"
+import type { xcmTransferNativeAssetSchema, XcmTransferNativeAssetToolResult } from "../../types"
+import { ToolNames } from "../../types/common"
+import { toolConfigXcmTransferNativeAsset } from "../../types/xcm"
+import { executeTool } from "../../utils"
 
 /**
  * Returns a tool that transfers native tokens to a specific address to a destination chain via xcm
