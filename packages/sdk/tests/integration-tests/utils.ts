@@ -76,6 +76,8 @@ export async function getBalance(
   return await api.query.System.Account.getValue(address);
 }
 
+
+
 /**
  * Helper function to check if an API is ready before using it
  * @param api - The API instance to check

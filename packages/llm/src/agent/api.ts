@@ -187,7 +187,7 @@ export class PolkadotAgentApi implements IPolkadotAgentApi {
   }
 
   mintVdotTool(signer: PolkadotSigner): MintVdotTool {
-    return mintVdotTool(signer) as unknown as MintVdotTool
+    return mintVdotTool(this.api, signer) as unknown as MintVdotTool
   }
 
   getActions(signer: PolkadotSigner, address: string): Action[] {

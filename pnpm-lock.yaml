@@ -550,7 +550,7 @@ importers:
         version: 11.12.9(polkadot-api@1.20.1(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1))(rxjs@7.8.2)(typescript@5.9.3)(zod@3.25.67)
       '@paraspell/xcm-router':
         specifier: 11.12.9
-        version: 11.12.9(@acala-network/types@6.3.0(@polkadot/api@16.4.6))(@ethersproject/address@5.8.0)(@polkadot/api-augment@16.4.6)(@polkadot/api-derive@16.4.6)(@polkadot/keyring@13.5.7(@polkadot/util-crypto@12.6.2(@polkadot/util@13.5.7))(@polkadot/util@13.5.7))(@polkadot/rpc-augment@16.4.9)(@polkadot/rpc-core@16.4.9)(@polkadot/rpc-provider@16.4.9)(@polkadot/types-augment@16.4.6)(@polkadot/types-create@16.4.6)(@polkadot/types-known@16.4.6)(@polkadot/util-crypto@12.6.2(@polkadot/util@13.5.7))(jiti@2.6.1)(react-dom@19.1.1(react@19.2.0))(tsx@4.20.6)(typescript@5.9.3)(viem@2.38.6(typescript@5.9.3)(zod@3.25.67))(yaml@2.8.1)(zod@3.25.67)
+        version: 11.12.9(@acala-network/types@6.3.0(@polkadot/api@16.4.6))(@ethersproject/address@5.8.0)(@polkadot/api-augment@16.4.6)(@polkadot/api-derive@16.4.6)(@polkadot/keyring@13.5.7(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(@polkadot/util@13.5.7))(@polkadot/rpc-augment@16.4.9)(@polkadot/rpc-core@16.4.9)(@polkadot/rpc-provider@16.4.9)(@polkadot/types-augment@16.4.6)(@polkadot/types-create@16.4.6)(@polkadot/types-known@16.4.6)(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(jiti@2.6.1)(react-dom@19.1.1(react@19.2.0))(tsx@4.20.6)(typescript@5.9.3)(viem@2.38.6(typescript@5.9.3)(zod@3.25.67))(yaml@2.8.1)(zod@3.25.67)
       '@polkadot-agent-kit/common':
         specifier: workspace:*
         version: link:../common
@@ -664,6 +664,9 @@ importers:
       '@paraspell/sdk':
         specifier: 11.12.9
         version: 11.12.9(polkadot-api@1.20.1(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1))(rxjs@7.8.2)(typescript@5.9.3)(zod@3.25.67)
+      '@paraspell/sdk-core':
+        specifier: 11.12.9
+        version: 11.12.9(typescript@5.9.3)(zod@3.25.67)
       '@polkadot-agent-kit/common':
         specifier: workspace:*
         version: link:../common
@@ -9196,23 +9199,6 @@ snapshots:
 
   '@acala-network/contracts@4.3.4': {}
 
-  '@acala-network/eth-providers@2.10.0(@acala-network/api@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)(@polkadot/util-crypto@12.6.2(@polkadot/util@13.5.7))':
-    dependencies:
-      '@acala-network/api': 6.3.0(@polkadot/api@16.4.6)
-      '@acala-network/contracts': 4.3.4
-      '@acala-network/eth-transactions': 2.10.0(@polkadot/util-crypto@12.6.2(@polkadot/util@13.5.7))
-      '@polkadot/api': 16.4.6
-      bn.js: 5.2.2
-      ethers: 5.7.2
-      graphql: 16.0.1
-      graphql-request: 3.6.1(graphql@16.0.1)
-      lru-cache: 7.8.2
-    transitivePeerDependencies:
-      - '@polkadot/util-crypto'
-      - bufferutil
-      - encoding
-      - utf-8-validate
-
   '@acala-network/eth-providers@2.10.0(@acala-network/api@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))':
     dependencies:
       '@acala-network/api': 6.3.0(@polkadot/api@16.4.6)
@@ -9228,14 +9214,6 @@ snapshots:
       - '@polkadot/util-crypto'
       - bufferutil
       - encoding
-      - utf-8-validate
-
-  '@acala-network/eth-transactions@2.10.0(@polkadot/util-crypto@12.6.2(@polkadot/util@13.5.7))':
-    dependencies:
-      '@polkadot/util-crypto': 12.6.2(@polkadot/util@13.5.7)
-      ethers: 5.7.2
-    transitivePeerDependencies:
-      - bufferutil
       - utf-8-validate
 
   '@acala-network/eth-transactions@2.10.0(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))':
@@ -9274,9 +9252,9 @@ snapshots:
       - encoding
       - ethers
 
-  '@acala-network/sdk-swap@4.1.15(@acala-network/api@6.3.0(@polkadot/api@16.4.6))(@acala-network/eth-providers@2.10.0(@acala-network/api@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)(@polkadot/util-crypto@12.6.2(@polkadot/util@13.5.7)))(@acala-network/types@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)(ethers@5.8.0)':
+  '@acala-network/sdk-swap@4.1.15(@acala-network/api@6.3.0(@polkadot/api@16.4.6))(@acala-network/eth-providers@2.10.0(@acala-network/api@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7)))(@acala-network/types@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)(ethers@5.8.0)':
     dependencies:
-      '@acala-network/sdk': 4.1.15(@acala-network/api@6.3.0(@polkadot/api@16.4.6))(@acala-network/eth-providers@2.10.0(@acala-network/api@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)(@polkadot/util-crypto@12.6.2(@polkadot/util@13.5.7)))(@acala-network/types@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)(ethers@5.8.0)
+      '@acala-network/sdk': 4.1.15(@acala-network/api@6.3.0(@polkadot/api@16.4.6))(@acala-network/eth-providers@2.10.0(@acala-network/api@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7)))(@acala-network/types@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)(ethers@5.8.0)
       '@acala-network/sdk-core': 4.1.15(@acala-network/types@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)
       '@acala-network/types': 6.3.0(@polkadot/api@16.4.6)
       '@polkadot/api': 16.4.6
@@ -9317,10 +9295,10 @@ snapshots:
       - debug
       - encoding
 
-  '@acala-network/sdk@4.1.15(@acala-network/api@6.3.0(@polkadot/api@16.4.6))(@acala-network/eth-providers@2.10.0(@acala-network/api@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)(@polkadot/util-crypto@12.6.2(@polkadot/util@13.5.7)))(@acala-network/types@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)(ethers@5.8.0)':
+  '@acala-network/sdk@4.1.15(@acala-network/api@6.3.0(@polkadot/api@16.4.6))(@acala-network/eth-providers@2.10.0(@acala-network/api@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7)))(@acala-network/types@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)(ethers@5.8.0)':
     dependencies:
       '@acala-network/api': 6.3.0(@polkadot/api@16.4.6)
-      '@acala-network/eth-providers': 2.10.0(@acala-network/api@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)(@polkadot/util-crypto@12.6.2(@polkadot/util@13.5.7))
+      '@acala-network/eth-providers': 2.10.0(@acala-network/api@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))
       '@acala-network/sdk-core': 4.1.15(@acala-network/types@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)
       '@polkadot/api': 16.4.6
       axios: 0.24.0
@@ -11202,7 +11180,7 @@ snapshots:
 
   '@galacticcouncil/math-xyk@1.2.0': {}
 
-  '@galacticcouncil/sdk@10.1.0(@polkadot/api-augment@16.4.6)(@polkadot/api-base@16.4.9)(@polkadot/api-derive@16.4.6)(@polkadot/api@16.4.6)(@polkadot/keyring@13.5.7(@polkadot/util-crypto@12.6.2(@polkadot/util@13.5.7))(@polkadot/util@13.5.7))(@polkadot/rpc-augment@16.4.9)(@polkadot/rpc-core@16.4.9)(@polkadot/rpc-provider@16.4.9)(@polkadot/types-augment@16.4.6)(@polkadot/types-codec@16.4.6)(@polkadot/types-create@16.4.6)(@polkadot/types-known@16.4.6)(@polkadot/types@16.4.6)(@polkadot/util-crypto@12.6.2(@polkadot/util@13.5.7))(@polkadot/util@13.5.7)(viem@2.38.6(typescript@5.9.3)(zod@3.25.67))':
+  '@galacticcouncil/sdk@10.1.0(@polkadot/api-augment@16.4.6)(@polkadot/api-base@16.4.9)(@polkadot/api-derive@16.4.6)(@polkadot/api@16.4.6)(@polkadot/keyring@13.5.7(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(@polkadot/util@13.5.7))(@polkadot/rpc-augment@16.4.9)(@polkadot/rpc-core@16.4.9)(@polkadot/rpc-provider@16.4.9)(@polkadot/types-augment@16.4.6)(@polkadot/types-codec@16.4.6)(@polkadot/types-create@16.4.6)(@polkadot/types-known@16.4.6)(@polkadot/types@16.4.6)(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(@polkadot/util@13.5.7)(viem@2.38.6(typescript@5.9.3)(zod@3.25.67))':
     dependencies:
       '@galacticcouncil/math-hsm': 1.1.0
       '@galacticcouncil/math-lbp': 1.2.0
@@ -11215,7 +11193,7 @@ snapshots:
       '@polkadot/api-augment': 16.4.6
       '@polkadot/api-base': 16.4.9
       '@polkadot/api-derive': 16.4.6
-      '@polkadot/keyring': 13.5.7(@polkadot/util-crypto@12.6.2(@polkadot/util@13.5.7))(@polkadot/util@13.5.7)
+      '@polkadot/keyring': 13.5.7(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(@polkadot/util@13.5.7)
       '@polkadot/rpc-augment': 16.4.9
       '@polkadot/rpc-core': 16.4.9
       '@polkadot/rpc-provider': 16.4.9
@@ -11225,7 +11203,7 @@ snapshots:
       '@polkadot/types-create': 16.4.6
       '@polkadot/types-known': 16.4.6
       '@polkadot/util': 13.5.7
-      '@polkadot/util-crypto': 12.6.2(@polkadot/util@13.5.7)
+      '@polkadot/util-crypto': 13.5.7(@polkadot/util@13.5.7)
       '@thi.ng/cache': 2.3.55
       '@thi.ng/memoize': 4.0.31
       bignumber.js: 9.3.1
@@ -12028,14 +12006,14 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@paraspell/sdk-pjs@11.12.9(@polkadot/api-base@16.4.9)(@polkadot/api@16.4.6)(@polkadot/types@16.4.6)(@polkadot/util-crypto@12.6.2(@polkadot/util@13.5.7))(@polkadot/util@13.5.7)(typescript@5.9.3)(zod@3.25.67)':
+  '@paraspell/sdk-pjs@11.12.9(@polkadot/api-base@16.4.9)(@polkadot/api@16.4.6)(@polkadot/types@16.4.6)(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(@polkadot/util@13.5.7)(typescript@5.9.3)(zod@3.25.67)':
     dependencies:
       '@paraspell/sdk-core': 11.12.9(typescript@5.9.3)(zod@3.25.67)
       '@polkadot/api': 16.4.6
       '@polkadot/api-base': 16.4.9
       '@polkadot/types': 16.4.6
       '@polkadot/util': 13.5.7
-      '@polkadot/util-crypto': 12.6.2(@polkadot/util@13.5.7)
+      '@polkadot/util-crypto': 13.5.7(@polkadot/util@13.5.7)
       '@snowbridge/api': 0.2.12
       '@snowbridge/contract-types': 0.2.12
       ethers: 6.15.0
@@ -12140,14 +12118,14 @@ snapshots:
       - yaml
       - zod
 
-  '@paraspell/xcm-router@11.12.9(@acala-network/types@6.3.0(@polkadot/api@16.4.6))(@ethersproject/address@5.8.0)(@polkadot/api-augment@16.4.6)(@polkadot/api-derive@16.4.6)(@polkadot/keyring@13.5.7(@polkadot/util-crypto@12.6.2(@polkadot/util@13.5.7))(@polkadot/util@13.5.7))(@polkadot/rpc-augment@16.4.9)(@polkadot/rpc-core@16.4.9)(@polkadot/rpc-provider@16.4.9)(@polkadot/types-augment@16.4.6)(@polkadot/types-create@16.4.6)(@polkadot/types-known@16.4.6)(@polkadot/util-crypto@12.6.2(@polkadot/util@13.5.7))(jiti@2.6.1)(react-dom@19.1.1(react@19.2.0))(tsx@4.20.6)(typescript@5.9.3)(viem@2.38.6(typescript@5.9.3)(zod@3.25.67))(yaml@2.8.1)(zod@3.25.67)':
+  '@paraspell/xcm-router@11.12.9(@acala-network/types@6.3.0(@polkadot/api@16.4.6))(@ethersproject/address@5.8.0)(@polkadot/api-augment@16.4.6)(@polkadot/api-derive@16.4.6)(@polkadot/keyring@13.5.7(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(@polkadot/util@13.5.7))(@polkadot/rpc-augment@16.4.9)(@polkadot/rpc-core@16.4.9)(@polkadot/rpc-provider@16.4.9)(@polkadot/types-augment@16.4.6)(@polkadot/types-create@16.4.6)(@polkadot/types-known@16.4.6)(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(jiti@2.6.1)(react-dom@19.1.1(react@19.2.0))(tsx@4.20.6)(typescript@5.9.3)(viem@2.38.6(typescript@5.9.3)(zod@3.25.67))(yaml@2.8.1)(zod@3.25.67)':
     dependencies:
       '@acala-network/api': 6.3.0(@polkadot/api@16.4.6)
       '@acala-network/app-util': 4.1.8-14
-      '@acala-network/eth-providers': 2.10.0(@acala-network/api@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)(@polkadot/util-crypto@12.6.2(@polkadot/util@13.5.7))
-      '@acala-network/sdk': 4.1.15(@acala-network/api@6.3.0(@polkadot/api@16.4.6))(@acala-network/eth-providers@2.10.0(@acala-network/api@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)(@polkadot/util-crypto@12.6.2(@polkadot/util@13.5.7)))(@acala-network/types@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)(ethers@5.8.0)
+      '@acala-network/eth-providers': 2.10.0(@acala-network/api@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))
+      '@acala-network/sdk': 4.1.15(@acala-network/api@6.3.0(@polkadot/api@16.4.6))(@acala-network/eth-providers@2.10.0(@acala-network/api@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7)))(@acala-network/types@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)(ethers@5.8.0)
       '@acala-network/sdk-core': 4.1.15(@acala-network/types@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)
-      '@acala-network/sdk-swap': 4.1.15(@acala-network/api@6.3.0(@polkadot/api@16.4.6))(@acala-network/eth-providers@2.10.0(@acala-network/api@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)(@polkadot/util-crypto@12.6.2(@polkadot/util@13.5.7)))(@acala-network/types@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)(ethers@5.8.0)
+      '@acala-network/sdk-swap': 4.1.15(@acala-network/api@6.3.0(@polkadot/api@16.4.6))(@acala-network/eth-providers@2.10.0(@acala-network/api@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7)))(@acala-network/types@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)(ethers@5.8.0)
       '@acala-network/sdk-wallet': 4.1.8-14
       '@crypto-dex-sdk/amm': 0.1.4(react-dom@19.1.1(react@19.2.0))(react@19.2.0)
       '@crypto-dex-sdk/chain': 0.1.2
@@ -12156,9 +12134,9 @@ snapshots:
       '@crypto-dex-sdk/math': 0.1.4
       '@crypto-dex-sdk/parachains-bifrost': 0.1.4(react-dom@19.1.1(react@19.2.0))(react@19.2.0)
       '@crypto-dex-sdk/token-lists': 0.1.4(@crypto-dex-sdk/currency@0.1.4(react-dom@19.1.1(react@19.2.0))(react@19.2.0))(@crypto-dex-sdk/format@0.1.4)(@crypto-dex-sdk/math@0.1.4)(@ethersproject/address@5.8.0)
-      '@galacticcouncil/sdk': 10.1.0(@polkadot/api-augment@16.4.6)(@polkadot/api-base@16.4.9)(@polkadot/api-derive@16.4.6)(@polkadot/api@16.4.6)(@polkadot/keyring@13.5.7(@polkadot/util-crypto@12.6.2(@polkadot/util@13.5.7))(@polkadot/util@13.5.7))(@polkadot/rpc-augment@16.4.9)(@polkadot/rpc-core@16.4.9)(@polkadot/rpc-provider@16.4.9)(@polkadot/types-augment@16.4.6)(@polkadot/types-codec@16.4.6)(@polkadot/types-create@16.4.6)(@polkadot/types-known@16.4.6)(@polkadot/types@16.4.6)(@polkadot/util-crypto@12.6.2(@polkadot/util@13.5.7))(@polkadot/util@13.5.7)(viem@2.38.6(typescript@5.9.3)(zod@3.25.67))
+      '@galacticcouncil/sdk': 10.1.0(@polkadot/api-augment@16.4.6)(@polkadot/api-base@16.4.9)(@polkadot/api-derive@16.4.6)(@polkadot/api@16.4.6)(@polkadot/keyring@13.5.7(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(@polkadot/util@13.5.7))(@polkadot/rpc-augment@16.4.9)(@polkadot/rpc-core@16.4.9)(@polkadot/rpc-provider@16.4.9)(@polkadot/types-augment@16.4.6)(@polkadot/types-codec@16.4.6)(@polkadot/types-create@16.4.6)(@polkadot/types-known@16.4.6)(@polkadot/types@16.4.6)(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(@polkadot/util@13.5.7)(viem@2.38.6(typescript@5.9.3)(zod@3.25.67))
       '@paraspell/sdk': 11.12.9(polkadot-api@1.20.1(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1))(rxjs@7.8.2)(typescript@5.9.3)(zod@3.25.67)
-      '@paraspell/sdk-pjs': 11.12.9(@polkadot/api-base@16.4.9)(@polkadot/api@16.4.6)(@polkadot/types@16.4.6)(@polkadot/util-crypto@12.6.2(@polkadot/util@13.5.7))(@polkadot/util@13.5.7)(typescript@5.9.3)(zod@3.25.67)
+      '@paraspell/sdk-pjs': 11.12.9(@polkadot/api-base@16.4.9)(@polkadot/api@16.4.6)(@polkadot/types@16.4.6)(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(@polkadot/util@13.5.7)(typescript@5.9.3)(zod@3.25.67)
       '@polkadot/api': 16.4.6
       '@polkadot/api-base': 16.4.9
       '@polkadot/types': 16.4.6
@@ -12765,12 +12743,6 @@ snapshots:
       '@polkadot/util-crypto': 13.5.6(@polkadot/util@13.5.6)
       tslib: 2.8.1
 
-  '@polkadot/keyring@13.5.7(@polkadot/util-crypto@12.6.2(@polkadot/util@13.5.7))(@polkadot/util@13.5.7)':
-    dependencies:
-      '@polkadot/util': 13.5.7
-      '@polkadot/util-crypto': 12.6.2(@polkadot/util@13.5.7)
-      tslib: 2.8.1
-
   '@polkadot/keyring@13.5.7(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(@polkadot/util@13.5.7)':
     dependencies:
       '@polkadot/util': 13.5.7
@@ -13121,29 +13093,16 @@ snapshots:
       '@scure/base': 1.2.6
       tslib: 2.8.1
 
-  '@polkadot/util-crypto@12.6.2(@polkadot/util@13.5.7)':
-    dependencies:
-      '@noble/curves': 1.9.7
-      '@noble/hashes': 1.8.0
-      '@polkadot/networks': 12.6.2
-      '@polkadot/util': 13.5.7
-      '@polkadot/wasm-crypto': 7.5.1(@polkadot/util@13.5.7)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@13.5.7)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7)))
-      '@polkadot/wasm-util': 7.5.1(@polkadot/util@13.5.7)
-      '@polkadot/x-bigint': 12.6.2
-      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@13.5.7)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7))
-      '@scure/base': 1.2.6
-      tslib: 2.8.1
-
   '@polkadot/util-crypto@13.5.6(@polkadot/util@13.5.6)':
     dependencies:
       '@noble/curves': 1.9.7
       '@noble/hashes': 1.8.0
       '@polkadot/networks': 13.5.6
       '@polkadot/util': 13.5.6
-      '@polkadot/wasm-crypto': 7.5.1(@polkadot/util@13.5.6)(@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7)))
+      '@polkadot/wasm-crypto': 7.5.1(@polkadot/util@13.5.6)(@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.6)))
       '@polkadot/wasm-util': 7.5.1(@polkadot/util@13.5.6)
       '@polkadot/x-bigint': 13.5.6
-      '@polkadot/x-randomvalues': 13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7))
+      '@polkadot/x-randomvalues': 13.5.6(@polkadot/util@13.5.7)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7))
       '@scure/base': 1.2.6
       tslib: 2.8.1
 
@@ -13197,18 +13156,11 @@ snapshots:
       '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.1(@polkadot/util@12.6.2))
       tslib: 2.8.1
 
-  '@polkadot/wasm-bridge@7.5.1(@polkadot/util@13.5.6)(@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7)))':
+  '@polkadot/wasm-bridge@7.5.1(@polkadot/util@13.5.6)(@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.6)))':
     dependencies:
       '@polkadot/util': 13.5.6
       '@polkadot/wasm-util': 7.5.1(@polkadot/util@13.5.6)
-      '@polkadot/x-randomvalues': 13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7))
-      tslib: 2.8.1
-
-  '@polkadot/wasm-bridge@7.5.1(@polkadot/util@13.5.7)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@13.5.7)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7)))':
-    dependencies:
-      '@polkadot/util': 13.5.7
-      '@polkadot/wasm-util': 7.5.1(@polkadot/util@13.5.7)
-      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@13.5.7)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7))
+      '@polkadot/x-randomvalues': 13.5.6(@polkadot/util@13.5.7)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7))
       tslib: 2.8.1
 
   '@polkadot/wasm-bridge@7.5.1(@polkadot/util@13.5.7)(@polkadot/x-randomvalues@13.5.7(@polkadot/util@13.5.7)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7)))':
@@ -13243,24 +13195,14 @@ snapshots:
       '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.1(@polkadot/util@12.6.2))
       tslib: 2.8.1
 
-  '@polkadot/wasm-crypto-init@7.5.1(@polkadot/util@13.5.6)(@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7)))':
+  '@polkadot/wasm-crypto-init@7.5.1(@polkadot/util@13.5.6)(@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.6)))':
     dependencies:
       '@polkadot/util': 13.5.6
-      '@polkadot/wasm-bridge': 7.5.1(@polkadot/util@13.5.6)(@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7)))
+      '@polkadot/wasm-bridge': 7.5.1(@polkadot/util@13.5.6)(@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.6)))
       '@polkadot/wasm-crypto-asmjs': 7.5.1(@polkadot/util@13.5.6)
       '@polkadot/wasm-crypto-wasm': 7.5.1(@polkadot/util@13.5.6)
       '@polkadot/wasm-util': 7.5.1(@polkadot/util@13.5.6)
-      '@polkadot/x-randomvalues': 13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7))
-      tslib: 2.8.1
-
-  '@polkadot/wasm-crypto-init@7.5.1(@polkadot/util@13.5.7)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@13.5.7)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7)))':
-    dependencies:
-      '@polkadot/util': 13.5.7
-      '@polkadot/wasm-bridge': 7.5.1(@polkadot/util@13.5.7)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@13.5.7)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7)))
-      '@polkadot/wasm-crypto-asmjs': 7.5.1(@polkadot/util@13.5.7)
-      '@polkadot/wasm-crypto-wasm': 7.5.1(@polkadot/util@13.5.7)
-      '@polkadot/wasm-util': 7.5.1(@polkadot/util@13.5.7)
-      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@13.5.7)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7))
+      '@polkadot/x-randomvalues': 13.5.6(@polkadot/util@13.5.7)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7))
       tslib: 2.8.1
 
   '@polkadot/wasm-crypto-init@7.5.1(@polkadot/util@13.5.7)(@polkadot/x-randomvalues@13.5.7(@polkadot/util@13.5.7)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7)))':
@@ -13302,26 +13244,15 @@ snapshots:
       '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.1(@polkadot/util@12.6.2))
       tslib: 2.8.1
 
-  '@polkadot/wasm-crypto@7.5.1(@polkadot/util@13.5.6)(@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7)))':
+  '@polkadot/wasm-crypto@7.5.1(@polkadot/util@13.5.6)(@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.6)))':
     dependencies:
       '@polkadot/util': 13.5.6
-      '@polkadot/wasm-bridge': 7.5.1(@polkadot/util@13.5.6)(@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7)))
+      '@polkadot/wasm-bridge': 7.5.1(@polkadot/util@13.5.6)(@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.6)))
       '@polkadot/wasm-crypto-asmjs': 7.5.1(@polkadot/util@13.5.6)
-      '@polkadot/wasm-crypto-init': 7.5.1(@polkadot/util@13.5.6)(@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7)))
+      '@polkadot/wasm-crypto-init': 7.5.1(@polkadot/util@13.5.6)(@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.6)))
       '@polkadot/wasm-crypto-wasm': 7.5.1(@polkadot/util@13.5.6)
       '@polkadot/wasm-util': 7.5.1(@polkadot/util@13.5.6)
-      '@polkadot/x-randomvalues': 13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7))
-      tslib: 2.8.1
-
-  '@polkadot/wasm-crypto@7.5.1(@polkadot/util@13.5.7)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@13.5.7)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7)))':
-    dependencies:
-      '@polkadot/util': 13.5.7
-      '@polkadot/wasm-bridge': 7.5.1(@polkadot/util@13.5.7)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@13.5.7)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7)))
-      '@polkadot/wasm-crypto-asmjs': 7.5.1(@polkadot/util@13.5.7)
-      '@polkadot/wasm-crypto-init': 7.5.1(@polkadot/util@13.5.7)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@13.5.7)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7)))
-      '@polkadot/wasm-crypto-wasm': 7.5.1(@polkadot/util@13.5.7)
-      '@polkadot/wasm-util': 7.5.1(@polkadot/util@13.5.7)
-      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@13.5.7)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7))
+      '@polkadot/x-randomvalues': 13.5.6(@polkadot/util@13.5.7)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7))
       tslib: 2.8.1
 
   '@polkadot/wasm-crypto@7.5.1(@polkadot/util@13.5.7)(@polkadot/x-randomvalues@13.5.7(@polkadot/util@13.5.7)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7)))':
@@ -13396,17 +13327,10 @@ snapshots:
       '@polkadot/x-global': 12.6.2
       tslib: 2.8.1
 
-  '@polkadot/x-randomvalues@12.6.2(@polkadot/util@13.5.7)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7))':
+  '@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.7)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7))':
     dependencies:
       '@polkadot/util': 13.5.7
-      '@polkadot/wasm-util': 7.5.1(@polkadot/util@13.5.7)
-      '@polkadot/x-global': 12.6.2
-      tslib: 2.8.1
-
-  '@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7))':
-    dependencies:
-      '@polkadot/util': 13.5.6
-      '@polkadot/wasm-util': 7.5.1(@polkadot/util@13.5.7)
+      '@polkadot/wasm-util': 7.5.1(@polkadot/util@13.5.6)
       '@polkadot/x-global': 13.5.6
       tslib: 2.8.1
 
