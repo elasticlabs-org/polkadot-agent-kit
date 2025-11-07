@@ -291,7 +291,8 @@ export default function ConfigPage() {
     setLlmConnected("idle")
 
     try {
-      // Store agent config in server session
+      console.log("Storing agent config in server session")
+      // Store agent config in server session (handles validation and initialization server-side)
       const agentResult = await storeAgentConfig({
         privateKey: agentConfig.privateKey,
         keyType: agentConfig.keyType as "Sr25519" | "Ed25519",
@@ -304,26 +305,6 @@ export default function ConfigPage() {
         return
       }
 
-      // Store LLM config in server session (if not already stored in step 1)
-      const needsApiKey = agentConfig.llmProvider === "openai" || agentConfig.llmProvider === "gemini"
-      const envApiKey = agentConfig.llmProvider === "openai"
-        ? process.env.NEXT_PUBLIC_OPENAI_KEY
-        : agentConfig.llmProvider === "gemini"
-          ? process.env.NEXT_PUBLIC_GOOGLE_API_KEY
-          : null
-      const apiKeyToPersist = agentConfig.llmProvider === "ollama" ? null : (agentConfig.apiKey || envApiKey || null)
-      
-      const llmResult = await storeLlmConfig({
-        provider: agentConfig.llmProvider,
-        model: agentConfig.llmModel,
-        apiKey: apiKeyToPersist
-      })
-
-      if (!llmResult.success) {
-        alert(llmResult.error || "Failed to store LLM configuration")
-        setInitializing(false)
-        return
-      }
 
       // Update local state for UI (without privateKey)
       const storeConfig = {
@@ -344,10 +325,7 @@ export default function ConfigPage() {
     } catch (err) {
       console.error("Failed to connect agent:", err)
       alert(
-        `Failed to connect agent: ${err instanceof Error ? err.message : "Unknown error"}. ` +
-          (agentConfig.llmProvider === "ollama" && llmConnected === "error"
-            ? "Ollama seems unreachable at 127.0.0.1:11434. Ensure Ollama is running and the model is pulled."
-            : "")
+        `Failed to connect agent: ${err instanceof Error ? err.message : "Unknown error"}`
       )
     } finally {
       setInitializing(false)

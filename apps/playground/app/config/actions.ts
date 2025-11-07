@@ -19,39 +19,57 @@ export interface StoreAgentConfigResult {
 export async function storeAgentConfig(
   config: Omit<AgentConfig, 'isConfigured'>
 ): Promise<StoreAgentConfigResult> {
+  console.log('[Config Actions] storeAgentConfig: Starting function')
+  console.log('[Config Actions] storeAgentConfig: Received config - keyType:', config.keyType, 'chains:', config.chains?.length || 0)
   try {
+    console.log('[Config Actions] storeAgentConfig: Validating private key')
     if (!config.privateKey) {
+      console.error('[Config Actions] storeAgentConfig: Validation failed - Private key is required')
       return {
         success: false,
         error: 'Private key is required',
       }
     }
+    console.log('[Config Actions] storeAgentConfig: Private key validation passed')
 
+    console.log('[Config Actions] storeAgentConfig: Validating key type')
     if (!config.keyType) {
+      console.error('[Config Actions] storeAgentConfig: Validation failed - Key type is required')
       return {
         success: false,
         error: 'Key type is required',
       }
     }
+    console.log('[Config Actions] storeAgentConfig: Key type validation passed:', config.keyType)
 
+    console.log('[Config Actions] storeAgentConfig: Validating chains')
     if (!config.chains || config.chains.length === 0) {
+      console.error('[Config Actions] storeAgentConfig: Validation failed - At least one chain is required')
       return {
         success: false,
         error: 'At least one chain is required',
       }
     }
+    console.log('[Config Actions] storeAgentConfig: Chains validation passed, count:', config.chains.length)
 
+    console.log('[Config Actions] storeAgentConfig: Creating full config with isConfigured: true')
     const fullConfig: AgentConfig = {
       ...config,
       isConfigured: true,
     }
+    console.log('[Config Actions] storeAgentConfig: Full config created, isConfigured:', fullConfig.isConfigured)
 
+    console.log('[Config Actions] storeAgentConfig: Storing agent config in session')
     await setAgentConfig(fullConfig)
+    console.log('[Config Actions] storeAgentConfig: Agent config stored successfully')
 
+    console.log('[Config Actions] storeAgentConfig: Initializing agentKit')
     try {
       await initializeAgentKit()
+      console.log('[Config Actions] storeAgentConfig: AgentKit initialized successfully')
     } catch (error) {
       console.error('[Config Actions] Failed to initialize agentKit:', error)
+      console.error('[Config Actions] storeAgentConfig: Initialization failed, returning error')
       return {
         success: false,
         error:
@@ -61,11 +79,13 @@ export async function storeAgentConfig(
       }
     }
 
+    console.log('[Config Actions] storeAgentConfig: All operations completed successfully')
     return {
       success: true,
     }
   } catch (error) {
     console.error('[Config Actions] Error storing agent config:', error)
+    console.error('[Config Actions] storeAgentConfig: Unexpected error occurred')
     return {
       success: false,
       error:

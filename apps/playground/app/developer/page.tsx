@@ -15,8 +15,9 @@ import {
 } from "@/components/ui/collapsible"
 import { ChevronDown } from "lucide-react"
 import { useAgentStore, useAgentRestore } from "@/stores/agent-store"
+import { getToolsMap, executeTool } from "./actions"
 
-type ToolLike = { name?: string; description?: string; schema?: any; schemaJson?: any; call: (args: any) => Promise<any> }
+type ToolLike = { name: string; description: string; schemaJson: any }
 type EndpointKey = "assets" | "swap" | "bifrost" | "staking"
 type ToolsMap = Record<EndpointKey, Record<string, ToolLike>>
 
@@ -44,64 +45,22 @@ export default function DeveloperPage() {
   // Restore agent session on page load
   useAgentRestore()
 
-  // Initialize tools when agentKit is available
+  // Initialize tools from server
   useEffect(() => {
     const initializeTools = async () => {
-      if (!agentKit || !isInitialized) {
+      if (!isInitialized) {
         setToolsMap(null)
         return
       }
 
       try {
-        const { default: zodToJsonSchema } = await import("zod-to-json-schema")
-        const ep: ToolsMap = {
-          assets: {
-            getNativeBalanceTool: agentKit.getNativeBalanceTool(),
-            transferNativeTool: agentKit.transferNativeTool(),
-            xcmTransferNativeTool: agentKit.xcmTransferNativeTool(),
-          },
-          swap: {
-            swapTokensTool: agentKit.swapTokensTool(),
-          },
-          bifrost: {
-            mintVdotTool: agentKit.mintVdotTool(),
-          },
-          staking: {
-            joinPoolTool: agentKit.joinPoolTool(),
-            bondExtraTool: agentKit.bondExtraTool(),
-            unbondTool: agentKit.unbondTool(),
-            withdrawUnbondedTool: agentKit.withdrawUnbondedTool(),
-            claimRewardsTool: agentKit.claimRewardsTool(),
-          },
-
-
+        const result = await getToolsMap()
+        if (result.success && result.tools) {
+          setToolsMap(result.tools as ToolsMap)
+        } else {
+          console.error("Failed to get tools:", result.error)
+          setToolsMap(null)
         }
-
-        // Process each tool to add schema information
-        for (const [endpoint, tools] of Object.entries(ep)) {
-          for (const [methodName, tool] of Object.entries(tools)) {
-            try {
-              const fullSchema = zodToJsonSchema(tool.schema, methodName) as any
-              let schemaJson
-
-              if (fullSchema?.$ref && fullSchema?.definitions) {
-                const refName = fullSchema.$ref.replace('#/definitions/', '')
-                schemaJson = fullSchema.definitions[refName] || fullSchema
-              } else {
-                schemaJson = fullSchema
-              }
-
-              // Add schema information to the tool
-              ;(tool as any).schemaJson = schemaJson
-              ;(tool as any).name = methodName
-              ;(tool as any).description = tool.description || `${methodName} tool`
-            } catch (error) {
-              console.warn(`Failed to process schema for ${methodName}:`, error)
-            }
-          }
-        }
-
-        setToolsMap(ep)
       } catch (error) {
         console.error("Failed to initialize tools:", error)
         setToolsMap(null)
@@ -109,7 +68,7 @@ export default function DeveloperPage() {
     }
 
     initializeTools()
-  }, [agentKit])
+  }, [isInitialized])
 
   const selectedTool = useMemo(() => {
     if (!selectedEndpoint || !selectedMethod || !toolsMap) return null
@@ -187,15 +146,19 @@ export default function DeveloperPage() {
   }
 
   const runTool = async (params: Record<string, any>) => {
-    if (!selectedTool || isExecuting) return
+    if (!selectedEndpoint || !selectedMethod || isExecuting) return
     setIsExecuting(true)
     const id = String(Date.now())
     setToolCalls(prev => [...prev, { id, tool: selectedEndpoint || "", method: selectedMethod, params: JSON.stringify(params, null, 2), status: "pending" }])
     try {
       console.log("[Developer] Executing:", { endpoint: selectedEndpoint, method: selectedMethod, params: params })
-      const res = await (selectedTool as any).call(params)
-      console.log("[Developer] Response:", res)
-      setToolCalls(prev => prev.map(c => c.id === id ? { ...c, status: "success", response: JSON.stringify(res, null, 2) } : c))
+      const result = await executeTool(selectedEndpoint, selectedMethod, params)
+      if (result.success && result.result !== undefined) {
+        console.log("[Developer] Response:", result.result)
+        setToolCalls(prev => prev.map(c => c.id === id ? { ...c, status: "success", response: JSON.stringify(result.result, null, 2) } : c))
+      } else {
+        setToolCalls(prev => prev.map(c => c.id === id ? { ...c, status: "error", response: result.error || "Unknown error" } : c))
+      }
     } catch (err: any) {
       setToolCalls(prev => prev.map(c => c.id === id ? { ...c, status: "error", response: String(err?.message || err) } : c))
     } finally {
