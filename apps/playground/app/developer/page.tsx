@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Play, Zap, Terminal } from "lucide-react"
+import { Play, Zap, Terminal, X, Loader2 } from "lucide-react"
 import {
   Collapsible,
   CollapsibleContent,
@@ -48,6 +48,7 @@ export default function DeveloperPage() {
   const [toolCalls, setToolCalls] = useState<ToolCall[]>([])
   const [formData, setFormData] = useState<Record<string, any>>({})
   const [parsedSchema, setParsedSchema] = useState<any>(null)
+  const [isExecuting, setIsExecuting] = useState(false)
 
   // Restore agent session on page load
   useAgentRestore()
@@ -195,7 +196,8 @@ export default function DeveloperPage() {
   }
 
   const runTool = async (params: Record<string, any>) => {
-    if (!selectedTool) return
+    if (!selectedTool || isExecuting) return
+    setIsExecuting(true)
     const id = String(Date.now())
     setToolCalls(prev => [...prev, { id, tool: selectedEndpoint || "", method: selectedMethod, params: JSON.stringify(params, null, 2), status: "pending" }])
     try {
@@ -205,7 +207,13 @@ export default function DeveloperPage() {
       setToolCalls(prev => prev.map(c => c.id === id ? { ...c, status: "success", response: JSON.stringify(res, null, 2) } : c))
     } catch (err: any) {
       setToolCalls(prev => prev.map(c => c.id === id ? { ...c, status: "error", response: String(err?.message || err) } : c))
+    } finally {
+      setIsExecuting(false)
     }
+  }
+
+  const removeToolCall = (id: string) => {
+    setToolCalls(prev => prev.filter(c => c.id !== id))
   }
 
   return (
@@ -215,7 +223,7 @@ export default function DeveloperPage() {
 
         <div className="flex-1 flex flex-col min-h-screen">
           <div className="border-b border-white/10 modern-card border-l-0 border-r-0 border-t-0 rounded-none flex-shrink-0">
-            <div className="flex items-center justify-between p-4 sm:p-6">
+            <div className="flex items-center justify-between p-4 sm:p-6 h-[73px] sm:h-[89px]">
               <div className="flex items-center gap-4">
                 <h2 className="text-xl sm:text-2xl font-bold modern-text-primary">Developer Portal</h2>
                 <Badge className="modern-badge font-medium px-3 py-1">Tools</Badge>
@@ -297,11 +305,20 @@ export default function DeveloperPage() {
                   <div className="pt-4 border-t border-white/10">
                     <Button
                       onClick={() => runTool(formData)}
-                      disabled={!isInitialized || !selectedEndpoint || !selectedMethod}
+                      disabled={!isInitialized || !selectedEndpoint || !selectedMethod || isExecuting}
                       className="w-full modern-button-primary"
                     >
-                      <Play className="w-4 h-4 mr-2" />
-                      Execute API Call
+                      {isExecuting ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Executing...
+                        </>
+                      ) : (
+                        <>
+                          <Play className="w-4 h-4 mr-2" />
+                          Execute API Call
+                        </>
+                      )}
                     </Button>
                   </div>
                 </div>
@@ -343,6 +360,15 @@ export default function DeveloperPage() {
                             >
                               {call.status}
                             </Badge>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeToolCall(call.id)}
+                              className="h-6 w-6 p-0 hover:bg-red-500/20 hover:text-red-400"
+                              title="Remove this API call"
+                            >
+                              <X className="w-3 h-3 sm:w-4 sm:h-4" />
+                            </Button>
                           </div>
                             </div>
 
