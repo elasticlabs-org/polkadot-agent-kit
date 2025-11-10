@@ -11,6 +11,7 @@ import { Settings, Key, Cpu, Loader2, Check, ArrowLeft, ArrowRight, Link } from 
 import Sidebar from "@/components/sidebar"
 import { ChainSelector } from "@/components/chain-selector"
 import { useAgentStore } from "@/stores/agent-store"
+import { useToast } from "@/hooks/use-toast"
 import type { KnownChainId, KeyType } from "@polkadot-agent-kit/common"
 interface AgentConfig {
   llmProvider: string
@@ -34,6 +35,7 @@ interface Chain {
 
 export default function ConfigPage() {
   const router = useRouter()
+  const { toast } = useToast()
   const { 
     config, 
     isConfigured, 
@@ -313,6 +315,12 @@ export default function ConfigPage() {
     setInitializing(true)
     setLlmConnected("idle")
 
+    // Show connecting toast notification
+    const connectingToast = toast({
+      title: "Connecting",
+      description: "Initializing agent, please wait...",
+    })
+
     try {
       // If LLM changed, persist LLM config and (optionally) validate
       if (llmChanged) {
@@ -375,9 +383,25 @@ export default function ConfigPage() {
       const updatedConfig = { ...agentConfig, isConfigured: true }
       setAgentConfig(updatedConfig)
 
+      // Dismiss connecting toast and show success
+      connectingToast.dismiss()
+      toast({
+        title: "Connected",
+        description: "Agent initialized successfully!",
+      })
+
       router.push("/chat")
     } catch (err) {
       console.error("Failed to connect agent:", err)
+      
+      // Dismiss connecting toast and show error
+      connectingToast.dismiss()
+      toast({
+        title: "Connection Failed",
+        description: err instanceof Error ? err.message : "Unknown error occurred",
+        variant: "destructive",
+      })
+      
       alert(
         `Failed to connect agent: ${err instanceof Error ? err.message : "Unknown error"}. ` +
           (agentConfig.llmProvider === "ollama" && llmConnected === "error"
@@ -411,7 +435,7 @@ export default function ConfigPage() {
 
         <div className="flex-1 flex flex-col overflow-hidden">
           <div className="border-b border-white/10 modern-card border-l-0 border-r-0 border-t-0 rounded-none flex-shrink-0">
-            <div className="flex items-center justify-between p-4 sm:p-6">
+            <div className="flex items-center justify-between p-4 sm:p-6 h-[73px] sm:h-[89px]">
               <div className="flex items-center gap-2 sm:gap-4">
                 <h2 className="text-xl sm:text-2xl font-bold modern-text-primary">Agent Configuration</h2>
                 <Badge className="modern-badge font-medium px-2 py-1 text-xs sm:px-3 sm:py-1 sm:text-sm">Setup</Badge>
@@ -788,7 +812,7 @@ export default function ConfigPage() {
                       {isInitializing ? (
                         <>
                           <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Connecting...
+                          Connecting
                         </>
                       ) : (
                         <>

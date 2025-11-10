@@ -31,15 +31,12 @@ export default function Sidebar({ currentPage }: SidebarProps) {
 
   return (
     <div className={`${sidebarCollapsed ? "w-16" : "w-80"} transition-all duration-300 modern-sidebar`}>
-      <div className={`flex items-center ${sidebarCollapsed ? "justify-center" : "justify-between"} p-4 border-b border-white/10`}>
+      <div className={`flex items-center ${sidebarCollapsed ? "justify-center" : "justify-between"} p-4 sm:p-6 border-b border-white/10 h-[73px] sm:h-[89px]`}>
         {!sidebarCollapsed && (
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 modern-logo flex items-center justify-center">
-              <Terminal className="w-5 h-5" />
-            </div>
             <div>
               <h1 className="font-bold text-xl modern-gradient-text">Polkadot Agent Kit</h1>
-              <p className="text-xs modern-text-secondary">Playground v0.1.0</p>
+              <p className="text-xs modern-text-secondary">Playground v2.1.3</p>
             </div>
           </div>
         )}
@@ -77,23 +74,6 @@ export default function Sidebar({ currentPage }: SidebarProps) {
           <Code2 className="w-5 h-5" />
           {!sidebarCollapsed && <span className="font-medium">Developer Portal</span>}
         </Button>
-      </div>
-
-      <div className="p-4 mt-auto">
-        {sidebarCollapsed ? (
-          <div className="flex justify-center">
-            <div className={`w-3 h-3 rounded-full ${isInitialized ? "bg-green-400" : "bg-red-400"}`} />
-          </div>
-        ) : (
-          <div className="modern-form-section">
-            <div className="flex items-center gap-2 text-xs">
-              <div className={`w-2 h-2 rounded-full ${isInitialized ? "bg-green-400" : "bg-red-400"}`} />
-              <span className="modern-text-secondary">
-                {isInitialized ? "Agent Configured" : "Configuration Required"}
-              </span>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   )

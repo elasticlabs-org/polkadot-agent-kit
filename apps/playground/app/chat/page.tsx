@@ -165,7 +165,7 @@ export default function ChatPage() {
 
         <div className="flex-1 flex flex-col min-h-0">
           <div className="border-b border-white/10 modern-card border-l-0 border-r-0 border-t-0 rounded-none flex-shrink-0">
-            <div className="flex items-center justify-between p-4 sm:p-6">
+            <div className="flex items-center justify-between p-4 sm:p-6 h-[73px] sm:h-[89px]">
               <div className="flex items-center gap-2 sm:gap-4">
                 <h2 className="text-xl sm:text-2xl font-bold modern-text-primary">AI Chat Interface</h2>
                 <Badge className="modern-badge font-medium px-2 py-1 text-xs sm:px-3 sm:py-1 sm:text-sm">Interactive</Badge>
