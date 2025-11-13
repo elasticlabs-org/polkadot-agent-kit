@@ -31,4 +31,3 @@ export function getLangChainTools(polkadotAgentKit: PolkadotAgentKit): Structure
     )
   )
 }
-

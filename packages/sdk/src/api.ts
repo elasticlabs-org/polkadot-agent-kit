@@ -11,10 +11,8 @@ import type {
   TransferTool,
   XcmTransferNativeAssetTool
 } from "@polkadot-agent-kit/llm"
-import { PolkadotAgentApi } from "@polkadot-agent-kit/llm"
+import { PolkadotAgentApi, validateTools } from "@polkadot-agent-kit/llm"
 import { type PolkadotSigner } from "polkadot-api/signer"
-
-import { validateCustomTools } from "./utils"
 
 export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
   private polkadotApi: PolkadotApi
@@ -292,7 +290,7 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
    *
    */
   addCustomTools(tools: Action[]): void {
-    validateCustomTools(tools, this.customTools)
+    validateTools(tools, this.customTools)
     this.customTools.push(...tools)
   }
 

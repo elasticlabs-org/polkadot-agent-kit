@@ -2,7 +2,7 @@ import type { KnownChainId } from "@polkadot-agent-kit/common"
 import { convertAddress } from "@polkadot-agent-kit/core"
 import type { ZodType } from "zod"
 
-import type { Action, ToolError, ToolResponse } from "../types"
+import { Action, ToolError, ToolNames, ToolResponse } from "../types"
 import { ChainNotAvailableError, ErrorCodes, InvalidAddressError, isAnyToolError } from "../types"
 
 /**
@@ -140,36 +140,6 @@ export const executeTool = async <T>(
   }
 }
 
-/**
- * Utility function to create chain-specific error responses.
- *
- * @example
- * ```typescript
- * const response = createChainErrorResponse("invalid-chain", ["polkadot"], "check_balance");
- * ```
- */
-export const createChainErrorResponse = (
-  chain: string,
-  availableChains: string[],
-  toolName: string
-): ToolResponse => {
-  const error = new ChainNotAvailableError(chain, availableChains)
-  return createErrorResponse(error, toolName)
-}
-
-/**
- * Utility function to create address-specific error responses.
- *
- * @example
- * ```typescript
- * const response = createAddressErrorResponse("invalid-address", "transfer");
- * ```
- */
-export const createAddressErrorResponse = (address: string, toolName: string): ToolResponse => {
-  const error = new InvalidAddressError(address)
-  return createErrorResponse(error, toolName)
-}
-
 export const createAction = <T>(
   tool: { invoke: (args: T) => Promise<unknown> },
   toolConfig: { name: string; description: string; schema: ZodType }
@@ -182,3 +152,37 @@ export const createAction = <T>(
     return typeof result === "string" ? result : JSON.stringify(result)
   }
 })
+
+export function validateTools(actions: Action[], existingCustomActions: Action[]): void {
+  const builtInToolNames = new Set(Object.values(ToolNames))
+
+  for (const action of actions) {
+    if (!action.name || typeof action.name !== "string") {
+      throw new Error("Action must have a valid 'name' property")
+    }
+
+    if (!action.description || typeof action.description !== "string") {
+      throw new Error(`Action '${action.name}' must have a valid 'description' property`)
+    }
+
+    if (!action.schema) {
+      throw new Error(`Action '${action.name}' must have a valid 'schema' property`)
+    }
+
+    if (!action.invoke || typeof action.invoke !== "function") {
+      throw new Error(`Action '${action.name}' must have a valid 'invoke' function`)
+    }
+
+    if (builtInToolNames.has(action.name as ToolNames)) {
+      throw new Error(
+        `Action name '${action.name}' conflicts with a built-in tool. Please use a different name.`
+      )
+    }
+
+    if (existingCustomActions.some(existing => existing.name === action.name)) {
+      throw new Error(
+        `Action name '${action.name}' already exists in custom actions. Please use a unique name.`
+      )
+    }
+  }
+}
