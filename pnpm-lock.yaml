@@ -82,17 +82,17 @@ importers:
         specifier: ^0.5.12
         version: 0.5.18(@langchain/core@0.3.79(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67)))(ws@8.18.3)
       '@polkadot-agent-kit/common':
-        specifier: 2.1.3
-        version: 2.1.3(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1)
+        specifier: workspace:*
+        version: link:../../packages/common
       '@polkadot-agent-kit/core':
-        specifier: 2.1.3
-        version: 2.1.3(jiti@2.6.1)(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)(zod@3.25.67)
+        specifier: workspace:*
+        version: link:../../packages/core
       '@polkadot-agent-kit/llm':
-        specifier: 2.1.3
-        version: 2.1.3(@opentelemetry/api@1.9.0)(jiti@2.6.1)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+        specifier: workspace:*
+        version: link:../../packages/llm
       '@polkadot-agent-kit/sdk':
-        specifier: 2.1.3
-        version: 2.1.3(@cfworker/json-schema@4.1.1)(@opentelemetry/api@1.9.0)(ai@4.3.19(react@19.1.1)(zod@3.25.67))(jiti@2.6.1)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+        specifier: workspace:*
+        version: link:../../packages/sdk
       '@radix-ui/react-accordion':
         specifier: 1.2.2
         version: 1.2.2(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -2848,20 +2848,6 @@ packages:
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==, tarball: https://registry.npmjs.org/@pkgjs/parseargs/-/parseargs-0.11.0.tgz}
     engines: {node: '>=14'}
-
-  '@polkadot-agent-kit/common@2.1.3':
-    resolution: {integrity: sha512-nLZWRzkgg1iSbOBZYpElfAAG4Qw5Yswblr6gtue7cu7Eucg9TLoeyb06RR6ZaW2/Y6czlly8DWNQ++BoKtStyQ==, tarball: https://registry.npmjs.org/@polkadot-agent-kit/common/-/common-2.1.3.tgz}
-
-  '@polkadot-agent-kit/core@2.1.3':
-    resolution: {integrity: sha512-JeyU8cLtwXBwY6eHLbgq/mLkWGS0UgcG2nS/Qx26z/MIIIqD9A/hCywLPa/PnH0KzGESxOD9025o5MxdOutwZA==, tarball: https://registry.npmjs.org/@polkadot-agent-kit/core/-/core-2.1.3.tgz}
-
-  '@polkadot-agent-kit/llm@2.1.3':
-    resolution: {integrity: sha512-ts8vJOGTw9xtuDso1GnC4ijkBe8gFJ7sOF79qp6DxWixiQh1QjVwSCAyEZycFM+Pct7p0SwF89KxaVdF7jahnA==, tarball: https://registry.npmjs.org/@polkadot-agent-kit/llm/-/llm-2.1.3.tgz}
-
-  '@polkadot-agent-kit/sdk@2.1.3':
-    resolution: {integrity: sha512-K4SfQ+c+qdVWBY1XK27iCnce4YgQGiOAuifPSwStR8uLRDLSacmyuywc/nbBOutjPFTSKNa5rjjxeaWopoYb/Q==, tarball: https://registry.npmjs.org/@polkadot-agent-kit/sdk/-/sdk-2.1.3.tgz}
-    peerDependencies:
-      ai: ^4.1.16
 
   '@polkadot-api/cli@0.15.4':
     resolution: {integrity: sha512-+FHUoVTdgEaNjV/8QsOWEsRsR4CZDvhFzrVG1Ujskkoib7IBh/7cBvrfg8HB0mnk0Cq2TDrr3asOzBq0yGejCQ==, tarball: https://registry.npmjs.org/@polkadot-api/cli/-/cli-0.15.4.tgz}
@@ -9158,16 +9144,6 @@ snapshots:
     dependencies:
       json-schema: 0.4.0
 
-  '@ai-sdk/react@1.2.12(react@19.1.1)(zod@3.25.67)':
-    dependencies:
-      '@ai-sdk/provider-utils': 2.2.8(zod@3.25.67)
-      '@ai-sdk/ui-utils': 1.2.11(zod@3.25.67)
-      react: 19.1.1
-      swr: 2.3.6(react@19.1.1)
-      throttleit: 2.1.0
-    optionalDependencies:
-      zod: 3.25.67
-
   '@ai-sdk/react@1.2.12(react@19.2.0)(zod@3.25.67)':
     dependencies:
       '@ai-sdk/provider-utils': 2.2.8(zod@3.25.67)
@@ -10113,25 +10089,6 @@ snapshots:
     dependencies:
       commander: 14.0.2
 
-  '@crypto-dex-sdk/amm@0.1.4(react-dom@19.1.1(react@19.1.1))(react@19.2.0)':
-    dependencies:
-      '@crypto-dex-sdk/chain': 0.1.2
-      '@crypto-dex-sdk/currency': 0.1.4(react-dom@19.1.1(react@19.1.1))(react@19.2.0)
-      '@crypto-dex-sdk/math': 0.1.4
-      '@ethersproject/abi': 5.8.0
-      '@ethersproject/address': 5.8.0
-      '@ethersproject/bignumber': 5.8.0
-      '@ethersproject/constants': 5.8.0
-      '@ethersproject/solidity': 5.8.0
-      ethers: 5.8.0
-      tiny-invariant: 1.3.3
-      tiny-warning: 1.0.3
-    transitivePeerDependencies:
-      - bufferutil
-      - react
-      - react-dom
-      - utf-8-validate
-
   '@crypto-dex-sdk/amm@0.1.4(react-dom@19.1.1(react@19.2.0))(react@19.2.0)':
     dependencies:
       '@crypto-dex-sdk/chain': 0.1.2
@@ -10152,18 +10109,6 @@ snapshots:
       - utf-8-validate
 
   '@crypto-dex-sdk/chain@0.1.2': {}
-
-  '@crypto-dex-sdk/currency@0.1.4(react-dom@19.1.1(react@19.1.1))(react@19.2.0)':
-    dependencies:
-      '@crypto-dex-sdk/chain': 0.1.2
-      '@crypto-dex-sdk/format': 0.1.4
-      '@crypto-dex-sdk/math': 0.1.4
-      '@ethersproject/address': 5.8.0
-      '@ethersproject/units': 5.8.0
-      lodash.flatmap: 4.5.0
-      react: 19.2.0
-      react-dom: 19.1.1(react@19.1.1)
-      tiny-invariant: 1.3.3
 
   '@crypto-dex-sdk/currency@0.1.4(react-dom@19.1.1(react@19.2.0))(react@19.2.0)':
     dependencies:
@@ -10189,33 +10134,6 @@ snapshots:
       jsbi: 4.3.2
       tiny-invariant: 1.3.3
       toformat: 2.0.0
-
-  '@crypto-dex-sdk/parachains-bifrost@0.1.4(react-dom@19.1.1(react@19.1.1))(react@19.2.0)':
-    dependencies:
-      '@crypto-dex-sdk/amm': 0.1.4(react-dom@19.1.1(react@19.1.1))(react@19.2.0)
-      '@crypto-dex-sdk/chain': 0.1.2
-      '@crypto-dex-sdk/currency': 0.1.4(react-dom@19.1.1(react@19.1.1))(react@19.2.0)
-      '@crypto-dex-sdk/format': 0.1.4
-      '@crypto-dex-sdk/math': 0.1.4
-      '@headlessui/react': 2.2.0(react-dom@19.1.1(react@19.1.1))(react@19.2.0)
-      '@heroicons/react': 2.2.0(react@19.2.0)
-      '@lingui/core': 5.2.0
-      '@lingui/macro': 5.2.0(react@19.2.0)
-      '@lingui/react': 5.2.0(react@19.2.0)
-      '@polkadot-onboard/react': 1.1.0
-      '@polkadot/api': 16.4.6
-      '@polkadot/api-augment': 12.4.2
-      '@polkadot/types': 16.4.6
-      '@polkadot/types-codec': 16.4.6
-      '@zenlink-types/bifrost': 1.7.6
-      react: 19.2.0
-      react-dom: 19.1.1(react@19.1.1)
-    transitivePeerDependencies:
-      - '@lingui/babel-plugin-lingui-macro'
-      - babel-plugin-macros
-      - bufferutil
-      - supports-color
-      - utf-8-validate
 
   '@crypto-dex-sdk/parachains-bifrost@0.1.4(react-dom@19.1.1(react@19.2.0))(react@19.2.0)':
     dependencies:
@@ -10243,12 +10161,6 @@ snapshots:
       - bufferutil
       - supports-color
       - utf-8-validate
-
-  '@crypto-dex-sdk/token-lists@0.1.4(@crypto-dex-sdk/currency@0.1.4(react-dom@19.1.1(react@19.1.1))(react@19.2.0))(@crypto-dex-sdk/format@0.1.4)(@crypto-dex-sdk/math@0.1.4)':
-    dependencies:
-      '@crypto-dex-sdk/currency': 0.1.4(react-dom@19.1.1(react@19.1.1))(react@19.2.0)
-      '@crypto-dex-sdk/format': 0.1.4
-      '@crypto-dex-sdk/math': 0.1.4
 
   '@crypto-dex-sdk/token-lists@0.1.4(@crypto-dex-sdk/currency@0.1.4(react-dom@19.1.1(react@19.2.0))(react@19.2.0))(@crypto-dex-sdk/format@0.1.4)(@crypto-dex-sdk/math@0.1.4)(@ethersproject/address@5.8.0)':
     dependencies:
@@ -10919,25 +10831,11 @@ snapshots:
       react: 19.1.1
       react-dom: 19.1.1(react@19.1.1)
 
-  '@floating-ui/react-dom@2.1.6(react-dom@19.1.1(react@19.1.1))(react@19.2.0)':
-    dependencies:
-      '@floating-ui/dom': 1.7.4
-      react: 19.2.0
-      react-dom: 19.1.1(react@19.1.1)
-
   '@floating-ui/react-dom@2.1.6(react-dom@19.1.1(react@19.2.0))(react@19.2.0)':
     dependencies:
       '@floating-ui/dom': 1.7.4
       react: 19.2.0
       react-dom: 19.1.1(react@19.2.0)
-
-  '@floating-ui/react@0.26.28(react-dom@19.1.1(react@19.1.1))(react@19.2.0)':
-    dependencies:
-      '@floating-ui/react-dom': 2.1.6(react-dom@19.1.1(react@19.1.1))(react@19.2.0)
-      '@floating-ui/utils': 0.2.10
-      react: 19.2.0
-      react-dom: 19.1.1(react@19.1.1)
-      tabbable: 6.3.0
 
   '@floating-ui/react@0.26.28(react-dom@19.1.1(react@19.2.0))(react@19.2.0)':
     dependencies:
@@ -10994,15 +10892,6 @@ snapshots:
       viem: 2.38.6(typescript@5.9.3)(zod@3.25.67)
 
   '@google/generative-ai@0.24.1': {}
-
-  '@headlessui/react@2.2.0(react-dom@19.1.1(react@19.1.1))(react@19.2.0)':
-    dependencies:
-      '@floating-ui/react': 0.26.28(react-dom@19.1.1(react@19.1.1))(react@19.2.0)
-      '@react-aria/focus': 3.21.2(react-dom@19.1.1(react@19.1.1))(react@19.2.0)
-      '@react-aria/interactions': 3.25.6(react-dom@19.1.1(react@19.1.1))(react@19.2.0)
-      '@tanstack/react-virtual': 3.13.12(react-dom@19.1.1(react@19.1.1))(react@19.2.0)
-      react: 19.2.0
-      react-dom: 19.1.1(react@19.1.1)
 
   '@headlessui/react@2.2.0(react-dom@19.1.1(react@19.2.0))(react@19.2.0)':
     dependencies:
@@ -11795,227 +11684,8 @@ snapshots:
       - yaml
       - zod
 
-  '@paraspell/xcm-router@11.12.9(jiti@2.6.1)(react-dom@19.1.1(react@19.1.1))(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)(zod@3.25.67)':
-    dependencies:
-      '@acala-network/api': 6.3.0(@polkadot/api@16.4.6)
-      '@acala-network/app-util': 4.1.8-14
-      '@acala-network/eth-providers': 2.10.0(@acala-network/api@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))
-      '@acala-network/sdk': 4.1.15(@acala-network/api@6.3.0(@polkadot/api@16.4.6))(@acala-network/eth-providers@2.10.0(@acala-network/api@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7)))(@acala-network/types@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)(ethers@5.8.0)
-      '@acala-network/sdk-core': 4.1.15(@acala-network/types@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)
-      '@acala-network/sdk-swap': 4.1.15(@acala-network/api@6.3.0(@polkadot/api@16.4.6))(@acala-network/eth-providers@2.10.0(@acala-network/api@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7)))(@acala-network/types@6.3.0(@polkadot/api@16.4.6))(@polkadot/api@16.4.6)(ethers@5.8.0)
-      '@acala-network/sdk-wallet': 4.1.8-14
-      '@crypto-dex-sdk/amm': 0.1.4(react-dom@19.1.1(react@19.1.1))(react@19.2.0)
-      '@crypto-dex-sdk/chain': 0.1.2
-      '@crypto-dex-sdk/currency': 0.1.4(react-dom@19.1.1(react@19.1.1))(react@19.2.0)
-      '@crypto-dex-sdk/format': 0.1.4
-      '@crypto-dex-sdk/math': 0.1.4
-      '@crypto-dex-sdk/parachains-bifrost': 0.1.4(react-dom@19.1.1(react@19.1.1))(react@19.2.0)
-      '@crypto-dex-sdk/token-lists': 0.1.4(@crypto-dex-sdk/currency@0.1.4(react-dom@19.1.1(react@19.1.1))(react@19.2.0))(@crypto-dex-sdk/format@0.1.4)(@crypto-dex-sdk/math@0.1.4)
-      '@galacticcouncil/sdk': 10.1.0(@polkadot/api-augment@16.4.6)(@polkadot/api-base@16.4.9)(@polkadot/api-derive@16.4.6)(@polkadot/api@16.4.6)(@polkadot/keyring@13.5.7(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(@polkadot/util@13.5.7))(@polkadot/rpc-augment@16.4.9)(@polkadot/rpc-core@16.4.9)(@polkadot/rpc-provider@16.4.9)(@polkadot/types-augment@16.4.6)(@polkadot/types-codec@16.4.6)(@polkadot/types-create@16.4.6)(@polkadot/types-known@16.4.6)(@polkadot/types@16.4.6)(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(@polkadot/util@13.5.7)(viem@2.38.6(typescript@5.9.3)(zod@3.25.67))
-      '@paraspell/sdk': 11.12.9(polkadot-api@1.20.1(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1))(rxjs@7.8.2)(typescript@5.9.3)(zod@3.25.67)
-      '@paraspell/sdk-pjs': 11.12.9(@polkadot/api-base@16.4.9)(@polkadot/api@16.4.6)(@polkadot/types@16.4.6)(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(@polkadot/util@13.5.7)(typescript@5.9.3)(zod@3.25.67)
-      '@polkadot/api': 16.4.6
-      '@polkadot/api-base': 16.4.9
-      '@polkadot/types': 16.4.6
-      '@polkadot/types-codec': 16.4.6
-      '@polkadot/util': 13.5.7
-      '@zenlink-types/bifrost': 1.7.7
-      axios: 1.13.2
-      ethers: 5.8.0
-      ethers-v6: ethers@6.15.0
-      jsbi: 4.3.2
-      lodash-es: 4.17.21
-      polkadot-api: 1.20.1(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1)
-      postcss: 8.5.6
-      react: 19.2.0
-      rxjs: 7.8.2
-    transitivePeerDependencies:
-      - '@acala-network/types'
-      - '@ethersproject/address'
-      - '@lingui/babel-plugin-lingui-macro'
-      - '@microsoft/api-extractor'
-      - '@polkadot/api-augment'
-      - '@polkadot/api-derive'
-      - '@polkadot/keyring'
-      - '@polkadot/rpc-augment'
-      - '@polkadot/rpc-core'
-      - '@polkadot/rpc-provider'
-      - '@polkadot/types-augment'
-      - '@polkadot/types-create'
-      - '@polkadot/types-known'
-      - '@polkadot/util-crypto'
-      - '@swc/core'
-      - babel-plugin-macros
-      - bufferutil
-      - debug
-      - encoding
-      - jiti
-      - react-dom
-      - supports-color
-      - tsx
-      - typescript
-      - utf-8-validate
-      - viem
-      - yaml
-      - zod
-
   '@pkgjs/parseargs@0.11.0':
     optional: true
-
-  '@polkadot-agent-kit/common@2.1.3(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1)':
-    dependencies:
-      '@polkadot-labs/hdkd': 0.0.13
-      '@polkadot-labs/hdkd-helpers': 0.0.13
-      '@subsquid/ss58': 2.0.2
-      polkadot-api: 1.20.1(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1)
-    transitivePeerDependencies:
-      - '@microsoft/api-extractor'
-      - '@swc/core'
-      - bufferutil
-      - jiti
-      - postcss
-      - react-native-b4a
-      - rxjs
-      - supports-color
-      - tsx
-      - utf-8-validate
-      - yaml
-
-  '@polkadot-agent-kit/core@2.1.3(jiti@2.6.1)(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)(zod@3.25.67)':
-    dependencies:
-      '@paraspell/assets': 11.12.9
-      '@paraspell/sdk': 11.12.9(polkadot-api@1.20.1(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1))(rxjs@7.8.2)(typescript@5.9.3)(zod@3.25.67)
-      '@paraspell/xcm-router': 11.12.9(jiti@2.6.1)(react-dom@19.1.1(react@19.1.1))(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)(zod@3.25.67)
-      '@polkadot-agent-kit/common': 2.1.3(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1)
-      '@subsquid/ss58': 2.0.2
-      polkadot-api: 1.20.1(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1)
-    transitivePeerDependencies:
-      - '@acala-network/types'
-      - '@ethersproject/address'
-      - '@lingui/babel-plugin-lingui-macro'
-      - '@microsoft/api-extractor'
-      - '@polkadot/api-augment'
-      - '@polkadot/api-derive'
-      - '@polkadot/keyring'
-      - '@polkadot/rpc-augment'
-      - '@polkadot/rpc-core'
-      - '@polkadot/rpc-provider'
-      - '@polkadot/types-augment'
-      - '@polkadot/types-create'
-      - '@polkadot/types-known'
-      - '@polkadot/util-crypto'
-      - '@swc/core'
-      - babel-plugin-macros
-      - bufferutil
-      - debug
-      - encoding
-      - jiti
-      - postcss
-      - react-dom
-      - react-native-b4a
-      - rxjs
-      - supports-color
-      - tsx
-      - typescript
-      - utf-8-validate
-      - viem
-      - yaml
-      - zod
-
-  '@polkadot-agent-kit/llm@2.1.3(@opentelemetry/api@1.9.0)(jiti@2.6.1)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)':
-    dependencies:
-      '@langchain/core': 0.3.79(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))
-      '@polkadot-agent-kit/common': 2.1.3(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1)
-      '@polkadot-agent-kit/core': 2.1.3(jiti@2.6.1)(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)(zod@3.25.67)
-      polkadot-api: 1.20.1(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1)
-      zod: 3.25.67
-    transitivePeerDependencies:
-      - '@acala-network/types'
-      - '@ethersproject/address'
-      - '@lingui/babel-plugin-lingui-macro'
-      - '@microsoft/api-extractor'
-      - '@opentelemetry/api'
-      - '@opentelemetry/exporter-trace-otlp-proto'
-      - '@opentelemetry/sdk-trace-base'
-      - '@polkadot/api-augment'
-      - '@polkadot/api-derive'
-      - '@polkadot/keyring'
-      - '@polkadot/rpc-augment'
-      - '@polkadot/rpc-core'
-      - '@polkadot/rpc-provider'
-      - '@polkadot/types-augment'
-      - '@polkadot/types-create'
-      - '@polkadot/types-known'
-      - '@polkadot/util-crypto'
-      - '@swc/core'
-      - babel-plugin-macros
-      - bufferutil
-      - debug
-      - encoding
-      - jiti
-      - openai
-      - postcss
-      - react-dom
-      - react-native-b4a
-      - rxjs
-      - supports-color
-      - tsx
-      - typescript
-      - utf-8-validate
-      - viem
-      - yaml
-
-  '@polkadot-agent-kit/sdk@2.1.3(@cfworker/json-schema@4.1.1)(@opentelemetry/api@1.9.0)(ai@4.3.19(react@19.1.1)(zod@3.25.67))(jiti@2.6.1)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)':
-    dependencies:
-      '@langchain/core': 0.3.79(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))
-      '@langchain/google-genai': 1.0.0(@langchain/core@0.3.79(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67)))
-      '@modelcontextprotocol/sdk': 1.21.0(@cfworker/json-schema@4.1.1)
-      '@paraspell/assets': 11.12.9
-      '@paraspell/sdk': 11.12.9(polkadot-api@1.20.1(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1))(rxjs@7.8.2)(typescript@5.9.3)(zod@3.25.67)
-      '@paraspell/sdk-core': 11.12.9(typescript@5.9.3)(zod@3.25.67)
-      '@polkadot-agent-kit/common': 2.1.3(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1)
-      '@polkadot-agent-kit/core': 2.1.3(jiti@2.6.1)(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)(zod@3.25.67)
-      '@polkadot-agent-kit/llm': 2.1.3(@opentelemetry/api@1.9.0)(jiti@2.6.1)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
-      ai: 4.3.19(react@19.1.1)(zod@3.25.67)
-      polkadot-api: 1.20.1(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1)
-      zod: 3.25.67
-      zod-to-json-schema: 3.24.6(zod@3.25.67)
-    transitivePeerDependencies:
-      - '@acala-network/types'
-      - '@cfworker/json-schema'
-      - '@ethersproject/address'
-      - '@lingui/babel-plugin-lingui-macro'
-      - '@microsoft/api-extractor'
-      - '@opentelemetry/api'
-      - '@opentelemetry/exporter-trace-otlp-proto'
-      - '@opentelemetry/sdk-trace-base'
-      - '@polkadot/api-augment'
-      - '@polkadot/api-derive'
-      - '@polkadot/keyring'
-      - '@polkadot/rpc-augment'
-      - '@polkadot/rpc-core'
-      - '@polkadot/rpc-provider'
-      - '@polkadot/types-augment'
-      - '@polkadot/types-create'
-      - '@polkadot/types-known'
-      - '@polkadot/util-crypto'
-      - '@swc/core'
-      - babel-plugin-macros
-      - bufferutil
-      - debug
-      - encoding
-      - jiti
-      - openai
-      - postcss
-      - react-dom
-      - react-native-b4a
-      - rxjs
-      - supports-color
-      - tsx
-      - typescript
-      - utf-8-validate
-      - viem
-      - yaml
 
   '@polkadot-api/cli@0.15.4(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(yaml@2.8.1)':
     dependencies:
@@ -12764,10 +12434,10 @@ snapshots:
       '@noble/hashes': 1.8.0
       '@polkadot/networks': 12.6.2
       '@polkadot/util': 12.6.2
-      '@polkadot/wasm-crypto': 7.5.1(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.1(@polkadot/util@12.6.2)))
+      '@polkadot/wasm-crypto': 7.5.1(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7)))
       '@polkadot/wasm-util': 7.5.1(@polkadot/util@12.6.2)
       '@polkadot/x-bigint': 12.6.2
-      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.1(@polkadot/util@12.6.2))
+      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7))
       '@scure/base': 1.2.6
       tslib: 2.8.1
 
@@ -12780,7 +12450,7 @@ snapshots:
       '@polkadot/wasm-crypto': 7.5.1(@polkadot/util@13.5.6)(@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.6)))
       '@polkadot/wasm-util': 7.5.1(@polkadot/util@13.5.6)
       '@polkadot/x-bigint': 13.5.6
-      '@polkadot/x-randomvalues': 13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.6))
+      '@polkadot/x-randomvalues': 13.5.6(@polkadot/util@13.5.7)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7))
       '@scure/base': 1.2.6
       tslib: 2.8.1
 
@@ -12827,18 +12497,18 @@ snapshots:
       bn.js: 5.2.2
       tslib: 2.8.1
 
-  '@polkadot/wasm-bridge@7.5.1(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.1(@polkadot/util@12.6.2)))':
+  '@polkadot/wasm-bridge@7.5.1(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7)))':
     dependencies:
       '@polkadot/util': 12.6.2
       '@polkadot/wasm-util': 7.5.1(@polkadot/util@12.6.2)
-      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.1(@polkadot/util@12.6.2))
+      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7))
       tslib: 2.8.1
 
   '@polkadot/wasm-bridge@7.5.1(@polkadot/util@13.5.6)(@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.6)))':
     dependencies:
       '@polkadot/util': 13.5.6
       '@polkadot/wasm-util': 7.5.1(@polkadot/util@13.5.6)
-      '@polkadot/x-randomvalues': 13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.6))
+      '@polkadot/x-randomvalues': 13.5.6(@polkadot/util@13.5.7)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7))
       tslib: 2.8.1
 
   '@polkadot/wasm-bridge@7.5.1(@polkadot/util@13.5.7)(@polkadot/x-randomvalues@13.5.7(@polkadot/util@13.5.7)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7)))':
@@ -12863,14 +12533,14 @@ snapshots:
       '@polkadot/util': 13.5.7
       tslib: 2.8.1
 
-  '@polkadot/wasm-crypto-init@7.5.1(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.1(@polkadot/util@12.6.2)))':
+  '@polkadot/wasm-crypto-init@7.5.1(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7)))':
     dependencies:
       '@polkadot/util': 12.6.2
-      '@polkadot/wasm-bridge': 7.5.1(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.1(@polkadot/util@12.6.2)))
+      '@polkadot/wasm-bridge': 7.5.1(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7)))
       '@polkadot/wasm-crypto-asmjs': 7.5.1(@polkadot/util@12.6.2)
       '@polkadot/wasm-crypto-wasm': 7.5.1(@polkadot/util@12.6.2)
       '@polkadot/wasm-util': 7.5.1(@polkadot/util@12.6.2)
-      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.1(@polkadot/util@12.6.2))
+      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7))
       tslib: 2.8.1
 
   '@polkadot/wasm-crypto-init@7.5.1(@polkadot/util@13.5.6)(@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.6)))':
@@ -12880,7 +12550,7 @@ snapshots:
       '@polkadot/wasm-crypto-asmjs': 7.5.1(@polkadot/util@13.5.6)
       '@polkadot/wasm-crypto-wasm': 7.5.1(@polkadot/util@13.5.6)
       '@polkadot/wasm-util': 7.5.1(@polkadot/util@13.5.6)
-      '@polkadot/x-randomvalues': 13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.6))
+      '@polkadot/x-randomvalues': 13.5.6(@polkadot/util@13.5.7)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7))
       tslib: 2.8.1
 
   '@polkadot/wasm-crypto-init@7.5.1(@polkadot/util@13.5.7)(@polkadot/x-randomvalues@13.5.7(@polkadot/util@13.5.7)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7)))':
@@ -12911,15 +12581,15 @@ snapshots:
       '@polkadot/wasm-util': 7.5.1(@polkadot/util@13.5.7)
       tslib: 2.8.1
 
-  '@polkadot/wasm-crypto@7.5.1(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.1(@polkadot/util@12.6.2)))':
+  '@polkadot/wasm-crypto@7.5.1(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7)))':
     dependencies:
       '@polkadot/util': 12.6.2
-      '@polkadot/wasm-bridge': 7.5.1(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.1(@polkadot/util@12.6.2)))
+      '@polkadot/wasm-bridge': 7.5.1(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7)))
       '@polkadot/wasm-crypto-asmjs': 7.5.1(@polkadot/util@12.6.2)
-      '@polkadot/wasm-crypto-init': 7.5.1(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.1(@polkadot/util@12.6.2)))
+      '@polkadot/wasm-crypto-init': 7.5.1(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7)))
       '@polkadot/wasm-crypto-wasm': 7.5.1(@polkadot/util@12.6.2)
       '@polkadot/wasm-util': 7.5.1(@polkadot/util@12.6.2)
-      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.1(@polkadot/util@12.6.2))
+      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7))
       tslib: 2.8.1
 
   '@polkadot/wasm-crypto@7.5.1(@polkadot/util@13.5.6)(@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.6)))':
@@ -12930,7 +12600,7 @@ snapshots:
       '@polkadot/wasm-crypto-init': 7.5.1(@polkadot/util@13.5.6)(@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.6)))
       '@polkadot/wasm-crypto-wasm': 7.5.1(@polkadot/util@13.5.6)
       '@polkadot/wasm-util': 7.5.1(@polkadot/util@13.5.6)
-      '@polkadot/x-randomvalues': 13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.6))
+      '@polkadot/x-randomvalues': 13.5.6(@polkadot/util@13.5.7)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7))
       tslib: 2.8.1
 
   '@polkadot/wasm-crypto@7.5.1(@polkadot/util@13.5.7)(@polkadot/x-randomvalues@13.5.7(@polkadot/util@13.5.7)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7)))':
@@ -12998,16 +12668,16 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  '@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.1(@polkadot/util@12.6.2))':
+  '@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7))':
     dependencies:
       '@polkadot/util': 12.6.2
-      '@polkadot/wasm-util': 7.5.1(@polkadot/util@12.6.2)
+      '@polkadot/wasm-util': 7.5.1(@polkadot/util@13.5.6)
       '@polkadot/x-global': 12.6.2
       tslib: 2.8.1
 
-  '@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.6))':
+  '@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.7)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7))':
     dependencies:
-      '@polkadot/util': 13.5.6
+      '@polkadot/util': 13.5.7
       '@polkadot/wasm-util': 7.5.1(@polkadot/util@13.5.6)
       '@polkadot/x-global': 13.5.6
       tslib: 2.8.1
@@ -13015,7 +12685,7 @@ snapshots:
   '@polkadot/x-randomvalues@13.5.7(@polkadot/util@13.5.7)(@polkadot/wasm-util@7.5.1(@polkadot/util@13.5.7))':
     dependencies:
       '@polkadot/util': 13.5.7
-      '@polkadot/wasm-util': 7.5.1(@polkadot/util@13.5.7)
+      '@polkadot/wasm-util': 7.5.1(@polkadot/util@13.5.6)
       '@polkadot/x-global': 13.5.7
       tslib: 2.8.1
 
@@ -13759,16 +13429,6 @@ snapshots:
 
   '@radix-ui/rect@1.1.0': {}
 
-  '@react-aria/focus@3.21.2(react-dom@19.1.1(react@19.1.1))(react@19.2.0)':
-    dependencies:
-      '@react-aria/interactions': 3.25.6(react-dom@19.1.1(react@19.1.1))(react@19.2.0)
-      '@react-aria/utils': 3.31.0(react-dom@19.1.1(react@19.1.1))(react@19.2.0)
-      '@react-types/shared': 3.32.1(react@19.2.0)
-      '@swc/helpers': 0.5.17
-      clsx: 2.1.1
-      react: 19.2.0
-      react-dom: 19.1.1(react@19.1.1)
-
   '@react-aria/focus@3.21.2(react-dom@19.1.1(react@19.2.0))(react@19.2.0)':
     dependencies:
       '@react-aria/interactions': 3.25.6(react-dom@19.1.1(react@19.2.0))(react@19.2.0)
@@ -13778,16 +13438,6 @@ snapshots:
       clsx: 2.1.1
       react: 19.2.0
       react-dom: 19.1.1(react@19.2.0)
-
-  '@react-aria/interactions@3.25.6(react-dom@19.1.1(react@19.1.1))(react@19.2.0)':
-    dependencies:
-      '@react-aria/ssr': 3.9.10(react@19.2.0)
-      '@react-aria/utils': 3.31.0(react-dom@19.1.1(react@19.1.1))(react@19.2.0)
-      '@react-stately/flags': 3.1.2
-      '@react-types/shared': 3.32.1(react@19.2.0)
-      '@swc/helpers': 0.5.17
-      react: 19.2.0
-      react-dom: 19.1.1(react@19.1.1)
 
   '@react-aria/interactions@3.25.6(react-dom@19.1.1(react@19.2.0))(react@19.2.0)':
     dependencies:
@@ -13803,17 +13453,6 @@ snapshots:
     dependencies:
       '@swc/helpers': 0.5.17
       react: 19.2.0
-
-  '@react-aria/utils@3.31.0(react-dom@19.1.1(react@19.1.1))(react@19.2.0)':
-    dependencies:
-      '@react-aria/ssr': 3.9.10(react@19.2.0)
-      '@react-stately/flags': 3.1.2
-      '@react-stately/utils': 3.10.8(react@19.2.0)
-      '@react-types/shared': 3.32.1(react@19.2.0)
-      '@swc/helpers': 0.5.17
-      clsx: 2.1.1
-      react: 19.2.0
-      react-dom: 19.1.1(react@19.1.1)
 
   '@react-aria/utils@3.31.0(react-dom@19.1.1(react@19.2.0))(react@19.2.0)':
     dependencies:
@@ -14166,12 +13805,6 @@ snapshots:
       '@tailwindcss/oxide': 4.1.16
       postcss: 8.5.6
       tailwindcss: 4.1.16
-
-  '@tanstack/react-virtual@3.13.12(react-dom@19.1.1(react@19.1.1))(react@19.2.0)':
-    dependencies:
-      '@tanstack/virtual-core': 3.13.12
-      react: 19.2.0
-      react-dom: 19.1.1(react@19.1.1)
 
   '@tanstack/react-virtual@3.13.12(react-dom@19.1.1(react@19.2.0))(react@19.2.0)':
     dependencies:
@@ -14658,18 +14291,6 @@ snapshots:
   agentkeepalive@4.6.0:
     dependencies:
       humanize-ms: 1.2.1
-
-  ai@4.3.19(react@19.1.1)(zod@3.25.67):
-    dependencies:
-      '@ai-sdk/provider': 1.1.3
-      '@ai-sdk/provider-utils': 2.2.8(zod@3.25.67)
-      '@ai-sdk/react': 1.2.12(react@19.1.1)(zod@3.25.67)
-      '@ai-sdk/ui-utils': 1.2.11(zod@3.25.67)
-      '@opentelemetry/api': 1.9.0
-      jsondiffpatch: 0.6.0
-      zod: 3.25.67
-    optionalDependencies:
-      react: 19.1.1
 
   ai@4.3.19(react@19.2.0)(zod@3.25.67):
     dependencies:
@@ -18650,12 +18271,6 @@ snapshots:
       has-flag: 4.0.0
 
   supports-preserve-symlinks-flag@1.0.0: {}
-
-  swr@2.3.6(react@19.1.1):
-    dependencies:
-      dequal: 2.0.3
-      react: 19.1.1
-      use-sync-external-store: 1.6.0(react@19.1.1)
 
   swr@2.3.6(react@19.2.0):
     dependencies:

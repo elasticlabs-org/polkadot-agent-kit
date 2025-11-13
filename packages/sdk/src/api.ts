@@ -116,8 +116,8 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
    *
    * @throws \{Error\} If the transfer fails or parameters are invalid
    */
-  transferNativeTool(): TransferTool {
-    return this.agentApi.transferNativeTool(this.getSigner())
+  transferNativeTool(signer: PolkadotSigner): TransferTool {
+    return this.agentApi.transferNativeTool(signer)
   }
 
   /**
