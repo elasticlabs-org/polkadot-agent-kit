@@ -36,6 +36,10 @@ import { getLangChainTools } from '@polkadot-agent-kit/sdk'
 const agent = new PolkadotAgentKit({privateKey:'your private key', keyType: 'Sr25519', chains: ['polkadot','west', 'west_asset_hub'] });
 await agent.initializeApi()
 
+// Optional: Add your custom tool
+
+agent.addCustomTools([yourTool]);
+
 // Get LangChain tools
 const tools = getLangChainTools(agent)
 

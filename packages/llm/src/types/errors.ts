@@ -30,25 +30,6 @@ export interface ToolError extends Error {
 }
 
 /**
- * Error thrown when a requested blockchain network is not available.
- *
- * @example
- * ```typescript
- * throw new ChainNotAvailableError("invalid-chain", ["polkadot", "kusama"]);
- * // Error: Chain 'invalid-chain' not available. Available chains: polkadot, kusama
- * // error.code === 1001
- * ```
- */
-export class ChainNotAvailableError extends Error implements ToolError {
-  code = ErrorCodes.LLM_CHAIN_NOT_AVAILABLE
-
-  constructor(chain: string, availableChains: string[]) {
-    super(`Chain '${chain}' not available. Available chains: ${availableChains.join(", ")}`)
-    this.name = "ChainNotAvailableError"
-  }
-}
-
-/**
  * Error thrown when an address format is invalid.
  *
  * @example

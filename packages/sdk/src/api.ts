@@ -11,12 +11,13 @@ import type {
   TransferTool,
   XcmTransferNativeAssetTool
 } from "@polkadot-agent-kit/llm"
-import { PolkadotAgentApi } from "@polkadot-agent-kit/llm"
+import { PolkadotAgentApi, validateTools } from "@polkadot-agent-kit/llm"
 import { type PolkadotSigner } from "polkadot-api/signer"
 
 export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
   private polkadotApi: PolkadotApi
   private agentApi: PolkadotAgentApi
+  private customTools: Action[] = []
 
   public config: AgentConfig
   private miniSecret: Uint8Array
@@ -279,8 +280,23 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
     return this.agentApi.mintVdotTool(this.getSigner())
   }
 
+  /**
+   * Add custom actions to the agent
+   *
+   * Allows developers to extend the agent with custom tool calls.
+   *
+   * @param actions - Array of custom actions to add
+   * @throws Error if action is invalid or name conflicts with built-in tools
+   *
+   */
+  addCustomTools(tools: Action[]): void {
+    validateTools(tools, this.customTools)
+    this.customTools.push(...tools)
+  }
+
   getActions(): Action[] {
-    return this.agentApi.getActions(this.getSigner(), this.getCurrentAddress())
+    const builtInActions = this.agentApi.getActions(this.getSigner(), this.getCurrentAddress())
+    return [...builtInActions, ...this.customTools]
   }
 
   /**

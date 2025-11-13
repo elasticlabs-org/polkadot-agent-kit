@@ -1,6 +1,9 @@
 import { Telegraf } from "telegraf";
 import { setupHandlers } from "./handlers";
 import { getLangChainTools, PolkadotAgentKit } from "@polkadot-agent-kit/sdk";
+
+import { z } from "zod"
+import { createAction, createSuccessResponse, type ToolConfig } from "@polkadot-agent-kit/llm"
 import {
   ChatModelFactory,
   ChatModelOptions,
@@ -41,7 +44,7 @@ export class TelegramBot {
     this.agent = new PolkadotAgentKit({
       privateKey: privateKey as string,
       keyType: "Sr25519",
-      // chains: ["polkadot_asset_hub"]
+      chains: ["polkadot", "polkadot_asset_hub"]
     });
 
     this.llm = this.initializeLLM(openAiApiKey);
@@ -54,6 +57,37 @@ export class TelegramBot {
       // Initialize APIs first
       await this.agent.initializeApi();
 
+      // 1. Build a LangChain-style tool
+      const voteTool = {
+        async invoke(args: { proposalId: number; vote: "aye" | "nay" }) {
+          // TODO:
+          // - Call the vote on the proposal
+          // - Return the result
+
+          return createSuccessResponse(
+            `Voted ${args.vote} on proposal ${args.proposalId}`,
+            "vote_on_proposal"
+          )
+        }
+      }
+
+      // 2. Describe it with a ToolConfig
+      const voteConfig: ToolConfig = {
+        name: "vote_on_proposal",
+        description: "Vote on a governance proposal",
+        schema: z.object({
+          proposalId: z.number(),
+          vote: z.enum(["aye", "nay"])
+        })
+      }
+
+      // 3. Convert to an Action and register
+      const voteAction = createAction(voteTool, voteConfig)
+
+      // 4. Add the tool
+      this.agent.addCustomTools([voteAction]);
+
+      // 5. Get built-in tools including custom tools 
       const tools = getLangChainTools(this.agent);
       setupHandlers(this.bot, this.llm, tools);
 
