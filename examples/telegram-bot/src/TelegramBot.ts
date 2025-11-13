@@ -1,12 +1,14 @@
 import { Telegraf } from "telegraf";
 import { setupHandlers } from "./handlers";
-import { createCustomTool, getLangChainTools, PolkadotAgentKit } from "@polkadot-agent-kit/sdk";
+import { getLangChainTools, PolkadotAgentKit } from "@polkadot-agent-kit/sdk";
+
+import { z } from "zod"
+import { createAction, createSuccessResponse, type ToolConfig } from "@polkadot-agent-kit/llm"
 import {
   ChatModelFactory,
   ChatModelOptions,
   ChatModelWithTools,
 } from "./models";
-import z from "zod";
 
 interface BotConfig {
   botToken: string;
@@ -55,29 +57,37 @@ export class TelegramBot {
       // Initialize APIs first
       await this.agent.initializeApi();
 
-      const customTool = createCustomTool(
-        "vote_on_proposal",
-        "Vote on a governance proposal",
-        z.object({
-          proposalId: z.number(),
-          vote: z.enum(["aye", "nay"]),
-        }),
-        async (args) => {
-          // TODO: 
-          // - Call the vote on the proposal 
+      // 1. Build a LangChain-style tool
+      const voteTool = {
+        async invoke(args: { proposalId: number; vote: "aye" | "nay" }) {
+          // TODO:
+          // - Call the vote on the proposal
           // - Return the result
-          return JSON.stringify({
-            content: JSON.stringify({
-              success: true,
-              data: `Voted ${args.vote} on proposal ${args.proposalId}`,
-              tool: "vote_on_proposal",
-              timestamp: new Date().toISOString()
-            }),
-            tool_call_id: `vote_on_proposal_${Date.now()}`
-          });
+
+          return createSuccessResponse(
+            `Voted ${args.vote} on proposal ${args.proposalId}`,
+            "vote_on_proposal"
+          )
         }
-      );
-      this.agent.addCustomTools([customTool]);
+      }
+
+      // 2. Describe it with a ToolConfig
+      const voteConfig: ToolConfig = {
+        name: "vote_on_proposal",
+        description: "Vote on a governance proposal",
+        schema: z.object({
+          proposalId: z.number(),
+          vote: z.enum(["aye", "nay"])
+        })
+      }
+
+      // 3. Convert to an Action and register
+      const voteAction = createAction(voteTool, voteConfig)
+
+      // 4. Add the tool
+      this.agent.addCustomTools([voteAction]);
+
+      // 5. Get built-in tools including custom tools 
       const tools = getLangChainTools(this.agent);
       setupHandlers(this.bot, this.llm, tools);
 

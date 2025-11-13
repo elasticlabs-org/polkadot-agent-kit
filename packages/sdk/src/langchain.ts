@@ -32,16 +32,3 @@ export function getLangChainTools(polkadotAgentKit: PolkadotAgentKit): Structure
   )
 }
 
-export function createCustomTool<T extends z.ZodSchema>(
-  name: string,
-  description: string,
-  schema: T,
-  invoke: (args: z.infer<T>) => Promise<string>
-): Action {
-  return {
-    name,
-    description,
-    schema,
-    invoke
-  }
-}
