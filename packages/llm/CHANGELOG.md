@@ -1,11 +1,21 @@
 # @polkadot-agent-kit/llm
 
+## 2.1.4
+
+### Patch Changes
+
+- remove unused functions 
+- add validate tool helper function 
+- Updated dependencies
+  - @polkadot-agent-kit/common@2.1.4
+  - @polkadot-agent-kit/core@2.1.4
+
 ## 2.1.3
 
 ### Patch Changes
 
 - Release version 2.1.3
-- Update Prompt for each catogory tools 
+- Update Prompt for each catogory tools
 - Updated dependencies
   - @polkadot-agent-kit/common@2.1.3
   - @polkadot-agent-kit/core@2.1.3

@@ -1,13 +1,24 @@
 # @polkadot-agent-kit/sdk
 
+## 2.1.4
+
+### Patch Changes
+
+- add `addCustomTools` -> allow dev can extend their function calls 
+
+- Updated dependencies
+  - @polkadot-agent-kit/common@2.1.4
+  - @polkadot-agent-kit/core@2.1.4
+  - @polkadot-agent-kit/llm@2.1.4
+
 ## 2.1.3
 
 ### Patch Changes
 
 - Release version 2.1.3
-- Add gemini model choice to integration tests 
-- add assertions for integration tests , make sure logic work 
-- add vdot and swap mainnet integration tests 
+- Add gemini model choice to integration tests
+- add assertions for integration tests , make sure logic work
+- add vdot and swap mainnet integration tests
 
 - Updated dependencies
   - @polkadot-agent-kit/common@2.1.3

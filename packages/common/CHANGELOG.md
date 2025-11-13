@@ -1,12 +1,16 @@
 # @polkadot-agent-kit/common
 
+## 2.1.4
+
+### Patch Changes
+- release new version 
+
 ## 2.1.3
 
 ### Patch Changes
 
 - Release version 2.1.3
-- Add isApiReady function 
-
+- Add isApiReady function
 
 ## 2.1.2
 

@@ -1,6 +1,6 @@
 {
   "name": "@polkadot-agent-kit/cli",
-  "version": "2.1.3",
+  "version": "2.1.4",
   "description": "CLI for Polkadot Agent Kit - AI Agent Management",
   "repository": {
     "type": "git",
