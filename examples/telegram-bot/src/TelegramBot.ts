@@ -1,11 +1,12 @@
 import { Telegraf } from "telegraf";
 import { setupHandlers } from "./handlers";
-import { getLangChainTools, PolkadotAgentKit } from "@polkadot-agent-kit/sdk";
+import { createCustomTool, getLangChainTools, PolkadotAgentKit } from "@polkadot-agent-kit/sdk";
 import {
   ChatModelFactory,
   ChatModelOptions,
   ChatModelWithTools,
 } from "./models";
+import z from "zod";
 
 interface BotConfig {
   botToken: string;
@@ -41,7 +42,7 @@ export class TelegramBot {
     this.agent = new PolkadotAgentKit({
       privateKey: privateKey as string,
       keyType: "Sr25519",
-      // chains: ["polkadot_asset_hub"]
+      chains: ["polkadot", "polkadot_asset_hub"]
     });
 
     this.llm = this.initializeLLM(openAiApiKey);
@@ -54,6 +55,29 @@ export class TelegramBot {
       // Initialize APIs first
       await this.agent.initializeApi();
 
+      const customTool = createCustomTool(
+        "vote_on_proposal",
+        "Vote on a governance proposal",
+        z.object({
+          proposalId: z.number(),
+          vote: z.enum(["aye", "nay"]),
+        }),
+        async (args) => {
+          // TODO: 
+          // - Call the vote on the proposal 
+          // - Return the result
+          return JSON.stringify({
+            content: JSON.stringify({
+              success: true,
+              data: `Voted ${args.vote} on proposal ${args.proposalId}`,
+              tool: "vote_on_proposal",
+              timestamp: new Date().toISOString()
+            }),
+            tool_call_id: `vote_on_proposal_${Date.now()}`
+          });
+        }
+      );
+      this.agent.addCustomTools([customTool]);
       const tools = getLangChainTools(this.agent);
       setupHandlers(this.bot, this.llm, tools);
 

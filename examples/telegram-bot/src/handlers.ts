@@ -45,7 +45,6 @@ export function setupHandlers(
       const aiMessage = await llmWithTools.invoke(messages);
       if (aiMessage.tool_calls && aiMessage.tool_calls.length > 0) {
         for (const toolCall of aiMessage.tool_calls) {
-          
           const selectedTool = tools.find((tool: StructuredTool) => tool.name === toolCall.name);
           if (selectedTool) {
             const toolMessage = await selectedTool.invoke(toolCall);
