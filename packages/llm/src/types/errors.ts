@@ -29,7 +29,6 @@ export interface ToolError extends Error {
   details?: unknown
 }
 
-
 /**
  * Error thrown when an address format is invalid.
  *

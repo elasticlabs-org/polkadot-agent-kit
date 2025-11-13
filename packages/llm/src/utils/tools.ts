@@ -2,10 +2,9 @@ import type { KnownChainId } from "@polkadot-agent-kit/common"
 import { convertAddress } from "@polkadot-agent-kit/core"
 import type { ZodType } from "zod"
 
-import type { Action, ToolError, ToolResponse } from "../types";
+import type { Action, ToolError, ToolResponse } from "../types"
 import { ToolNames } from "../types"
 import { ErrorCodes, InvalidAddressError, isAnyToolError } from "../types"
-
 
 const generateToolCallId = (prefix: string): string => `${prefix}_${Date.now()}`
 
@@ -16,7 +15,6 @@ export const validateAndFormatAddress = (address: string, chain: KnownChainId): 
   }
   return formattedAddress
 }
-
 
 export const createErrorResponse = (error: ToolError | string, toolName: string): ToolResponse => {
   if (isAnyToolError(error)) {
@@ -51,7 +49,6 @@ export const createErrorResponse = (error: ToolError | string, toolName: string)
   }
 }
 
-
 export const createSuccessResponse = (data: unknown, toolName: string): ToolResponse => ({
   content: JSON.stringify({
     success: true,
@@ -61,7 +58,6 @@ export const createSuccessResponse = (data: unknown, toolName: string): ToolResp
   }),
   tool_call_id: generateToolCallId(toolName)
 })
-
 
 export const executeTool = async <T>(
   toolName: string,
