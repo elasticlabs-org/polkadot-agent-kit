@@ -79,8 +79,6 @@ We welcome contributions from the community! Please:
 
 ### Acknowledgment
 
-[Dedot](https://dedot.dev) take a lot of inspirations from project [@polkadot/api](https://github.com/polkadot-js/api). A big thank to all the maintainers/contributors of this awesome library.
-
 Proudly supported by Web3 Foundation Grants Program.
 <p align="left">
   <img width="250" src="https://user-images.githubusercontent.com/6867026/227230786-0796214a-3e3f-42af-94e9-d4122c730b62.png">
