@@ -1,0 +1,24 @@
+{
+  "name": "eliza-agent-example",
+  "version": "1.0.0",
+  "description": "Example Eliza agent with Polkadot Agent Kit integration",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node --loader ts-node/esm index.ts",
+    "dev": "node --loader ts-node/esm --watch index.ts",
+    "build": "tsc",
+    "clean": "rm -rf dist node_modules"
+  },
+  "dependencies": {
+    "@ai16z/eliza": "^0.1.6",
+    "@polkadot-agent-kit/eliza": "workspace:*",
+    "@polkadot-agent-kit/sdk": "workspace:*",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.13",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
+  }
+}

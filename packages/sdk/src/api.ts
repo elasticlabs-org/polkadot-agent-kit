@@ -26,7 +26,16 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
     this.polkadotApi = new PolkadotApi(config.chains)
     this.agentApi = new PolkadotAgentApi(this.polkadotApi)
     this.config = this.validateAndNormalizeConfig(config)
-    this.miniSecret = generateMiniSecret(this.config)
+
+    try {
+      const miniSecret: Uint8Array = (generateMiniSecret as (config: AgentConfig) => Uint8Array)(
+        this.config
+      )
+      this.miniSecret = miniSecret
+    } catch (error: unknown) {
+      const errMsg = error instanceof Error ? error.message : String(error)
+      throw new Error(`Failed to generate mini secret: ${errMsg}`)
+    }
   }
 
   setApi(chainId: KnownChainId, api?: Api<KnownChainId>) {
@@ -281,6 +290,88 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
   }
 
   /**
+   * Get Scrape Web Tool
+   * Creates a tool for scraping content from web pages
+   *
+   * @returns DynamicStructuredTool for scraping web pages
+   *
+   * @example
+   * ```typescript
+   * // Create a web scraping tool
+   * const scrapeTool = agent.scrapeWebTool();
+   *
+   * // Tool can be used with LangChain
+   * const result = await scrapeTool.call({
+   *   url: "https://example.com",
+   *   formats: ["markdown"]
+   * });
+   * ```
+   */
+  scrapeWebTool(): ReturnType<typeof this.agentApi.scrapeWebTool> {
+    try {
+      return (this.agentApi.scrapeWebTool as () => ReturnType<typeof this.agentApi.scrapeWebTool>)()
+    } catch (error: unknown) {
+      const errMsg = error instanceof Error ? error.message : String(error)
+      throw new Error(`Failed to create scrape web tool: ${errMsg}`)
+    }
+  }
+
+  /**
+   * Get Crawl Web Tool
+   * Creates a tool for crawling multiple pages from a website
+   *
+   * @returns DynamicStructuredTool for crawling websites
+   *
+   * @example
+   * ```typescript
+   * // Create a web crawling tool
+   * const crawlTool = agent.crawlWebTool();
+   *
+   * // Tool can be used with LangChain
+   * const result = await crawlTool.call({
+   *   url: "https://example.com/docs",
+   *   maxDepth: 2,
+   *   limit: 10
+   * });
+   * ```
+   */
+  crawlWebTool(): ReturnType<typeof this.agentApi.crawlWebTool> {
+    try {
+      return (this.agentApi.crawlWebTool as () => ReturnType<typeof this.agentApi.crawlWebTool>)()
+    } catch (error: unknown) {
+      const errMsg = error instanceof Error ? error.message : String(error)
+      throw new Error(`Failed to create crawl web tool: ${errMsg}`)
+    }
+  }
+
+  /**
+   * Get Search Web Tool
+   * Creates a tool for searching the web
+   *
+   * @returns DynamicStructuredTool for searching the web
+   *
+   * @example
+   * ```typescript
+   * // Create a web search tool
+   * const searchTool = agent.searchWebTool();
+   *
+   * // Tool can be used with LangChain
+   * const result = await searchTool.call({
+   *   query: "Polkadot blockchain",
+   *   limit: 5
+   * });
+   * ```
+   */
+  searchWebTool(): ReturnType<typeof this.agentApi.searchWebTool> {
+    try {
+      return (this.agentApi.searchWebTool as () => ReturnType<typeof this.agentApi.searchWebTool>)()
+    } catch (error: unknown) {
+      const errMsg = error instanceof Error ? error.message : String(error)
+      throw new Error(`Failed to create search web tool: ${errMsg}`)
+    }
+  }
+
+  /**
    * Add custom actions to the agent
    *
    * Allows developers to extend the agent with custom tool calls.
@@ -290,8 +381,16 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
    *
    */
   addCustomTools(tools: Action[]): void {
-    validateTools(tools, this.customTools)
-    this.customTools.push(...tools)
+    try {
+      ;(validateTools as (actions: Action[], existingCustomActions: Action[]) => void)(
+        tools,
+        this.customTools
+      )
+      this.customTools.push(...tools)
+    } catch (error: unknown) {
+      const errMsg = error instanceof Error ? error.message : String(error)
+      throw new Error(`Failed to add custom tools: ${errMsg}`)
+    }
   }
 
   getActions(): Action[] {
@@ -307,19 +406,36 @@ export class PolkadotAgentKit implements IPolkadotApi, IPolkadotAgentApi {
    *
    */
   public getCurrentAddress(): string {
-    return deriveAndConvertAddress(
-      this.miniSecret,
-      this.config.keyType || "Sr25519",
-      this.config.derivationPath || ""
-    )
+    try {
+      const result: string = (
+        deriveAndConvertAddress as (
+          miniSecret: Uint8Array,
+          keyType: "Sr25519" | "Ed25519",
+          derivationPath: string,
+          chainId?: string
+        ) => string
+      )(this.miniSecret, this.config.keyType || "Sr25519", this.config.derivationPath || "")
+      return result
+    } catch (error: unknown) {
+      const errMsg = error instanceof Error ? error.message : String(error)
+      throw new Error(`Failed to derive address: ${errMsg}`)
+    }
   }
 
   private getSigner(): PolkadotSigner {
-    return getSigner(
-      this.miniSecret,
-      this.config.keyType || "Sr25519",
-      this.config.derivationPath || ""
-    )
+    try {
+      const result: PolkadotSigner = (
+        getSigner as (
+          miniSecret: Uint8Array,
+          keyType: "Sr25519" | "Ed25519",
+          derivationPath: string
+        ) => PolkadotSigner
+      )(this.miniSecret, this.config.keyType || "Sr25519", this.config.derivationPath || "")
+      return result
+    } catch (error: unknown) {
+      const errMsg = error instanceof Error ? error.message : String(error)
+      throw new Error(`Failed to get signer: ${errMsg}`)
+    }
   }
 
   /**

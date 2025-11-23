@@ -1,14 +1,24 @@
-# Polkadot AI Agent Kit 
+# Polkadot AI Agent Kit 2.0 🚀
 
 ![Group 57](https://github.com/user-attachments/assets/ddc9ebc7-0bc6-4bac-af3e-82f378c959f5)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-![Status: In Development](https://img.shields.io/badge/Status-In%20Development-yellow)
+![Status: Production Ready](https://img.shields.io/badge/Status-Production%20Ready-green)
 [![NPM Package](https://img.shields.io/npm/v/@polkadot-agent-kit/sdk)](https://www.npmjs.com/package/@polkadot-agent-kit/sdk)
 <br/>
 <br/>
 
 Polkadot AI Agent Kit is an open-source library for building autonomous AI agents capable of executing complex operations within the Polkadot ecosystem. It provides a modular framework and high-level APIs to abstract the complexity of on-chain interactions.
+
+## ✨ What's New in 2.0
+
+- **🤖 Framework Extensions**: Now compatible with Eliza (ai16z) and Google A2A protocol
+- **🌐 Web Integration**: Built-in Firecrawl support for web scraping and search
+- **📋 Intent Schema Builder**: Define custom response formats for AI outputs
+- **🔐 Hyperbridge Verification**: Verify cross-chain messages for enhanced security
+- **✅ Comprehensive Testing**: Expanded integration test suite
+
+**[Migration Guide](./MIGRATION_v2.md)** | **[What's New](./CHANGELOG.md)**
 
 ## 📦 Monorepo Structure
 

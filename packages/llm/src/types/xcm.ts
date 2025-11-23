@@ -16,6 +16,12 @@ export const xcmTransferNativeAssetSchema = z.object({
     .string()
     .describe(
       "The destination chain in ParaSpell format (e.g., 'AssetHubWestend', 'PeopleWestend', 'Polkadot', 'Westend')"
+    ),
+  verifyWithHyperbridge: z
+    .boolean()
+    .optional()
+    .describe(
+      "Whether to verify the cross-chain transfer using Hyperbridge (default: false). When true, waits for confirmation."
     )
 })
 
@@ -45,6 +51,7 @@ export type XcmTransferNativeAssetToolResult = BaseToolCallResult
  */
 export const toolConfigXcmTransferNativeAsset: ToolConfig = {
   name: ToolNames.XCM_TRANSFER_NATIVE_ASSET,
-  description: "Transfer native tokens to a specific address to a destination chain via xcm",
+  description:
+    "Transfer native tokens to a specific address to a destination chain via XCM. Optionally verify the cross-chain transfer using Hyperbridge for enhanced security and confirmation.",
   schema: xcmTransferNativeAssetSchema
 }
