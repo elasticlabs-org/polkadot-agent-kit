@@ -5,9 +5,12 @@ import {
   bondExtraTool,
   checkBalanceTool,
   claimRewardsTool,
+  crawlWebTool,
   initializeChainApiTool,
   joinPoolTool,
   registerIdentityTool,
+  scrapeWebTool,
+  searchWebTool,
   swapTokensTool,
   transferNativeTool,
   unbondTool,
@@ -21,17 +24,23 @@ import {
   type BalanceTool,
   type BondExtraTool,
   type ClaimRewardsTool,
+  type crawlWebSchema,
   type InitializeChainApiTool,
   type JoinPoolTool,
   type RegisterIdentityTool,
+  type scrapeWebSchema,
+  type searchWebSchema,
   type SwapTokensTool,
   toolConfigBalance,
   toolConfigBondExtra,
   toolConfigClaimRewards,
+  toolConfigCrawlWeb,
   toolConfigInitializeChainApi,
   toolConfigJoinPool,
   toolConfigMintVdot,
   toolConfigRegisterIdentity,
+  toolConfigScrapeWeb,
+  toolConfigSearchWeb,
   toolConfigSwapTokens,
   toolConfigTransferNative,
   toolConfigUnbond,
@@ -125,6 +134,24 @@ export interface IPolkadotAgentApi {
 
   mintVdotTool(signer: PolkadotSigner): MintVdotTool
 
+  /**
+   * Returns a tool for scraping web pages
+   * @returns A dynamic structured tool for scraping web pages
+   */
+  scrapeWebTool(): unknown
+
+  /**
+   * Returns a tool for crawling websites
+   * @returns A dynamic structured tool for crawling websites
+   */
+  crawlWebTool(): unknown
+
+  /**
+   * Returns a tool for searching the web
+   * @returns A dynamic structured tool for searching the web
+   */
+  searchWebTool(): unknown
+
   getActions(signer: PolkadotSigner, address: string): Action[]
 }
 
@@ -190,6 +217,39 @@ export class PolkadotAgentApi implements IPolkadotAgentApi {
     return mintVdotTool(this.api, signer) as unknown as MintVdotTool
   }
 
+  scrapeWebTool() {
+    try {
+      const result: unknown = (scrapeWebTool as () => unknown)()
+      return result
+    } catch (error: unknown) {
+      throw new Error(
+        `Failed to create scrape web tool: ${error instanceof Error ? error.message : String(error)}`
+      )
+    }
+  }
+
+  crawlWebTool() {
+    try {
+      const result: unknown = (crawlWebTool as () => unknown)()
+      return result
+    } catch (error: unknown) {
+      throw new Error(
+        `Failed to create crawl web tool: ${error instanceof Error ? error.message : String(error)}`
+      )
+    }
+  }
+
+  searchWebTool() {
+    try {
+      const result: unknown = (searchWebTool as () => unknown)()
+      return result
+    } catch (error: unknown) {
+      throw new Error(
+        `Failed to create search web tool: ${error instanceof Error ? error.message : String(error)}`
+      )
+    }
+  }
+
   getActions(signer: PolkadotSigner, address: string): Action[] {
     const actions: Action[] = []
 
@@ -240,6 +300,48 @@ export class PolkadotAgentApi implements IPolkadotAgentApi {
     // Mint VDOT Tool
     const mintVdotTool = this.mintVdotTool(signer)
     actions.push(createAction(mintVdotTool, toolConfigMintVdot))
+
+    // Firecrawl Tools - wrapped in try-catch as these are optional integrations
+    try {
+      actions.push(
+        createAction(
+          this.scrapeWebTool() as { invoke: (args: unknown) => Promise<unknown> },
+          toolConfigScrapeWeb as {
+            name: string
+            description: string
+            schema: typeof scrapeWebSchema
+          }
+        )
+      )
+    } catch {
+      // Firecrawl scrape tool is optional
+    }
+
+    try {
+      actions.push(
+        createAction(
+          this.crawlWebTool() as { invoke: (args: unknown) => Promise<unknown> },
+          toolConfigCrawlWeb as { name: string; description: string; schema: typeof crawlWebSchema }
+        )
+      )
+    } catch {
+      // Firecrawl crawl tool is optional
+    }
+
+    try {
+      actions.push(
+        createAction(
+          this.searchWebTool() as { invoke: (args: unknown) => Promise<unknown> },
+          toolConfigSearchWeb as {
+            name: string
+            description: string
+            schema: typeof searchWebSchema
+          }
+        )
+      )
+    } catch {
+      // Firecrawl search tool is optional
+    }
 
     return actions
   }

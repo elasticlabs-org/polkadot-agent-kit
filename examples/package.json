@@ -1,0 +1,24 @@
+{
+  "name": "polkadot-agent-kit-examples",
+  "version": "1.0.0",
+  "description": "Example scripts for Polkadot Agent Kit 2.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test:firecrawl": "tsx firecrawl.test.ts 2>&1 | grep -v '@polkadot' | grep -v 'Either remove' | grep -v 'conflicting packages' | grep -v 'esm\\|cjs' | grep -v 'node_modules' || true",
+    "test:a2a": "tsx a2a.test.ts 2>&1 | grep -v '@polkadot' | grep -v 'Either remove' | grep -v 'conflicting packages' | grep -v 'esm\\|cjs' | grep -v 'node_modules' || true",
+    "test:intent": "tsx intent.test.ts 2>&1 | grep -v '@polkadot' | grep -v 'Either remove' | grep -v 'conflicting packages' | grep -v 'esm\\|cjs' | grep -v 'node_modules' || true",
+    "test:all": "pnpm run test:firecrawl && pnpm run test:a2a && pnpm run test:intent"
+  },
+  "dependencies": {
+    "@polkadot-agent-kit/llm": "workspace:*",
+    "@polkadot-agent-kit/sdk": "workspace:*",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.13",
+    "cross-env": "^7.0.3",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}

@@ -2,6 +2,7 @@
 export * from "./api"
 export * from "./bifrost/mintVdot"
 export * from "./defi/swap"
+export * from "./hyperbridge"
 export * from "./pallets/assets"
 export * from "./pallets/identity"
 export * from "./pallets/nomination-pools"

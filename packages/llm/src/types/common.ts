@@ -32,7 +32,13 @@ export enum ToolNames {
   /** Tool for registering an identity on People Chain */
   REGISTER_IDENTITY = "register_identity",
   /** Tool for minting vDOT tokens on Bifrost */
-  MINT_VDOT = "mint_vdot"
+  MINT_VDOT = "mint_vdot",
+  /** Tool for scraping web pages */
+  SCRAPE_WEB = "scrape_web",
+  /** Tool for crawling websites */
+  CRAWL_WEB = "crawl_web",
+  /** Tool for searching the web */
+  SEARCH_WEB = "search_web"
 }
 
 /**

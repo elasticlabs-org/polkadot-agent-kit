@@ -1,11 +1,11 @@
 {
-  "name": "@polkadot-agent-kit/core",
-  "version": "2.1.4",
-  "description": "Core Package for Polkadot Agent Kit",
+  "name": "@polkadot-agent-kit/eliza",
+  "version": "2.0.0",
+  "description": "Eliza framework integration for Polkadot Agent Kit",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/elasticlabs-org/polkadot-agent-kit.git",
-    "directory": "packages/core"
+    "directory": "packages/eliza"
   },
   "license": "MIT",
   "type": "module",
@@ -38,18 +38,16 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@paraspell/assets": "11.12.9",
-    "@paraspell/sdk": "11.12.9",
-    "@paraspell/xcm-router": "11.12.9",
     "@polkadot-agent-kit/common": "workspace:*",
-    "@subsquid/ss58": "^2.0.2",
-    "polkadot-api": "^1.14.1"
+    "@polkadot-agent-kit/llm": "workspace:*",
+    "@polkadot-agent-kit/sdk": "workspace:*",
+    "zod": "^3.24.3"
   },
   "devDependencies": {
+    "@ai16z/eliza": "^0.1.6",
     "@babel/plugin-syntax-import-attributes": "^7.26.0",
     "@babel/preset-env": "^7.26.9",
     "@codecov/rollup-plugin": "^1.9.0",
-    "@polkadot-api/descriptors": "^0.0.1",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-typescript": "^12.1.2",
@@ -58,5 +56,8 @@
     "prettier": "^3.5.3",
     "rollup": "^4.37.0",
     "rollup-plugin-dts": "^6.2.1"
+  },
+  "peerDependencies": {
+    "@ai16z/eliza": "^0.1.0"
   }
 }

@@ -30,7 +30,11 @@ export default tseslint.config(
     },
     languageOptions: {
       parserOptions: {
-        project: ["./packages/*/tsconfig*.json",],
+        project: [
+          "./packages/*/tsconfig*.json",
+          "./examples/*/tsconfig.json",
+          "./examples/tsconfig.json",
+        ],
         tsconfigRootDir: import.meta.dirname,
       },
     },
@@ -59,10 +63,10 @@ export default tseslint.config(
       ],
       "simple-import-sort/imports": "error",
       "simple-import-sort/exports": "error",
-      '@typescript-eslint/ban-ts-comment': [
-        'error',
+      "@typescript-eslint/ban-ts-comment": [
+        "error",
         {
-          'ts-ignore': false,
+          "ts-ignore": false,
         },
       ],
     },
@@ -74,9 +78,7 @@ export default tseslint.config(
     },
   },
   {
-    files: [
-      "packages/*/**/*.test.ts",
-    ],
+    files: ["packages/*/**/*.test.ts"],
     rules: {
       "no-restricted-syntax": "off",
     },
@@ -90,13 +92,25 @@ export default tseslint.config(
       "@typescript-eslint/no-unsafe-member-access": "off",
       "@typescript-eslint/no-unsafe-return": "off",
       "no-console": "off",
-      "@typescript-eslint/no-unsafe-argument":"off",
-      "@typescript-eslint/require-await":"off",
-      "@typescript-eslint/no-unused-vars":"off",
-      "@typescript-eslint/no-misused-promises":"off",
-      "@typescript-eslint/unbound-method":"off"
-
+      "@typescript-eslint/no-unsafe-argument": "off",
+      "@typescript-eslint/require-await": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/no-misused-promises": "off",
+      "@typescript-eslint/unbound-method": "off",
+    },
+  },
+  {
+    files: ["examples/**"],
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/no-unsafe-call": "off",
+      "@typescript-eslint/no-unsafe-member-access": "off",
+      "@typescript-eslint/no-unsafe-return": "off",
+      "@typescript-eslint/no-unsafe-argument": "off",
+      "@typescript-eslint/require-await": "off",
+      "@typescript-eslint/no-misused-promises": "off",
+      "no-console": "off",
     },
   },
 );
-
