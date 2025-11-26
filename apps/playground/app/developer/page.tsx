@@ -1,16 +1,12 @@
 "use client"
 
-export const dynamic = 'force-dynamic'
-
 import { useEffect, useMemo, useState } from "react"
 import Sidebar from "@/components/sidebar"
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import { Play, Zap, Terminal, X, Loader2 } from "lucide-react"
 import {
   Collapsible,

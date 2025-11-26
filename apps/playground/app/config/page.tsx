@@ -1,6 +1,5 @@
 "use client"
 
-export const dynamic = 'force-dynamic'
 
 import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
@@ -9,12 +8,12 @@ import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { Settings, Key, Cpu, Loader2, Check, ArrowLeft, ArrowRight, Link } from "lucide-react"
+import { Key, Cpu, Loader2, Check, ArrowLeft, ArrowRight, Link } from "lucide-react"
 import Sidebar from "@/components/sidebar"
 import { ChainSelector } from "@/components/chain-selector"
 import { useAgentStore, useIsInitialized } from "@/stores/agent-store"
 import { useToast } from "@/hooks/use-toast"
-import type { KnownChainId, KeyType } from "@polkadot-agent-kit/common"
+import type { KeyType } from "@polkadot-agent-kit/common"
 interface AgentConfig {
   llmProvider: string
   llmModel: string

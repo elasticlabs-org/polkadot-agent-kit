@@ -1,15 +1,11 @@
 "use client"
 
-export const dynamic = 'force-dynamic'
-
 import { useState, useEffect } from "react"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import { Bot } from "lucide-react"
 import Sidebar from "@/components/sidebar"
 import { useAgentStore, useAgentRestore, useIsInitialized } from "@/stores/agent-store"
-import { ASSETS_PROMPT, XCM_PROMPT } from "@polkadot-agent-kit/llm"
 import { SystemMessage, HumanMessage, ToolMessage } from "@langchain/core/messages"
 
 interface ChatMessage {
@@ -101,6 +97,9 @@ export default function ChatPage() {
 
       const tools = getLangChainTools(agentKit)
       const modelWithTools = chatModel.bindTools(tools)
+
+      // Dynamically import prompts to avoid build-time issues
+      const { ASSETS_PROMPT, XCM_PROMPT } = await import("@polkadot-agent-kit/llm")
 
       const messages = [
         new SystemMessage({ content: ASSETS_PROMPT + XCM_PROMPT }),

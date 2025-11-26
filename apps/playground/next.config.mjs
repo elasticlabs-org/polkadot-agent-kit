@@ -9,7 +9,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  webpack: (config) => {
+  webpack: (config, { isServer }) => {
     // Enable WebAssembly used by downstream SDK deps
     config.experiments = {
       ...(config.experiments || {}),
@@ -24,6 +24,23 @@ const nextConfig = {
         asyncFunction: true,
       },
     }
+    
+    // Configure WASM file handling
+    config.module.rules.push({
+      test: /\.wasm$/,
+      type: 'asset/resource',
+    })
+    
+    // Externalize Polkadot packages on server to avoid build-time execution
+    if (isServer) {
+      config.externals = config.externals || []
+      config.externals.push({
+        '@polkadot/wasm-crypto': '@polkadot/wasm-crypto',
+        '@polkadot/wasm-bridge': '@polkadot/wasm-bridge',
+        '@polkadot/wasm-util': '@polkadot/wasm-util',
+      })
+    }
+    
     return config
   },
 }
