@@ -82,17 +82,17 @@ importers:
         specifier: ^0.5.12
         version: 0.5.18(@langchain/core@0.3.79(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67)))(ws@8.18.3)
       '@polkadot-agent-kit/common':
-        specifier: 2.1.3
-        version: 2.1.3(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1)
+        specifier: 2.1.4
+        version: 2.1.4(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1)
       '@polkadot-agent-kit/core':
-        specifier: 2.1.3
-        version: 2.1.3(jiti@2.6.1)(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)(zod@3.25.67)
+        specifier: 2.1.4
+        version: 2.1.4(jiti@2.6.1)(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)(zod@3.25.67)
       '@polkadot-agent-kit/llm':
-        specifier: 2.1.3
-        version: 2.1.3(@opentelemetry/api@1.9.0)(jiti@2.6.1)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+        specifier: 2.1.4
+        version: 2.1.4(@opentelemetry/api@1.9.0)(jiti@2.6.1)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
       '@polkadot-agent-kit/sdk':
-        specifier: 2.1.3
-        version: 2.1.3(@cfworker/json-schema@4.1.1)(@opentelemetry/api@1.9.0)(ai@4.3.19(react@19.1.1)(zod@3.25.67))(jiti@2.6.1)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+        specifier: 2.1.4
+        version: 2.1.4(@cfworker/json-schema@4.1.1)(@opentelemetry/api@1.9.0)(ai@4.3.19(react@19.1.1)(zod@3.25.67))(jiti@2.6.1)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
       '@radix-ui/react-accordion':
         specifier: 1.2.2
         version: 1.2.2(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -2849,17 +2849,17 @@ packages:
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==, tarball: https://registry.npmjs.org/@pkgjs/parseargs/-/parseargs-0.11.0.tgz}
     engines: {node: '>=14'}
 
-  '@polkadot-agent-kit/common@2.1.3':
-    resolution: {integrity: sha512-nLZWRzkgg1iSbOBZYpElfAAG4Qw5Yswblr6gtue7cu7Eucg9TLoeyb06RR6ZaW2/Y6czlly8DWNQ++BoKtStyQ==, tarball: https://registry.npmjs.org/@polkadot-agent-kit/common/-/common-2.1.3.tgz}
+  '@polkadot-agent-kit/common@2.1.4':
+    resolution: {integrity: sha512-HTNnH+p/4Xt1Z6dkUXLam5ScK8wsP2Aoqw8SyiAj7QTvPYHwSM53vXrvVdZwcbAKF++HyK2Es1vsKdUH7ql1DA==, tarball: https://registry.npmjs.org/@polkadot-agent-kit/common/-/common-2.1.4.tgz}
 
-  '@polkadot-agent-kit/core@2.1.3':
-    resolution: {integrity: sha512-JeyU8cLtwXBwY6eHLbgq/mLkWGS0UgcG2nS/Qx26z/MIIIqD9A/hCywLPa/PnH0KzGESxOD9025o5MxdOutwZA==, tarball: https://registry.npmjs.org/@polkadot-agent-kit/core/-/core-2.1.3.tgz}
+  '@polkadot-agent-kit/core@2.1.4':
+    resolution: {integrity: sha512-053L67bUcZWYB60nMHs1tT9cw7nygmadLpujPPFuKF7sM4YK7H7YJxXeuhkb5OEE4rsfsuynniPaijEKFELwKw==, tarball: https://registry.npmjs.org/@polkadot-agent-kit/core/-/core-2.1.4.tgz}
 
-  '@polkadot-agent-kit/llm@2.1.3':
-    resolution: {integrity: sha512-ts8vJOGTw9xtuDso1GnC4ijkBe8gFJ7sOF79qp6DxWixiQh1QjVwSCAyEZycFM+Pct7p0SwF89KxaVdF7jahnA==, tarball: https://registry.npmjs.org/@polkadot-agent-kit/llm/-/llm-2.1.3.tgz}
+  '@polkadot-agent-kit/llm@2.1.4':
+    resolution: {integrity: sha512-d87OwrzmbnacNioM4XgP7MGXAfq1A5ks4eA+Dm8iIoJWoEH9FUqwYMsRC5zeS3TDngEBZFr8XQJDIDPI87GxVQ==, tarball: https://registry.npmjs.org/@polkadot-agent-kit/llm/-/llm-2.1.4.tgz}
 
-  '@polkadot-agent-kit/sdk@2.1.3':
-    resolution: {integrity: sha512-K4SfQ+c+qdVWBY1XK27iCnce4YgQGiOAuifPSwStR8uLRDLSacmyuywc/nbBOutjPFTSKNa5rjjxeaWopoYb/Q==, tarball: https://registry.npmjs.org/@polkadot-agent-kit/sdk/-/sdk-2.1.3.tgz}
+  '@polkadot-agent-kit/sdk@2.1.4':
+    resolution: {integrity: sha512-3kXcRPiSiRg5k8OzAV1fBukWzpqWNLzA3VY4MeY4jd1C7VnkgCO1CBOWl5LgZoz8bwDhKg9/eiEFxtQ/VsN8Zw==, tarball: https://registry.npmjs.org/@polkadot-agent-kit/sdk/-/sdk-2.1.4.tgz}
     peerDependencies:
       ai: ^4.1.16
 
@@ -11862,7 +11862,7 @@ snapshots:
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
-  '@polkadot-agent-kit/common@2.1.3(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1)':
+  '@polkadot-agent-kit/common@2.1.4(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1)':
     dependencies:
       '@polkadot-labs/hdkd': 0.0.13
       '@polkadot-labs/hdkd-helpers': 0.0.13
@@ -11881,12 +11881,12 @@ snapshots:
       - utf-8-validate
       - yaml
 
-  '@polkadot-agent-kit/core@2.1.3(jiti@2.6.1)(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)(zod@3.25.67)':
+  '@polkadot-agent-kit/core@2.1.4(jiti@2.6.1)(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)(zod@3.25.67)':
     dependencies:
       '@paraspell/assets': 11.12.9
       '@paraspell/sdk': 11.12.9(polkadot-api@1.20.1(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1))(rxjs@7.8.2)(typescript@5.9.3)(zod@3.25.67)
       '@paraspell/xcm-router': 11.12.9(jiti@2.6.1)(react-dom@19.1.1(react@19.1.1))(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)(zod@3.25.67)
-      '@polkadot-agent-kit/common': 2.1.3(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1)
+      '@polkadot-agent-kit/common': 2.1.4(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1)
       '@subsquid/ss58': 2.0.2
       polkadot-api: 1.20.1(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1)
     transitivePeerDependencies:
@@ -11922,11 +11922,11 @@ snapshots:
       - yaml
       - zod
 
-  '@polkadot-agent-kit/llm@2.1.3(@opentelemetry/api@1.9.0)(jiti@2.6.1)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)':
+  '@polkadot-agent-kit/llm@2.1.4(@opentelemetry/api@1.9.0)(jiti@2.6.1)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)':
     dependencies:
       '@langchain/core': 0.3.79(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))
-      '@polkadot-agent-kit/common': 2.1.3(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1)
-      '@polkadot-agent-kit/core': 2.1.3(jiti@2.6.1)(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)(zod@3.25.67)
+      '@polkadot-agent-kit/common': 2.1.4(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1)
+      '@polkadot-agent-kit/core': 2.1.4(jiti@2.6.1)(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)(zod@3.25.67)
       polkadot-api: 1.20.1(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1)
       zod: 3.25.67
     transitivePeerDependencies:
@@ -11965,7 +11965,7 @@ snapshots:
       - viem
       - yaml
 
-  '@polkadot-agent-kit/sdk@2.1.3(@cfworker/json-schema@4.1.1)(@opentelemetry/api@1.9.0)(ai@4.3.19(react@19.1.1)(zod@3.25.67))(jiti@2.6.1)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)':
+  '@polkadot-agent-kit/sdk@2.1.4(@cfworker/json-schema@4.1.1)(@opentelemetry/api@1.9.0)(ai@4.3.19(react@19.1.1)(zod@3.25.67))(jiti@2.6.1)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)':
     dependencies:
       '@langchain/core': 0.3.79(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))
       '@langchain/google-genai': 1.0.0(@langchain/core@0.3.79(@opentelemetry/api@1.9.0)(openai@5.23.2(ws@8.18.3)(zod@3.25.67)))
@@ -11973,9 +11973,9 @@ snapshots:
       '@paraspell/assets': 11.12.9
       '@paraspell/sdk': 11.12.9(polkadot-api@1.20.1(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1))(rxjs@7.8.2)(typescript@5.9.3)(zod@3.25.67)
       '@paraspell/sdk-core': 11.12.9(typescript@5.9.3)(zod@3.25.67)
-      '@polkadot-agent-kit/common': 2.1.3(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1)
-      '@polkadot-agent-kit/core': 2.1.3(jiti@2.6.1)(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)(zod@3.25.67)
-      '@polkadot-agent-kit/llm': 2.1.3(@opentelemetry/api@1.9.0)(jiti@2.6.1)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      '@polkadot-agent-kit/common': 2.1.4(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1)
+      '@polkadot-agent-kit/core': 2.1.4(jiti@2.6.1)(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)(zod@3.25.67)
+      '@polkadot-agent-kit/llm': 2.1.4(@opentelemetry/api@1.9.0)(jiti@2.6.1)(openai@5.23.2(ws@8.18.3)(zod@3.25.67))(postcss@8.5.6)(react-dom@19.1.1(react@19.1.1))(rxjs@7.8.2)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
       ai: 4.3.19(react@19.1.1)(zod@3.25.67)
       polkadot-api: 1.20.1(jiti@2.6.1)(postcss@8.5.6)(rxjs@7.8.2)(tsx@4.20.6)(yaml@2.8.1)
       zod: 3.25.67

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { MessageCircle, Code2, Terminal, ChevronLeft, ChevronRight, Settings } from "lucide-react"
-import { useAgentStore } from "@/stores/agent-store"
+import { useAgentStore, useIsInitialized } from "@/stores/agent-store"
 
 interface SidebarProps {
   currentPage: "config" | "chat" | "developer"
@@ -16,7 +16,7 @@ interface AgentConfig {
 
 export default function Sidebar({ currentPage }: SidebarProps) {
   const router = useRouter()
-  const { isInitialized } = useAgentStore()
+  const isInitialized = useIsInitialized()
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
 
   const navigateTo = (page: string) => {
@@ -36,7 +36,7 @@ export default function Sidebar({ currentPage }: SidebarProps) {
           <div className="flex items-center gap-3">
             <div>
               <h1 className="font-bold text-xl modern-gradient-text">Polkadot Agent Kit</h1>
-              <p className="text-xs modern-text-secondary">Playground v2.1.3</p>
+              <p className="text-xs modern-text-secondary">Playground v2.1.4</p>
             </div>
           </div>
         )}

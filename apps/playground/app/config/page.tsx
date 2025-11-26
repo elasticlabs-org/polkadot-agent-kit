@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Settings, Key, Cpu, Loader2, Check, ArrowLeft, ArrowRight, Link } from "lucide-react"
 import Sidebar from "@/components/sidebar"
 import { ChainSelector } from "@/components/chain-selector"
-import { useAgentStore } from "@/stores/agent-store"
+import { useAgentStore, useIsInitialized } from "@/stores/agent-store"
 import { useToast } from "@/hooks/use-toast"
 import type { KnownChainId, KeyType } from "@polkadot-agent-kit/common"
 interface AgentConfig {
@@ -39,12 +39,12 @@ export default function ConfigPage() {
   const { 
     config, 
     isConfigured, 
-    isInitialized, 
     isInitializing, 
     setConfig, 
     initializeAgent, 
     setInitializing 
   } = useAgentStore()
+  const isInitialized = useIsInitialized()
   
   const [currentStep, setCurrentStep] = useState(1)
   const [agentConfig, setAgentConfig] = useState<AgentConfig>({
@@ -57,6 +57,7 @@ export default function ConfigPage() {
     isConfigured: false,
   })
   const [llmConnected, setLlmConnected] = useState<"idle" | "ok" | "error">("idle")
+  const hasPrefilledConfig = useRef(false)
 
   const nextStep = () => {
     if (currentStep < 3) {
@@ -154,14 +155,16 @@ export default function ConfigPage() {
   }, [])
 
   // Prefill from persisted store config (Polkadot) when available
+  // Only prefill once on mount to avoid overwriting user input
   useEffect(() => {
-    if (config) {
+    if (config && !hasPrefilledConfig.current) {
       setAgentConfig((prev) => ({
         ...prev,
-        privateKey: config.privateKey || prev.privateKey,
-        keyType: (config.keyType as string) || prev.keyType,
-        chains: (config.chains as string[]) || prev.chains,
+        privateKey: prev.privateKey || config.privateKey || "",
+        keyType: prev.keyType || (config.keyType as string) || "Sr25519",
+        chains: prev.chains.length > 0 ? prev.chains : (config.chains as string[]) || ["paseo"],
       }))
+      hasPrefilledConfig.current = true
     }
   }, [config])
 
@@ -365,18 +368,26 @@ export default function ConfigPage() {
       }
 
       // If Polkadot config changed, update store and (re)initialize agent
-      if (polkadotChanged) {
+      // Also re-initialize if only LLM changed but agent is not ready
+      if (polkadotChanged || !isInitialized || llmChanged) {
         const storeConfig = {
           privateKey: agentConfig.privateKey,
           keyType: agentConfig.keyType as "Sr25519" | "Ed25519",
           chains: agentConfig.chains,
           isConfigured: true
         }
-        try {
-          setConfig(storeConfig)
-        } catch (error) {
-          console.error('[ConfigPage] Error calling setConfig:', error)
+        
+        // Only update store if config actually changed
+        if (polkadotChanged) {
+          try {
+            setConfig(storeConfig)
+          } catch (error) {
+            console.error('[ConfigPage] Error calling setConfig:', error)
+          }
         }
+        
+        // Re-initialize agent to ensure it picks up any environment/config changes
+        // that might affect tool execution or API connections
         await initializeAgent()
       }
 
@@ -686,7 +697,10 @@ export default function ConfigPage() {
                         type="password"
                         placeholder="Enter your private key..."
                         value={agentConfig.privateKey}
-                        onChange={(e) => setAgentConfig((prev) => ({ ...prev, privateKey: e.target.value }))}
+                        onChange={(e) => {
+                          hasPrefilledConfig.current = true
+                          setAgentConfig((prev) => ({ ...prev, privateKey: e.target.value }))
+                        }}
                         className="h-10 sm:h-12 modern-input font-mono"
                       />
                       <p className="text-xs modern-text-secondary mt-2">

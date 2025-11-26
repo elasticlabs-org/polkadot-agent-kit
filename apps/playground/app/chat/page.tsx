@@ -6,7 +6,9 @@ import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Bot } from "lucide-react"
 import Sidebar from "@/components/sidebar"
-import { useAgentStore, useAgentRestore } from "@/stores/agent-store"
+import { useAgentStore, useAgentRestore, useIsInitialized } from "@/stores/agent-store"
+import { ASSETS_PROMPT, XCM_PROMPT } from "@polkadot-agent-kit/llm"
+import { SystemMessage, HumanMessage, ToolMessage } from "@langchain/core/messages"
 
 interface ChatMessage {
   id: string
@@ -26,7 +28,8 @@ interface AgentConfig {
 }
 
 export default function ChatPage() {
-  const { agentKit, isInitialized, config } = useAgentStore()
+  const { agentKit, config } = useAgentStore()
+  const isInitialized = useIsInitialized()
   const [chatInput, setChatInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [isClient, setIsClient] = useState(false)
@@ -56,21 +59,18 @@ export default function ChatPage() {
     setIsLoading(true)
 
     try {
-      // Use the shared agentKit from Zustand store to create LangChain agent
       const { getLangChainTools } = await import("@polkadot-agent-kit/sdk")
-      const { AgentExecutor, createToolCallingAgent } = await import("langchain/agents")
-      const { ChatPromptTemplate } = await import("@langchain/core/prompts")
       const { ChatOllama } = await import("@langchain/ollama")
-      
+
       // Get LLM config from localStorage
       const llmConfig = localStorage.getItem("llm_config")
       if (!llmConfig) throw new Error("LLM configuration not found")
-      
+
       const { provider, model, apiKey: storedApiKey } = JSON.parse(llmConfig)
 
-      let llm: any
+      let chatModel: any
       if (provider === "ollama") {
-        llm = new ChatOllama({
+        chatModel = new ChatOllama({
           model: model || "qwen3:latest",
           temperature: 0,
         })
@@ -79,7 +79,7 @@ export default function ChatPage() {
         const { ChatOpenAI } = await import("@langchain/openai")
         const apiKey = storedApiKey || process.env.NEXT_PUBLIC_OPENAI_KEY
         if (!apiKey) throw new Error("OpenAI API key not found. Provide it or set NEXT_PUBLIC_OPENAI_KEY.")
-        llm = new ChatOpenAI({
+        chatModel = new ChatOpenAI({
           model: model || "gpt-4o-mini",
           temperature: 0,
           apiKey,
@@ -88,7 +88,7 @@ export default function ChatPage() {
         const { ChatGoogleGenerativeAI } = await import("@langchain/google-genai")
         const apiKey = storedApiKey || process.env.NEXT_PUBLIC_GOOGLE_API_KEY
         if (!apiKey) throw new Error("Google Generative AI API key not found. Set it in config or NEXT_PUBLIC_GOOGLE_API_KEY.")
-        llm = new ChatGoogleGenerativeAI({
+        chatModel = new ChatGoogleGenerativeAI({
           model: model || "gemini-2.0-flash",
           temperature: 0,
           apiKey,
@@ -98,33 +98,80 @@ export default function ChatPage() {
       }
 
       const tools = getLangChainTools(agentKit)
-      const agentPrompt = createToolCallingAgent({
-        llm: llm as any,
-        tools: tools as any,
-        prompt: ChatPromptTemplate.fromMessages([
-          ["system", "You are a helpful Polkadot assistant. Use the available tools to help users with blockchain operations."],
-          ["placeholder", "{chat_history}"],
-          ["human", "{input}"],
-          ["placeholder", "{agent_scratchpad}"],
-        ]) as any,
-      })
+      const modelWithTools = chatModel.bindTools(tools)
 
-      const agentExecutor = new AgentExecutor({
-        agent: agentPrompt,
-        tools: tools as any,
-        verbose: true,
-        returnIntermediateSteps: true,
-      })
+      const messages = [
+        new SystemMessage({ content: ASSETS_PROMPT + XCM_PROMPT }),
+        new HumanMessage({ content: userMessage.content }),
+      ]
 
-      const result = await agentExecutor.invoke({ input: userMessage.content })
-      let outputText = typeof result.output === "string" ? result.output : JSON.stringify(result.output, null, 2)
-      
-      outputText = outputText.replace(/<think>[\s\S]*?<\/think>/g, '').trim()
-      
+      const aiResponse = await modelWithTools.invoke(messages)
+
+      let outputText = ""
+
+      if (aiResponse.tool_calls && aiResponse.tool_calls.length > 0) {
+
+  
+        // Execute all tools and collect results
+        const toolMessages: ToolMessage[] = []
+        
+        for (const toolCall of aiResponse.tool_calls) {
+          const selectedTool = tools.find((t) => t.name === toolCall.name)
+          if (selectedTool) {
+            try {
+              console.log(`Executing tool ${toolCall.name} with args:`, toolCall.args)
+              const toolResult = await selectedTool.invoke(toolCall.args)
+              console.log(`Tool result (${toolCall.name}):`, toolResult)
+              
+              // Create a ToolMessage with the result
+              toolMessages.push(
+                new ToolMessage({
+                  content: typeof toolResult === "string" ? toolResult : JSON.stringify(toolResult),
+                  tool_call_id: toolCall.id || toolCall.name,
+                })
+              )
+            } catch (error) {
+              console.error(`Error executing tool ${toolCall.name}:`, error)
+              toolMessages.push(
+                new ToolMessage({
+                  content: `Error: ${error instanceof Error ? error.message : String(error)}`,
+                  tool_call_id: toolCall.id || toolCall.name,
+                })
+              )
+            }
+          } else {
+            toolMessages.push(
+              new ToolMessage({
+                content: `Error: Tool ${toolCall.name} not found`,
+                tool_call_id: toolCall.id || toolCall.name,
+              })
+            )
+          }
+        }
+        
+        const messagesWithToolResults = [
+          ...messages,
+          aiResponse,
+          ...toolMessages,
+        ]
+        
+        const finalResponse = await chatModel.invoke(messagesWithToolResults)
+        
+        outputText = typeof finalResponse.content === "string" 
+          ? finalResponse.content 
+          : JSON.stringify(finalResponse.content, null, 2)
+      } else {
+        outputText = typeof aiResponse.content === "string" 
+          ? aiResponse.content 
+          : JSON.stringify(aiResponse.content, null, 2)
+      }
+
+      outputText = outputText.replace(/<think>[\s\S]*?<\/think>/g, "").trim()
+
       const aiMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: "ai",
-        content: outputText,
+        content: outputText || "No response generated.",
         timestamp: new Date(),
       }
       setChatMessages((prev) => [...prev, aiMessage])
@@ -190,11 +237,10 @@ export default function ChatPage() {
                 {chatMessages.map((message) => (
                   <div key={message.id} className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}>
                     <div
-                      className={`max-w-[90%] sm:max-w-[85%] rounded-xl sm:rounded-2xl p-3 sm:p-5 ${
-                        message.type === "user" 
-                          ? "bg-blue-600/20 border border-blue-500/30 ml-4 sm:ml-12" 
+                      className={`max-w-[90%] sm:max-w-[85%] rounded-xl sm:rounded-2xl p-3 sm:p-5 ${message.type === "user"
+                          ? "bg-blue-600/20 border border-blue-500/30 ml-4 sm:ml-12"
                           : "modern-card mr-4 sm:mr-12"
-                      }`}
+                        }`}
                     >
                       <div className="flex items-start gap-2 sm:gap-4">
                         {message.type === "ai" && (
@@ -259,8 +305,8 @@ export default function ChatPage() {
                         handleSendMessage()
                       }
                     }}
-                    onCompositionStart={() => {/* optional: set state if you want */}}
-                    onCompositionEnd={() => {/* optional: clear state */}}
+                    onCompositionStart={() => {/* optional: set state if you want */ }}
+                    onCompositionEnd={() => {/* optional: clear state */ }}
                   />
                   {isLoading && (
                     <div className="absolute right-3 top-1/2 -translate-y-1/2">
