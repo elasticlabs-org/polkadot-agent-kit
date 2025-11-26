@@ -1,5 +1,7 @@
 "use client"
 
+export const dynamic = 'force-dynamic'
+
 import { useEffect, useMemo, useState } from "react"
 import Sidebar from "@/components/sidebar"
 import { Badge } from "@/components/ui/badge"
