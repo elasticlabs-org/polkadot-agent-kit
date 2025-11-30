@@ -99,15 +99,16 @@ export default function ChatPage() {
       const modelWithTools = chatModel.bindTools(tools)
 
       // Dynamically import prompts to avoid build-time issues
-      const { ASSETS_PROMPT, XCM_PROMPT } = await import("@polkadot-agent-kit/llm")
+      const { ASSETS_PROMPT, XCM_PROMPT, SWAP_PROMPT } = await import("@polkadot-agent-kit/llm")
 
       const messages = [
-        new SystemMessage({ content: ASSETS_PROMPT + XCM_PROMPT }),
+        new SystemMessage({ content: ASSETS_PROMPT + XCM_PROMPT + SWAP_PROMPT }),
         new HumanMessage({ content: userMessage.content }),
       ]
 
       const aiResponse = await modelWithTools.invoke(messages)
 
+      console.log("AI Response:", aiResponse)
       let outputText = ""
 
       if (aiResponse.tool_calls && aiResponse.tool_calls.length > 0) {
