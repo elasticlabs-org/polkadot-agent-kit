@@ -38,9 +38,9 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@paraspell/sdk": "11.12.9",
-    "@paraspell/xcm-router": "11.12.9",
-    "@paraspell/assets": "11.12.9",
+    "@paraspell/sdk": "11.14.8",
+    "@paraspell/xcm-router": "11.14.8",
+    "@paraspell/assets": "11.14.8",
     "@polkadot-agent-kit/common": "workspace:*",
     "@subsquid/ss58": "^2.0.2",
     "polkadot-api": "^1.14.1"

@@ -254,8 +254,10 @@ When using any swap tool, you MUST use PascalCase for chain names as defined bel
 | polkadot asset hub   | AssetHubPolkadot               |
 | AssetHubPolkadot     | AssetHubPolkadot               |
 | Polkadot Asset Hub   | AssetHubPolkadot               |
-| Hydra                | Hydra                          |
-| hydra                | Hydra                          |
+| Hydration            | Hydration                      |
+| hydra                | Hydration                      |
+| Hydra                | Hydration                      |
+| hydra                | Hydration                      |
 | Kusama               | Kusama                         |
 | kusama               | Kusama                         |
 

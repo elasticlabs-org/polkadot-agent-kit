@@ -50,9 +50,9 @@
     "@modelcontextprotocol/sdk": "^1.6.1",
     "zod-to-json-schema": "^3.24.3",
     "@langchain/google-genai": "^1.0.0",
-    "@paraspell/sdk": "11.12.9",
-    "@paraspell/assets": "11.12.9",
-    "@paraspell/sdk-core": "11.12.9"
+    "@paraspell/sdk": "11.14.8",
+    "@paraspell/assets": "11.14.8",
+    "@paraspell/sdk-core": "11.14.8"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.26.0",
