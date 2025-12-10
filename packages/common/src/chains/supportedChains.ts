@@ -55,7 +55,7 @@ export const westendAssetHubChain = createChain({
   id: "west_asset_hub",
   name: "AssetHubWestend",
   specName: "asset-hub-westend",
-  wsUrls: ["wss://westend-asset-hub-rpc.polkadot.io", "wss://asset-hub-westend-rpc.n.dwellir.com"],
+  wsUrls: ["wss://polkadot-asset-hub-rpc.polkadot.io"],
   relay: "west",
   type: "system",
   chainId: 1000,

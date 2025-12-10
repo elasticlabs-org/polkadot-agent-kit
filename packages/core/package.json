@@ -43,7 +43,7 @@
     "@paraspell/assets": "11.14.8",
     "@polkadot-agent-kit/common": "workspace:*",
     "@subsquid/ss58": "^2.0.2",
-    "polkadot-api": "^1.14.1"
+    "polkadot-api": "^1.23.1"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.26.0",
