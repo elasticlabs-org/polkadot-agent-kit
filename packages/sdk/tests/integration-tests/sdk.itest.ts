@@ -24,7 +24,7 @@ describe('PolkadotAgentKit Integration with OllamaAgent check balance', () => {
       agentKit = new PolkadotAgentKit({
         privateKey: process.env.AGENT_PRIVATE_KEY,
         keyType: 'Sr25519',
-        chains: ['west', 'west_asset_hub', 'paseo', 'paseo_asset_hub','west_people']
+        chains: ['west', 'west_asset_hub', 'paseo', 'paseo_asset_hub']
       });
       await agentKit.initializeApi();
       agent = new AgentTest(agentKit, ASSETS_PROMPT);
