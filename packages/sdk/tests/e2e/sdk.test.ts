@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import { PolkadotAgentKit } from '../../src/api';
+import { getLangChainTools } from '../../src/langchain';
 import { getVercelAITools } from '../../src/vercel';
 import type { AgentConfig } from '@polkadot-agent-kit/common';
 
@@ -17,6 +18,15 @@ const mockClaimRewardsResult = { success: true, transactionHash: '0xMOCKEDCLAIMR
 
 // Bifrost mintVdot mock results
 const mockMintVdotResult = { success: true, transactionHash: '0xMOCKEDMINTVDOTTXHASH' };
+
+vi.mock('@langchain/core/tools', () => ({
+  tool: vi.fn().mockImplementation((fn: any, options: any) => ({
+    name: options?.name,
+    description: options?.description,
+    schema: options?.schema,
+    call: fn
+  }))
+}));
 
 vi.mock('../../src/api', () => {
   return {
@@ -295,6 +305,40 @@ describe('PolkadotAgentKit E2E', () => {
       const tool = arrange(agent);
       const result = await act(tool);
       assert(result);
+    });
+  });
+
+  describe('getLangChainTools', () => {
+    it('should return a tool array with correct structure', async () => {
+      const tools = getLangChainTools(agent);
+
+      expect(Array.isArray(tools)).toBe(true);
+      expect(tools).toHaveLength(2);
+
+      const checkBalance = tools[0];
+      const transferNative = tools[1];
+
+      expect(checkBalance.name).toBe('check_balance');
+      expect(checkBalance.description).toBe('Check balance of the wallet address on a specific chain');
+      expect(typeof checkBalance.call).toBe('function');
+
+      expect(transferNative.name).toBe('transfer_native');
+      expect(transferNative.description).toBe('Transfer native tokens to an address');
+      expect(typeof transferNative.call).toBe('function');
+    });
+
+    it('should execute tools and return expected results', async () => {
+      const tools = getLangChainTools(agent);
+
+      const balanceResult = await tools[0].call({ chain: 'westend' });
+      const transferResult = await tools[1].call({
+        to: '5D7jcv6aYbhbYGVY8k65oemM6FVNoyBfoVkuJ5cbFvbefftr',
+        amount: (0.01 * 10 ** 12).toString(),
+        chain: 'westend'
+      });
+
+      expect(balanceResult).toBe(JSON.stringify(mockBalanceResult));
+      expect(transferResult).toBe(JSON.stringify(mockTransferResult));
     });
   });
 
