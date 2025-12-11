@@ -38,7 +38,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "polkadot-api": "^1.9.13",
+    "polkadot-api": "^1.23.1",
     "@polkadot-labs/hdkd": "^0.0.13",
     "@polkadot-labs/hdkd-helpers": "^0.0.13",
     "@subsquid/ss58": "^2.0.2"

@@ -1,4 +1,4 @@
-import { getAssetDecimals } from "@paraspell/assets"
+import { getAssetDecimals, getAssetsObject } from "@paraspell/assets"
 import type { TCurrency, TLocation, TNodeDotKsmWithRelayChains } from "@paraspell/sdk"
 import type {
   RouterBuilderCore,
@@ -11,8 +11,7 @@ import { RouterBuilder } from "@paraspell/xcm-router"
 import { parseUnits } from "@polkadot-agent-kit/common"
 import type { PolkadotSigner } from "polkadot-api/signer"
 
-import type { AssetInfo } from "../utils/assets"
-import { getAllAssetsBySymbol } from "../utils/assets"
+import type { AssetInfo } from "../utils"
 import { getPairSupported } from "../utils/defi"
 
 // Constants
@@ -78,24 +77,77 @@ function getAssetlocationWithSelection(
   chain: TNodeDotKsmWithRelayChains,
   symbol: string
 ): TLocation {
-  // Get all assets with this symbol
-  const assets = getAllAssetsBySymbol(chain, symbol)
+  const chainAssets = getAssetsObject(chain)
+  const nativeAssetSymbol = chainAssets.nativeAssetSymbol
+
+  let assetsInfo: AssetInfo[] = []
+
+  // Check if symbol matches native asset symbol (case-insensitive comparison)
+  if (symbol.toUpperCase() === nativeAssetSymbol?.toUpperCase()) {
+    // Return native asset info
+    const nativeAssets = chainAssets.nativeAssets || []
+    const matchingNative = nativeAssets.find(
+      (asset: { symbol: string }) => asset.symbol?.toUpperCase() === symbol.toUpperCase()
+    )
+
+    if (matchingNative && matchingNative.location) {
+      assetsInfo = [
+        {
+          symbol: matchingNative.symbol,
+          location: matchingNative.location,
+          decimals: matchingNative.decimals,
+          isNative: true,
+          isFeeAsset: matchingNative.isFeeAsset,
+          existentialDeposit: matchingNative.existentialDeposit
+        }
+      ]
+    }
+  }
+
+  // If not found in native assets, search in otherAssets
+  if (assetsInfo.length === 0) {
+    const otherAssets = chainAssets.otherAssets || []
+    const matchingAssets = otherAssets.filter(
+      (asset: { symbol: string }) => asset.symbol?.toUpperCase() === symbol.toUpperCase()
+    )
+
+    assetsInfo = matchingAssets.map(
+      (asset: {
+        symbol: string
+        assetId?: string
+        decimals: number
+        location?: TLocation
+        existentialDeposit?: string
+        isFeeAsset?: boolean
+        alias?: string
+      }) => ({
+        symbol: asset.symbol,
+        assetId: asset.assetId,
+        decimals: asset.decimals,
+        location: asset.location,
+        existentialDeposit: asset.existentialDeposit,
+        isFeeAsset: asset.isFeeAsset,
+        alias: asset.alias,
+        isNative: false
+      })
+    )
+  }
 
   // Handle no assets found
-  if (!assets || assets.length === 0) {
+  if (!assetsInfo || assetsInfo.length === 0) {
     throw new Error(`No asset found for symbol ${symbol} on ${chain}`)
   }
 
   // Handle single asset - return directly
-  if (assets.length === 1) {
-    if (!assets[0].location) {
+  if (assetsInfo.length === 1) {
+    if (!assetsInfo[0].location) {
       throw new Error(`Asset ${symbol} on ${chain} does not have a location`)
     }
-    return assets[0].location
+    return assetsInfo[0].location
   }
 
   // Handle multiple assets - apply selection strategy
-  const selectedAsset = selectBestAsset(assets, symbol, chain)
+  const selectedAsset = selectBestAsset(assetsInfo, symbol, chain)
 
   if (!selectedAsset.location) {
     throw new Error(
@@ -221,6 +273,7 @@ function getCrossChainlocations(args: SwapTokenArgs) {
     args.from as TNodeDotKsmWithRelayChains,
     args.currencyFrom
   )
+
   const locationTo = getAssetlocationWithSelection(
     args.to as TNodeDotKsmWithRelayChains,
     args.currencyTo

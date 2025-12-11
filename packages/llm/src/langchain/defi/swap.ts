@@ -25,7 +25,6 @@ export const swapTokensTool = (signer: PolkadotSigner, sender: string) => {
       ToolNames.SWAP_TOKENS,
       async () => {
         const swapContext = createSwapContext(input, sender)
-
         try {
           const transactionResult = await withTimeoutAndRetry(async () => {
             const routerPlan = await executeSwap(swapContext, signer)

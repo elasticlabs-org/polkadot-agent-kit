@@ -4,7 +4,7 @@ import { UnsafeTransactionType } from "@polkadot-agent-kit/common"
 
 
 export const RECIPIENT0 = '5Fniv36Eu3bTWVRaR6N2Ve1qVouiTd15SJcZpxPyhkngRnqj';
-export const RECIPIENT= '5CcqKCNDxrYYkPNWys8yrjHJVTzd69i66VTgtewrSbJiVqoR';
+export const RECIPIENT = '5CcqKCNDxrYYkPNWys8yrjHJVTzd69i66VTgtewrSbJiVqoR';
 export const RECIPIENT2 = '5D7jcv6aYbhbYGVY8k65oemM6FVNoyBfoVkuJ5cbFvbefftr';
 export const RECIPIENT3 = '5FdxcDTshU5yhHrC91NneaJ64XCE2jwxnMCv8bfxQbwhkWMG';
 export const RECIPIENT4 = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY';
@@ -33,6 +33,34 @@ export async function getBalance(
   address: string
 ) {
   return await api.query.System.Account.getValue(address);
+}
+
+
+// Get token balance for a specific asset ID on Hydration
+export async function getTokenBalance(
+  api: Api<KnownChainId>,
+  address: string,
+  assetId: number
+): Promise<{ free: bigint; reserved: bigint; frozen: bigint } | null> {
+  try {
+    // On Hydration, token balances are stored in Tokens.Accounts storage
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const tokenAccount = await api.query.Tokens.Accounts.getValue(address, assetId);
+
+    if (!tokenAccount) {
+      return null;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
+    return {
+      free: tokenAccount.free as bigint,
+      reserved: tokenAccount.reserved as bigint,
+      frozen: tokenAccount.frozen as bigint
+    };
+  } catch (error) {
+    console.error(`Failed to get token balance for asset ${assetId}:`, error);
+    return null;
+  }
 }
 
 
@@ -85,15 +113,15 @@ export async function getPendingRewards(api: Api<ChainIdAssetHub>, address: stri
 export const getUnbondingByEra = async (api: Api<ChainIdAssetHub>, address: string, era: number): Promise<bigint> => {
   const poolMember = await api.query.NominationPools.PoolMembers.getValue(address);
   if (!poolMember) return 0n;
-  
+
   const unbondingEras = poolMember.unbonding_eras;
   const unbondingEra = unbondingEras.find((eraEntry) => eraEntry[0] === era);
-  
+
   if (!unbondingEra) return 0n;
   return unbondingEra[1];
 }
 
-export const getCurrentEra = async (api: Api<ChainIdAssetHub>) : Promise<number>  => {
+export const getCurrentEra = async (api: Api<ChainIdAssetHub>): Promise<number> => {
 
   const currentEra = await api.query.Staking.CurrentEra.getValue();
 

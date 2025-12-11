@@ -2,10 +2,9 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { PolkadotAgentKit } from '../../src/api';
 import { AgentTest } from './agents/agent';
 import dotenv from 'dotenv';
-import { getBalance, sleep } from './utils';
+import { getBalance, getTokenBalance, sleep } from './utils';
+import { getAssetBalance } from '@paraspell/sdk';
 import { Api, ChainIdAssetHub, getDecimalsByChainId, parseUnits } from '@polkadot-agent-kit/common';
-import { getAssetBalance as getAssetBalanceParaSpell } from '@paraspell/sdk-core';
-import { getAssetBalance } from '@polkadot-agent-kit/core';
 import { Builder } from '@paraspell/sdk';
 import { SWAP_PROMPT, BIFROST_PROMPT } from '@polkadot-agent-kit/llm';
 dotenv.config({ path: '../../.env' });
@@ -17,7 +16,7 @@ describe('PolkadotAgentKit Integration with LLM Agent Swap', () => {
     beforeAll(async () => {
 
         if (process.env.AGENT_PRIVATE_KEY_MAINNET) {
-            agentKit = new PolkadotAgentKit({ privateKey: process.env.AGENT_PRIVATE_KEY_MAINNET, keyType: 'Sr25519', chains: ['polkadot', 'polkadot_asset_hub'] });
+            agentKit = new PolkadotAgentKit({ privateKey: process.env.AGENT_PRIVATE_KEY_MAINNET, keyType: 'Sr25519', chains: ['polkadot', 'polkadot_asset_hub', 'hydra'] });
             await agentKit.initializeApi();
             agent = new AgentTest(agentKit, SWAP_PROMPT);
             await agent.init();
@@ -38,22 +37,24 @@ describe('PolkadotAgentKit Integration with LLM Agent Swap', () => {
         // swap at least 0.2 DOT for sufficient fees on DEX
         // Sometime it is not working with NoDeal issue from Hydration due to insuficient liquidity/fees for Hydration
 
-        const amount = parseUnits("0.2", getDecimalsByChainId('polkadot'));
-        const userQuery = `swap 0.2 DOT from Polkadot to USDC on Polkadot Asset Hub`;
+        const amount = parseUnits("0.1", getDecimalsByChainId('polkadot_asset_hub'));
+        const userQuery = `swap 0.1 DOT from Polkadot Asset Hub to USDT on Hydration`;
 
-        const apiPolkadot = agentKit.getApi('polkadot');
+        // USDT asset ID on Hydration is 10
+        const USDT_ASSET_ID = 10;
 
-        const balanceDotBefore = await getBalance(apiPolkadot, agentKit.getCurrentAddress());
+        const apiPolkadotAssetHub = agentKit.getApi('polkadot_asset_hub');
+        const apiHydration = agentKit.getApi('hydra');
+
+        const balanceDotBefore = await getBalance(apiPolkadotAssetHub, agentKit.getCurrentAddress());
         console.log('Balance DOT Before:', balanceDotBefore);
-        const apiPolkadotAssetHub = agentKit.getApi('polkadot_asset_hub') as Api<ChainIdAssetHub>;
 
-        const balanceUSDCBefore = await getAssetBalance(apiPolkadotAssetHub, 'AssetHubPolkadot', 'USDC', agentKit.getCurrentAddress());
-        console.log("Balance USDC before:",balanceUSDCBefore);
-
-
+        // Get USDT balance before swap on Hydration
+        const balanceUsdtBefore = await getTokenBalance(apiHydration, agentKit.getCurrentAddress(), USDT_ASSET_ID);
+        console.log('Balance USDT Before (Asset ID 1984):', balanceUsdtBefore);
 
         const result = await agent.ask(userQuery);
-        console.log('Swap Tokens Query Result (Polkadot → Polkadot Asset Hub):', result);
+        console.log('Swap Tokens Query Result (Polkadot Asset Hub → USDT on Hydration):', result);
 
         expect(result.output).toBeDefined();
         expect(result.intermediateSteps).toBeDefined();
@@ -65,34 +66,37 @@ describe('PolkadotAgentKit Integration with LLM Agent Swap', () => {
 
         expect(swapCall).toBeDefined();
         expect(swapCall.action.toolInput).toMatchObject({
-            amount: '0.2',
+            amount: '0.1',
             currencyFrom: 'DOT',
-            currencyTo: 'USDC',
-            from: 'Polkadot',
-            to: 'AssetHubPolkadot'
+            currencyTo: 'USDT',
+            from: 'AssetHubPolkadot',
+            to: 'Hydration'
         });
 
         await sleep(3 * 60 * 1000);
-        const apiPolkadotAfter = agentKit.getApi('polkadot');
+        const apiAssetHubAfter = agentKit.getApi('polkadot_asset_hub') as Api<ChainIdAssetHub>;
+        const apiHydrationAfter = agentKit.getApi('hydra');
 
-        const balanceDotAfter = await getBalance(apiPolkadotAfter, agentKit.getCurrentAddress());
+        const balanceDotAfter = await getBalance(apiAssetHubAfter, agentKit.getCurrentAddress());
         console.log('Balance DOT After:', balanceDotAfter);
-        const apiPolkadotAssetHubAfter = agentKit.getApi('polkadot_asset_hub') as Api<ChainIdAssetHub>;
 
-        const balanceUSDCAfter = await getAssetBalance(apiPolkadotAssetHubAfter, 'AssetHubPolkadot', 'USDC', agentKit.getCurrentAddress());
-        console.log("Balance USDC after:",balanceUSDCAfter);
+        // Get USDT balance after swap on Hydration
+        const balanceUsdtAfter = await getTokenBalance(apiHydrationAfter, agentKit.getCurrentAddress(), USDT_ASSET_ID);
+        console.log('Balance USDT After (Asset ID 10):', balanceUsdtAfter);
 
         // compare the balance before and after swapping 
         expect(balanceDotAfter.data.free).toBeLessThan(balanceDotBefore.data.free - amount);
-        expect(balanceUSDCAfter).toBeGreaterThan(balanceUSDCBefore);
+        
+        // Verify USDT balance increased after swap
+        const usdtBefore = balanceUsdtBefore?.free ?? 0n;
+        const usdtAfter = balanceUsdtAfter?.free ?? 0n;
+        expect(usdtAfter).toBeGreaterThan(usdtBefore);
 
 
 
     }, 1500000);
 
 });
-
-
 
 
 describe('PolkadotAgentKit Integration with LLM Agent Bifrost', () => {
@@ -136,22 +140,20 @@ describe('PolkadotAgentKit Integration with LLM Agent Bifrost', () => {
             throw new Error(`Failed to initialize paraspell API for Bifrost: ${error instanceof Error ? error.message : String(error)}`);
         }
 
-        const balanceDotBefore = await getAssetBalanceParaSpell({
+        const balanceDotBefore = await getAssetBalance({
             address: agentKit.getCurrentAddress(),
             chain: 'BifrostPolkadot',
             currency: {symbol: {type: 'Foreign', value: 'DOT'}} ,
-            api: paraspellApi
         });
         console.log('Balance DOT Before:', balanceDotBefore);
 
     
-        const balanceVDotBefore = await getAssetBalanceParaSpell({
+        const balanceVDotBefore = await getAssetBalance({
             address: agentKit.getCurrentAddress(),
             chain: 'BifrostPolkadot',
-            currency: {symbol: {type: 'Foreign', value: 'DOT'}} ,
-            api: paraspellApi
+            currency: {symbol: {type: 'Foreign', value: 'vDOT'}} ,
         });
-        console.log('Balance vDOT Before:', balanceDotBefore);
+        console.log('Balance vDOT Before:', balanceVDotBefore);
 
         try {
             await paraspellApi.disconnect();
@@ -187,20 +189,18 @@ describe('PolkadotAgentKit Integration with LLM Agent Bifrost', () => {
             throw new Error(`Failed to reinitialize paraspell API for balance check: ${error instanceof Error ? error.message : String(error)}`);
         }
 
-        const balanceDotAfter = await getAssetBalanceParaSpell({
+        const balanceDotAfter = await getAssetBalance({
             address: agentKit.getCurrentAddress(),
             chain: 'BifrostPolkadot',
             currency: {symbol: {type: 'Foreign', value: 'DOT'}} ,
-            api: paraspellApiAfter
         });
         console.log('Balance DOT After:', balanceDotAfter);
 
 
-        const balancevDotAfter = await getAssetBalanceParaSpell({
+        const balancevDotAfter = await getAssetBalance({
             address: agentKit.getCurrentAddress(),
             chain: 'BifrostPolkadot',
             currency: {symbol: {type: 'Foreign', value: 'vDOT'}} ,
-            api: paraspellApiAfter
         });
         console.log('Balance vDOT After:', balanceDotAfter);
 

@@ -45,14 +45,14 @@
     "@polkadot-agent-kit/common": "workspace:*",
     "@polkadot-agent-kit/core": "workspace:*",
     "@polkadot-agent-kit/llm": "workspace:*",
-    "polkadot-api": "^1.14.1",
+    "polkadot-api": "^1.23.1",
     "zod": "^3.24.3",
     "@modelcontextprotocol/sdk": "^1.6.1",
     "zod-to-json-schema": "^3.24.3",
     "@langchain/google-genai": "^1.0.0",
-    "@paraspell/sdk": "11.12.9",
-    "@paraspell/assets": "11.12.9",
-    "@paraspell/sdk-core": "11.12.9"
+    "@paraspell/sdk": "11.14.8",
+    "@paraspell/assets": "11.14.8",
+    "@paraspell/sdk-core": "11.14.8"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.26.0",
@@ -68,7 +68,8 @@
     "rollup-plugin-dts": "^6.2.1",
     "@langchain/ollama": "^0.2.2",
     "langchain": "^0.1.21",
-    "@agentic/langchain": "^7.6.9"
+    "@agentic/langchain": "^7.6.9",
+    "@galacticcouncil/sdk": "^10.2.0"
   },
   "peerDependencies": {
     "ai": "^4.1.16"
