@@ -1,9 +1,17 @@
 # @polkadot-agent-kit/common
 
+## 2.1.5
+
+### Patch Changes
+
+- bump version polkadot-api
+- update url westend asset hub 
+
 ## 2.1.4
 
 ### Patch Changes
-- release new version 
+
+- release new version
 
 ## 2.1.3
 

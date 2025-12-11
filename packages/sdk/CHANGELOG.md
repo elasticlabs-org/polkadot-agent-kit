@@ -1,10 +1,22 @@
 # @polkadot-agent-kit/sdk
 
+## 2.1.5
+
+### Patch Changes
+
+- bump the latest paraspell
+- update test case after migration 
+
+- Updated dependencies
+  - @polkadot-agent-kit/common@2.1.5
+  - @polkadot-agent-kit/core@2.1.5
+  - @polkadot-agent-kit/llm@2.1.5
+
 ## 2.1.4
 
 ### Patch Changes
 
-- add `addCustomTools` -> allow dev can extend their function calls 
+- add `addCustomTools` -> allow dev can extend their function calls
 
 - Updated dependencies
   - @polkadot-agent-kit/common@2.1.4

@@ -1,11 +1,22 @@
 # @polkadot-agent-kit/llm
 
+## 2.1.5
+
+### Patch Changes
+
+- bump polkadot-api
+- update prompt for swap 
+
+- Updated dependencies
+  - @polkadot-agent-kit/common@2.1.5
+  - @polkadot-agent-kit/core@2.1.5
+
 ## 2.1.4
 
 ### Patch Changes
 
-- remove unused functions 
-- add validate tool helper function 
+- remove unused functions
+- add validate tool helper function
 - Updated dependencies
   - @polkadot-agent-kit/common@2.1.4
   - @polkadot-agent-kit/core@2.1.4

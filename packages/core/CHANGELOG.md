@@ -1,5 +1,16 @@
 # @polkadot-agent-kit/core
 
+## 2.1.5
+
+### Patch Changes
+
+- fix get currency location 
+- bump polkadot-api
+- remove unused codes
+
+- Updated dependencies
+  - @polkadot-agent-kit/common@2.1.5
+
 ## 2.1.4
 
 ### Patch Changes

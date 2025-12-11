@@ -1,6 +1,6 @@
 {
   "name": "@polkadot-agent-kit/sdk",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "description": "SDK for Polkadot Agent Kit",
   "repository": {
     "type": "git",
