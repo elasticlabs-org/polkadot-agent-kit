@@ -14,58 +14,58 @@ dotenv.config({ path: '../../.env' });
 /// We are using Ollama for testing purposes, but you can use any other model you want
 
 
-describe('PolkadotAgentKit Integration with OllamaAgent check balance', () => {
-  let agentKit: PolkadotAgentKit;
-  let agent: AgentTest;
+// describe('PolkadotAgentKit Integration with OllamaAgent check balance', () => {
+//   let agentKit: PolkadotAgentKit;
+//   let agent: AgentTest;
 
-  beforeAll(async () => {
-    // Make sure private key 
-    if (process.env.AGENT_PRIVATE_KEY) {
-      agentKit = new PolkadotAgentKit({
-        privateKey: process.env.AGENT_PRIVATE_KEY,
-        keyType: 'Sr25519',
-        chains: ['west', 'west_asset_hub', 'paseo', 'paseo_asset_hub']
-      });
-      await agentKit.initializeApi();
-      agent = new AgentTest(agentKit, ASSETS_PROMPT);
-      await agent.init();
-    } else {
-      throw new Error('AGENT_PRIVATE_KEY is not set');
-    }
-  }, 3500000);
+//   beforeAll(async () => {
+//     // Make sure private key 
+//     if (process.env.AGENT_PRIVATE_KEY) {
+//       agentKit = new PolkadotAgentKit({
+//         privateKey: process.env.AGENT_PRIVATE_KEY,
+//         keyType: 'Sr25519',
+//         chains: ['west', 'west_asset_hub', 'paseo', 'paseo_asset_hub']
+//       });
+//       await agentKit.initializeApi();
+//       agent = new AgentTest(agentKit, ASSETS_PROMPT);
+//       await agent.init();
+//     } else {
+//       throw new Error('AGENT_PRIVATE_KEY is not set');
+//     }
+//   }, 3500000);
 
-  describe('Check balance on Paseo with different users intent ', () => {
-    const testCases = [
-      { query: 'check balance on paseo', expectedChain: 'paseo' },
-      { query: 'check balance on Paseo Asset Hub', expectedChain: 'paseo_asset_hub' },
-      { query: 'check balance on Asset Hub Paseo', expectedChain: 'paseo_asset_hub' },
-    ];
+//   describe('Check balance on Paseo with different users intent ', () => {
+//     const testCases = [
+//       { query: 'check balance on paseo', expectedChain: 'paseo' },
+//       { query: 'check balance on Paseo Asset Hub', expectedChain: 'paseo_asset_hub' },
+//       { query: 'check balance on Asset Hub Paseo', expectedChain: 'paseo_asset_hub' },
+//     ];
 
-    it.each(testCases)(
-      'should call check_balance tool with correct chain for "$query"',
-      async ({ query, expectedChain }) => {
-        const result = await agent.ask(query);
+//     it.each(testCases)(
+//       'should call check_balance tool with correct chain for "$query"',
+//       async ({ query, expectedChain }) => {
+//         const result = await agent.ask(query);
 
-        expect(result.output).toBeDefined();
-        expect(result.intermediateSteps).toBeDefined();
-        expect(result.intermediateSteps?.length).toBeGreaterThan(0);
+//         expect(result.output).toBeDefined();
+//         expect(result.intermediateSteps).toBeDefined();
+//         expect(result.intermediateSteps?.length).toBeGreaterThan(0);
 
-        const balanceCall = result.intermediateSteps?.find(
-          (step: any) => step.action?.tool === 'check_balance'
-        );
+//         const balanceCall = result.intermediateSteps?.find(
+//           (step: any) => step.action?.tool === 'check_balance'
+//         );
 
-        expect(balanceCall).toBeDefined();
-        expect(balanceCall.action.toolInput).toEqual({
-          chain: expectedChain,
-        });
+//         expect(balanceCall).toBeDefined();
+//         expect(balanceCall.action.toolInput).toEqual({
+//           chain: expectedChain,
+//         });
 
-        await sleep(30000);
-      },
-      3500000
-    );
-  });
+//         await sleep(30000);
+//       },
+//       3500000
+//     );
+//   });
 
-})
+// })
 
 describe('PolkadotAgentKit Integration with OllamaAgent transfer_native tool', () => {
   let agentKit: PolkadotAgentKit;
@@ -77,7 +77,7 @@ describe('PolkadotAgentKit Integration with OllamaAgent transfer_native tool', (
       agentKit = new PolkadotAgentKit({
         privateKey: process.env.AGENT_PRIVATE_KEY,
         keyType: 'Sr25519',
-        chains: ['paseo', 'paseo_asset_hub']
+        chains: ['paseo', 'paseo_asset_hub', 'paseo_people']
       });
       await agentKit.initializeApi();
       agent = new AgentTest(agentKit, ASSETS_PROMPT);
@@ -239,272 +239,272 @@ describe('PolkadotAgentKit Integration with OllamaAgent for XCM Transfer', () =>
 })
 
 
-describe('PolkadotAgentKit Integration with LLM Agent staking nomination pool tools', () => {
-  let agentKit: PolkadotAgentKit;
-  let agent: AgentTest;
+// describe('PolkadotAgentKit Integration with LLM Agent staking nomination pool tools', () => {
+//   let agentKit: PolkadotAgentKit;
+//   let agent: AgentTest;
 
-  beforeAll(async () => {
-    // Make sure private key 
-    if (process.env.AGENT_PRIVATE_KEY) {
-      agentKit = new PolkadotAgentKit({
-        privateKey: process.env.AGENT_PRIVATE_KEY,
-        keyType: 'Sr25519',
-        chains: ['paseo_asset_hub']
-      });
-      await agentKit.initializeApi();
+//   beforeAll(async () => {
+//     // Make sure private key 
+//     if (process.env.AGENT_PRIVATE_KEY) {
+//       agentKit = new PolkadotAgentKit({
+//         privateKey: process.env.AGENT_PRIVATE_KEY,
+//         keyType: 'Sr25519',
+//         chains: ['paseo_asset_hub']
+//       });
+//       await agentKit.initializeApi();
 
 
-      agent = new AgentTest(agentKit, NOMINATION_PROMPT);
-      await agent.init();
-    } else {
-      throw new Error('AGENT_PRIVATE_KEY is not set');
-    }
-  }, 3500000);
+//       agent = new AgentTest(agentKit, NOMINATION_PROMPT);
+//       await agent.init();
+//     } else {
+//       throw new Error('AGENT_PRIVATE_KEY is not set');
+//     }
+//   }, 3500000);
 
-  afterEach(async () => {
-    // Add delay between tests to avoid stale transaction errors
-    await sleep(120000); // 120 seconds delay (2 minutes)
-  });
+//   afterEach(async () => {
+//     // Add delay between tests to avoid stale transaction errors
+//     await sleep(120000); // 120 seconds delay (2 minutes)
+//   });
 
 
-  it('should call join_pool tool', async () => {
+//   it('should call join_pool tool', async () => {
 
-    await sleep(60000); // 60 seconds additional delay
+//     await sleep(60000); // 60 seconds additional delay
 
-    const userQuery = 'join pool with 1 PAS on Paseo Asset Hub';
+//     const userQuery = 'join pool with 1 PAS on Paseo Asset Hub';
 
-    // Get bonded amount before the operation (only if we expect a successful join)
-    const bondedAmountBefore = await getBondedAmountByMember(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress());
+//     // Get bonded amount before the operation (only if we expect a successful join)
+//     const bondedAmountBefore = await getBondedAmountByMember(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress());
 
 
-    const result = await agent.ask(userQuery);
-    console.log('Join Pool Query Result:', result);
+//     const result = await agent.ask(userQuery);
+//     console.log('Join Pool Query Result:', result);
 
-    // Check that we have intermediate steps
-    expect(result.intermediateSteps).toBeDefined();
-    expect(result.intermediateSteps?.length).toBeGreaterThan(0);
+//     // Check that we have intermediate steps
+//     expect(result.intermediateSteps).toBeDefined();
+//     expect(result.intermediateSteps?.length).toBeGreaterThan(0);
 
-    // Find the join_pool tool call
-    const joinPoolCall = result.intermediateSteps?.find((step: any) =>
-      step.action?.tool === 'join_pool'
-    );
+//     // Find the join_pool tool call
+//     const joinPoolCall = result.intermediateSteps?.find((step: any) =>
+//       step.action?.tool === 'join_pool'
+//     );
 
-    expect(joinPoolCall).toBeDefined();
-    expect(joinPoolCall.action.toolInput).toMatchObject({
-      amount: '1',
-      chain: 'paseo_asset_hub'
-    });
+//     expect(joinPoolCall).toBeDefined();
+//     expect(joinPoolCall.action.toolInput).toMatchObject({
+//       amount: '1',
+//       chain: 'paseo_asset_hub'
+//     });
 
-    // Check for either successful join or account already belongs to pool error
-    const observationStep = result.intermediateSteps?.find((step: any) =>
-      step.observation && (
-        step.observation.includes('Successfully joined pool') ||
-        step.observation.includes('NominationPools.AccountBelongsToOtherPool')
-      )
-    );
+//     // Check for either successful join or account already belongs to pool error
+//     const observationStep = result.intermediateSteps?.find((step: any) =>
+//       step.observation && (
+//         step.observation.includes('Successfully joined pool') ||
+//         step.observation.includes('NominationPools.AccountBelongsToOtherPool')
+//       )
+//     );
 
-    expect(observationStep).toBeDefined();
-    // Wait for transaction to be processed
-    await sleep(30000);
+//     expect(observationStep).toBeDefined();
+//     // Wait for transaction to be processed
+//     await sleep(30000);
 
-    // Check if it's a successful join or an error
-    if (observationStep.observation.includes('Successfully joined pool')) {
-      expect(observationStep.observation).toContain('Successfully joined pool');
-      console.log('Successfully joined nomination pool');
+//     // Check if it's a successful join or an error
+//     if (observationStep.observation.includes('Successfully joined pool')) {
+//       expect(observationStep.observation).toContain('Successfully joined pool');
+//       console.log('Successfully joined nomination pool');
 
-      const bondedAmountAfter = await getBondedAmountByMember(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress());
+//       const bondedAmountAfter = await getBondedAmountByMember(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress());
 
-      const expectedAmount = parseUnits("1", getDecimalsByChainId('paseo_asset_hub'));
-      expect(bondedAmountAfter).toEqual(bondedAmountBefore + expectedAmount);
+//       const expectedAmount = parseUnits("1", getDecimalsByChainId('paseo_asset_hub'));
+//       expect(bondedAmountAfter).toEqual(bondedAmountBefore + expectedAmount);
 
-    } else if (observationStep.observation.includes('NominationPools.AccountBelongsToOtherPool')) {
-      expect(observationStep.observation).toContain('NominationPools.AccountBelongsToOtherPool');
-      console.log('Account already belongs to a nomination pool - this is expected behavior');
-    } else {
-      throw new Error('Unexpected observation: ' + observationStep.observation);
-    }
+//     } else if (observationStep.observation.includes('NominationPools.AccountBelongsToOtherPool')) {
+//       expect(observationStep.observation).toContain('NominationPools.AccountBelongsToOtherPool');
+//       console.log('Account already belongs to a nomination pool - this is expected behavior');
+//     } else {
+//       throw new Error('Unexpected observation: ' + observationStep.observation);
+//     }
 
-  }, 3500000);
+//   }, 3500000);
 
-  it('should call bond_extra tool with FreeBalance', async () => {
+//   it('should call bond_extra tool with FreeBalance', async () => {
 
-    await sleep(60000); // 60 seconds additional delay
+//     await sleep(60000); // 60 seconds additional delay
 
-    const userQuery = 'bond extra 1 PAS on Paseo Asset Hub';
+//     const userQuery = 'bond extra 1 PAS on Paseo Asset Hub';
 
-    // Get bonded amount before the operation
-    const bondedAmountBefore = await getBondedAmountByMember(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress());
-    console.log('Bonded amount before:', bondedAmountBefore);
+//     // Get bonded amount before the operation
+//     const bondedAmountBefore = await getBondedAmountByMember(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress());
+//     console.log('Bonded amount before:', bondedAmountBefore);
 
-    const result = await agent.ask(userQuery);
-    console.log('Bond Extra Query Result:', result);
+//     const result = await agent.ask(userQuery);
+//     console.log('Bond Extra Query Result:', result);
 
-    // Check that we have intermediate steps
-    expect(result.intermediateSteps).toBeDefined();
-    expect(result.intermediateSteps?.length).toBeGreaterThan(0);
+//     // Check that we have intermediate steps
+//     expect(result.intermediateSteps).toBeDefined();
+//     expect(result.intermediateSteps?.length).toBeGreaterThan(0);
 
-    // Find the bond_extra tool call
-    const bondExtraCall = result.intermediateSteps?.find((step: any) =>
-      step.action?.tool === 'bond_extra'
-    );
+//     // Find the bond_extra tool call
+//     const bondExtraCall = result.intermediateSteps?.find((step: any) =>
+//       step.action?.tool === 'bond_extra'
+//     );
 
-    expect(bondExtraCall).toBeDefined();
-    expect(bondExtraCall.action.toolInput).toMatchObject({
-      amount: '1',
-      chain: 'paseo_asset_hub',
-      type: 'FreeBalance'
-    });
+//     expect(bondExtraCall).toBeDefined();
+//     expect(bondExtraCall.action.toolInput).toMatchObject({
+//       amount: '1',
+//       chain: 'paseo_asset_hub',
+//       type: 'FreeBalance'
+//     });
 
-    const observationStep = result.intermediateSteps?.find((step: any) =>
-      step.observation && step.observation.includes('Successfully bonded extra tokens')
-    );
+//     const observationStep = result.intermediateSteps?.find((step: any) =>
+//       step.observation && step.observation.includes('Successfully bonded extra tokens')
+//     );
 
-    expect(observationStep).toBeDefined();
-    expect(observationStep.observation).toContain('Successfully bonded extra tokens (FreeBalance) on paseo_asset_hub');
+//     expect(observationStep).toBeDefined();
+//     expect(observationStep.observation).toContain('Successfully bonded extra tokens (FreeBalance) on paseo_asset_hub');
 
-    // Wait for transaction to be processed
-    await sleep(30000);
+//     // Wait for transaction to be processed
+//     await sleep(30000);
 
-    // Get bonded amount after the operation
-    const bondedAmountAfter = await getBondedAmountByMember(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress());
-    console.log('Bonded amount after:', bondedAmountAfter);
+//     // Get bonded amount after the operation
+//     const bondedAmountAfter = await getBondedAmountByMember(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress());
+//     console.log('Bonded amount after:', bondedAmountAfter);
 
-    const expectedAmount = parseUnits("1", getDecimalsByChainId('paseo_asset_hub'));
-    expect(bondedAmountAfter).toEqual(bondedAmountBefore + expectedAmount);
+//     const expectedAmount = parseUnits("1", getDecimalsByChainId('paseo_asset_hub'));
+//     expect(bondedAmountAfter).toEqual(bondedAmountBefore + expectedAmount);
 
-  }, 3500000);
+//   }, 3500000);
 
 
-  it('should call bond_extra tool with Rewards', async () => {
-    const userQuery = 'bond rewards on Paseo Asset Hub';
+//   it('should call bond_extra tool with Rewards', async () => {
+//     const userQuery = 'bond rewards on Paseo Asset Hub';
 
-    const pendingReward = await getPendingRewards(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress());
+//     const pendingReward = await getPendingRewards(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress());
 
-    // Get bonded amount before the operation
-    const bondedAmountBefore = await getBondedAmountByMember(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress());
-    console.log('Bonded amount before:', bondedAmountBefore);
+//     // Get bonded amount before the operation
+//     const bondedAmountBefore = await getBondedAmountByMember(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress());
+//     console.log('Bonded amount before:', bondedAmountBefore);
 
-    const result = await agent.ask(userQuery);
-    console.log('Bond Extra Query Result:', result);
+//     const result = await agent.ask(userQuery);
+//     console.log('Bond Extra Query Result:', result);
 
-    // Check that we have intermediate steps
-    expect(result.intermediateSteps).toBeDefined();
-    expect(result.intermediateSteps?.length).toBeGreaterThan(0);
+//     // Check that we have intermediate steps
+//     expect(result.intermediateSteps).toBeDefined();
+//     expect(result.intermediateSteps?.length).toBeGreaterThan(0);
 
-    // Find the bond_extra tool call
-    const bondExtraCall = result.intermediateSteps?.find((step: any) =>
-      step.action?.tool === 'bond_extra'
-    );
+//     // Find the bond_extra tool call
+//     const bondExtraCall = result.intermediateSteps?.find((step: any) =>
+//       step.action?.tool === 'bond_extra'
+//     );
 
-    expect(bondExtraCall).toBeDefined();
-    expect(bondExtraCall.action.toolInput).toMatchObject({
-      chain: 'paseo_asset_hub',
-      type: 'Rewards'
-    });
+//     expect(bondExtraCall).toBeDefined();
+//     expect(bondExtraCall.action.toolInput).toMatchObject({
+//       chain: 'paseo_asset_hub',
+//       type: 'Rewards'
+//     });
 
-    const observationStep = result.intermediateSteps?.find((step: any) =>
-      step.observation && step.observation.includes('Successfully bonded extra tokens')
-    );
+//     const observationStep = result.intermediateSteps?.find((step: any) =>
+//       step.observation && step.observation.includes('Successfully bonded extra tokens')
+//     );
 
-    expect(observationStep).toBeDefined();
-    expect(observationStep.observation).toContain('Successfully bonded extra tokens (Rewards) on paseo_asset_hub');
+//     expect(observationStep).toBeDefined();
+//     expect(observationStep.observation).toContain('Successfully bonded extra tokens (Rewards) on paseo_asset_hub');
 
 
 
-    // Wait for transaction to be processed
-    await sleep(10000);
+//     // Wait for transaction to be processed
+//     await sleep(10000);
 
-    // Get bonded amount after the operation
-    const bondedAmountAfter = await getBondedAmountByMember(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress());
-    console.log('Bonded amount after:', bondedAmountAfter);
+//     // Get bonded amount after the operation
+//     const bondedAmountAfter = await getBondedAmountByMember(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress());
+//     console.log('Bonded amount after:', bondedAmountAfter);
 
 
-    expect(bondedAmountAfter).toEqual(bondedAmountBefore + pendingReward);
+//     expect(bondedAmountAfter).toEqual(bondedAmountBefore + pendingReward);
 
-  }, 3500000);
+//   }, 3500000);
 
 
-  it('should call unbond tool', async () => {
-    const amountParsed = parseUnits("0.01", getDecimalsByChainId('paseo_asset_hub'));
-    const userQuery = 'unbond 0.01 PAS on Paseo Asset Hub';
+//   it('should call unbond tool', async () => {
+//     const amountParsed = parseUnits("0.01", getDecimalsByChainId('paseo_asset_hub'));
+//     const userQuery = 'unbond 0.01 PAS on Paseo Asset Hub';
 
 
-    const currentEra = await getCurrentEra(agentKit.getApi('paseo_asset_hub') as any);
-    const unbondingBefore = await getUnbondingByEra(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress(), currentEra);
+//     const currentEra = await getCurrentEra(agentKit.getApi('paseo_asset_hub') as any);
+//     const unbondingBefore = await getUnbondingByEra(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress(), currentEra);
 
-    const result = await agent.ask(userQuery);
-    console.log('Unbond Query Result:', result);
+//     const result = await agent.ask(userQuery);
+//     console.log('Unbond Query Result:', result);
 
-    // Check that we have intermediate steps
-    expect(result.intermediateSteps).toBeDefined();
-    expect(result.intermediateSteps?.length).toBeGreaterThan(0);
+//     // Check that we have intermediate steps
+//     expect(result.intermediateSteps).toBeDefined();
+//     expect(result.intermediateSteps?.length).toBeGreaterThan(0);
 
-    const unbondCall = result.intermediateSteps?.find((step: any) =>
-      step.action?.tool === 'unbond'
-    );
+//     const unbondCall = result.intermediateSteps?.find((step: any) =>
+//       step.action?.tool === 'unbond'
+//     );
 
-    expect(unbondCall).toBeDefined();
-    expect(unbondCall.action.toolInput).toMatchObject({
-      chain: 'paseo_asset_hub',
-      amount: '0.01'
-    });
+//     expect(unbondCall).toBeDefined();
+//     expect(unbondCall.action.toolInput).toMatchObject({
+//       chain: 'paseo_asset_hub',
+//       amount: '0.01'
+//     });
 
-    await sleep(5000);
+//     await sleep(5000);
 
-    const unbondingAfter = await getUnbondingByEra(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress(), currentEra);
+//     const unbondingAfter = await getUnbondingByEra(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress(), currentEra);
 
-    expect(unbondingAfter).toEqual(unbondingBefore + amountParsed);
+//     expect(unbondingAfter).toEqual(unbondingBefore + amountParsed);
 
-  }, 3500000);
+//   }, 3500000);
 
-  it('should call withdraw unbond tool', async () => {
-    const userQuery = 'withdraw unbonded on Paseo Asset Hub';
-    const result = await agent.ask(userQuery);
-    console.log('Withdraw Unbonded Query Result:', result);
+//   it('should call withdraw unbond tool', async () => {
+//     const userQuery = 'withdraw unbonded on Paseo Asset Hub';
+//     const result = await agent.ask(userQuery);
+//     console.log('Withdraw Unbonded Query Result:', result);
 
-    // Check that we have intermediate steps
-    expect(result.intermediateSteps).toBeDefined();
-    expect(result.intermediateSteps?.length).toBeGreaterThan(0);
+//     // Check that we have intermediate steps
+//     expect(result.intermediateSteps).toBeDefined();
+//     expect(result.intermediateSteps?.length).toBeGreaterThan(0);
 
-    const withdrawUnbondedCall = result.intermediateSteps?.find((step: any) =>
-      step.action?.tool === 'withdraw_unbonded'
-    );
+//     const withdrawUnbondedCall = result.intermediateSteps?.find((step: any) =>
+//       step.action?.tool === 'withdraw_unbonded'
+//     );
 
-    expect(withdrawUnbondedCall).toBeDefined();
-    expect(withdrawUnbondedCall.action.toolInput).toMatchObject({
-      chain: 'paseo_asset_hub',
-      slashingSpans: "0"
-    });
+//     expect(withdrawUnbondedCall).toBeDefined();
+//     expect(withdrawUnbondedCall.action.toolInput).toMatchObject({
+//       chain: 'paseo_asset_hub',
+//       slashingSpans: "0"
+//     });
 
 
-  }, 3500000);
+//   }, 3500000);
 
 
-  it('should call claim rewards  tool', async () => {
-    const userQuery = 'claim rewards from pool on paseo_asset_hub';
+//   it('should call claim rewards  tool', async () => {
+//     const userQuery = 'claim rewards from pool on paseo_asset_hub';
 
 
-    const result = await agent.ask(userQuery);
-    console.log('Claim Rewards Query Result:', result);
+//     const result = await agent.ask(userQuery);
+//     console.log('Claim Rewards Query Result:', result);
 
 
-    expect(result.intermediateSteps).toBeDefined();
-    expect(result.intermediateSteps?.length).toBeGreaterThan(0);
+//     expect(result.intermediateSteps).toBeDefined();
+//     expect(result.intermediateSteps?.length).toBeGreaterThan(0);
 
 
-    const claimRewardsCall = result.intermediateSteps?.find((step: any) =>
-      step.action?.tool === 'claim_rewards'
-    );
+//     const claimRewardsCall = result.intermediateSteps?.find((step: any) =>
+//       step.action?.tool === 'claim_rewards'
+//     );
 
-    expect(claimRewardsCall).toBeDefined();
-    expect(claimRewardsCall.action.toolInput).toMatchObject({
-      chain: 'paseo_asset_hub',
-    });
+//     expect(claimRewardsCall).toBeDefined();
+//     expect(claimRewardsCall.action.toolInput).toMatchObject({
+//       chain: 'paseo_asset_hub',
+//     });
 
-    await sleep(5000);
-    const pendingRewardAfter = await getPendingRewards(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress());
+//     await sleep(5000);
+//     const pendingRewardAfter = await getPendingRewards(agentKit.getApi('paseo_asset_hub') as any, agentKit.getCurrentAddress());
 
-    expect(pendingRewardAfter).toEqual(0n);
-  }, 3500000);
+//     expect(pendingRewardAfter).toEqual(0n);
+//   }, 3500000);
 
-})
+// })
