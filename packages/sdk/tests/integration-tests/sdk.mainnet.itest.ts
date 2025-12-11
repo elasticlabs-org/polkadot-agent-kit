@@ -99,8 +99,6 @@ describe('PolkadotAgentKit Integration with LLM Agent Swap', () => {
 });
 
 
-
-
 describe('PolkadotAgentKit Integration with LLM Agent Bifrost', () => {
     let agentKit: PolkadotAgentKit;
     let agent: AgentTest;
@@ -146,7 +144,6 @@ describe('PolkadotAgentKit Integration with LLM Agent Bifrost', () => {
             address: agentKit.getCurrentAddress(),
             chain: 'BifrostPolkadot',
             currency: {symbol: {type: 'Foreign', value: 'DOT'}} ,
-            api: paraspellApi
         });
         console.log('Balance DOT Before:', balanceDotBefore);
 
@@ -154,10 +151,9 @@ describe('PolkadotAgentKit Integration with LLM Agent Bifrost', () => {
         const balanceVDotBefore = await getAssetBalance({
             address: agentKit.getCurrentAddress(),
             chain: 'BifrostPolkadot',
-            currency: {symbol: {type: 'Foreign', value: 'DOT'}} ,
-            api: paraspellApi
+            currency: {symbol: {type: 'Foreign', value: 'vDOT'}} ,
         });
-        console.log('Balance vDOT Before:', balanceDotBefore);
+        console.log('Balance vDOT Before:', balanceVDotBefore);
 
         try {
             await paraspellApi.disconnect();
@@ -197,7 +193,6 @@ describe('PolkadotAgentKit Integration with LLM Agent Bifrost', () => {
             address: agentKit.getCurrentAddress(),
             chain: 'BifrostPolkadot',
             currency: {symbol: {type: 'Foreign', value: 'DOT'}} ,
-            api: paraspellApiAfter
         });
         console.log('Balance DOT After:', balanceDotAfter);
 
@@ -206,7 +201,6 @@ describe('PolkadotAgentKit Integration with LLM Agent Bifrost', () => {
             address: agentKit.getCurrentAddress(),
             chain: 'BifrostPolkadot',
             currency: {symbol: {type: 'Foreign', value: 'vDOT'}} ,
-            api: paraspellApiAfter
         });
         console.log('Balance vDOT After:', balanceDotAfter);
 
