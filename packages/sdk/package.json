@@ -68,7 +68,8 @@
     "rollup-plugin-dts": "^6.2.1",
     "@langchain/ollama": "^0.2.2",
     "langchain": "^0.1.21",
-    "@agentic/langchain": "^7.6.9"
+    "@agentic/langchain": "^7.6.9",
+    "@galacticcouncil/sdk": "^10.2.0"
   },
   "peerDependencies": {
     "ai": "^4.1.16"

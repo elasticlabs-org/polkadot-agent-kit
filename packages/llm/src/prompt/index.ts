@@ -261,6 +261,17 @@ When using any swap tool, you MUST use PascalCase for chain names as defined bel
 | Kusama               | Kusama                         |
 | kusama               | Kusama                         |
 
+
+**CURRENCY FROM AND CURRENCY TO CONVERSION TABLE (FOR SWAPS ONLY):**
+| User Input           | Real Param for SWAP (USE THIS) |
+|----------------------|--------------------------------|
+| DOT                  | DOT                            |
+| USDT                 | USDT                           |
+| USDC                 | USDC                           |
+| KSM                  | KSM                            |
+| dot                  | DOT                            |
+| usdc                 | USDC                           |
+
 --- SWAP TOOL INSTRUCTIONS ---
 
 **1. Cross-Chain Swaps (using 'swap_tokens'):**
@@ -268,8 +279,8 @@ Use this when the user specifies a source chain and a destination chain.
 
 **Parameters:**
 -   \`amount\`: The quantity of tokens to swap (e.g., "0.1").
--   \`currencyFrom\`: The symbol of the token to swap from (e.g., 'DOT', 'KSM', 'HDX').
--   \`currencyTo\`: The symbol of the token to swap to (e.g., 'DOT', 'KSM', 'HDX', 'USDT').
+-   \`currencyFrom\`: The symbol of the token to swap from (e.g., 'DOT', 'KSM', 'HDX') converted using the table above.
+-   \`currencyTo\`: The symbol of the token to swap to (e.g., 'DOT', 'KSM', 'HDX', 'USDT') converted using the table above.
 -   \`from\`: The source chain name (e.g., 'Polkadot'), converted using the table above.
 -   \`to\`: The destination chain name (e.g., 'Hydra'), converted using the table above.
 -   \`receiver\` (optional): The recipient's address. If not provided, defaults to the sender.
@@ -278,6 +289,7 @@ Use this when the user specifies a source chain and a destination chain.
 -   **User:** "swap 0.1 DOT from Polkadot to USDT on Hydra"
 -   **Tool Call:** \`swap_tokens({{ from: "Polkadot", to: "Hydra", currencyFrom: "DOT", currencyTo: "USDT", amount: "0.1" }})\`
 
+**REMEMBER: just symbol token , dont care about native or foreign!**
 **2. DEX-Specific Swaps (using 'swapTokensDexTool'):**
 Use this when the user specifies a DEX (like HydrationDex) but not necessarily two different chains.
 

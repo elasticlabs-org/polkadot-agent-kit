@@ -77,7 +77,7 @@ describe('PolkadotAgentKit Integration with OllamaAgent transfer_native tool', (
       agentKit = new PolkadotAgentKit({
         privateKey: process.env.AGENT_PRIVATE_KEY,
         keyType: 'Sr25519',
-        chains: ['west', 'west_asset_hub']
+        chains: ['paseo', 'paseo_asset_hub']
       });
       await agentKit.initializeApi();
       agent = new AgentTest(agentKit, ASSETS_PROMPT);
@@ -91,22 +91,20 @@ describe('PolkadotAgentKit Integration with OllamaAgent transfer_native tool', (
   describe('Should call transfer_native tool', () => {
 
     const testCases = [
-      `transfer 0.2 WND to ${RECIPIENT0} on Westend Asset Hub`,
+      `transfer 0.2 PAS to ${RECIPIENT0} on Paseo Asset Hub`,
     ];
 
     it.each(testCases)('should call transfer_native tool with correct parameters for query: "%s"', async (userQuery) => {
-      const balanceRecipientBefore = await getBalance(agentKit.getApi('west_asset_hub'), RECIPIENT0);
-      const balanceAgentBefore = await getBalance(agentKit.getApi('west_asset_hub'), agentKit.getCurrentAddress());
+      const balanceRecipientBefore = await getBalance(agentKit.getApi('paseo_asset_hub'), RECIPIENT0);
+      const balanceAgentBefore = await getBalance(agentKit.getApi('paseo_asset_hub'), agentKit.getCurrentAddress());
+      const amount = parseUnits("0.2", getDecimalsByChainId('paseo_asset_hub'));
 
       const result = await agent.ask(userQuery);
       console.log('Transfer Query Result:', result);
 
+      const tx = await transferNativeCall(agentKit.getApi('paseo_asset_hub'), agentKit.getCurrentAddress(), RECIPIENT0, amount);
 
-      const amount = parseUnits("0.2", getDecimalsByChainId('west_asset_hub'));
-      const tx = await transferNativeCall(agentKit.getApi('west_asset_hub'), agentKit.getCurrentAddress(), RECIPIENT0, amount);
-
-      const feeTx = await estimateTransactionFee(tx.transaction!, RECIPIENT0);
-
+      const feeTx = await estimateTransactionFee(tx.transaction!, agentKit.getCurrentAddress());
 
       expect(result.output).toBeDefined();
       expect(result.intermediateSteps).toBeDefined();
@@ -119,17 +117,17 @@ describe('PolkadotAgentKit Integration with OllamaAgent transfer_native tool', (
       expect(transferCall).toBeDefined();
       expect(transferCall.action.toolInput).toMatchObject({
         amount: '0.2',
-        chain: 'west_asset_hub',
+        chain: 'paseo_asset_hub',
         to: RECIPIENT0,
       });
 
       await sleep(30000);
 
-      const balanceRecipientAfter = await getBalance(agentKit.getApi('west_asset_hub'), RECIPIENT0);
+      const balanceRecipientAfter = await getBalance(agentKit.getApi('paseo_asset_hub'), RECIPIENT0);
       expect(balanceRecipientAfter.data.free).toEqual(balanceRecipientBefore.data.free + amount);
 
-      const balanceAgentAfter = await getBalance(agentKit.getApi('west_asset_hub'), agentKit.getCurrentAddress());
-      expect(balanceAgentAfter.data.free).toBeLessThan(balanceAgentBefore.data.free - amount - feeTx);
+      const balanceAgentAfter = await getBalance(agentKit.getApi('paseo_asset_hub'), agentKit.getCurrentAddress());
+      expect(balanceAgentAfter.data.free).toBeLessThanOrEqual(balanceAgentBefore.data.free - amount - feeTx);
 
     }, 3500000);
 
@@ -137,8 +135,6 @@ describe('PolkadotAgentKit Integration with OllamaAgent transfer_native tool', (
   })
 
 })
-
-
 
 describe('PolkadotAgentKit Integration with OllamaAgent for XCM Transfer', () => {
   let agentKit: PolkadotAgentKit;  
